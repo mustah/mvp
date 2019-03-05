@@ -83,6 +83,24 @@ export const migrations = {
         },
       },
     }),
+  5: (state: PersistedState | any) => {
+    const {userSelection: {userSelection}} = state;
+    const selectionParameters = userSelection.selectionParameters;
+    return {
+      ...state,
+      userSelection: {
+        userSelection: {
+          ...userSelection,
+          selectionParameters: {
+            ...selectionParameters,
+            threshold: selectionParameters.threshold
+              ? {...selectionParameters.threshold, dateRange: selectionParameters.dateRange}
+              : undefined
+          }
+        }
+      },
+    };
+  },
 };
 
-export const currentVersion: number = 4;
+export const currentVersion: number = 5;

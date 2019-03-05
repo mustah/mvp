@@ -40,12 +40,16 @@ describe('reportActions', () => {
 
   describe('addToReport', () => {
 
+    beforeEach(() => {
+      initialState = {report};
+    });
+
     it('adds a meter that is not already selected', () => {
       const store = configureMockStore(initialState);
 
       store.dispatch(addToReport(gasLegendItem));
 
-      expect(store.getActions()).toEqual([addLegendItems([gasLegendItem])]);
+      expect(store.getActions()).toEqual([addLegendItems([{...gasLegendItem, quantities: [Quantity.volume]}])]);
     });
 
     it('does not fire an event if meter is already selected', () => {
@@ -57,14 +61,6 @@ describe('reportActions', () => {
       store.dispatch(addToReport(items[0]));
 
       expect(store.getActions()).toEqual([]);
-    });
-
-    it('selects report indicators', () => {
-      const store = configureMockStore(initialState);
-
-      store.dispatch(addToReport(gasLegendItem));
-
-      expect(store.getActions()).toEqual([addLegendItems([gasLegendItem])]);
     });
 
     it('does not add unknown type meter to graph', () => {
@@ -80,7 +76,14 @@ describe('reportActions', () => {
 
       store.dispatch(addToReport(districtHeatingLegendItem));
 
-      expect(store.getActions()).toEqual([addLegendItems([districtHeatingLegendItem])]);
+      expect(store.getActions()).toEqual([
+        addLegendItems([
+          {
+            ...districtHeatingLegendItem,
+            quantities: [Quantity.energy]
+          }
+        ])
+      ]);
     });
 
     it('adds more than one legend item to report', () => {
@@ -90,9 +93,36 @@ describe('reportActions', () => {
       store.dispatch(addToReport(districtHeatingLegendItem));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([gasLegendItem]),
-        addLegendItems([districtHeatingLegendItem])
+        addLegendItems([{...gasLegendItem, quantities: [Quantity.volume]}]),
+        addLegendItems([{...districtHeatingLegendItem, quantities: [Quantity.energy]}])
       ]);
+    });
+
+    it('selects default quantity for given meter', () => {
+      const store = configureMockStore({...initialState});
+
+      store.dispatch(addToReport(gasLegendItem));
+
+      expect(store.getActions()).toEqual([
+        addLegendItems([{...gasLegendItem, quantities: [Quantity.volume]}])
+      ]);
+    });
+
+    it('does not selects default quantity when there are already two selected', () => {
+      const roomMeter = {...gasLegendItem, id: 6, type: Medium.roomSensor};
+      const legendItems = [
+        {...gasLegendItem, quantities: [Quantity.volume]},
+        {...districtHeatingLegendItem, quantities: [Quantity.energy]},
+      ];
+
+      const store = configureMockStore({
+        ...initialState,
+        report: {...report, savedReports: savedReportsWith(legendItems)}
+      });
+
+      store.dispatch(addToReport(roomMeter));
+
+      expect(store.getActions()).toEqual([addLegendItems([...legendItems, roomMeter])]);
     });
 
     it('copies the view settings for the same type', () => {
@@ -108,7 +138,7 @@ describe('reportActions', () => {
       expect(store.getActions()).toEqual([
         addLegendItems([
           legendItems[0],
-          {...newGasLegendItem, isRowExpanded: true}
+          {...newGasLegendItem, isRowExpanded: true, quantities: [Quantity.volume]}
         ])
       ]);
     });
