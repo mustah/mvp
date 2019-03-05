@@ -7,8 +7,8 @@ import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {RowBottom, RowLeft} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
-import {OnSelectSelection, UserSelection} from '../../../../state/user-selection/userSelectionModels';
-import {Clickable, IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
+import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
+import {CallbackWith, Clickable, IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import './InlineEditInput.scss';
 
 const textFieldStyle: React.CSSProperties = {
@@ -65,8 +65,8 @@ const ResetIconButton = ({onClick}: Clickable) => (
 interface Props {
   isChanged: boolean;
   selection: UserSelection;
-  saveSelection: OnSelectSelection;
-  updateSelection: OnSelectSelection;
+  saveSelection: CallbackWith<UserSelection>;
+  updateSelection: CallbackWith<UserSelection>;
   resetSelection: OnClick;
   selectSavedSelection: OnClickWithId;
 }

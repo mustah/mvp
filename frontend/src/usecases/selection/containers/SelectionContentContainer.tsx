@@ -2,12 +2,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {setThreshold, toggleParameter} from '../../../state/user-selection/userSelectionActions';
-import {
-  OnChangeThreshold,
-  OnSelectParameter,
-  SelectionListItem,
-  ThresholdQuery
-} from '../../../state/user-selection/userSelectionModels';
+import {SelectionListItem, SelectionParameter, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {
   getSelectedAddresses,
   getSelectedAlarms,
@@ -21,7 +16,7 @@ import {
   getThreshold,
   getUserSelectionId,
 } from '../../../state/user-selection/userSelectionSelectors';
-import {uuid} from '../../../types/Types';
+import {CallbackWith, uuid} from '../../../types/Types';
 import {SelectionContent} from '../components/SelectionContent';
 
 interface StateToProps {
@@ -39,8 +34,8 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  toggleParameter: OnSelectParameter;
-  onChangeThreshold: OnChangeThreshold;
+  toggleParameter: CallbackWith<SelectionParameter>;
+  onChangeThreshold: CallbackWith<ThresholdQuery>;
 }
 
 export type SelectionContentProps = StateToProps & DispatchToProps;

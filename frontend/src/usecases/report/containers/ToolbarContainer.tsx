@@ -5,10 +5,10 @@ import {RootState} from '../../../reducers/rootReducer';
 import {exportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
-import {OnSelectResolution, SelectionInterval} from '../../../state/user-selection/userSelectionModels';
+import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {Toolbar} from '../components/Toolbar';
-import {selectResolution, setReportTimePeriod} from '../reportActions';
+import {selectResolution, setReportTimePeriod, toggleComparePeriod} from '../reportActions';
 import {hasLegendItems} from '../reportSelectors';
 
 interface StateToProps {
@@ -19,13 +19,15 @@ interface StateToProps {
   isFetching: boolean;
   isExportingToExcel: boolean;
   timePeriod: SelectionInterval;
+  shouldComparePeriod: boolean;
 }
 
 interface DispatchToProps {
   changeToolbarView: OnChangeToolbarView;
-  selectResolution: OnSelectResolution;
+  selectResolution: CallbackWith<TemporalResolution>;
   exportToExcel: Callback;
   setReportTimePeriod: CallbackWith<SelectionInterval>;
+  toggleComparePeriod: Callback;
 }
 
 interface OwnProps {
@@ -35,25 +37,27 @@ interface OwnProps {
 export type Props = StateToProps & DispatchToProps & OwnProps;
 
 const mapStateToProps = ({
-  report: {savedReports, temporal: {resolution, timePeriod}},
-  measurement: {measurementResponse: {measurements}, isFetching, isExportingToExcel},
+  report: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
+  measurement: {measurementResponse: {measurements, compare}, isFetching, isExportingToExcel},
   ui: {toolbar: {measurement: {view}}}
 }: RootState): StateToProps =>
   ({
     hasLegendItems: hasLegendItems(savedReports),
-    hasMeasurements: measurements.length > 0,
+    hasMeasurements: measurements.length > 0 || compare.length > 0,
     isFetching,
     isExportingToExcel,
     resolution,
     timePeriod,
+    shouldComparePeriod,
     view,
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView,
-  selectResolution,
   exportToExcel,
+  selectResolution,
   setReportTimePeriod,
+  toggleComparePeriod,
 }, dispatch);
 
 export const ToolbarContainer =

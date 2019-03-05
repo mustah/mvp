@@ -4,8 +4,7 @@ import {dropdownListStyle} from '../../app/themes';
 import {momentAtUtcPlusOneFrom, prettyRange} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {OnSelectCustomDateRange, OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
-import {Styled} from '../../types/Types';
+import {CallbackWith, Styled} from '../../types/Types';
 import {PeriodConfirmDialog} from '../dialog/PeriodConfirmDialog';
 import {DropdownMenu, MenuItemProps} from '../dropdown-selector/DropdownMenu';
 import {DateRange, Period} from './dateModels';
@@ -19,8 +18,8 @@ interface Props extends Styled {
   disabled?: boolean;
   customDateRange: Maybe<DateRange>;
   period: Period;
-  selectPeriod: OnSelectPeriod;
-  setCustomDateRange: OnSelectCustomDateRange;
+  selectPeriod: CallbackWith<Period>;
+  setCustomDateRange: CallbackWith<DateRange>;
 }
 
 interface State {

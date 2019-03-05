@@ -5,7 +5,8 @@ import {RootState} from '../../reducers/rootReducer';
 import {MeasurementParameters, Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {
-  LegendItem, LegendType,
+  LegendItem,
+  LegendType,
   LegendViewOptions,
   Report,
   SavedReportsState,
@@ -51,14 +52,15 @@ export const getMeasurementParameters =
   createSelector<RootState, RootState, MeasurementParameters>(
     identity,
     ({
-      report: {savedReports, temporal},
+      report: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
       userSelection: {userSelection: {selectionParameters}},
     }) => ({
-      resolution: temporal.resolution,
+      shouldComparePeriod,
+      resolution,
       legendItems: getLegendItems(savedReports),
       selectionParameters: {
         ...selectionParameters,
-        dateRange: temporal.timePeriod,
+        dateRange: timePeriod,
       },
     })
   );

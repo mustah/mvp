@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {popoverStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
-import {OnSelectResolution} from '../../state/user-selection/userSelectionModels';
+import {CallbackWith} from '../../types/Types';
 import {DropdownMenu, MenuItemProps} from '../dropdown-selector/DropdownMenu';
 import {IconTemporalResolution} from '../icons/IconTemporalResolution';
 import {TemporalResolution} from './dateModels';
@@ -9,7 +9,7 @@ import {TemporalResolution} from './dateModels';
 export interface ResolutionProps {
   disabled?: boolean;
   resolution: TemporalResolution;
-  selectResolution: OnSelectResolution;
+  selectResolution: CallbackWith<TemporalResolution>;
 }
 
 const width = 124;

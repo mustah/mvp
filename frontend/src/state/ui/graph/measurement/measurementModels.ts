@@ -28,6 +28,7 @@ export interface MeasurementParameters {
   legendItems: LegendItem[];
   resolution: TemporalResolution;
   selectionParameters: SelectedParameters;
+  shouldComparePeriod: boolean;
 }
 
 export type FetchMeasurements = (requestParameters: MeasurementParameters) => void;
@@ -66,8 +67,9 @@ export interface MeasurementResponsePart {
 export type MeasurementsApiResponse = MeasurementResponsePart[];
 
 export interface MeasurementResponse {
-  measurements: MeasurementsApiResponse;
   average: MeasurementsApiResponse;
+  compare: MeasurementsApiResponse;
+  measurements: MeasurementsApiResponse;
 }
 
 export interface QuantityAttributes {

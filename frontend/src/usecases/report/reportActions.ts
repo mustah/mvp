@@ -1,5 +1,5 @@
 import {find, uniqBy} from 'lodash';
-import {createStandardAction} from 'typesafe-actions';
+import {createAction, createStandardAction} from 'typesafe-actions';
 import {TemporalResolution} from '../../components/dates/dateModels';
 import {Maybe} from '../../helpers/Maybe';
 import {GetState} from '../../reducers/rootReducer';
@@ -13,6 +13,7 @@ import {getLegendItems} from './reportSelectors';
 
 export const addLegendItems = createStandardAction('ADD_LEGEND_ITEMS')<LegendItem[]>();
 export const selectResolution = createStandardAction('SELECT_RESOLUTION')<TemporalResolution>();
+export const toggleComparePeriod = createAction('TOGGLE_COMPARE_PERIOD');
 export const toggleLine = createStandardAction('TOGGLE_LINE')<uuid>();
 export const toggleQuantityByType = createStandardAction('TOGGLE_QUANTITY_BY_TYPE')<QuantityLegendType>();
 export const toggleQuantityById = createStandardAction('TOGGLE_QUANTITY_BY_ID')<QuantityId>();

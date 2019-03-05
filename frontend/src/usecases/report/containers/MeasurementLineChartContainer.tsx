@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import {DateRange, Period} from '../../../components/dates/dateModels';
-import {DispatchToProps} from '../../../components/tabs/components/MainContentTabs';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
@@ -25,17 +24,17 @@ export interface StateToProps {
 }
 
 const mapStateToProps = ({
-  report: {savedReports},
+  report: {savedReports, temporal: {shouldComparePeriod}},
   measurement,
   userSelection: {userSelection},
   ui,
 }: RootState): StateToProps =>
   ({
     ...getSelectedPeriod(userSelection),
-    isSideMenuOpen: isSideMenuOpen(ui),
     hasMeters: hasLegendItems(savedReports),
-    hasContent: hasMeasurementValues(measurement.measurementResponse)
+    hasContent: hasMeasurementValues(measurement.measurementResponse),
+    isSideMenuOpen: isSideMenuOpen(ui),
   });
 
 export const MeasurementLineChartContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps)(LineChartComponent);
+  connect<StateToProps, {}, OwnProps>(mapStateToProps)(LineChartComponent);
