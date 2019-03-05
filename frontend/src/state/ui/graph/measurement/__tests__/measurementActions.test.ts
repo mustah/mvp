@@ -101,6 +101,7 @@ describe('measurementActions', () => {
           period: Period.currentMonth,
         }
       },
+      shouldComparePeriod: false,
     };
 
     describe('do not fetch', () => {
@@ -204,6 +205,7 @@ describe('measurementActions', () => {
               makeMeasurementResponse(gasMeter),
             ],
             average: [],
+            compare: [],
           })
         ]);
       });
@@ -285,6 +287,7 @@ describe('measurementActions', () => {
               ...makeMeasurementAverageResponse(aggregateItem),
               values: justValues
             })),
+            compare: [],
           }),
         ]);
       });

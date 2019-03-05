@@ -2,7 +2,7 @@ import {default as classNames} from 'classnames';
 import {DropDownMenu, MenuItem} from 'material-ui';
 import * as React from 'react';
 import {borderRadius, colors, fontSize, menuItemStyle} from '../../app/themes';
-import {OnClick, Styled, WithChildren} from '../../types/Types';
+import {ClassNamed, OnClick, Styled, WithChildren} from '../../types/Types';
 import {Period} from '../dates/dateModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
@@ -44,7 +44,7 @@ const menu: {[name: string]: React.CSSProperties} = {
   underlineStyle: {border: 'none'},
 };
 
-export interface DropdownMenuProps extends WithChildren, Styled {
+export interface DropdownMenuProps extends WithChildren, Styled, ClassNamed {
   disabled?: boolean;
   labelStyle?: React.CSSProperties;
   listStyle?: React.CSSProperties;
@@ -58,12 +58,13 @@ export interface MenuItemProps {
   hasDivider?: boolean;
   label: string;
   onClick: OnClick;
-  primaryText: string;
-  value: Period | string;
+  primaryText?: string;
+  value: Period | string | undefined;
 }
 
 export const DropdownMenu = ({
   children,
+  className,
   disabled,
   IconButton = IconCalendar,
   labelStyle,
@@ -76,7 +77,7 @@ export const DropdownMenu = ({
   const renderedMenuItems = menuItems.map(({hasDivider, primaryText, label, value, onClick}: MenuItemProps) => (
     <MenuItem
       className={classNames('DropdownMenu-MenuItem', {hasDivider})}
-      key={primaryText}
+      key={`${label}-${value}`}
       label={label}
       primaryText={primaryText}
       style={menuItemStyle}
@@ -89,7 +90,7 @@ export const DropdownMenu = ({
   const menuLabelStyle = {...menu.labelStyle, ...labelStyle};
 
   return (
-    <Row className={classNames('DropdownMenu', {isActive: !disabled})}>
+    <Row className={classNames('DropdownMenu', className, {isActive: !disabled})}>
       <DropDownMenu
         className="DropdownMenu-dropdown"
         disabled={disabled}

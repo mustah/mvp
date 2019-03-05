@@ -1,13 +1,13 @@
 import * as React from 'react';
-import {OnSelectCustomDateRange} from '../../state/user-selection/userSelectionModels';
-import {OnClick, PickValue} from '../../types/Types';
+import {CallbackWith, OnClick, PickValue} from '../../types/Types';
 import {ButtonCancel, ButtonConfirm} from '../buttons/DialogButtons';
 import {CustomPeriodSelector, CustomPeriodSelectorProps} from '../dates/CustumPeriodSelector';
+import {DateRange} from '../dates/dateModels';
 import {Dialog} from './Dialog';
 
 interface Props {
   isOpen: boolean;
-  confirm: OnSelectCustomDateRange;
+  confirm: CallbackWith<DateRange>;
   close: OnClick;
   startDate: PickValue<State, 'startDate'>;
   endDate: PickValue<State, 'endDate'>;

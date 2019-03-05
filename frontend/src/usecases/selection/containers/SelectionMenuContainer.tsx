@@ -8,9 +8,9 @@ import {
   selectSavedSelection,
   updateSelection,
 } from '../../../state/user-selection/userSelectionActions';
-import {OnSelectSelection, UserSelection} from '../../../state/user-selection/userSelectionModels';
+import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {getUserSelection} from '../../../state/user-selection/userSelectionSelectors';
-import {OnClick, OnClickWithId} from '../../../types/Types';
+import {CallbackWith, OnClick, OnClickWithId} from '../../../types/Types';
 import {SelectionMenu} from '../components/selection-menu/SelectionMenu';
 
 interface StateToProps {
@@ -19,8 +19,8 @@ interface StateToProps {
 
 interface DispatchToProps {
   closeSelectionPage: OnClick;
-  saveSelection: OnSelectSelection;
-  updateSelection: OnSelectSelection;
+  saveSelection: CallbackWith<UserSelection>;
+  updateSelection: CallbackWith<UserSelection>;
   resetSelection: OnClick;
   selectSavedSelection: OnClickWithId;
 }

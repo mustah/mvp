@@ -16,7 +16,6 @@ import {
   unitPerHour
 } from '../../../../state/ui/graph/measurement/measurementModels';
 import {
-  OnChangeThreshold,
   RelationalOperator,
   SelectionInterval,
   ThresholdQuery
@@ -59,7 +58,7 @@ const quantityMenuItems = Object.keys(Quantity)
 
 interface ThresholdProps {
   query?: ThresholdQuery;
-  onChange: OnChangeThreshold;
+  onChange: CallbackWith<ThresholdQuery>;
 }
 
 type RenderableThresholdQuery = Partial<{
@@ -79,7 +78,7 @@ const thresholdQueryIsModified = (query: RenderableThresholdQuery) =>
 
 const useChangeQuery = (
   initialQuery: RenderableThresholdQuery,
-  onChange: OnChangeThreshold
+  onChange: CallbackWith<ThresholdQuery>
 ): [RenderableThresholdQuery, CallbackWith<RenderableThresholdQuery>] => {
   const [value, updateProperty] = React.useState<RenderableThresholdQuery>(initialQuery);
   const onChangeThresholdQuery = (query: RenderableThresholdQuery) => {

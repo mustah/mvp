@@ -1,8 +1,9 @@
 import {flatMap, map, sortBy} from 'lodash';
 import {createAction} from 'typesafe-actions';
-import {TemporalResolution} from '../../../../components/dates/dateModels';
+import {DateRange, Period, TemporalResolution} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonHelpers';
+import {makeCompareCustomDateRange, makeCompareDateRange} from '../../../../helpers/dateHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
 import {
   encodeRequestParameters,
@@ -107,6 +108,24 @@ const metersByQuantityRequests = ({
     .map(parameters => restClient.getParallel(makeUrl(EndPoints.measurements, parameters)));
 };
 
+const compareMeterRequests = (parameters: MeasurementParameters): GraphDataRequests =>
+  Maybe.maybe<MeasurementParameters>(parameters)
+    .filter(it => it.shouldComparePeriod)
+    .map(it => {
+        const {period, customDateRange} = it.selectionParameters.dateRange;
+        const dateRange = Maybe.maybe<DateRange>(customDateRange)
+          .map(makeCompareCustomDateRange)
+          .orElseGet(() => makeCompareDateRange(period));
+        return metersByQuantityRequests({
+          ...it,
+          selectionParameters: {
+            ...it.selectionParameters,
+            dateRange: {period: Period.custom, customDateRange: dateRange}
+          }
+        });
+      }
+    ).orElse([]);
+
 const averageByQuantityRequests = (
   {
     legendItems,
@@ -150,24 +169,23 @@ const shouldFetchMeasurements: FetchIfNeeded = (getState: GetState): boolean => 
   return !isSuccessfullyFetched && !isFetching && error.isNothing();
 };
 
-export const fetchMeasurements = (measurementParameters: MeasurementParameters) =>
+export const fetchMeasurements = (parameters: MeasurementParameters) =>
   async (dispatch, getState: GetState) => {
     if (shouldFetchMeasurements(getState)) {
-      const meters: GraphDataRequests = metersByQuantityRequests(measurementParameters);
-      const average: GraphDataRequests = averageByQuantityRequests(measurementParameters, getState);
+      const meters: GraphDataRequests = metersByQuantityRequests(parameters);
+      const average: GraphDataRequests = averageByQuantityRequests(parameters, getState);
+      const compare: GraphDataRequests = compareMeterRequests(parameters);
 
-      if (meters.length || average.length) {
+      if (meters.length || average.length || compare.length) {
         dispatch(measurementRequest());
         try {
-          const [meterResponses, averageResponses]: GraphDataResponse[][] =
-            await Promise.all([Promise.all(meters), Promise.all(average)]);
+          const [meterResponses, averageResponses, compareResponses]: GraphDataResponse[][] =
+            await Promise.all([Promise.all(meters), Promise.all(average), Promise.all(compare)]);
 
           const response: MeasurementResponse = {
-            measurements: sortBy(flatMap(meterResponses, 'data'), 'label'),
-            average: map(
-              flatMap(averageResponses, 'data'),
-              removeUndefinedValues,
-            ),
+            average: map(flatMap(averageResponses, 'data'), removeUndefinedValues),
+            compare: sortBy(flatMap(compareResponses, 'data'), removeUndefinedValues, 'label'),
+            measurements: sortBy(flatMap(meterResponses, 'data'), removeUndefinedValues, 'label'),
           };
           dispatch(measurementSuccess(response));
         } catch (error) {

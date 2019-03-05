@@ -5,6 +5,7 @@ import {Action, ErrorResponse} from '../../../../types/Types';
 import {
   addLegendItems,
   removeAllByType,
+  toggleComparePeriod,
   selectResolution,
   setReportTimePeriod,
   toggleQuantityById,
@@ -29,8 +30,9 @@ export const initialState: MeasurementState = {
   isSuccessfullyFetched: false,
   error: Maybe.nothing(),
   measurementResponse: {
-    measurements: [],
     average: [],
+    compare: [],
+    measurements: [],
   },
   isExportingToExcel: false,
 };
@@ -68,6 +70,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
       };
     case MEASUREMENT_CLEAR_ERROR:
     case getType(selectResolution):
+    case getType(toggleComparePeriod):
     case getType(setReportTimePeriod):
     case getType(addLegendItems):
     case getType(removeAllByType):

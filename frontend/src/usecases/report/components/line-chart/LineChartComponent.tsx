@@ -1,12 +1,11 @@
 import * as React from 'react';
-import {TooltipProps} from 'recharts';
+import {TooltipPayload, TooltipProps} from 'recharts';
 import {withEmptyContent, WithEmptyContentProps} from '../../../../components/hoc/withEmptyContent';
 import {toggle} from '../../../../helpers/collections';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {Dictionary, uuid} from '../../../../types/Types';
 import {OwnProps, StateToProps} from '../../containers/MeasurementLineChartContainer';
-import {ActiveDataPoint} from '../../reportModels';
 import {ActiveDot, ActiveDotReChartProps} from './ActiveDot';
 import {CustomizedTooltip} from './CustomizedTooltip';
 import {Dot, KeyedDotProps} from './Dot';
@@ -21,7 +20,7 @@ interface MouseOverProps {
   chartX: number;
   chartY: number;
   activeTooltipIndex: number;
-  activePayload: ActiveDataPoint[];
+  activePayload: TooltipPayload[];
 }
 
 type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
@@ -34,7 +33,7 @@ export class LineChartComponent extends React.Component<Props, GraphComponentSta
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
-  private tooltipPayload: ActiveDataPoint;
+  private tooltipPayload: TooltipPayload;
 
   private activeDataKey: uuid;
 
@@ -49,7 +48,7 @@ export class LineChartComponent extends React.Component<Props, GraphComponentSta
       isSideMenuOpen,
       outerHiddenKeys,
       hasMeters,
-      hasContent
+      hasContent,
     } = this.props;
 
     const wrapperProps: GraphContentWrapperProps = {

@@ -1,5 +1,12 @@
-import {Period} from '../../components/dates/dateModels';
-import {displayDate, momentAtUtcPlusOneFrom, prettyRange, toPeriodApiParameters} from '../dateHelpers';
+import {DateRange, Period} from '../../components/dates/dateModels';
+import {
+  displayDate,
+  makeCompareCustomDateRange,
+  makeCompareDateRange,
+  momentAtUtcPlusOneFrom,
+  prettyRange,
+  toPeriodApiParameters
+} from '../dateHelpers';
 import {Maybe} from '../Maybe';
 
 describe('dateHelper', () => {
@@ -127,6 +134,80 @@ describe('dateHelper', () => {
 
     it('formats in timezone in Stockholm (offset +2 from UTC)', () => {
       expect(displayDate('2018-01-21T08:00:00+02:00')).toBe('2018-01-21 07:00');
+    });
+
+  });
+
+  describe('makeCompareDateRange', () => {
+
+    describe('compare period is yesterday', () => {
+
+      it('has date range for current month period ', () => {
+        const period = Period.currentMonth;
+        const start = momentAtUtcPlusOneFrom('2019-03-05 10:00:00').toDate();
+        const actual: DateRange = makeCompareDateRange(period, start);
+
+        expect(displayDate(actual.start)).toBe('2019-02-01 00:00');
+        expect(displayDate(actual.end)).toBe('2019-02-28 00:00');
+      });
+
+      it('has date range for previous month period ', () => {
+        const period = Period.previousMonth;
+        const start = momentAtUtcPlusOneFrom('2019-03-05 10:00:00').toDate();
+        const actual: DateRange = makeCompareDateRange(period, start);
+
+        expect(displayDate(actual.start)).toBe('2019-01-01 00:00');
+        expect(displayDate(actual.end)).toBe('2019-01-31 00:00');
+      });
+
+      it('has date range for current week period ', () => {
+        const period = Period.currentWeek;
+        const start = momentAtUtcPlusOneFrom('2019-03-05 10:00:00').toDate();
+        const actual: DateRange = makeCompareDateRange(period, start);
+
+        expect(displayDate(actual.start)).toBe('2019-02-25 00:00');
+        expect(displayDate(actual.end)).toBe('2019-03-04 00:00');
+      });
+
+      it('has date range for latest period ', () => {
+        const period = Period.latest;
+        const start = momentAtUtcPlusOneFrom('2019-03-05 10:00:00').toDate();
+        const actual: DateRange = makeCompareDateRange(period, start);
+
+        expect(displayDate(actual.start)).toBe('2019-03-02 00:00');
+        expect(displayDate(actual.end)).toBe('2019-03-03 00:00');
+      });
+    });
+
+    describe('custom date range', () => {
+
+      it('compares custom date range', () => {
+        const start = momentAtUtcPlusOneFrom('2019-03-18 11:00:00').toDate();
+        const end = momentAtUtcPlusOneFrom('2019-03-20 11:00:00').toDate();
+        const actual: DateRange = makeCompareCustomDateRange({start, end});
+
+        expect(displayDate(actual.start)).toBe('2019-03-16 00:00');
+        expect(displayDate(actual.end)).toBe('2019-03-18 00:00');
+      });
+
+      it('compares custom date range over long period', () => {
+        const start = momentAtUtcPlusOneFrom('2019-03-20 11:00:00').toDate();
+        const end = momentAtUtcPlusOneFrom('2019-03-30 11:00:00').toDate();
+        const actual: DateRange = makeCompareCustomDateRange({start, end});
+
+        expect(displayDate(actual.start)).toBe('2019-03-10 00:00');
+        expect(displayDate(actual.end)).toBe('2019-03-20 00:00');
+      });
+
+      it('compares custom date range for same day', () => {
+        const start = momentAtUtcPlusOneFrom('2019-03-20 11:00:00').toDate();
+        const end = momentAtUtcPlusOneFrom('2019-03-20 11:00:00').toDate();
+        const actual: DateRange = makeCompareCustomDateRange({start, end});
+
+        expect(displayDate(actual.start)).toBe('2019-03-19 00:00');
+        expect(displayDate(actual.end)).toBe('2019-03-20 00:00');
+      });
+
     });
 
   });

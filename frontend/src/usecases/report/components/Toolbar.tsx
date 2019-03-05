@@ -4,6 +4,7 @@ import ContentSave from 'material-ui/svg-icons/content/save';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
+import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
 import {colors, iconSizeMedium} from '../../../app/themes';
 import {ToolbarActionButton} from '../../../components/buttons/ToolbarActionButton';
@@ -44,7 +45,9 @@ export const Toolbar = ({
   isExportingToExcel,
   view,
   setReportTimePeriod,
+  shouldComparePeriod,
   timePeriod,
+  toggleComparePeriod,
 }: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
@@ -98,6 +101,14 @@ export const Toolbar = ({
       </Row>
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
+        <Row>
+          <Toggle
+            label={firstUpperTranslated('compare period')}
+            defaultToggled={shouldComparePeriod}
+            onToggle={toggleComparePeriod}
+            style={{maxWidth: 200, marginRight: 4}}
+          />
+        </Row>
         <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
         <PeriodSelection
           disabled={!hasLegendItems}

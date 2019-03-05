@@ -22,6 +22,7 @@ import {useResizeWindow} from '../../../../hooks/resizeWindowHook';
 import {Children, OnClick, uuid} from '../../../../types/Types';
 import {AxesProps, LineProps} from '../../reportModels';
 import {ActiveDotReChartProps} from './ActiveDot';
+import {GraphContentProps} from './LineChart';
 
 const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 const domains: [AxisDomain, AxisDomain] = ['dataMin', 'dataMax'];
@@ -66,7 +67,15 @@ const renderLines = ({lines, hiddenKeys, outerHiddenKeys, renderDot, renderActiv
     });
 
 export const LineChart =
-  ({linesProps, renderTooltipContent, data, key, legendClick, legend, setTooltipPayload}: GraphContentProps) => {
+  ({
+    data,
+    key,
+    legendClick,
+    legend,
+    linesProps,
+    renderTooltipContent,
+    setTooltipPayload,
+  }: GraphContentProps) => {
     const {resized} = useResizeWindow();
 
     const {axes: {left, right}} = linesProps;

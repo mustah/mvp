@@ -6,8 +6,8 @@ import {PeriodSelection} from '../components/dates/PeriodSelection';
 import {Maybe} from '../helpers/Maybe';
 import {RootState} from '../reducers/rootReducer';
 import {selectPeriod, setCustomDateRange} from '../state/user-selection/userSelectionActions';
-import {OnSelectCustomDateRange, OnSelectPeriod} from '../state/user-selection/userSelectionModels';
 import {getSelectedPeriod} from '../state/user-selection/userSelectionSelectors';
+import {CallbackWith} from '../types/Types';
 
 interface StateToProps {
   period: Period;
@@ -15,8 +15,8 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  selectPeriod: OnSelectPeriod;
-  setCustomDateRange: OnSelectCustomDateRange;
+  selectPeriod: CallbackWith<Period>;
+  setCustomDateRange: CallbackWith<DateRange>;
 }
 
 const style: React.CSSProperties = {

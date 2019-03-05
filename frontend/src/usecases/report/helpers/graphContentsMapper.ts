@@ -1,6 +1,7 @@
-import {toArray} from 'lodash';
+import {sortBy, toArray} from 'lodash';
 import {LegendPayload} from 'recharts';
 import {colors} from '../../../app/themes';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {
   MeasurementResponse,
   MeasurementResponsePart,
@@ -8,7 +9,7 @@ import {
   Quantity
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
-import {ActivePointPayload, AxesProps, GraphContents} from '../reportModels';
+import {AxesProps, GraphContents} from '../reportModels';
 
 const colorize =
   (colorSchema: {[key: string]: string}) =>
@@ -36,39 +37,52 @@ const yAxisIdLookup = (axes: AxesProps, unit: string): 'left' | 'right' | undefi
   return undefined;
 };
 
-interface AggregateKey {
-  label: string;
+interface DataKey {
   id: string;
+  label: string;
+  quantity: Quantity;
 }
 
-const makeAggregateKey = ({label, id}: AggregateKey): string => `aggregate-${label}-${id}`;
+export interface ByDate {
+  [when: number]: Dictionary<number>;
+}
+
+const makeDataKey = ({id, label, quantity}: DataKey): string => `${quantity}-${label}-${id}`;
+
+export const makeAggregateKey = (key: DataKey): string => `aggregate-${makeDataKey(key)}`;
+export const makeMeasurementKey = (key: DataKey): string => `measurement-${makeDataKey(key)}`;
+export const makeCompareKey = (key: DataKey): string => `compare-${makeDataKey(key)}`;
+export const makeTimestampKey = (dataKey: string): string => `${dataKey}-timestamp`;
+
+type KeyFactory = (response: MeasurementResponsePart) => string;
+type ValueFactory = (response: MeasurementResponsePart) => string;
+
+const legendPayloadReducer = (keyFactory: KeyFactory, valueFactory: ValueFactory) =>
+  (prev, responsePart: MeasurementResponsePart) => (
+    prev[keyFactory(responsePart)]
+      ? prev
+      : {
+        ...prev,
+        [keyFactory(responsePart)]: {
+          type: 'line',
+          color: colorFor(responsePart.quantity),
+          value: valueFactory(responsePart),
+        },
+      });
 
 const makeLegendPayloads = ({average, measurements}: MeasurementResponse): LegendPayload[] => {
-  const meterLegends: Dictionary<LegendPayload> = measurements.reduce((prev, {quantity}) => (
-    prev[quantity]
-      ? prev
-      : {
-        ...prev,
-        [quantity]: {
-          type: 'line',
-          color: colorFor(quantity),
-          value: quantity,
-        },
-      }), {});
+  const aggregateLegends: Dictionary<LegendPayload> =
+    average.reduce(legendPayloadReducer(
+      ({id, label, quantity}) => makeAggregateKey({id, label, quantity}),
+      ({id, label, quantity}) => `${firstUpperTranslated('average')} ${quantity}`,
+    ), {});
 
-  const aggregateLegends: Dictionary<LegendPayload> = average.reduce((prev, {id, label, quantity}) => (
-    prev[label]
-      ? prev
-      : {
-        ...prev,
-        [makeAggregateKey({id, label})]: {
-          type: 'line',
-          color: colorFor(quantity),
-          value: `Average ${quantity}`,
-        },
-      }), {});
+  const meterLegends: Dictionary<LegendPayload> = measurements.reduce(legendPayloadReducer(
+    ({quantity}) => quantity,
+    ({quantity}) => quantity,
+  ), {});
 
-  return toArray({...aggregateLegends, ...meterLegends});
+  return toArray({...meterLegends, ...aggregateLegends});
 };
 
 const makeAxes = (graphContents: GraphContents, unit: string): void => {
@@ -79,52 +93,83 @@ const makeAxes = (graphContents: GraphContents, unit: string): void => {
   }
 };
 
+type Created = MeasurementValue & {dataKey: string, timestamp?: number};
+
 export const toGraphContents =
   (response: MeasurementResponse): GraphContents => {
     const graphContents: GraphContents = {
-      axes: {left: undefined, right: undefined},
+      axes: {},
       data: [],
       legend: [],
       lines: [],
     };
 
-    const byDate: {[when: number]: ActivePointPayload} = {};
+    const byDate: ByDate = {};
 
-    let firstTimestamp = Number.MAX_VALUE;
+    const {average, measurements, compare} = response;
 
-    const {measurements, average} = response;
-
-    const makeByDate = ({when, value, dataKey, timestamp}: MeasurementValue & {dataKey: string, timestamp: number}) => {
-      if (!byDate[when]) {
-        byDate[when] = {name: Number(when), timestamp};
+    const makeByDate = ({when, value, dataKey, timestamp}: Created) => {
+      let payloadItem = byDate[when];
+      if (!payloadItem) {
+        payloadItem = {name: Number(when)};
       }
-      byDate[when][dataKey] = value!;
+      byDate[when] = {...payloadItem, [dataKey]: value!, [makeTimestampKey(dataKey)]: Number(timestamp)};
     };
 
-    measurements.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
-      const dataKey: string = `${quantity} ${label}`;
+    const sortedMeasurementValues: Dictionary<MeasurementValue[]> = {};
 
+    measurements.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
       makeAxes(graphContents, unit);
 
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
 
       if (yAxisId) {
+        const dataKey: string = makeMeasurementKey({id, label, quantity});
         graphContents.lines.push({
           id,
           dataKey,
           key: dataKey,
-          name: label,
+          name: `${quantity} ${label}`,
           stroke: colorFor(quantity),
           strokeWidth: 1,
           unit,
           yAxisId,
         });
 
-        values.forEach((it) => {
+        values.forEach(it => {
           const timestamp: number = it.when * 1000;
-          firstTimestamp = Math.min(firstTimestamp, timestamp);
-          makeByDate({...it, when: timestamp, dataKey, timestamp});
+          makeByDate({...it, when: timestamp, dataKey});
         });
+        sortedMeasurementValues[dataKey] = sortBy(values, it => it.when);
+      }
+    });
+
+    compare.forEach(({id, label, city, address, medium, quantity, unit, values}: MeasurementResponsePart) => {
+      const yAxisId = yAxisIdLookup(graphContents.axes, unit);
+
+      if (yAxisId) {
+        const dataKey: string = makeCompareKey({id, label, quantity});
+        graphContents.lines.push({
+          id,
+          dataKey,
+          key: dataKey,
+          name: `${quantity} ${label}`,
+          stroke: colorFor(quantity),
+          strokeWidth: 1,
+          strokeDasharray: '5 5',
+          unit,
+          yAxisId,
+        });
+
+        const measurementKey = makeMeasurementKey({id, label, quantity});
+        sortBy(values, it => it.when)
+          .forEach((it, index) => {
+            const timestamp: number = it.when * 1000;
+            const measurement = sortedMeasurementValues[measurementKey][index];
+            if (measurement) {
+              makeByDate({when: measurement.when * 1000, value: it.value!, dataKey, timestamp});
+            }
+          });
       }
     });
 
@@ -133,12 +178,12 @@ export const toGraphContents =
 
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
       if (yAxisId) {
-        const dataKey: string = `Average ${label}`;
+        const dataKey: string = makeAggregateKey({id, label, quantity});
         graphContents.lines.push({
           id,
           dataKey,
-          key: makeAggregateKey({id, label}),
-          name: label,
+          key: dataKey,
+          name: `${firstUpperTranslated('average')}: ${label} ${quantity}`,
           stroke: colorFor(quantity),
           strokeWidth: 4,
           unit,
@@ -146,9 +191,7 @@ export const toGraphContents =
         });
         values.forEach(it => {
           const timestamp: number = it.when * 1000;
-          if (timestamp >= firstTimestamp) {
-            makeByDate({...it, when: timestamp, dataKey, timestamp});
-          }
+          makeByDate({...it, when: timestamp, dataKey});
         });
       }
     });

@@ -39,6 +39,7 @@ export interface SavedReportsState {
 
 export interface TemporalReportState {
   resolution: TemporalResolution;
+  shouldComparePeriod: boolean;
   timePeriod: SelectionInterval;
 }
 
@@ -56,22 +57,19 @@ export interface AxesProps {
   right?: string;
 }
 
-interface TooltipLineProps {
-  dataKey: string;
-  name: string;
-  stroke: string;
-  strokeWidth: number;
-  unit: string;
-}
-
-export interface LineProps extends TooltipLineProps {
+export interface LineProps {
   id: string;
-  key: string;
   city?: string;
   address?: string;
+  dataKey: string;
+  key: string;
   medium?: string;
+  name: string;
   strokeDasharray?: string;
+  stroke: string;
+  strokeWidth: number;
   type?: LineType;
+  unit: string;
   yAxisId: string;
 }
 
@@ -80,20 +78,6 @@ export interface GraphContents {
   data: object[];
   legend: LegendPayload[];
   lines: LineProps[];
-}
-
-export interface ActivePointPayload {
-  timestamp: number;
-  name: number;
-
-  [key: string]: number;
-}
-
-export interface ActiveDataPoint extends TooltipLineProps {
-  color: any;
-  fill: any;
-  payload: ActivePointPayload;
-  value: number;
 }
 
 export interface QuantityLegendType {

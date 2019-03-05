@@ -20,10 +20,13 @@ export const boxShadow =
 export const popoverBoxShadow =
   '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)';
 
+// light-blue: http://zavoloklom.github.io/material-design-color-palette/colors.html#light-blue
 export const colors = {
   blue200: '#81d4fa',
   blue100: '#b3e5fc',
   blue50: '#e1f5fe',
+  blueA100: '#80d8ff',
+  blueA200: '#40c4ff',
   blueA400: '#00b0ff',
   blueA700: '#0091ea',
 
@@ -83,6 +86,10 @@ export const mvpTheme = getMuiTheme({
   },
   raisedButton: {
     primaryColor: colors.blueA700,
+  },
+  toggle: {
+    trackOnColor: colors.blueA100,
+    thumbOnColor: colors.blueA700,
   }
 });
 

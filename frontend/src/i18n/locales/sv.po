@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "compare period"
+msgstr "jämför period"
+
 msgid "latency"
 msgstr "latens"
 
