@@ -7,12 +7,12 @@ import {momentAtUtcPlusOneFrom, toPeriodApiParameters} from '../dateHelpers';
 import {idGenerator} from '../idGenerator';
 import {Maybe} from '../Maybe';
 import {
-  RequestParameters,
-  encodeRequestParameters,
   encodedUriParametersFrom,
-  requestParametersFrom,
+  encodeRequestParameters,
   entityApiParametersGatewaysFactory,
   entityApiParametersMetersFactory,
+  RequestParameters,
+  requestParametersFrom,
   toGatewayIdsApiParameters,
   toMeterIdsApiParameters,
   toPaginationApiParameters,
@@ -37,6 +37,7 @@ describe('urlFactory', () => {
         threshold: {
           quantity: Quantity.power,
           unit: 'kW',
+          dateRange: {period: Period.latest},
           value: '3',
           relationalOperator: '<' as RelationalOperator,
         },

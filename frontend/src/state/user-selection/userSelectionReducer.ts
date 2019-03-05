@@ -22,7 +22,7 @@ import {
   ParameterName,
   SelectionItem,
   SelectionParameter,
-  ThresholdQueryWithin,
+  ThresholdQuery,
   UserSelection,
   UserSelectionState
 } from './userSelectionModels';
@@ -137,7 +137,7 @@ const updateCustomDateRange = (
 
 const applyThreshold = (
   state: UserSelectionState,
-  {dateRange, ...threshold}: ThresholdQueryWithin,
+  threshold: ThresholdQuery,
 ): UserSelectionState => ({
   ...state,
   userSelection: {
@@ -145,8 +145,7 @@ const applyThreshold = (
     isChanged: true,
     selectionParameters: {
       ...state.userSelection.selectionParameters,
-      threshold,
-      dateRange,
+      threshold
     }
   }
 });
@@ -157,7 +156,7 @@ type ActionTypes =
   | Action<UserSelection>
   | Action<Period>
   | Action<DateRange>
-  | Action<ThresholdQueryWithin>;
+  | Action<ThresholdQuery>;
 
 export const userSelection = (
   state: UserSelectionState = initialState,
@@ -175,7 +174,7 @@ export const userSelection = (
     case getType(setCustomDateRange):
       return updateCustomDateRange(state, action as Action<DateRange>);
     case getType(setThresholdAction):
-      return applyThreshold(state, (action as Action<ThresholdQueryWithin>).payload);
+      return applyThreshold(state, (action as Action<ThresholdQuery>).payload);
     case SELECT_SAVED_SELECTION:
     case domainModelsPostSuccess(EndPoints.userSelections):
     case domainModelsPutSuccess(EndPoints.userSelections):

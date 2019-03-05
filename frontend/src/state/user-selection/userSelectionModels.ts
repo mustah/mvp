@@ -37,9 +37,6 @@ export interface ThresholdQuery {
   quantity: Quantity;
   unit: string;
   duration?: string | null;
-}
-
-export interface ThresholdQueryWithin extends ThresholdQuery {
   dateRange: SelectionInterval;
 }
 

@@ -28,7 +28,7 @@ import {
   RelationalOperator,
   SelectedParameters,
   SelectionParameter,
-  ThresholdQueryWithin,
+  ThresholdQuery,
   UserSelection,
   UserSelectionState,
 } from '../userSelectionModels';
@@ -351,10 +351,10 @@ describe('userSelectionActions', () => {
   describe('setThreshold', () => {
 
     type IncompleteThresholdQuery =
-      Partial<{ [key in keyof ThresholdQueryWithin]: string | undefined | ThresholdQueryWithin[key] }>;
-    type UsersInput = ThresholdQueryWithin | undefined | IncompleteThresholdQuery;
+      Partial<{ [key in keyof ThresholdQuery]: string | undefined | ThresholdQuery[key] }>;
+    type UsersInput = ThresholdQuery | undefined | IncompleteThresholdQuery;
 
-    const userSelectionStateFromThreshold = (threshold: ThresholdQueryWithin): UserSelectionState => ({
+    const userSelectionStateFromThreshold = (threshold: ThresholdQuery): UserSelectionState => ({
       ...rootStateNoSaved.userSelection,
       userSelection: {
         ...rootStateNoSaved.userSelection.userSelection,
@@ -366,7 +366,7 @@ describe('userSelectionActions', () => {
     });
 
     const empty = undefined;
-    const ok: ThresholdQueryWithin = {
+    const ok: ThresholdQuery = {
       value: '2',
       unit: 'kW',
       quantity: Quantity.power,
@@ -375,7 +375,7 @@ describe('userSelectionActions', () => {
         period: Period.latest,
       },
     };
-    const anotherOk: ThresholdQueryWithin = {...ok, value: '3', duration: '2'};
+    const anotherOk: ThresholdQuery = {...ok, value: '3', duration: '2'};
     const incomplete: IncompleteThresholdQuery = {
       value: '',
       unit: undefined,

@@ -5,7 +5,8 @@ import {CurrentPeriod, toPeriodApiParameters} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {getTranslationOrName} from '../../helpers/translations';
 import {
-  encodedUriParametersFrom, entityApiParametersCollectionStatFactory,
+  encodedUriParametersFrom,
+  entityApiParametersCollectionStatFactory,
   EntityApiParametersFactory,
   entityApiParametersGatewaysFactory,
   entityApiParametersMetersFactory,
@@ -90,6 +91,26 @@ const defaultPeriod: CurrentPeriod = {
   period: Period.latest,
 };
 
+const determineActivePeriod = (
+  hasWildcard: boolean,
+  selectionPeriod: CurrentPeriod,
+  threshold?: ThresholdQuery
+): CurrentPeriod => {
+  if (hasWildcard && selectionPeriod) {
+    return selectionPeriod;
+  }
+
+  if (threshold) {
+    if (threshold.dateRange.customDateRange || threshold.dateRange.period === Period.custom) {
+      return {period: Period.custom, customDateRange: Maybe.maybe(threshold.dateRange.customDateRange)};
+    } else {
+      return {period: threshold.dateRange.period, customDateRange: Maybe.nothing()};
+    }
+  }
+
+  return defaultPeriod;
+};
+
 const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) =>
   createSelector<UriLookupStatePaginated,
     string,
@@ -107,7 +128,7 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
       const thresholdParameter = toThresholdParameter(threshold);
       const parametersToEncode = [
         ...toSortParameters(sort),
-        ...toPeriodApiParameters(thresholdParameter.length ? currentPeriod : defaultPeriod),
+        ...toPeriodApiParameters(determineActivePeriod(query !== undefined, currentPeriod, threshold)),
         ...toPaginationApiParameters(pagination),
       ];
       return query
@@ -131,7 +152,7 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     (query, {dateRange, threshold, ...rest}, currentPeriod) => {
       const thresholdParameter = toThresholdParameter(threshold);
       const parametersToEncode = [
-        ...toPeriodApiParameters(thresholdParameter.length ? currentPeriod : defaultPeriod),
+        ...toPeriodApiParameters(determineActivePeriod(query !== undefined, currentPeriod, threshold)),
       ];
       return query
         ? encodedUriParametersFrom([

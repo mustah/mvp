@@ -194,6 +194,7 @@ describe('userSelectionSelectors', () => {
       const threshold: ThresholdQuery = {
         relationalOperator: '>=' as RelationalOperator,
         quantity: Quantity.power,
+        dateRange: {period: Period.latest},
         unit: 'kW',
         value: '3',
       };
@@ -224,6 +225,7 @@ describe('userSelectionSelectors', () => {
       const threshold: ThresholdQuery = {
         relationalOperator: '>=' as RelationalOperator,
         quantity: Quantity.power,
+        dateRange: {period: Period.latest},
         unit: 'kW',
         value: '3',
       };
@@ -255,6 +257,7 @@ describe('userSelectionSelectors', () => {
       const threshold: ThresholdQuery = {
         relationalOperator: '>=' as RelationalOperator,
         quantity: Quantity.power,
+        dateRange: {period: Period.latest},
         unit: 'kW',
         value: '3',
         duration: '3'
@@ -286,6 +289,7 @@ describe('userSelectionSelectors', () => {
       const threshold: ThresholdQuery = {
         relationalOperator: '>=' as RelationalOperator,
         quantity: Quantity.power,
+        dateRange: {period: Period.latest},
         unit: 'kW',
         value: '3',
         duration: null
@@ -488,6 +492,7 @@ describe('userSelectionSelectors', () => {
       const threshold: ThresholdQuery = {
         relationalOperator: '>=' as RelationalOperator,
         quantity: Quantity.power,
+        dateRange: {period: Period.latest},
         unit: 'kW',
         value: '3',
       };

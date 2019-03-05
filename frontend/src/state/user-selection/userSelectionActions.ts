@@ -20,7 +20,6 @@ import {
   SelectionItem,
   SelectionParameter,
   ThresholdQuery,
-  ThresholdQueryWithin,
   UserSelection
 } from './userSelectionModels';
 import {userSelectionsDataFormatter} from './userSelectionSchema';
@@ -39,7 +38,7 @@ const deselectParameterInSelection = payloadActionOf<SelectionParameter>(DESELEC
 export const resetSelection = emptyActionOf(RESET_SELECTION);
 const selectSavedSelectionAction = payloadActionOf<UserSelection>(SELECT_SAVED_SELECTION);
 
-export const setThresholdAction = createStandardAction('SET_THRESHOLD')<ThresholdQueryWithin>();
+export const setThresholdAction = createStandardAction('SET_THRESHOLD')<ThresholdQuery>();
 
 export const setThreshold =
   (threshold: ThresholdQuery | undefined) =>
@@ -49,20 +48,12 @@ export const setThreshold =
 
       const isOldValid = isValidThreshold(oldThreshold);
       const isNewValid = isValidThreshold(threshold);
-
       if (
         (!isOldValid && isNewValid) ||
         (isOldValid && threshold === undefined) ||
         (isOldValid && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
       ) {
-        const payload = isNewValid
-          ? {
-
-            dateRange: state.userSelection.userSelection.selectionParameters.dateRange,
-            ...threshold,
-          }
-          : threshold;
-        dispatch(setThresholdAction(payload as ThresholdQueryWithin));
+        dispatch(setThresholdAction(threshold!));
       }
     };
 
