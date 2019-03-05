@@ -80,9 +80,11 @@ export const meterParameters: ParameterNames & MeterParameterNames = {
 const mapRequestParameters =
   (selectedParameter: keyof SelectedParameters, value: any): RequestParameters => {
     if (selectedParameter === 'threshold') {
+      const threshold = value as ThresholdQuery;
       return isValidThreshold(value)
         ? {
-          [RequestParameter.threshold]: thresholdAsString(value as ThresholdQuery)
+          [RequestParameter.threshold]: thresholdAsString(threshold),
+          ...queryParametersOfDateRange(threshold.dateRange),
         }
         : {};
     }
@@ -101,8 +103,11 @@ const mapRequestParameters =
     return {};
   };
 
-export const requestParametersFrom = (parameters: SelectedParameters): RequestParameters =>
-  Object.keys(parameters)
+export const requestParametersFrom = (parameters: SelectedParameters): RequestParameters => {
+  if (parameters.threshold) {
+    delete parameters.dateRange;
+  }
+  return Object.keys(parameters)
     .reduce(
       (allParameters: RequestParameters, selectedParameter: keyof SelectedParameters) => ({
         ...allParameters,
@@ -113,6 +118,7 @@ export const requestParametersFrom = (parameters: SelectedParameters): RequestPa
       }),
       {}
     );
+};
 
 export const encodeRequestParameters = (parameters: RequestParameters): EncodedUriParameters =>
   Object.keys(parameters)
