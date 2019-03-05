@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 
 import com.elvaco.mvp.configuration.config.ApmInterceptor;
@@ -21,6 +22,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.CacheControl;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.util.StringUtils;
@@ -71,7 +73,11 @@ public class MvpApplication implements WebMvcConfigurer {
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
     registry.addResourceHandler("/**")
       .addResourceLocations("classpath:/static/")
-      .resourceChain(false)
+      .setCacheControl(
+        CacheControl.maxAge(0, TimeUnit.DAYS)
+        .cachePrivate()
+        .mustRevalidate())
+      .resourceChain(true)
       .addResolver(new PushStateResourceResolver());
   }
 
