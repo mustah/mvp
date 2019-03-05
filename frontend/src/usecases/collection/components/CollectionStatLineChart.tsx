@@ -8,7 +8,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Bold, Normal} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
-import {displayDate, shortTimestamp} from '../../../helpers/dateHelpers';
+import {diplayDateNoHours, shortDate} from '../../../helpers/dateHelpers';
 import {formatPercentage} from '../../../helpers/formatters';
 import {encodeRequestParameters, requestParametersFrom} from '../../../helpers/urlFactory';
 import {colorFor} from '../../report/helpers/graphContentsMapper';
@@ -25,7 +25,7 @@ const style: React.CSSProperties = {
 };
 
 const formatTime = (time: number) =>
-  shortTimestamp(time * 1000);
+  shortDate(time * 1000);
 
 const CustomizedTooltip = (props) => {
   const {active, payload} = props;
@@ -36,7 +36,7 @@ const CustomizedTooltip = (props) => {
       <Paper style={{...paperStyle, ...style}}>
         <Column>
           <Row>
-            <Normal style={{marginRight: 4}}>{displayDate(id * 1000)}:</Normal>
+            <Normal style={{marginRight: 4}}>{diplayDateNoHours(id * 1000)}:</Normal>
             <Bold>{formatPercentage(collectionPercentage)}</Bold>
           </Row>
         </Column>
