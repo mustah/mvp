@@ -26,7 +26,7 @@ export interface ViewOptions {
 
 export type LegendViewOptions = { [p in LegendType]: ViewOptions };
 
-export type SelectedQuantityColumns = { [p in LegendType]: Quantity[] };
+export type SelectedQuantities = { [p in LegendType]: Quantity[] };
 
 export interface Report extends Identifiable {
   legendItems: LegendItem[];

@@ -1,8 +1,9 @@
+import {flatMap, values} from 'lodash';
 import {createSelector} from 'reselect';
 import {unique} from '../../helpers/collections';
 import {identity} from '../../helpers/commonHelpers';
 import {RootState} from '../../reducers/rootReducer';
-import {MeasurementParameters, Medium} from '../../state/ui/graph/measurement/measurementModels';
+import {MeasurementParameters, Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {
   LegendItem,
@@ -10,7 +11,7 @@ import {
   LegendViewOptions,
   Report,
   SavedReportsState,
-  SelectedQuantityColumns,
+  SelectedQuantities,
   ViewOptions
 } from './reportModels';
 
@@ -28,7 +29,7 @@ export const getLegendItems = (state: SavedReportsState): LegendItem[] =>
 export const hasLegendItems = (state: SavedReportsState): boolean =>
   getLegendItems(state).length > 0;
 
-export const makeLegendTypeQuantitiesMap = (): SelectedQuantityColumns =>
+export const makeLegendTypeQuantitiesMap = (): SelectedQuantities =>
   Object.keys(Medium).map(k => Medium[k])
     .reduce((acc, medium) => ({...acc, [medium]: []}), {aggregate: []});
 
@@ -38,14 +39,26 @@ export const getHiddenLines =
     items => items.filter(it => it.isHidden).map(it => it.id)
   );
 
-export const getSelectedQuantityColumns =
-  createSelector<SavedReportsState, LegendItem[], SelectedQuantityColumns>(
+export const getSelectedQuantitiesMap =
+  createSelector<SavedReportsState, LegendItem[], SelectedQuantities>(
     getLegendItems,
     items => {
-      const columns: SelectedQuantityColumns = makeLegendTypeQuantitiesMap();
+      const columns: SelectedQuantities = makeLegendTypeQuantitiesMap();
       items.forEach(({type, quantities}) => columns[type] = unique([...columns[type], ...quantities]));
       return columns;
     }
+  );
+
+export const getSelectedQuantities =
+  createSelector<SavedReportsState, SelectedQuantities, Quantity[]>(
+    getSelectedQuantitiesMap,
+    selectedQuantities => unique(flatMap(values(selectedQuantities)))
+  );
+
+export const hasSelectedQuantities =
+  createSelector<SavedReportsState, Quantity[], boolean>(
+    getSelectedQuantities,
+    selectedQuantities => selectedQuantities.length > 0
   );
 
 export const getMeasurementParameters =

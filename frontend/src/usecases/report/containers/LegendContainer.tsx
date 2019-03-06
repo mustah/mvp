@@ -23,12 +23,12 @@ import {
   QuantityId,
   QuantityLegendType,
   SavedReportsState,
-  SelectedQuantityColumns
+  SelectedQuantities
 } from '../reportModels';
 import {
   getLegendItems,
   getLegendViewOptions,
-  getSelectedQuantityColumns,
+  getSelectedQuantitiesMap,
   hasLegendItems
 } from '../reportSelectors';
 
@@ -37,7 +37,7 @@ export interface StateToProps extends HasContent, ColumnQuantities {
   mediumViewOptions: LegendViewOptions;
   resolution: TemporalResolution;
   savedReports: SavedReportsState;
-  selectedQuantityColumns: SelectedQuantityColumns;
+  selectedQuantitiesMap: SelectedQuantities;
 }
 
 export interface RowDispatch {
@@ -68,7 +68,7 @@ const mapStateToProps = ({report}: RootState): StateToProps => {
     mediumViewOptions: getLegendViewOptions(savedReports),
     resolution,
     savedReports,
-    selectedQuantityColumns: getSelectedQuantityColumns(savedReports),
+    selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
   });
 };
 

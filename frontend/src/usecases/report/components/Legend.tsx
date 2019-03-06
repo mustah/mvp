@@ -41,7 +41,7 @@ export const Legend = ({
   legendItems,
   mediumViewOptions,
   removeAllByType,
-  selectedQuantityColumns,
+  selectedQuantitiesMap,
   showHideLegend,
   showHideLegendRows,
   toggleLine,
@@ -50,7 +50,7 @@ export const Legend = ({
 }: DispatchToProps & StateToProps & OwnProps) => {
   const columnRenderProps: QuantityCell = {
     columnQuantities,
-    selectedQuantityColumns,
+    selectedQuantitiesMap,
     toggleQuantityById
   };
   const quantityGridColumns = React.useMemo(() => renderColumns(columnRenderProps), [legendItems]);

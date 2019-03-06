@@ -11,7 +11,7 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {allQuantitiesMap, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
-import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantityColumns} from '../reportModels';
+import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantities} from '../reportModels';
 import {colorFor} from './graphContentsMapper';
 import {isGroupHeader} from './measurementGridHelper';
 
@@ -24,7 +24,7 @@ interface CurrentQuantity {
 }
 
 export interface QuantityCell extends ColumnQuantities {
-  selectedQuantityColumns: SelectedQuantityColumns;
+  selectedQuantitiesMap: SelectedQuantities;
   toggleQuantityById: OnClickWith<QuantityId>;
 }
 
@@ -127,7 +127,7 @@ export const rowRenderer = (props: RowProps) =>
   };
 
 const renderQuantityCell =
-  ({quantity, selectedQuantityColumns, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
+  ({quantity, selectedQuantitiesMap, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
     ({dataItem: {id, label, type, quantities}}: GridCellProps) => {
       if (allQuantitiesMap[type].some(q => q === quantity)) {
         const checked = quantities.indexOf(quantity) !== -1;
