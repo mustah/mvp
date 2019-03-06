@@ -10,12 +10,15 @@ export type LegendType = Medium | 'aggregate';
 export const isMedium = (type: LegendType): type is Medium => Medium[type] !== undefined;
 export const isAggregate = (type: LegendType): type is 'aggregate' => !isMedium(type);
 
-export interface LegendItem {
+export interface LegendItemSettings {
+  isHidden?: boolean;
+  isRowExpanded?: boolean;
+}
+
+export interface LegendItem extends LegendItemSettings {
   id: uuid;
   label: string;
   type: LegendType;
-  isHidden: boolean;
-  isRowExpanded?: boolean;
   quantities: Quantity[];
 }
 

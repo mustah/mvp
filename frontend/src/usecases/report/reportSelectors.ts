@@ -36,7 +36,7 @@ export const makeLegendTypeQuantitiesMap = (): SelectedQuantities =>
 export const getHiddenLines =
   createSelector<SavedReportsState, LegendItem[], uuid[]>(
     getLegendItems,
-    items => items.filter(it => it.isHidden).map(it => it.id)
+    items => items.filter(it => !!it.isHidden).map(it => it.id)
   );
 
 export const getSelectedQuantitiesMap =

@@ -41,7 +41,7 @@ import {
   MeasurementValue,
   Medium,
   Quantity,
-  toMediumText
+  getMediumText
 } from '../measurementModels';
 import {initialState} from '../measurementReducer';
 
@@ -85,7 +85,7 @@ describe('measurementActions', () => {
       city: 'Varberg',
       address: '',
       quantity: Quantity.power,
-      medium: toMediumText(Medium.electricity),
+      medium: getMediumText(Medium.electricity),
       values: [{when: 1516521585107, value: 0.4353763591158477}],
       unit: 'mW',
     });
@@ -235,7 +235,8 @@ describe('measurementActions', () => {
       });
 
       it('for single legend item having aggregate type with a user selection', async () => {
-        const legendItems = [toAggregateLegendItem({id: 1, name: 'foo'})];
+        const item: LegendItem = {...toAggregateLegendItem({id: 1, name: 'foo'}), quantities: [Quantity.volume]};
+        const legendItems = [item];
 
         const requestedUrls: string[] = onFetchAsync(legendItems);
 

@@ -161,7 +161,7 @@ const mediumTexts: { [medium in Medium]: string } = {
   [Medium.unknown]: 'Unknown',
 };
 
-export const toMediumText = (medium: Medium): string => mediumTexts[medium];
+export const getMediumText = (medium: Medium): string => mediumTexts[medium];
 
 export const allQuantitiesMap: { [p in LegendType]: Quantity[] } = {
   [Medium.districtHeating]: [

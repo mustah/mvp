@@ -2,7 +2,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {RootState} from '../../../reducers/rootReducer';
-import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import {getMediumText, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {toLegendItem} from '../helpers/legendHelper';
 import {addAllToReport, addLegendItems, addToReport, deleteItem} from '../reportActions';
 import {LegendItem, SavedReportsState} from '../reportModels';
 import {initialState as report} from '../reportReducer';
@@ -251,7 +253,7 @@ describe('reportActions', () => {
     });
 
     it('copies the view settings for the same type for given group', () => {
-      const meter1 = {...gasMeter, isRowExpanded: true};
+      const meter1 = {...gasMeter, isRowExpanded: false};
       const meter2 = {...gasMeter, id: 2};
       const store = configureMockStore({
         ...initialState,
@@ -263,7 +265,26 @@ describe('reportActions', () => {
       expect(store.getActions()).toEqual([
         addLegendItems([
           meter1,
-          {...meter2, isRowExpanded: true, quantities: [Quantity.volume]}
+          {...meter2, isRowExpanded: false, quantities: [Quantity.volume]}
+        ])
+      ]);
+    });
+
+    it('copies view settings where all lines are hidden', () => {
+      const meter1: LegendItem = {...gasMeter, id: 2, isHidden: true, isRowExpanded: true};
+      const meter = {id: 99, facility: 'abc', medium: getMediumText(Medium.gas)};
+      const meter2 = toLegendItem(meter as Meter);
+      const store = configureMockStore({
+        ...initialState,
+        report: {...report, savedReports: savedReportsWith([meter1])}
+      });
+
+      store.dispatch(addAllToReport([meter2]));
+
+      expect(store.getActions()).toEqual([
+        addLegendItems([
+          {...meter1},
+          {...meter2, isHidden: true, isRowExpanded: true, quantities: [Quantity.volume]}
         ])
       ]);
     });

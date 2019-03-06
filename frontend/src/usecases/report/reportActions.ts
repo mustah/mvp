@@ -8,7 +8,7 @@ import {allQuantitiesMap, Medium, Quantity} from '../../state/ui/graph/measureme
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Dispatcher, uuid} from '../../types/Types';
-import {LegendItem, LegendType, QuantityId, QuantityLegendType} from './reportModels';
+import {LegendItem, LegendItemSettings, LegendType, QuantityId, QuantityLegendType} from './reportModels';
 import {getLegendItems, hasSelectedQuantities} from './reportSelectors';
 
 export const addLegendItems = createStandardAction('ADD_LEGEND_ITEMS')<LegendItem[]>();
@@ -38,9 +38,12 @@ export const getDefaultQuantity = <T extends LegendTyped>({type}: T): Quantity =
 const findByType = (legendItems: LegendItem[], {type}: LegendTyped): Maybe<LegendItem> =>
   Maybe.maybe<LegendItem>(find(legendItems, {type}));
 
-const copyPropertiesFrom = (savedLegendItems, item): LegendItem =>
-  findByType(savedLegendItems, item)
-    .map(it => ({...it, ...item}))
+const pickJustSettings = ({isHidden, isRowExpanded}: LegendItem): LegendItemSettings =>
+  ({isHidden, isRowExpanded: isRowExpanded || false});
+
+const copyPropertiesFrom = (legendItems, item): LegendItem =>
+  findByType(legendItems, item)
+    .map(it => ({...item, ...pickJustSettings(it)}))
     .orElse(item);
 
 const selectItemsIfWithinLimits = ({dispatch, items}: DispatchWithinLimits) => {

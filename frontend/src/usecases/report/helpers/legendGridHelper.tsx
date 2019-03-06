@@ -8,7 +8,7 @@ import {IconRightArrow} from '../../../components/icons/IconRightArrow';
 import {RowLeft, RowMiddle, RowRight} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {allQuantitiesMap, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
+import {allQuantitiesMap, Medium, Quantity, getMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
 import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantities} from '../reportModels';
@@ -88,7 +88,7 @@ const renderGroupHeaderTds = ({
   return tds;
 };
 
-export const getGroupHeaderTitle = (type: LegendType): string => toMediumText(type as Medium) || 'average';
+export const getGroupHeaderTitle = (type: LegendType): string => getMediumText(type as Medium) || 'average';
 
 const renderGroupHeader = (props: RowProps, dataItem: any) => {
   const type: LegendType = dataItem.value;
