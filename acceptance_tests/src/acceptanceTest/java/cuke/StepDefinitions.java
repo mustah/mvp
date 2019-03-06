@@ -45,6 +45,9 @@ public class StepDefinitions {
   private void getEnvironmentOptions() throws UnknownHostException {
     String server = Optional.ofNullable(System.getenv("MVP_SERVER"))
       .orElse("http://" + getHostName());
+
+    String webServer = Optional.ofNullable(System.getenv("MVP_WEB_SERVER"))
+      .orElse(server);
     String webPort = Optional.ofNullable(System.getenv("MVP_WEB_PORT"))
       .orElse("4444");
     String apiPort = Optional.ofNullable(System.getenv("MVP_API_PORT"))
@@ -55,7 +58,11 @@ public class StepDefinitions {
       .orElse("changeme");
     useLocalBrowser = System.getenv("LOCAL_BROWSER");
 
-    evoServer = server + ":" + webPort;
+    if (server.endsWith("/")) {
+      server = server.substring(0, server.length() - 1);
+    }
+
+    evoServer = webServer + ":" + webPort;
     evoApiServer = server + ":" + apiPort;
   }
 
