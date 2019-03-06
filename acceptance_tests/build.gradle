@@ -53,7 +53,7 @@ dependencies {
   testCompile 'io.cucumber:cucumber-junit:2.4.0'
   testCompile 'junit:junit:4.12'
   testCompile 'org.assertj:assertj-core:3.11.1'
-  testCompile 'org.seleniumhq.selenium:selenium-java:3.11.0'
-  testCompile 'org.seleniumhq.selenium:selenium-chrome-driver:3.11.0'
+  testCompile 'org.seleniumhq.selenium:selenium-java:3.141.59'
+  testCompile 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
   testCompile 'com.mashape.unirest:unirest-java:1.4.9'
 }
