@@ -62,7 +62,7 @@ const renderGroupHeaderTds = ({
 }: RowProps & CurrentLegendType) => {
   const tds = columnQuantities.map((quantity) => {
     const key = `group-header-td-${type}-${quantity}`;
-    if (allQuantitiesMap[type].some(q => q === quantity)) {
+    if (allQuantitiesMap[type].indexOf(quantity) !== -1) {
       const checked = mediumViewOptions[type].quantities.indexOf(quantity) !== -1;
       const onClick = () => toggleQuantityByType({type, quantity});
       return (
@@ -129,7 +129,7 @@ export const rowRenderer = (props: RowProps) =>
 const renderQuantityCell =
   ({quantity, selectedQuantitiesMap, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
     ({dataItem: {id, label, type, quantities}}: GridCellProps) => {
-      if (allQuantitiesMap[type].some(q => q === quantity)) {
+      if (allQuantitiesMap[type].indexOf(quantity) !== -1) {
         const checked = quantities.indexOf(quantity) !== -1;
         const onClick = () => toggleQuantityById({id, quantity});
         return (
