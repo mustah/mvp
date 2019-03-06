@@ -15,7 +15,8 @@ import {toIdNamed} from '../../../../../types/Types';
 import {logoutUser} from '../../../../../usecases/auth/authActions';
 import {AuthState, Unauthorized} from '../../../../../usecases/auth/authModels';
 import {toAggregateLegendItem} from '../../../../../usecases/report/helpers/legendHelper';
-import {isAggregate, isMedium, LegendItem} from '../../../../../usecases/report/reportModels';
+import {getDefaultQuantity} from '../../../../../usecases/report/reportActions';
+import {isAggregate, isMedium, LegendItem, LegendType} from '../../../../../usecases/report/reportModels';
 import {noInternetConnection, requestTimeout} from '../../../../api/apiActions';
 import {NormalizedState} from '../../../../domain-models/domainModels';
 import {initialDomain} from '../../../../domain-models/domainModelsReducer';
@@ -33,7 +34,6 @@ import {
   measurementSuccess
 } from '../measurementActions';
 import {
-  allQuantitiesMap,
   MeasurementParameters,
   MeasurementResponsePart,
   MeasurementsApiResponse,
@@ -63,9 +63,9 @@ describe('measurementActions', () => {
 
     const mockHost: string = 'https://blabla.com';
 
-    const legendItemOf = (medium: Medium, label: string = 'facility-1'): LegendItem => {
+    const legendItemOf = (type: LegendType, label: string = 'facility-1'): LegendItem => {
       const id = idGenerator.uuid().toString();
-      return ({id, type: medium, label, isHidden: false, quantities: [allQuantitiesMap[medium][0]]});
+      return ({id, type, label, isHidden: false, quantities: [getDefaultQuantity({type})]});
     };
 
     const justValues: MeasurementValue[] = [

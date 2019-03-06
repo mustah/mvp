@@ -250,6 +250,24 @@ describe('reportActions', () => {
       ]);
     });
 
+    it('copies the view settings for the same type for given group', () => {
+      const meter1 = {...gasMeter, isRowExpanded: true};
+      const meter2 = {...gasMeter, id: 2};
+      const store = configureMockStore({
+        ...initialState,
+        report: {...report, savedReports: savedReportsWith([meter1])}
+      });
+
+      store.dispatch(addAllToReport([meter2]));
+
+      expect(store.getActions()).toEqual([
+        addLegendItems([
+          meter1,
+          {...meter2, isRowExpanded: true, quantities: [Quantity.volume]}
+        ])
+      ]);
+    });
+
   });
 
   describe('deleteItem', () => {
