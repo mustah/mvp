@@ -6,9 +6,10 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -16,6 +17,7 @@ import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Test;
@@ -27,6 +29,8 @@ import static com.elvaco.mvp.core.domainmodels.Units.DEGREES_CELSIUS;
 import static com.elvaco.mvp.core.domainmodels.Units.KILOWATT_HOURS;
 import static com.elvaco.mvp.core.domainmodels.Units.PERCENT;
 import static com.elvaco.mvp.core.domainmodels.Units.WATT;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementRepositoryAverageTest extends IntegrationTest {
@@ -71,7 +75,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(VOLUME_DISPLAY),
         start.plusHours(5),
         start.plusHours(9),
@@ -89,7 +93,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusDays(1),
@@ -108,7 +112,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusMonths(1),
@@ -128,7 +132,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(2),
@@ -153,7 +157,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(1).plusMinutes(1),
@@ -172,9 +176,10 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     given(series(meterOne, Quantity.POWER, start, 12));
     given(series(meterTwo, Quantity.POWER, start, 99.8));
 
+    RequestParameters parameters = idParametersOf(meterOne);
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meterOne.id),
+        parameters,
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusSeconds(1),
@@ -194,7 +199,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusSeconds(1),
@@ -215,7 +220,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(EXTERNAL_TEMPERATUR_DISPLAY, HUMIDITY_DISPLAY),
         start,
         start.plusSeconds(1),
@@ -238,7 +243,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(ENERGY_DISPLAY, VOLUME_DISPLAY),
         start,
         start.plusSeconds(1),
@@ -258,20 +263,24 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     given(series(meter, Quantity.POWER, start, 2.0));
     //should not be included (not requested)
     given(series(meter, Quantity.RETURN_TEMPERATURE, start, 6.0));
-    //should not be included (not part of meter definition)
+    //should be included but not contain values (not part of meter definition)
     given(series(meter, Quantity.HUMIDITY, start, 18.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY, HUMIDITY_DISPLAY),
         start,
         start.plusSeconds(1),
         TemporalResolution.hour
       ));
 
-    assertThat(result.keySet()).containsOnly(Quantity.POWER.name);
+    assertThat(result.keySet()).containsExactlyInAnyOrder(
+      Quantity.POWER.name,
+      Quantity.HUMIDITY.name
+    );
     assertThat(result.get(Quantity.POWER.name)).extracting(v -> v.value).containsExactly(2.0);
+    assertThat(result.get(Quantity.HUMIDITY.name)).extracting(v -> v.value).containsOnlyNulls();
   }
 
   @Test
@@ -283,7 +292,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> resultDayResolution = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(ENERGY_DISPLAY),
         start,
         start.plusSeconds(1),
@@ -292,7 +301,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> resultMonthResolution = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(ENERGY_DISPLAY),
         start,
         start.plusSeconds(1),
@@ -317,7 +326,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meterOne.id, meterTwo.id),
+        idParametersOf(meterOne, meterTwo),
         quantityParametersOf(ENERGY_DISPLAY),
         start.plusHours(1),
         start.plusHours(3),
@@ -343,7 +352,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meterOne.id, meterTwo.id),
+        idParametersOf(meterOne, meterTwo),
         quantityParametersOf(ENERGY_DISPLAY),
         start.plusHours(1),
         start.plusHours(2),
@@ -368,7 +377,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meterOne.id, meterTwo.id),
+        idParametersOf(meterOne, meterTwo),
         quantityParametersOf(POWER_DISPLAY),
         start.plusHours(1),
         start.plusHours(4),
@@ -395,7 +404,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meterOne.id, meterTwo.id),
+        idParametersOf(meterOne, meterTwo),
         quantityParametersOf(ENERGY_DISPLAY),
         start.plusHours(1),
         start.plusHours(2),
@@ -426,7 +435,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(logicalMeter.id),
+        idParametersOf(logicalMeter),
         quantityParametersOf(POWER_DISPLAY),
         start.minusDays(2),
         start.plusDays(1),
@@ -456,7 +465,7 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(logicalMeter.id),
+        idParametersOf(logicalMeter),
         quantityParametersOf(VOLUME_DISPLAY),
         start.minusDays(2),
         start,
@@ -468,11 +477,19 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
       .containsExactly(2.0, null, 6.0);
   }
 
+  private RequestParameters idParametersOf(LogicalMeter... meters) {
+    Map<String, List<String>> multiValueMap = Map.of(
+      LOGICAL_METER_ID.toString(),
+      Arrays.stream(meters).map(meter -> meter.id.toString()).collect(toList())
+    );
+    return RequestParametersAdapter.of(multiValueMap);
+  }
+
   private List<QuantityParameter> quantityParametersOf(DisplayQuantity... quantities) {
     return Arrays.stream(quantities).map(quantity -> new QuantityParameter(
       quantity.quantity.name,
       quantity.unit,
       quantity.displayMode
-    )).collect(Collectors.toList());
+    )).collect(toList());
   }
 }

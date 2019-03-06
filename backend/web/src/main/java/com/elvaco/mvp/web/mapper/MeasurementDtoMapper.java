@@ -1,8 +1,8 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.util.List;
+import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
@@ -28,18 +28,22 @@ public class MeasurementDtoMapper {
 
   public static MeasurementSeriesDto toSeries(
     List<MeasurementValue> values,
-    LogicalMeter logicalMeter,
+    UUID logicalMeterId,
+    String externalId,
+    String city,
+    String locationAddress,
+    String mediumName,
     String physicalMeterAddress,
     QuantityParameter quantityParameter
   ) {
     return new MeasurementSeriesDto(
-      logicalMeter.id.toString(),
+      logicalMeterId.toString(),
       quantityParameter.name,
       quantityParameter.unit,
-      logicalMeter.externalId + "-" + physicalMeterAddress,
-      logicalMeter.location.getCity(),
-      logicalMeter.location.getAddress(),
-      logicalMeter.meterDefinition.medium.name.toString(),
+      externalId + "-" + physicalMeterAddress,
+      city,
+      locationAddress,
+      mediumName,
       values.stream()
         .map(measurement -> new MeasurementValueDto(measurement.when, measurement.value))
         .collect(toList())

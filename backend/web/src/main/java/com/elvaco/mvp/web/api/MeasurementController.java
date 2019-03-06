@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
@@ -34,7 +32,6 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.Collections.emptySet;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
@@ -57,8 +54,6 @@ public class MeasurementController {
   ) {
     RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
 
-    List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAllBy(parameters);
-
     Map<String, QuantityParameter> quantityMap = getMappedQuantities(
       optionalQuantityParameters,
       parameters
@@ -68,7 +63,7 @@ public class MeasurementController {
     TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
 
     var parameter = new MeasurementParameter(
-      logicalMeters.stream().map(l -> l.id).collect(toList()),
+      parameters.setPeriod(start, stop),
       new ArrayList<>(quantityMap.values()),
       start,
       stop,
@@ -101,12 +96,6 @@ public class MeasurementController {
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
     RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
-
-    List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAllBy(parameters);
-
-    Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
-      .collect(toMap(LogicalMeter::getId, identity()));
-
     Map<String, QuantityParameter> quantityMap = getMappedQuantities(
       optionalQuantityParameters.orElse(emptySet()),
       parameters
@@ -116,7 +105,7 @@ public class MeasurementController {
     TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
 
     MeasurementParameter parameter = new MeasurementParameter(
-      logicalMeters.stream().map(l -> l.id).collect(toList()),
+      parameters.setPeriod(start, stop),
       new ArrayList<>(quantityMap.values()),
       start,
       stop,
@@ -124,13 +113,20 @@ public class MeasurementController {
     );
 
     return measurementUseCases.findSeriesForPeriod(parameter)
-      .entrySet().stream().map(entry ->
-        toSeries(
-          entry.getValue(),
-          logicalMetersMap.get(entry.getKey().logicalMeterId),
-          entry.getKey().physicalMeterAddress,
-          quantityMap.get(entry.getKey().quantity)
-        )
+      .entrySet().stream().map(entry -> {
+          var key = entry.getKey();
+          var value = entry.getValue();
+          return toSeries(
+            value,
+            key.logicalMeterId,
+            key.externalId,
+            key.city,
+            key.locationAddress,
+            key.mediumName,
+            key.physicalMeterAddress,
+            quantityMap.get(key.quantity)
+          );
+        }
       ).collect(toList());
   }
 

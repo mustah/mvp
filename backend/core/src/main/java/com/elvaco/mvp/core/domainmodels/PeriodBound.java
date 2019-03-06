@@ -5,10 +5,8 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-@RequiredArgsConstructor
 @ToString
 public class PeriodBound implements Serializable {
 
@@ -18,6 +16,17 @@ public class PeriodBound implements Serializable {
 
   @Nullable
   public final ZonedDateTime dateTime;
+
+  public PeriodBound(boolean isInclusive, @Nullable ZonedDateTime dateTime) {
+    if (dateTime == null) {
+      /*Ensure that we mirror the behaviour described in
+    https://www.postgresql.org/docs/10/rangetypes.html#RANGETYPES-INFINITE
+    to avoid confusion*/
+      isInclusive = false;
+    }
+    this.isInclusive = isInclusive;
+    this.dateTime = dateTime;
+  }
 
   public static PeriodBound inclusiveOf(@Nullable ZonedDateTime dateTime) {
     return new PeriodBound(true, dateTime);

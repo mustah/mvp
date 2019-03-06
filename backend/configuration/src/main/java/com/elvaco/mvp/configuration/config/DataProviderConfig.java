@@ -43,6 +43,7 @@ import com.elvaco.mvp.database.repository.access.RootOrganisationRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.access.UserSelectionRepository;
+import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jpa.DisplayQuantityJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
@@ -153,14 +154,16 @@ class DataProviderConfig {
   Measurements measurements(
     DSLContext dsl,
     QuantityProvider quantityProvider,
-    QuantityEntityMapper quantityEntityMapper
+    QuantityEntityMapper quantityEntityMapper,
+    FilterAcceptor logicalMeterFilters
   ) {
     return new MeasurementRepository(
       dsl,
       measurementJpaRepository,
       quantityProvider,
       unitConverter,
-      quantityEntityMapper
+      quantityEntityMapper,
+      logicalMeterFilters
     );
   }
 

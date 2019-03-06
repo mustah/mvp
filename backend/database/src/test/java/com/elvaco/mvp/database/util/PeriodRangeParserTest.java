@@ -27,10 +27,10 @@ public class PeriodRangeParserTest {
       .isEqualTo("(,)");
 
     assertThat(PeriodRangeParser.format(PeriodRange.closedFrom(null, null)))
-      .isEqualTo("[,]");
+      .isEqualTo("(,)");
 
     assertThat(PeriodRangeParser.format(PeriodRange.halfOpenFrom(null, null)))
-      .isEqualTo("[,)");
+      .isEqualTo("(,)");
   }
 
   @Test
@@ -134,10 +134,10 @@ public class PeriodRangeParserTest {
       .isEqualTo("(2018-01-01 08:00:00.000+01:00,)");
 
     assertThat(PeriodRangeParser.format(PeriodRange.halfOpenFrom(null, dateTime)))
-      .isEqualTo("[,2018-01-01 08:00:00.000+01:00)");
+      .isEqualTo("(,2018-01-01 08:00:00.000+01:00)");
 
     assertThat(PeriodRangeParser.format(PeriodRange.closedFrom(null, dateTime)))
-      .isEqualTo("[,2018-01-01 08:00:00.000+01:00]");
+      .isEqualTo("(,2018-01-01 08:00:00.000+01:00]");
   }
 
   @Test

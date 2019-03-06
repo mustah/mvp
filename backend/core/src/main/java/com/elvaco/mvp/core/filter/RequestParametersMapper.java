@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.exception.InvalidId;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 
@@ -124,7 +125,11 @@ public final class RequestParametersMapper {
   }
 
   private static List<UUID> toUuids(List<String> ids) {
-    return ids.stream().map(UUID::fromString).collect(toList());
+    try {
+      return ids.stream().map(UUID::fromString).collect(toList());
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidId(ex.getMessage());
+    }
   }
 
   private static boolean isIgnored(RequestParameter parameter) {

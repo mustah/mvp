@@ -31,7 +31,9 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public Map<String, List<MeasurementValue>> findAverageForPeriod(MeasurementParameter parameter) {
+  public Map<String, List<MeasurementValue>> findAverageForPeriod(
+    MeasurementParameter parameter
+  ) {
     return emptyMap();
   }
 
