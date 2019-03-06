@@ -78,7 +78,7 @@ export const CollectionStatLineChart = (props: Props) => {
               tickFormatter={formatTime}
               type="number"
             />
-            <YAxis height={100} ticks={ticks}/>
+            <YAxis height={100} ticks={ticks} label={{value: '[%]', angle: -90, position: 'insideLeft'}}/>
             <CartesianGrid strokeDasharray="3 3"/>
             <Tooltip content={<CustomizedTooltip/>}/>
             <Line
