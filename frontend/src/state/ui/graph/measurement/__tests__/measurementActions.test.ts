@@ -15,7 +15,8 @@ import {toIdNamed} from '../../../../../types/Types';
 import {logoutUser} from '../../../../../usecases/auth/authActions';
 import {AuthState, Unauthorized} from '../../../../../usecases/auth/authModels';
 import {toAggregateLegendItem} from '../../../../../usecases/report/helpers/legendHelper';
-import {isAggregate, isMedium, LegendItem} from '../../../../../usecases/report/reportModels';
+import {getDefaultQuantity} from '../../../../../usecases/report/reportActions';
+import {isAggregate, isMedium, LegendItem, LegendType} from '../../../../../usecases/report/reportModels';
 import {noInternetConnection, requestTimeout} from '../../../../api/apiActions';
 import {NormalizedState} from '../../../../domain-models/domainModels';
 import {initialDomain} from '../../../../domain-models/domainModelsReducer';
@@ -33,7 +34,6 @@ import {
   measurementSuccess
 } from '../measurementActions';
 import {
-  allQuantitiesMap,
   MeasurementParameters,
   MeasurementResponsePart,
   MeasurementsApiResponse,
@@ -41,7 +41,7 @@ import {
   MeasurementValue,
   Medium,
   Quantity,
-  toMediumText
+  getMediumText
 } from '../measurementModels';
 import {initialState} from '../measurementReducer';
 
@@ -63,9 +63,9 @@ describe('measurementActions', () => {
 
     const mockHost: string = 'https://blabla.com';
 
-    const legendItemOf = (medium: Medium, label: string = 'facility-1'): LegendItem => {
+    const legendItemOf = (type: LegendType, label: string = 'facility-1'): LegendItem => {
       const id = idGenerator.uuid().toString();
-      return ({id, type: medium, label, isHidden: false, quantities: [allQuantitiesMap[medium][0]]});
+      return ({id, type, label, isHidden: false, quantities: [getDefaultQuantity({type})]});
     };
 
     const justValues: MeasurementValue[] = [
@@ -85,7 +85,7 @@ describe('measurementActions', () => {
       city: 'Varberg',
       address: '',
       quantity: Quantity.power,
-      medium: toMediumText(Medium.electricity),
+      medium: getMediumText(Medium.electricity),
       values: [{when: 1516521585107, value: 0.4353763591158477}],
       unit: 'mW',
     });
@@ -235,7 +235,8 @@ describe('measurementActions', () => {
       });
 
       it('for single legend item having aggregate type with a user selection', async () => {
-        const legendItems = [toAggregateLegendItem({id: 1, name: 'foo'})];
+        const item: LegendItem = {...toAggregateLegendItem({id: 1, name: 'foo'}), quantities: [Quantity.volume]};
+        const legendItems = [item];
 
         const requestedUrls: string[] = onFetchAsync(legendItems);
 

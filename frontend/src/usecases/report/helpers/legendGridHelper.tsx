@@ -8,10 +8,10 @@ import {IconRightArrow} from '../../../components/icons/IconRightArrow';
 import {RowLeft, RowMiddle, RowRight} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {allQuantitiesMap, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
+import {allQuantitiesMap, Medium, Quantity, getMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
-import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantityColumns} from '../reportModels';
+import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantities} from '../reportModels';
 import {colorFor} from './graphContentsMapper';
 import {isGroupHeader} from './measurementGridHelper';
 
@@ -24,7 +24,7 @@ interface CurrentQuantity {
 }
 
 export interface QuantityCell extends ColumnQuantities {
-  selectedQuantityColumns: SelectedQuantityColumns;
+  selectedQuantitiesMap: SelectedQuantities;
   toggleQuantityById: OnClickWith<QuantityId>;
 }
 
@@ -62,7 +62,7 @@ const renderGroupHeaderTds = ({
 }: RowProps & CurrentLegendType) => {
   const tds = columnQuantities.map((quantity) => {
     const key = `group-header-td-${type}-${quantity}`;
-    if (allQuantitiesMap[type].some(q => q === quantity)) {
+    if (allQuantitiesMap[type].indexOf(quantity) !== -1) {
       const checked = mediumViewOptions[type].quantities.indexOf(quantity) !== -1;
       const onClick = () => toggleQuantityByType({type, quantity});
       return (
@@ -88,7 +88,7 @@ const renderGroupHeaderTds = ({
   return tds;
 };
 
-export const getGroupHeaderTitle = (type: LegendType): string => toMediumText(type as Medium) || 'average';
+export const getGroupHeaderTitle = (type: LegendType): string => getMediumText(type as Medium) || 'average';
 
 const renderGroupHeader = (props: RowProps, dataItem: any) => {
   const type: LegendType = dataItem.value;
@@ -127,9 +127,9 @@ export const rowRenderer = (props: RowProps) =>
   };
 
 const renderQuantityCell =
-  ({quantity, selectedQuantityColumns, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
+  ({quantity, selectedQuantitiesMap, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
     ({dataItem: {id, label, type, quantities}}: GridCellProps) => {
-      if (allQuantitiesMap[type].some(q => q === quantity)) {
+      if (allQuantitiesMap[type].indexOf(quantity) !== -1) {
         const checked = quantities.indexOf(quantity) !== -1;
         const onClick = () => toggleQuantityById({id, quantity});
         return (

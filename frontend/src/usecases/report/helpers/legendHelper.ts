@@ -1,6 +1,5 @@
-import {flatMap, head} from 'lodash';
+import {flatMap} from 'lodash';
 import {unique} from '../../../helpers/collections';
-import {Maybe} from '../../../helpers/Maybe';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {
   allQuantitiesMap,
@@ -10,31 +9,29 @@ import {
   Quantity
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {IdNamed} from '../../../types/Types';
-import {LegendItem, SavedReportsState} from '../reportModels';
+import {LegendItem, LegendItemSettings, SavedReportsState} from '../reportModels';
 import {getLegendItems} from '../reportSelectors';
 
-const getFirstQuantityFor = (legendType: string): Quantity[] =>
-  Maybe.maybe<Quantity>(head(allQuantitiesMap[legendType]))
-    .map(quantity => [quantity])
-    .orElse([]);
+export const legendViewSettings: LegendItemSettings = {
+  isHidden: false,
+  isRowExpanded: true,
+};
 
-export const toLegendItem = ({id, facility, medium}: Meter): LegendItem =>
-  ({
-    id,
-    label: facility as string,
-    type: getMediumType(medium),
-    isHidden: false,
-    quantities: getFirstQuantityFor(medium)
-  });
+export const toLegendItem = ({id, facility, medium}: Meter): LegendItem => ({
+  id,
+  label: facility as string,
+  type: getMediumType(medium),
+  quantities: [],
+  ...legendViewSettings
+});
 
-export const toAggregateLegendItem = ({id, name}: IdNamed): LegendItem =>
-  ({
-    id,
-    label: name,
-    type: 'aggregate',
-    isHidden: false,
-    quantities: getFirstQuantityFor('aggregate')
-  });
+export const toAggregateLegendItem = ({id, name}: IdNamed): LegendItem => ({
+  id,
+  label: name,
+  type: 'aggregate',
+  quantities: [],
+  ...legendViewSettings
+});
 
 export const makeColumnQuantities = (state: SavedReportsState) => {
   const quantities: Quantity[][] = flatMap(getLegendItems(state), it => it.type)

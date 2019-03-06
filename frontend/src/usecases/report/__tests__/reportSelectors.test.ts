@@ -1,11 +1,11 @@
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {allQuantitiesMap, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {makeColumnQuantities} from '../helpers/legendHelper';
-import {LegendItem, SavedReportsState, SelectedQuantityColumns} from '../reportModels';
+import {LegendItem, SavedReportsState, SelectedQuantities} from '../reportModels';
 import {initialSavedReportState} from '../reportReducer';
 import {
   getLegendItems,
-  getSelectedQuantityColumns,
+  getSelectedQuantitiesMap,
   makeLegendTypeQuantitiesMap
 } from '../reportSelectors';
 
@@ -55,7 +55,7 @@ describe('reportSelectors', () => {
     });
   });
 
-  describe('getSelectedQuantityColumns', () => {
+  describe('getSelectedQuantitiesMap', () => {
 
     it('collects all selected quantities for each type', () => {
       const districtHeating: LegendItem = {...meter, type: Medium.districtHeating};
@@ -67,11 +67,11 @@ describe('reportSelectors', () => {
         ...savedReportsWith([meter1, meter2, meter3]),
       };
 
-      const expected: SelectedQuantityColumns = {
+      const expected: SelectedQuantities = {
         ...makeLegendTypeQuantitiesMap(),
         [Medium.districtHeating]: [Quantity.flow, Quantity.power],
       };
-      expect(getSelectedQuantityColumns(state)).toEqual(expected);
+      expect(getSelectedQuantitiesMap(state)).toEqual(expected);
     });
 
   });

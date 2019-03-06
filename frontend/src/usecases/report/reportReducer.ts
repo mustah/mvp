@@ -27,7 +27,7 @@ import {
 import {getLegendItems, getLegendViewOptions, getViewOptions} from './reportSelectors';
 import {initialState as initialTemporalState, temporal} from './temporalReducer';
 
-export const makeInitialLegendTypeViewOptions = (): LegendViewOptions =>
+export const makeInitialLegendViewOptions = (): LegendViewOptions =>
   Object.keys(Medium).map(k => Medium[k])
     .reduce((acc, medium) => ({...acc, [medium]: {quantities: []}}), {aggregate: {quantities: []}});
 
@@ -35,7 +35,7 @@ export const initialSavedReportState: SavedReportsState = {
   meterPage: {
     id: 'meterPage',
     legendItems: [],
-    legendViewOptions: makeInitialLegendTypeViewOptions(),
+    legendViewOptions: makeInitialLegendViewOptions(),
   }
 };
 
