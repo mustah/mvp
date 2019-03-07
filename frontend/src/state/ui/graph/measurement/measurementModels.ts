@@ -1,7 +1,7 @@
 import {Overwrite} from 'utility-types';
 import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
-import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Types';
+import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
 import {LegendItem, LegendType} from '../../../../usecases/report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {SelectedParameters} from '../../../user-selection/userSelectionModels';
@@ -51,6 +51,11 @@ export interface Readings {
 export interface MeasurementValue {
   when: number;
   value?: number;
+}
+
+export interface TooltipMeta {
+  id: uuid;
+  quantity: Quantity;
 }
 
 export interface MeasurementResponsePart {
