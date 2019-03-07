@@ -1,16 +1,16 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
-import {AppSwitch} from './AppSwitch';
 import {connectedAdminOnly} from '../../../components/hoc/withRoles';
-import {Row, RowRight} from '../../../components/layouts/row/Row';
+import {Row, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {ClassNamed, WithChildren} from '../../../types/Types';
 import {ProfileContainer} from '../containers/ProfileContainer';
+import {AppSwitch} from './AppSwitch';
 import './TopMenu.scss';
 
 const AppSwitchDropdownComponent = connectedAdminOnly(AppSwitch);
 
 export const TopMenu = ({children, className}: ClassNamed & WithChildren) => (
-  <Row className={classNames('TopMenu space-between', className)}>
+  <RowSpaceBetween className={classNames('TopMenu', className)}>
     <Row className="SelectionMenu">
       {children}
     </Row>
@@ -18,5 +18,5 @@ export const TopMenu = ({children, className}: ClassNamed & WithChildren) => (
       <AppSwitchDropdownComponent/>
       <ProfileContainer/>
     </RowRight>
-  </Row>
+  </RowSpaceBetween>
 );
