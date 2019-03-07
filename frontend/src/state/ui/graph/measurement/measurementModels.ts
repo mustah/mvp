@@ -134,22 +134,11 @@ export enum Medium {
   electricity = 'electricity',
   districtHeating = 'districtHeating',
   gas = 'gas',
-  hotWater = 'warmWater',
+  hotWater = 'hotWater',
   roomSensor = 'roomSensor',
   water = 'water',
   unknown = 'unknown',
 }
-
-const mediumTypes: {[key: string]: Medium} = {
-  'District heating': Medium.districtHeating,
-  'Gas': Medium.gas,
-  'Water': Medium.water,
-  'Hot water': Medium.hotWater,
-  'Electricity': Medium.electricity,
-  'Room sensor': Medium.roomSensor,
-};
-
-export const getMediumType = (key: string): Medium => mediumTypes[key] || Medium.unknown;
 
 const mediumTexts: { [medium in Medium]: string } = {
   [Medium.districtHeating]: 'District heating',
@@ -160,6 +149,11 @@ const mediumTexts: { [medium in Medium]: string } = {
   [Medium.roomSensor]: 'Room sensor',
   [Medium.unknown]: 'Unknown',
 };
+
+const mediumTypes: {[name: string]: Medium} = Object.keys(mediumTexts)
+  .reduce((acc, m) => ({...acc, [mediumTexts[m]]: m}), {});
+
+export const getMediumType = (key: string): Medium => mediumTypes[key] || Medium.unknown;
 
 export const getMediumText = (medium: Medium): string => mediumTexts[medium];
 
