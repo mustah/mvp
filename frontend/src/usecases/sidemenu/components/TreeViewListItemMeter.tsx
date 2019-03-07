@@ -41,7 +41,7 @@ export const TreeViewListItemMeter = ({text, id}: SelectionTreeViewComposite) =>
       style={treeViewMeterStyle}
       title={firstUpperTranslated('add to report')}
     >
-      <MeterDetailsContainer selectedId={selectedId}/>
+      <MeterDetailsContainer selectedId={selectedId} useCollectionPeriod={false}/>
     </OpenDialogInfoButton>
   );
 };

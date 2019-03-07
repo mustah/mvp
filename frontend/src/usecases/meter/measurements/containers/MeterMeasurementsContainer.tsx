@@ -7,6 +7,7 @@ import {
   measurementClearError
 } from '../../../../state/ui/graph/measurement/measurementActions';
 import {fetchUserSelections} from '../../../../state/user-selection/userSelectionActions';
+import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {
   getUserSelectionId
 } from '../../../../state/user-selection/userSelectionSelectors';
@@ -17,6 +18,7 @@ import {getMeasurementParameters, hasMeasurementValues} from '../meterMeasuremen
 
 export interface OwnProps {
   meter: MeterDetails;
+  useCollectionPeriod?: boolean;
 }
 
 const hiddenLines = [];
@@ -24,8 +26,11 @@ const hiddenLines = [];
 const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps => {
   const {
     domainModels: {userSelections, meterDetailMeasurement},
-    meterDetail,
+    meterDetail: {isTimePeriodDefault, timePeriod},
+    collection,
   } = rootState;
+  const {useCollectionPeriod, meter} = ownProps;
+  const period: SelectionInterval = useCollectionPeriod && isTimePeriodDefault ? collection.timePeriod : timePeriod;
 
   return ({
     hasLegendItems: true,
@@ -33,7 +38,7 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     hiddenLines,
     measurement: meterDetailMeasurement,
     parameters: '',
-    requestParameters: getMeasurementParameters({meter: ownProps.meter, timePeriod: meterDetail.timePeriod}),
+    requestParameters: getMeasurementParameters({meter, timePeriod: period}),
     userSelectionId: getUserSelectionId(rootState.userSelection),
     userSelections,
   });

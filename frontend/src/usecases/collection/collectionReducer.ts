@@ -9,6 +9,7 @@ import {CollectionState} from './collectionModels';
 
 const initialState: CollectionState = {
   timePeriod: {period: Period.latest},
+  isTimePeriodDefault: true,
 };
 
 type ActionTypes = Action<TemporalResolution | SelectionInterval> | EmptyAction<string>;
@@ -16,7 +17,11 @@ type ActionTypes = Action<TemporalResolution | SelectionInterval> | EmptyAction<
 export const collection = (state: CollectionState = initialState, action: ActionTypes): CollectionState => {
   switch (action.type) {
     case getType(setCollectionTimePeriod):
-      return {...state, timePeriod: {...(action as Action<SelectionInterval>).payload}};
+      return {
+        ...state,
+        timePeriod: {...(action as Action<SelectionInterval>).payload},
+        isTimePeriodDefault: false,
+      };
     case getType(logoutUser):
       return initialState;
     default:

@@ -31,6 +31,7 @@ const mapStateToProps = (
     paginatedDomainModels: {collectionStatFacilities},
     ui: {pagination: paginationModel},
     search: {validation: {query}},
+    collection: {timePeriod}
   }: RootState,
   {componentId}: ComponentId,
 ): CollectionStateToProps => {
@@ -48,6 +49,7 @@ const mapStateToProps = (
     pagination,
     error: getPageError<CollectionStat>(collectionStatFacilities, page),
     entityType,
+    timePeriod,
   });
 };
 

@@ -5,9 +5,9 @@ import {changeCollectionToolbarView} from '../../../../state/ui/toolbar/toolbarA
 import {OnChangeToolbarView, ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith} from '../../../../types/Types';
+import {setMeterDetailsTimePeriod} from '../meterDetailActions';
 import {exportToExcel} from '../meterDetailMeasurementActions';
 import {MeasurementToolbar} from './MeasurementToolbar';
-import {setMeterDetailsTimePeriod} from '../meterDetailActions';
 
 interface StateToProps {
   hasMeasurements: boolean;
@@ -22,19 +22,23 @@ interface DispatchToProps {
   setMeterDetailsTimePeriod: CallbackWith<SelectionInterval>;
 }
 
+interface OwnProps {
+  useCollectionPeriod?: boolean;
+}
+
 export type Props = StateToProps & DispatchToProps;
 
 const mapStateToProps = ({
-  meterDetail: {timePeriod},
+  meterDetail: {isTimePeriodDefault, timePeriod},
   ui: {toolbar: {collection: {view}}},
-  domainModels: { meterDetailMeasurement: {isFetching, measurementResponse: {measurements}}},
-}: RootState): StateToProps =>
-  ({
-    hasMeasurements: measurements.length > 0,
-    isFetching,
-    view,
-    timePeriod,
-  });
+  domainModels: {meterDetailMeasurement: {isFetching, measurementResponse: {measurements}}},
+  collection
+}: RootState,            {useCollectionPeriod}: OwnProps): StateToProps => ({
+  hasMeasurements: measurements.length > 0,
+  isFetching,
+  view,
+  timePeriod: (useCollectionPeriod && isTimePeriodDefault) ? collection.timePeriod : timePeriod,
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView: changeCollectionToolbarView,
@@ -43,4 +47,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const MeasurementToolbarContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MeasurementToolbar);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeasurementToolbar);

@@ -10,6 +10,7 @@ import {
 import * as React from 'react';
 import {gridStyle} from '../../../app/themes';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
+
 import {formatCollectionPercentage, formatReadInterval} from '../../../helpers/formatters';
 import {translate} from '../../../services/translationService';
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
@@ -29,7 +30,8 @@ const sortable: GridSortSettings = {
   mode: 'single'
 };
 
-const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem meter={dataItem}/></td>;
+const renderMeterListItem = ({dataItem}: GridCellProps) =>
+  <td><MeterListItem meter={dataItem} subPath={'/collection-period'}/></td>;
 
 const renderReadInterval = ({dataItem: {readInterval}}) =>
   <td>{formatReadInterval(readInterval)}</td>;

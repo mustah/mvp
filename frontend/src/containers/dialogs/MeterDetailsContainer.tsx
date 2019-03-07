@@ -31,7 +31,11 @@ interface DispatchToProps {
   syncWithMetering: CallbackWithId;
 }
 
-type Props = StateToProps & DispatchToProps & SelectedId;
+interface OwnProps extends SelectedId {
+  useCollectionPeriod?: boolean;
+}
+
+type Props = StateToProps & DispatchToProps & OwnProps;
 
 const MeterDetailsContent = (props: Props) => {
   if (props.meter.isNothing()) {
@@ -64,15 +68,16 @@ const mapStateToProps = (
     domainModels: {meterMapMarkers, meters},
     userSelection: {userSelection: {selectionParameters: {dateRange: periodDateRange}}},
   }: RootState,
-  {selectedId}: SelectedId,
-): StateToProps => ({
-  isFetching: meters.isFetching,
-  periodDateRange,
-  meter: selectedId
-    .flatMap((id: uuid) => getDomainModelById<MeterDetails>(id)(meters)),
-  meterMapMarker: selectedId
-    .flatMap((id: uuid) => getDomainModelById<MapMarker>(id)(meterMapMarkers)),
-});
+  {selectedId}: OwnProps,
+): StateToProps =>
+  ({
+    isFetching: meters.isFetching,
+    periodDateRange,
+    meter: selectedId
+      .flatMap((id: uuid) => getDomainModelById<MeterDetails>(id)(meters)),
+    meterMapMarker: selectedId
+      .flatMap((id: uuid) => getDomainModelById<MapMarker>(id)(meterMapMarkers)),
+  });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addToReport,
@@ -80,7 +85,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   syncWithMetering,
 }, dispatch);
 
-export const MeterDetailsContainer = connect<StateToProps, DispatchToProps, SelectedId>(
+export const MeterDetailsContainer = connect<StateToProps, DispatchToProps, OwnProps>(
   () => mapStateToProps,
   mapDispatchToProps,
 )(MeterDetailsComponent);

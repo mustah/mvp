@@ -59,7 +59,7 @@ const renderFacility = ({id, facility}: Meter) => {
       autoScrollBodyContent={true}
       iconStyle={iconStyle}
     >
-      <MeterDetailsContainer selectedId={selectedId}/>
+      <MeterDetailsContainer selectedId={selectedId} useCollectionPeriod={false}/>
     </OpenDialogInfoButton>
   );
 };

@@ -15,6 +15,7 @@ export const MvpPages = () => (
     <Route exact={true} path={routes.dashboard} component={DashboardContainer}/>
     <Route exact={true} path={routes.meter} component={MetersPage}/>
     <Route exact={true} path={`${routes.meter}/:id?`} component={SingleMeterContainer}/>
+    <Route exact={true} path={`${routes.meter}/:id?/:collectionPeriod?`} component={SingleMeterContainer}/>
     <Route exact={true} path={`${routes.report}/:id?`} component={ReportPage}/>
     <Route exact={true} path={routes.selection} component={SelectionPage}/>
     <Route exact={true} path={routes.userProfile} component={EditProfileContainer}/>
