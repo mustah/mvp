@@ -6,7 +6,8 @@ import {
   MeasurementResponse,
   MeasurementResponsePart,
   MeasurementValue,
-  Quantity
+  Quantity,
+  TooltipMeta
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
 import {AxesProps, GraphContents} from '../reportModels';
@@ -44,7 +45,7 @@ interface DataKey {
 }
 
 export interface ByDate {
-  [when: number]: Dictionary<number>;
+  [when: number]: Dictionary<number | any>;
 }
 
 const makeDataKey = ({id, label, quantity}: DataKey): string => `${quantity}-${label}-${id}`;
@@ -53,6 +54,7 @@ export const makeAggregateKey = (key: DataKey): string => `aggregate-${makeDataK
 export const makeMeasurementKey = (key: DataKey): string => `measurement-${makeDataKey(key)}`;
 export const makeCompareKey = (key: DataKey): string => `compare-${makeDataKey(key)}`;
 export const makeTimestampKey = (dataKey: string): string => `${dataKey}-timestamp`;
+export const makeMetaKey = (dataKey: string): string => `${dataKey}-meta`;
 
 type KeyFactory = (response: MeasurementResponsePart) => string;
 type ValueFactory = (response: MeasurementResponsePart) => string;
@@ -93,7 +95,12 @@ const makeAxes = (graphContents: GraphContents, unit: string): void => {
   }
 };
 
-type Created = MeasurementValue & {dataKey: string, timestamp?: number};
+interface Meta {
+  dataKey: string;
+  timestamp?: number;
+}
+
+type TooltipContentProps = MeasurementValue & Meta & TooltipMeta;
 
 export const toGraphContents =
   (response: MeasurementResponse): GraphContents => {
@@ -108,12 +115,17 @@ export const toGraphContents =
 
     const {average, measurements, compare} = response;
 
-    const makeByDate = ({when, value, dataKey, timestamp}: Created) => {
+    const makeByDate = ({id, quantity, when, value, dataKey, timestamp}: TooltipContentProps) => {
       let payloadItem = byDate[when];
       if (!payloadItem) {
         payloadItem = {name: Number(when)};
       }
-      byDate[when] = {...payloadItem, [dataKey]: value!, [makeTimestampKey(dataKey)]: Number(timestamp)};
+      byDate[when] = {
+        ...payloadItem,
+        [dataKey]: value!,
+        [makeTimestampKey(dataKey)]: Number(timestamp),
+        [makeMetaKey(dataKey)]: {id, quantity},
+      };
     };
 
     const sortedMeasurementValues: Dictionary<MeasurementValue[]> = {};
@@ -129,7 +141,7 @@ export const toGraphContents =
           id,
           dataKey,
           key: dataKey,
-          name: `${quantity} ${label}`,
+          name: label,
           stroke: colorFor(quantity),
           strokeWidth: 1,
           unit,
@@ -138,7 +150,7 @@ export const toGraphContents =
 
         values.forEach(it => {
           const timestamp: number = it.when * 1000;
-          makeByDate({...it, when: timestamp, dataKey});
+          makeByDate({...it, when: timestamp, dataKey, id, quantity});
         });
         sortedMeasurementValues[dataKey] = sortBy(values, it => it.when);
       }
@@ -153,7 +165,7 @@ export const toGraphContents =
           id,
           dataKey,
           key: dataKey,
-          name: `${quantity} ${label}`,
+          name: label,
           stroke: colorFor(quantity),
           strokeWidth: 1,
           strokeDasharray: '5 5',
@@ -167,7 +179,8 @@ export const toGraphContents =
             const timestamp: number = it.when * 1000;
             const measurement = sortedMeasurementValues[measurementKey][index];
             if (measurement) {
-              makeByDate({when: measurement.when * 1000, value: it.value!, dataKey, timestamp});
+              const when = measurement.when * 1000;
+              makeByDate({when, value: it.value!, dataKey, timestamp, id, quantity});
             }
           });
       }
@@ -183,7 +196,7 @@ export const toGraphContents =
           id,
           dataKey,
           key: dataKey,
-          name: `${firstUpperTranslated('average')}: ${label} ${quantity}`,
+          name: `${firstUpperTranslated('average')}: ${label}`,
           stroke: colorFor(quantity),
           strokeWidth: 4,
           unit,
@@ -191,7 +204,7 @@ export const toGraphContents =
         });
         values.forEach(it => {
           const timestamp: number = it.when * 1000;
-          makeByDate({...it, when: timestamp, dataKey});
+          makeByDate({...it, when: timestamp, dataKey, id, quantity});
         });
       }
     });
