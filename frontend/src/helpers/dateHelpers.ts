@@ -1,7 +1,7 @@
 import {default as moment} from 'moment-timezone';
 import 'moment/locale/en-gb';
 import 'moment/locale/sv';
-import {DateRange, Period} from '../components/dates/dateModels';
+import {DateRange, Period, TemporalResolution} from '../components/dates/dateModels';
 import {SelectionInterval} from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters} from '../types/Types';
 import {Maybe} from './Maybe';
@@ -137,3 +137,15 @@ export const diplayDateNoHours = (input: moment.MomentInput): string =>
 
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>
   momentAtUtcPlusOneFrom(input).format(format);
+
+export const readIntervalToTemporal = (interval?: number): TemporalResolution => {
+  if (interval === 60) {
+    return TemporalResolution.hour;
+  } else if (interval === 1440) {
+    return TemporalResolution.day;
+  } else if (interval !== undefined && interval >= 1440) {
+    return TemporalResolution.month;
+  } else {
+    return TemporalResolution.hour;
+  }
+};

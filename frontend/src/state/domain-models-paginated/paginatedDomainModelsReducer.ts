@@ -9,7 +9,7 @@ import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {SEARCH} from '../../usecases/search/searchActions';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
-import {resetReducer} from '../domain-models/domainModelsReducer';
+import {resetReducer} from '../../reducers/resetReducer';
 import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';

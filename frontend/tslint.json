@@ -16,6 +16,7 @@
       true,
       "multiline"
     ],
+    "eofline": true,
     "no-submodule-imports": [
       true,
       "@progress",

@@ -30,7 +30,7 @@ import {Map as MapComponent} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {LegendItem} from '../../usecases/report/reportModels';
-import {MeterMeasurementsContainer} from './MeterMeasurements';
+import {MeasurementsContainer} from '../../usecases/meter/measurements/containers/MeasurementsContainer';
 
 export interface MeterDetailsState {
   selectedTab: TabName;
@@ -149,7 +149,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             </TabSettings>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
-            <MeterMeasurementsContainer meter={meter}/>
+            <MeasurementsContainer meter={meter} />
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Grid data={eventLog} scrollable="none">

@@ -17,6 +17,18 @@ export const legendViewSettings: LegendItemSettings = {
   isRowExpanded: true,
 };
 
+export const toLegendItemAllQuantities = ({id, facility, medium}: Meter): LegendItem => {
+  const mediumType: Medium = getMediumType(medium);
+  return ({
+    id,
+    label: facility as string,
+    type: mediumType,
+    isHidden: false,
+    quantities: allQuantitiesMap[mediumType],
+    isRowExpanded: true,
+  });
+};
+
 export const toLegendItem = ({id, facility, medium}: Meter): LegendItem => ({
   id,
   label: facility as string,

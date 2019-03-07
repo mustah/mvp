@@ -1,7 +1,7 @@
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {EndPoints} from '../../services/endPoints';
 import {failureAction, requestAction, successAction} from '../../state/api/apiActions';
-import {resetReducer} from '../../state/domain-models/domainModelsReducer';
+import {resetReducer} from '../../reducers/resetReducer';
 import {Action, ErrorResponse} from '../../types/Types';
 import {DashboardModel} from './dashboardModels';
 

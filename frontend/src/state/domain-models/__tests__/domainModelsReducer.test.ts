@@ -8,6 +8,7 @@ import {MapMarker} from '../../../usecases/map/mapModels';
 import {search} from '../../../usecases/search/searchActions';
 import {makeMeterQuery} from '../../../usecases/search/searchModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
+import {initialState as initialMeasurementState} from '../../ui/graph/measurement/measurementReducer';
 import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
 import {
   deleteRequestOf,
@@ -285,6 +286,7 @@ describe('domainModelsReducer', () => {
         meterDefinitions: initialDomain(),
         quantities: initialDomain(),
         collectionStats: initialDomain(),
+        meterDetailMeasurement: initialMeasurementState,
       };
 
       const isFetchingState: DomainModelsState = {
@@ -298,6 +300,7 @@ describe('domainModelsReducer', () => {
         meterDefinitions: {...initialState.meterDefinitions, isFetching: true},
         quantities: {...initialState.quantities, isFetching: true},
         collectionStats: {...initialState.collectionStats, isFetching: true},
+        meterDetailMeasurement: {...initialMeasurementState, isFetching: true},
       };
 
       const expected: DomainModelsState = {...initialState};

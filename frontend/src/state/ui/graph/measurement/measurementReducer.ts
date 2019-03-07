@@ -5,14 +5,14 @@ import {Action, ErrorResponse} from '../../../../types/Types';
 import {
   addLegendItems,
   removeAllByType,
-  toggleComparePeriod,
   selectResolution,
   setReportTimePeriod,
+  toggleComparePeriod,
   toggleQuantityById,
   toggleQuantityByType
 } from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
-import {resetReducer} from '../../../domain-models/domainModelsReducer';
+import {resetReducer} from '../../../../reducers/resetReducer';
 import {
   EXPORT_TO_EXCEL_SUCCESS,
   exportToExcelAction,
@@ -37,7 +37,10 @@ export const initialState: MeasurementState = {
   isExportingToExcel: false,
 };
 
-export const measurement = (state: MeasurementState = initialState, action: ActionTypes): MeasurementState => {
+export const measurement = (
+  state: MeasurementState = initialState,
+  action: ActionTypes
+): MeasurementState => {
   switch (action.type) {
     case getType(measurementRequest):
       return {

@@ -2,7 +2,7 @@ import {EmptyAction} from 'typesafe-actions/dist/types';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
 import {failureAction, requestAction, successAction} from '../api/apiActions';
-import {resetReducer} from '../domain-models/domainModelsReducer';
+import {resetReducer} from '../../reducers/resetReducer';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
 
 const emptyNormalizedState: NormalizedSelectionTree = {

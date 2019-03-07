@@ -11,7 +11,7 @@ import {
   domainModelsPaginatedDeleteRequest,
   domainModelsPaginatedDeleteSuccess
 } from '../domain-models-paginated/paginatedDomainModelsEntityActions';
-import {resetReducer} from '../domain-models/domainModelsReducer';
+import {resetReducer} from '../../reducers/resetReducer';
 import {SelectionSummary, SummaryState} from './summaryModels';
 
 export const initialState: SummaryState = {

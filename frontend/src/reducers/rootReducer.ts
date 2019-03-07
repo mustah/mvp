@@ -3,6 +3,8 @@ import {Reducer} from 'redux';
 import {createMigrate, MigrationDispatch, persistCombineReducers} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import {PersistConfig, PersistedState} from 'redux-persist/lib/types';
+import {MeterDetailState} from '../usecases/meter/measurements/MeterDetailModels';
+import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
 import {PaginatedDomainModelsState} from '../state/domain-models-paginated/paginatedDomainModels';
 import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
@@ -47,6 +49,7 @@ export interface RootState {
   summary: SummaryState;
   ui: UiState;
   userSelection: UserSelectionState;
+  meterDetail: MeterDetailState;
 }
 
 export type AppState = RootState | undefined;
@@ -83,4 +86,5 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     search,
     previousSession,
     collection,
+    meterDetail,
   });
