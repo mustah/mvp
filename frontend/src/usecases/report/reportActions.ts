@@ -9,7 +9,7 @@ import {showFailMessage} from '../../state/ui/message/messageActions';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Dispatcher, uuid} from '../../types/Types';
 import {LegendItem, LegendItemSettings, LegendType, QuantityId, QuantityLegendType} from './reportModels';
-import {getLegendItems, hasSelectedQuantities} from './reportSelectors';
+import {getLegendItems, getSelectedQuantitiesMap, hasSelectedQuantities} from './reportSelectors';
 
 export const addLegendItems = createStandardAction('ADD_LEGEND_ITEMS')<LegendItem[]>();
 export const selectResolution = createStandardAction('SELECT_RESOLUTION')<TemporalResolution>();
@@ -41,11 +41,6 @@ const findByType = (legendItems: LegendItem[], {type}: LegendTyped): Maybe<Legen
 const pickJustSettings = ({isHidden, isRowExpanded}: LegendItem): LegendItemSettings =>
   ({isHidden, isRowExpanded: isRowExpanded || false});
 
-const copyPropertiesFrom = (legendItems, item): LegendItem =>
-  findByType(legendItems, item)
-    .map(it => ({...item, ...pickJustSettings(it)}))
-    .orElse(item);
-
 const selectItemsIfWithinLimits = ({dispatch, items}: DispatchWithinLimits) => {
   if (items.length > limit) {
     dispatch(showFailMessage(firstUpperTranslated(
@@ -62,8 +57,13 @@ export const addToReport = (legendItem: LegendItem) =>
     const legendItems = getLegendItems(savedReports);
     const {type, id} = legendItem;
     if (type !== Medium.unknown && !find(legendItems, {id})) {
-      const quantities = hasSelectedQuantities(savedReports) ? [] : [getDefaultQuantity(legendItem)];
-      const item = copyPropertiesFrom(legendItems, {...legendItem, quantities});
+      const selectedQuantities = getSelectedQuantitiesMap(savedReports)[legendItem.type];
+      const quantities = hasSelectedQuantities(savedReports)
+        ? selectedQuantities
+        : selectedQuantities.length ? selectedQuantities : [getDefaultQuantity(legendItem)];
+      const item = findByType(legendItems, legendItem)
+        .map(it => ({...legendItem, ...pickJustSettings(it), quantities}))
+        .orElse({...legendItem, quantities});
       selectItemsIfWithinLimits({dispatch, items: [...legendItems, item]});
     }
   };
@@ -89,7 +89,9 @@ export const addAllToReport = (newLegendItems: LegendItem[]) =>
       ...savedLegendItems,
       ...legendItems
         .map(item => getDefaultQuantity(item) === quantity ? ({...item, quantities}) : item)
-        .map(item => copyPropertiesFrom(savedLegendItems, item))
+        .map(item => findByType(savedLegendItems, item)
+          .map(it => ({...item, ...pickJustSettings(it)}))
+          .orElse(item))
     ];
     selectItemsIfWithinLimits({dispatch, items});
   };
