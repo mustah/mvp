@@ -12,7 +12,8 @@ import {
   showHideLegendRows,
   toggleLine,
   toggleQuantityById,
-  toggleQuantityByType
+  toggleQuantityByType,
+  toggleShowAverage
 } from '../reportActions';
 
 import {LegendItem, QuantityId, QuantityLegendType, ReportState, SavedReportsState, ViewOptions} from '../reportModels';
@@ -355,7 +356,26 @@ describe('reportReducer', () => {
 
         expect(getLegendItems(nextState)).toEqual(items);
       });
+    });
 
+    describe('toggleShowAverage', () => {
+
+      it('toggles on', () => {
+        const state: SavedReportsState = savedReports(initialSavedReportState, toggleShowAverage());
+
+        expect(state.meterPage.shouldShowAverage).toBe(true);
+      });
+
+      it('toggles off', () => {
+        const toggledOnState: SavedReportsState = {
+          ...initialSavedReportState,
+          meterPage: {...initialSavedReportState.meterPage, shouldShowAverage: true}
+        };
+
+        const state: SavedReportsState = savedReports(toggledOnState, toggleShowAverage());
+
+        expect(state.meterPage.shouldShowAverage).toBe(false);
+      });
     });
 
   });

@@ -130,7 +130,7 @@ export const toGraphContents =
 
     const sortedMeasurementValues: Dictionary<MeasurementValue[]> = {};
 
-    measurements.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
+    measurements.forEach(({id, quantity, label, city, address, values, unit}: MeasurementResponsePart) => {
       makeAxes(graphContents, unit);
 
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
@@ -156,7 +156,7 @@ export const toGraphContents =
       }
     });
 
-    compare.forEach(({id, label, city, address, medium, quantity, unit, values}: MeasurementResponsePart) => {
+    compare.forEach(({id, label, city, address, quantity, unit, values}: MeasurementResponsePart) => {
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
 
       if (yAxisId) {

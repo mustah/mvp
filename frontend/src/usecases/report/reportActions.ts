@@ -14,6 +14,7 @@ import {getLegendItems, getSelectedQuantitiesMap, hasSelectedQuantities} from '.
 export const addLegendItems = createStandardAction('ADD_LEGEND_ITEMS')<LegendItem[]>();
 export const selectResolution = createStandardAction('SELECT_RESOLUTION')<TemporalResolution>();
 export const toggleComparePeriod = createAction('TOGGLE_COMPARE_PERIOD');
+export const toggleShowAverage = createAction('TOGGLE_SHOW_AVERAGE');
 export const toggleLine = createStandardAction('TOGGLE_LINE')<uuid>();
 export const toggleQuantityByType = createStandardAction('TOGGLE_QUANTITY_BY_TYPE')<QuantityLegendType>();
 export const toggleQuantityById = createStandardAction('TOGGLE_QUANTITY_BY_ID')<QuantityId>();

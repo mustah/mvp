@@ -1,6 +1,7 @@
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Maybe} from '../../../../helpers/Maybe';
+import {resetReducer} from '../../../../reducers/resetReducer';
 import {Action, ErrorResponse} from '../../../../types/Types';
 import {
   addLegendItems,
@@ -9,17 +10,17 @@ import {
   setReportTimePeriod,
   toggleComparePeriod,
   toggleQuantityById,
-  toggleQuantityByType
+  toggleQuantityByType,
+  toggleShowAverage
 } from '../../../../usecases/report/reportActions';
-import {SEARCH} from '../../../../usecases/search/searchActions';
-import {resetReducer} from '../../../../reducers/resetReducer';
+import {search} from '../../../../usecases/search/searchActions';
 import {
-  EXPORT_TO_EXCEL_SUCCESS,
   exportToExcelAction,
-  MEASUREMENT_CLEAR_ERROR,
-  MEASUREMENT_FAILURE,
-  MEASUREMENT_SUCCESS,
-  measurementRequest
+  exportToExcelSuccess,
+  measurementClearError,
+  measurementFailure,
+  measurementRequest,
+  measurementSuccess
 } from './measurementActions';
 import {MeasurementResponse, MeasurementState} from './measurementModels';
 
@@ -47,14 +48,14 @@ export const measurement = (
         ...state,
         isFetching: true,
       };
-    case MEASUREMENT_SUCCESS:
+    case getType(measurementSuccess):
       return {
         ...state,
         measurementResponse: (action as Action<MeasurementResponse>).payload,
         isFetching: false,
         isSuccessfullyFetched: true,
       };
-    case MEASUREMENT_FAILURE:
+    case getType(measurementFailure):
       return {
         ...state,
         error: (action as Action<Maybe<ErrorResponse>>).payload,
@@ -62,24 +63,19 @@ export const measurement = (
         isSuccessfullyFetched: false,
       };
     case getType(exportToExcelAction):
-      return {
-        ...state,
-        isExportingToExcel: true,
-      };
-    case EXPORT_TO_EXCEL_SUCCESS:
-      return {
-        ...state,
-        isExportingToExcel: false,
-      };
-    case MEASUREMENT_CLEAR_ERROR:
+      return {...state, isExportingToExcel: true};
+    case getType(exportToExcelSuccess):
+      return {...state, isExportingToExcel: false};
+    case getType(measurementClearError):
     case getType(selectResolution):
     case getType(toggleComparePeriod):
+    case getType(toggleShowAverage):
     case getType(setReportTimePeriod):
     case getType(addLegendItems):
     case getType(removeAllByType):
     case getType(toggleQuantityByType):
     case getType(toggleQuantityById):
-    case SEARCH:
+    case getType(search):
       return initialState;
     default:
       return resetReducer(state, action, initialState);

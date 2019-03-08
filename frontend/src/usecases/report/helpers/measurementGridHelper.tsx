@@ -7,15 +7,15 @@ import {RowMiddle} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {displayDate} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {translate} from '../../../services/translationService';
 import {
+  getGroupHeaderTitle,
   getMediumType,
   MeasurementResponsePart,
   MeasurementsApiResponse
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
 import {LegendType} from '../reportModels';
-import {getGroupHeaderTitle} from './legendGridHelper';
 
 export const isGroupHeader = (rowType?: GridRowType): boolean => rowType === 'groupHeader';
 
@@ -53,7 +53,7 @@ export const rowRender = (tr: React.ReactElement<HTMLTableRowElement>, {dataItem
         <td colSpan={14}>
           <RowMiddle>
             <MediumText className="Bold">{dataItem.value}</MediumText>
-            <InfoText style={{marginLeft: 16}}>{firstUpperTranslated(mediumText.toLowerCase())}</InfoText>
+            <InfoText style={{marginLeft: 16}}>{mediumText}</InfoText>
           </RowMiddle>
         </td>
       </tr>

@@ -2,7 +2,7 @@ import {getType} from 'typesafe-actions';
 import {Maybe} from '../../../helpers/Maybe';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {EndPoints} from '../../../services/endPoints';
-import {domainModelsGetEntitiesSuccess, } from '../../../state/domain-models/domainModelsActions';
+import {domainModelsGetEntitiesSuccess} from '../../../state/domain-models/domainModelsActions';
 import {
   METER_DETAIL_EXPORT_TO_EXCEL_SUCCESS,
   METER_DETAIL_MEASUREMENT_CLEAR_ERROR,
@@ -23,7 +23,7 @@ import {
   toggleQuantityById,
   toggleQuantityByType
 } from '../../report/reportActions';
-import {SEARCH} from '../../search/searchActions';
+import {search} from '../../search/searchActions';
 import {setMeterDetailsTimePeriod} from './meterDetailActions';
 
 export const meterDetailMeasurement = (
@@ -70,7 +70,7 @@ export const meterDetailMeasurement = (
     case getType(removeAllByType):
     case getType(toggleQuantityByType):
     case getType(toggleQuantityById):
-    case SEARCH:
+    case getType(search):
       return initialState;
     default:
       return resetReducer(state, action, initialState);

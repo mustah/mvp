@@ -1,10 +1,11 @@
 import {Location} from 'history';
 import {LOCATION_CHANGE} from 'react-router-redux';
+import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {routes} from '../../app/routes';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
-import {SEARCH} from '../../usecases/search/searchActions';
+import {search} from '../../usecases/search/searchActions';
 import {failureAction, requestAction, successAction} from '../api/apiActions';
 import {
   domainModelsPaginatedDeleteFailure,
@@ -67,7 +68,7 @@ export const summary = (state: SummaryState = initialState, action: ActionTypes)
       };
     case LOCATION_CHANGE:
       return getPathname(action) !== routes.searchResult ? initialState : state;
-    case SEARCH:
+    case getType(search):
       return initialState;
     default:
       return resetReducer(state, action, initialState);
