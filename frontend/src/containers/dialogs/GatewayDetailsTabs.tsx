@@ -1,4 +1,3 @@
-import './GatewayDetailsTabs.scss';
 import * as React from 'react';
 import {OpenDialogInfoButton} from '../../components/dialog/OpenDialogInfoButton';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
@@ -25,6 +24,7 @@ import {uuid} from '../../types/Types';
 import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
+import './GatewayDetailsTabs.scss';
 import {MeterDetailsContainer} from './MeterDetailsContainer';
 
 interface SuperAdmin {

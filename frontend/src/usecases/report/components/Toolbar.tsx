@@ -34,6 +34,7 @@ const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
 );
 
 export const Toolbar = ({
+  canShowAverage,
   changeToolbarView,
   hasLegendItems,
   hasMeasurements,
@@ -105,6 +106,7 @@ export const Toolbar = ({
       <RowRight className={classNames('Tabs-DropdownMenus')}>
         <Row>
           <Toggle
+            disabled={!canShowAverage}
             label={firstUpperTranslated('average')}
             defaultToggled={shouldShowAverage}
             onToggle={toggleShowAverage}
@@ -113,6 +115,7 @@ export const Toolbar = ({
         </Row>
         <Row>
           <Toggle
+            disabled={!hasLegendItems}
             label={firstUpperTranslated('compare period')}
             defaultToggled={shouldComparePeriod}
             onToggle={toggleComparePeriod}

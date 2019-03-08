@@ -22,7 +22,7 @@ export const MainMenuToggleIcon = ({onClick, isSideMenuOpen}: Props) => {
   const iconsProps: SvgIconProps = {
     style,
     onClick,
-    color: colors.darkBlue,
+    color: colors.blueA900,
     hoverColor: colors.blueA700,
   };
 

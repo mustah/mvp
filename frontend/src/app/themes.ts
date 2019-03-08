@@ -21,7 +21,7 @@ export const popoverBoxShadow =
   '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)';
 
 // light-blue: http://zavoloklom.github.io/material-design-color-palette/colors.html#light-blue
-export const colors = {
+const palette = {
   blue200: '#81d4fa',
   blue100: '#b3e5fc',
   blue50: '#e1f5fe',
@@ -29,9 +29,11 @@ export const colors = {
   blueA200: '#40c4ff',
   blueA400: '#00b0ff',
   blueA700: '#0091ea',
+  blueA900: '#01579b',
+};
 
-  darkBlue: '#006da3',
-
+export const colors = {
+  ...palette,
   darkGreen: '#4caf50',
   orange: '#ff9800',
   red: '#e84d6f',
@@ -43,6 +45,7 @@ export const colors = {
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',
   iconHover: '#0f2228',
+  link: palette.blueA700,
 };
 
 export const bgHoverColor = colors.blue50;
@@ -55,7 +58,7 @@ export const mvpTheme = getMuiTheme({
   appBar: {
     height: 60,
     padding: 16,
-    color: colors.darkBlue,
+    color: colors.blueA900,
   },
   badge: {
     secondaryColor: colors.secondaryBg,

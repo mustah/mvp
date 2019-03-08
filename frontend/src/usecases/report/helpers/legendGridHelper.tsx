@@ -108,12 +108,7 @@ const renderGroupHeader = (props: RowProps, dataItem: any) => {
 
 type TableRow = React.ReactElement<HTMLTableRowElement>;
 
-const renderDataRow = (tr: TableRow, dataItem: any) => {
-  const {isRowExpanded, last} = dataItem;
-  return isRowExpanded
-    ? last ? React.cloneElement(tr, {className: 'last'}, tr.props.children) : tr
-    : null;
-};
+const renderDataRow = (tr: TableRow, {isRowExpanded}: any) => isRowExpanded ? tr : null;
 
 export const rowRenderer = (props: RowProps) =>
   (tr: TableRow, {dataItem, rowType}: GridRowProps) => {

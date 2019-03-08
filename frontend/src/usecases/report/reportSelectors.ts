@@ -6,6 +6,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {MeasurementParameters, Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {
+  isMedium,
   LegendItem,
   LegendType,
   LegendViewOptions,
@@ -32,6 +33,11 @@ export const hasLegendItems = (state: SavedReportsState): boolean =>
 export const makeLegendTypeQuantitiesMap = (): SelectedQuantities =>
   Object.keys(Medium).map(k => Medium[k])
     .reduce((acc, medium) => ({...acc, [medium]: []}), {aggregate: []});
+
+export const getMeterLegendItems = createSelector<SavedReportsState, LegendItem[], LegendItem[]>(
+  getLegendItems,
+  items => items.filter(it => isMedium(it.type)),
+);
 
 export const getHiddenLines =
   createSelector<SavedReportsState, LegendItem[], uuid[]>(
