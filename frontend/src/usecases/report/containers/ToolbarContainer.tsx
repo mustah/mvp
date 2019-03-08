@@ -9,9 +9,10 @@ import {SelectionInterval} from '../../../state/user-selection/userSelectionMode
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {Toolbar} from '../components/Toolbar';
 import {selectResolution, setReportTimePeriod, toggleComparePeriod, toggleShowAverage} from '../reportActions';
-import {hasLegendItems} from '../reportSelectors';
+import {getMeterLegendItems, hasLegendItems} from '../reportSelectors';
 
 interface StateToProps {
+  canShowAverage: boolean;
   hasLegendItems: boolean;
   hasMeasurements: boolean;
   resolution: TemporalResolution;
@@ -44,6 +45,7 @@ const mapStateToProps = ({
   ui: {toolbar: {measurement: {view}}}
 }: RootState): StateToProps =>
   ({
+    canShowAverage: getMeterLegendItems(savedReports).length > 1,
     hasLegendItems: hasLegendItems(savedReports),
     hasMeasurements: measurements.length > 0 || compare.length > 0,
     isFetching,
