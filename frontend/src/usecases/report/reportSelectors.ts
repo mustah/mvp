@@ -66,14 +66,11 @@ export const getMeasurementParameters =
     identity,
     ({
       report: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
-      userSelection: {userSelection: {selectionParameters}},
     }) => ({
-      shouldComparePeriod,
+      dateRange: timePeriod,
       resolution,
       legendItems: getLegendItems(savedReports),
-      selectionParameters: {
-        ...selectionParameters,
-        dateRange: timePeriod,
-      },
+      shouldComparePeriod,
+      shouldShowAverage: savedReports.meterPage.shouldShowAverage,
     })
   );

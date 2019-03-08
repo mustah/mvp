@@ -2,7 +2,7 @@ import {Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectPeriod} from '../../../state/user-selection/userSelectionActions';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
-import {addLegendItems, selectResolution, setReportTimePeriod} from '../reportActions';
+import {addLegendItems, selectResolution, setReportTimePeriod, toggleComparePeriod} from '../reportActions';
 import {LegendItem, TemporalReportState} from '../reportModels';
 import {initialState, temporal} from '../temporalReducer';
 
@@ -32,7 +32,6 @@ describe('temporal', () => {
       const expected: SelectionInterval = {period: Period.currentMonth};
       expect(afterChange.timePeriod).toEqual(expected);
     });
-
   });
 
   describe('selectResolution', () => {
@@ -60,4 +59,22 @@ describe('temporal', () => {
       expect(state).toEqual(expected);
     });
   });
+
+  describe('toggleComparePeriod', () => {
+
+    it('toggles on', () => {
+      const state: TemporalReportState = temporal(initialState, toggleComparePeriod());
+
+      const expected: TemporalReportState = {...initialState, shouldComparePeriod: true};
+      expect(state).toEqual(expected);
+    });
+
+    it('toggles off', () => {
+      const state: TemporalReportState = temporal({...initialState, shouldComparePeriod: true}, toggleComparePeriod());
+
+      const expected: TemporalReportState = {...initialState, shouldComparePeriod: false};
+      expect(state).toEqual(expected);
+    });
+  });
+
 });

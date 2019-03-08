@@ -70,4 +70,11 @@ export const makeMeterDto = (id: number, city: string, address: string): MeterDt
 };
 
 export const savedReportsWith = (legendItems: LegendItem[]): SavedReportsState =>
-  ({meterPage: {id: 'meterPage', legendItems, legendViewOptions: makeInitialLegendViewOptions()}});
+  ({
+    meterPage: {
+      id: 'meterPage',
+      legendItems,
+      legendViewOptions: makeInitialLegendViewOptions(),
+      shouldShowAverage: false,
+    }
+  });

@@ -1,12 +1,11 @@
 import {throttle} from 'lodash';
 import {Dispatch} from 'react-redux';
+import {createStandardAction} from 'typesafe-actions';
 import {RootState} from '../../reducers/rootReducer';
-import {OnPayloadAction, payloadActionOf} from '../../types/Types';
+import {OnPayloadAction} from '../../types/Types';
 import {makeMeterQuery, OnSearch, QueryParameter} from './searchModels';
 
-export const SEARCH = 'SEARCH';
-
-export const search = payloadActionOf<QueryParameter>(SEARCH);
+export const search = createStandardAction('SEARCH')<QueryParameter>();
 
 const throttledSearch = throttle(
   (dispatch, parameter: QueryParameter, searchFunction: OnPayloadAction<QueryParameter>) =>

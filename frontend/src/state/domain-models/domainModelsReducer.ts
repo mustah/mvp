@@ -7,7 +7,7 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {SEARCH} from '../../usecases/search/searchActions';
+import {search} from '../../usecases/search/searchActions';
 import {QueryParameter} from '../../usecases/search/searchModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
 import {CollectionStat} from './collection-stat/collectionStatModels';
@@ -151,7 +151,7 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsFailure(endPoint):
         return setError(state, action as Action<ErrorResponse>);
       case domainModelsClearError(endPoint):
-      case SEARCH:
+      case getType(search):
         return initialDomain<T>();
       default:
         return resetState(state, action, endPoint);

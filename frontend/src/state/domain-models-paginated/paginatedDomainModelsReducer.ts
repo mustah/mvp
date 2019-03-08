@@ -6,7 +6,7 @@ import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Maybe} from '../../helpers/Maybe';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {SEARCH} from '../../usecases/search/searchActions';
+import {search} from '../../usecases/search/searchActions';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {resetReducer} from '../../reducers/resetReducer';
@@ -229,7 +229,7 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityFailure(endPoint):
       case domainModelsPaginatedDeleteFailure(endPoint):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
-      case SEARCH:
+      case getType(search):
         return {...makeInitialState<T>()};
       default:
         return Maybe.maybe(additionalReducers)

@@ -23,9 +23,8 @@ export const toLegendItemAllQuantities = ({id, facility, medium}: Meter): Legend
     id,
     label: facility as string,
     type: mediumType,
-    isHidden: false,
     quantities: allQuantitiesMap[mediumType],
-    isRowExpanded: true,
+    ...legendViewSettings,
   });
 };
 

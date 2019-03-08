@@ -1,8 +1,10 @@
 import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
+import {first} from 'lodash';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {getType} from 'typesafe-actions';
 import {routes} from '../../../../../app/routes';
 import {Period, TemporalResolution} from '../../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../../exceptions/InvalidToken';
@@ -27,21 +29,22 @@ import {
   exportToExcel,
   exportToExcelAction,
   fetchMeasurementsForReport,
-  MEASUREMENT_REQUEST,
-  MEASUREMENT_SUCCESS,
+  makeMeasurementMetersUriParameters,
   measurementFailure,
   measurementRequest,
-  measurementSuccess
+  measurementSuccess,
+  meterAverageLabelFactory,
+  urlsByType
 } from '../measurementActions';
 import {
+  getMediumText,
   MeasurementParameters,
   MeasurementResponsePart,
   MeasurementsApiResponse,
   MeasurementState,
   MeasurementValue,
   Medium,
-  Quantity,
-  getMediumText
+  Quantity
 } from '../measurementModels';
 import {initialState} from '../measurementReducer';
 
@@ -65,7 +68,8 @@ describe('measurementActions', () => {
 
     const legendItemOf = (type: LegendType, label: string = 'facility-1'): LegendItem => {
       const id = idGenerator.uuid().toString();
-      return ({id, type, label, isHidden: false, quantities: [getDefaultQuantity({type})]});
+      const quantities = type !== Medium.unknown ? [getDefaultQuantity({type})] : [];
+      return ({id, type, label, isHidden: false, quantities});
     };
 
     const justValues: MeasurementValue[] = [
@@ -79,29 +83,24 @@ describe('measurementActions', () => {
       {when: 1516521585109, value: 0.55},
     ];
 
-    const makeMeasurementResponse = ({id, label}: LegendItem) => ({
+    const makeMeasurementResponse = ({id, label, quantities}: LegendItem) => ({
       id: id.toString(),
       label,
-      city: 'Varberg',
-      address: '',
-      quantity: Quantity.power,
+      quantity: first(quantities) || Quantity.power,
       medium: getMediumText(Medium.electricity),
       values: [{when: 1516521585107, value: 0.4353763591158477}],
       unit: 'mW',
     });
 
-    const makeMeasurementAverageResponse = ({id, label}: LegendItem): MeasurementResponsePart =>
-      ({id: id.toString(), label, quantity: Quantity.flow, values, unit: ' mW'});
+    const makeMeasurementAverageResponse = ({id, label, quantities}: LegendItem): MeasurementResponsePart =>
+      ({id: id.toString(), label, quantity: first(quantities) || Quantity.flow, values, unit: 'mW'});
 
     const parameters: MeasurementParameters = {
       legendItems: [],
+      dateRange: {period: Period.currentMonth},
       resolution: TemporalResolution.day,
-      selectionParameters: {
-        dateRange: {
-          period: Period.currentMonth,
-        }
-      },
       shouldComparePeriod: false,
+      shouldShowAverage: false,
     };
 
     describe('do not fetch', () => {
@@ -117,15 +116,18 @@ describe('measurementActions', () => {
       it('never requests addresses', async () => {
         const store = storeWith(initialState);
 
-        const requestedUrls: string[] = onFetchAsync([
+        const legendItems: LegendItem[] = [
           legendItemOf(Medium.districtHeating),
           legendItemOf(Medium.districtHeating),
-        ]);
+        ];
 
-        await store.dispatch(fetchMeasurementsForReport(parameters));
+        const requestParameters: MeasurementParameters = {...parameters, legendItems};
 
-        expect(requestedUrls).toHaveLength(0);
-        expect(store.getActions()).toEqual([]);
+        const requestedUrls: string[] = onFetchAsync(requestParameters);
+
+        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+
+        expect(requestedUrls).toHaveLength(1);
       });
 
       it('should not fetch when already fetching', async () => {
@@ -158,24 +160,27 @@ describe('measurementActions', () => {
       it('does not send requests for meters with unknown media', async () => {
         const store = storeWith(initialState);
 
-        const requestedUrls = onFetchAsync([legendItemOf(Medium.unknown), legendItemOf(Medium.unknown)]);
+        const legendItems = [legendItemOf(Medium.unknown), legendItemOf(Medium.unknown)];
+        const requestParameters: MeasurementParameters = {...parameters, legendItems};
 
-        await store.dispatch(fetchMeasurementsForReport({...parameters}));
+        const requestedUrls = onFetchAsync(requestParameters);
+
+        await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
         expect(requestedUrls).toHaveLength(0);
         expect(store.getActions()).toEqual([]);
       });
 
       it('sends separate requests for meters with different quantities', async () => {
+        const store = storeWith(initialState);
         const roomSensorMeter = legendItemOf(Medium.roomSensor);
         const gasMeter = legendItemOf(Medium.gas, 'facility-gas');
         const legendItems = [roomSensorMeter, gasMeter];
+        const requestParameters: MeasurementParameters = {...parameters, legendItems};
 
-        const store = storeWith(initialState);
+        const requestedUrls: string[] = onFetchAsync(requestParameters);
 
-        const requestedUrls: string[] = onFetchAsync(legendItems);
-
-        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems}));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
         expect(requestedUrls).toHaveLength(2);
 
@@ -237,10 +242,11 @@ describe('measurementActions', () => {
       it('for single legend item having aggregate type with a user selection', async () => {
         const item: LegendItem = {...toAggregateLegendItem({id: 1, name: 'foo'}), quantities: [Quantity.volume]};
         const legendItems = [item];
+        const requestParameters: MeasurementParameters = {...parameters, legendItems};
 
-        const requestedUrls: string[] = onFetchAsync(legendItems);
+        const requestedUrls: string[] = onFetchAsync(requestParameters);
 
-        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems}));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
         expect(requestedUrls).toHaveLength(1);
 
@@ -251,7 +257,10 @@ describe('measurementActions', () => {
         expect(url.searchParams.get('before')).toBeTruthy();
         expect(url.searchParams.get('after')).toBeTruthy();
         expect(url.searchParams.get('city')).toBe(stockholm.id);
-        expect(store.getActions().map(it => it.type)).toEqual([MEASUREMENT_REQUEST, MEASUREMENT_SUCCESS]);
+        expect(store.getActions().map(it => it.type)).toEqual([
+          getType(measurementRequest),
+          getType(measurementSuccess),
+        ]);
       });
 
       it('make no average request when there is no user selections for given selection id', async () => {
@@ -260,10 +269,11 @@ describe('measurementActions', () => {
           quantities: [Quantity.flow]
         };
         const legendItems: LegendItem[] = [aggregateItem];
+        const requestParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchAsync(legendItems);
+        onFetchAsync(requestParameters);
 
-        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems}));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -275,10 +285,11 @@ describe('measurementActions', () => {
           quantities: [Quantity.volume, Quantity.flow]
         };
         const legendItems: LegendItem[] = [first, aggregateItem];
+        const requestParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchAsync(legendItems);
+        onFetchAsync(requestParameters);
 
-        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems}));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
         expect(store.getActions()).toEqual([
           measurementRequest(),
@@ -293,14 +304,73 @@ describe('measurementActions', () => {
         ]);
       });
 
+      it('makes meter average request for selected meters', async () => {
+        const item: LegendItem = legendItemOf(Medium.districtHeating);
+
+        const legendItems: LegendItem[] = [item];
+
+        const requestParameters: MeasurementParameters = {...parameters, legendItems, shouldShowAverage: true};
+
+        onFetchAsync(requestParameters);
+
+        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+
+        expect(store.getActions()).toEqual([
+          measurementRequest(),
+          measurementSuccess({
+            average: [{...makeMeasurementAverageResponse(item), values: justValues}],
+            compare: [],
+            measurements: [makeMeasurementAverageResponse(item)],
+          }),
+        ]);
+      });
+
+      it('makes request for meters that have selected quantities', async () => {
+        const item1: LegendItem = {...legendItemOf(Medium.districtHeating), label: 'a'};
+        const item2: LegendItem = {...legendItemOf(Medium.districtHeating), label: 'b', quantities: []};
+        const legendItems: LegendItem[] = [item1, item2];
+
+        const requestParameters: MeasurementParameters = {...parameters, legendItems};
+
+        const uriParameters = makeMeasurementMetersUriParameters(
+          requestParameters,
+          EndPoints.measurementsAverage,
+          meterAverageLabelFactory
+        );
+
+        expect(uriParameters).toHaveLength(1);
+      });
+
       it('does not fetch measurements when there are not items to fetch', async () => {
         const store = storeWith(initialState);
+        const legendItems = [];
+        const requestParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchAsync([legendItemOf(Medium.districtHeating), legendItemOf(Medium.districtHeating)]);
+        onFetchAsync(requestParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(parameters));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
         expect(store.getActions()).toEqual([]);
+      });
+
+      describe('urlsByType', () => {
+
+        it('makes meter average request for selected quantities for each meter type', async () => {
+          const item1: LegendItem = {
+            ...legendItemOf(Medium.districtHeating),
+            label: 'a',
+            quantities: [Quantity.volume]
+          };
+          const item2: LegendItem = {...legendItemOf(Medium.districtHeating), label: 'b', quantities: [Quantity.flow]};
+          const item3: LegendItem = {...legendItemOf(Medium.gas), label: 'c', quantities: [Quantity.volume]};
+          const legendItems: LegendItem[] = [item1, item2, item3];
+
+          const requestParameters: MeasurementParameters = {...parameters, legendItems};
+
+          const uriParameters = urlsByType(requestParameters);
+
+          expect(uriParameters).toHaveLength(3);
+        });
       });
 
     });
@@ -380,7 +450,7 @@ describe('measurementActions', () => {
 
     });
 
-    const onFetchAsync = (legendItems: LegendItem[]): string[] => {
+    const onFetchAsync = ({legendItems, shouldShowAverage}: MeasurementParameters): string[] => {
       const requestedUrls: string[] = [];
       const mockRestClient = new MockAdapter(axios);
 
@@ -389,9 +459,9 @@ describe('measurementActions', () => {
       mockRestClient.onGet().reply(async (config) => {
         requestedUrls.push(config.url!);
 
-        if (config.url!.match(/^\/measurements\/average/)) {
+        if (config.url!.match(/^\/measurements\/average/) || shouldShowAverage) {
           const average: MeasurementsApiResponse = legendItems
-            .filter(it => isAggregate(it.type))
+            .filter(it => isAggregate(it.type) || shouldShowAverage)
             .map(makeMeasurementAverageResponse);
           return [200, average];
         } else {
@@ -401,7 +471,6 @@ describe('measurementActions', () => {
           return [200, measurement];
         }
       });
-
       return requestedUrls;
     };
 

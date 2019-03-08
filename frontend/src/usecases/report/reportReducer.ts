@@ -13,6 +13,7 @@ import {
   toggleLine,
   toggleQuantityById,
   toggleQuantityByType,
+  toggleShowAverage as toggleShowAverageAction,
 } from './reportActions';
 import {
   LegendItem,
@@ -36,6 +37,7 @@ export const initialSavedReportState: SavedReportsState = {
     id: 'meterPage',
     legendItems: [],
     legendViewOptions: makeInitialLegendViewOptions(),
+    shouldShowAverage: false,
   }
 };
 
@@ -125,6 +127,9 @@ const toggleQuantityId = (state: SavedReportsState, {id, quantity}: QuantityId):
   return setLegendItems(state, meters);
 };
 
+const toggleShowAverage = (state: SavedReportsState): SavedReportsState =>
+  ({...state, meterPage: {...state.meterPage, shouldShowAverage: !state.meterPage.shouldShowAverage}});
+
 const toggleLegendItemVisibility = (state: SavedReportsState, id: uuid): SavedReportsState => {
   const meters = getLegendItems(state).map(it => it.id === id ? {...it, isHidden: !it.isHidden} : it);
   return setLegendItems(state, meters);
@@ -154,6 +159,8 @@ export const savedReports =
         return toggleQuantityLegendType(state, (action as Action<QuantityLegendType>).payload);
       case getType(toggleQuantityById):
         return toggleQuantityId(state, (action as Action<QuantityId>).payload);
+      case getType(toggleShowAverageAction):
+        return toggleShowAverage(state);
       case getType(logoutUser):
         return initialSavedReportState;
       default:

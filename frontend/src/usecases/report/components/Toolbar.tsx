@@ -46,8 +46,10 @@ export const Toolbar = ({
   view,
   setReportTimePeriod,
   shouldComparePeriod,
+  shouldShowAverage,
   timePeriod,
   toggleComparePeriod,
+  toggleShowAverage,
 }: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
@@ -101,6 +103,14 @@ export const Toolbar = ({
       </Row>
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
+        <Row>
+          <Toggle
+            label={firstUpperTranslated('average')}
+            defaultToggled={shouldShowAverage}
+            onToggle={toggleShowAverage}
+            style={{maxWidth: 200, marginRight: 16}}
+          />
+        </Row>
         <Row>
           <Toggle
             label={firstUpperTranslated('compare period')}

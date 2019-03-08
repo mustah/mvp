@@ -1,8 +1,9 @@
+import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {Action, UseCases} from '../../../types/Types';
-import {SEARCH} from '../../../usecases/search/searchActions';
+import {search} from '../../../usecases/search/searchActions';
 import {Query, QueryParameter} from '../../../usecases/search/searchModels';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {CHANGE_PAGE, UPDATE_PAGE_METADATA} from './paginationActions';
@@ -82,7 +83,7 @@ export const pagination = (
       return changePage(state, (action as Action<PaginationChangePayload>).payload);
     case UPDATE_PAGE_METADATA:
       return updateMetaData(state, action as Action<PaginationMetadataPayload>);
-    case SEARCH:
+    case getType(search):
       return changePage(state, toPaginationChangePayload((action as Action<QueryParameter>).payload));
     default:
       return resetReducer<PaginationState>(state, action, {...initialPaginationState});

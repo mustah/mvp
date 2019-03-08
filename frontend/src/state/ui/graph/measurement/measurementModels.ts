@@ -1,10 +1,11 @@
 import {Overwrite} from 'utility-types';
 import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
+import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
 import {LegendItem, LegendType} from '../../../../usecases/report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
-import {SelectedParameters} from '../../../user-selection/userSelectionModels';
+import {SelectionInterval} from '../../../user-selection/userSelectionModels';
 import {MeasurementsApiResponse, MeasurementValue} from './measurementModels';
 
 export interface Measurement extends Identifiable {
@@ -26,9 +27,10 @@ export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>
 
 export interface MeasurementParameters {
   legendItems: LegendItem[];
+  dateRange: SelectionInterval;
   resolution: TemporalResolution;
-  selectionParameters: SelectedParameters;
   shouldComparePeriod: boolean;
+  shouldShowAverage: boolean;
 }
 
 export type FetchMeasurements = (requestParameters: MeasurementParameters) => void;
@@ -161,6 +163,11 @@ const mediumTypes: {[name: string]: Medium} = Object.keys(mediumTexts)
 export const getMediumType = (key: string): Medium => mediumTypes[key] || Medium.unknown;
 
 export const getMediumText = (medium: Medium): string => mediumTexts[medium];
+
+export const getGroupHeaderTitle = (type: LegendType): string => {
+  const mediumText = getMediumText(type as Medium) || 'average';
+  return firstUpperTranslated(mediumText.toLowerCase());
+};
 
 export const allQuantitiesMap: { [p in LegendType]: Quantity[] } = {
   [Medium.districtHeating]: [

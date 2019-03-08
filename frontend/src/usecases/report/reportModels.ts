@@ -34,6 +34,7 @@ export type SelectedQuantities = { [p in LegendType]: Quantity[] };
 export interface Report extends Identifiable {
   legendItems: LegendItem[];
   legendViewOptions: LegendViewOptions;
+  shouldShowAverage: boolean;
 }
 
 export interface SavedReportsState {

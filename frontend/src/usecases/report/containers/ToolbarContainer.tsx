@@ -8,7 +8,7 @@ import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolba
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {Toolbar} from '../components/Toolbar';
-import {selectResolution, setReportTimePeriod, toggleComparePeriod} from '../reportActions';
+import {selectResolution, setReportTimePeriod, toggleComparePeriod, toggleShowAverage} from '../reportActions';
 import {hasLegendItems} from '../reportSelectors';
 
 interface StateToProps {
@@ -20,6 +20,7 @@ interface StateToProps {
   isExportingToExcel: boolean;
   timePeriod: SelectionInterval;
   shouldComparePeriod: boolean;
+  shouldShowAverage: boolean;
 }
 
 interface DispatchToProps {
@@ -28,6 +29,7 @@ interface DispatchToProps {
   exportToExcel: Callback;
   setReportTimePeriod: CallbackWith<SelectionInterval>;
   toggleComparePeriod: Callback;
+  toggleShowAverage: Callback;
 }
 
 interface OwnProps {
@@ -49,6 +51,7 @@ const mapStateToProps = ({
     resolution,
     timePeriod,
     shouldComparePeriod,
+    shouldShowAverage: savedReports.meterPage.shouldShowAverage,
     view,
   });
 
@@ -58,6 +61,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectResolution,
   setReportTimePeriod,
   toggleComparePeriod,
+  toggleShowAverage,
 }, dispatch);
 
 export const ToolbarContainer =
