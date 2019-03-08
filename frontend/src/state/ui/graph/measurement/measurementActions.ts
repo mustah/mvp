@@ -10,8 +10,13 @@ import {encodeRequestParameters, makeUrl, requestParametersFrom} from '../../../
 import {GetState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
-import {emptyActionOf, EncodedUriParameters, ErrorResponse, payloadActionOf, uuid} from '../../../../types/Types';
+import {EncodedUriParameters, ErrorResponse, uuid} from '../../../../types/Types';
 import {logout} from '../../../../usecases/auth/authActions';
+import {
+  meterDetailMeasurementFailure,
+  meterDetailMeasurementRequest,
+  meterDetailMeasurementSuccess
+} from '../../../../usecases/meter/measurements/meterDetailMeasurementActions';
 import {isAggregate, isMedium, LegendType} from '../../../../usecases/report/reportModels';
 import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {getDomainModelById} from '../../../domain-models/domainModelsSelectors';
@@ -33,34 +38,6 @@ export const measurementClearError = createAction('MEASUREMENT_CLEAR_ERROR');
 
 export const exportToExcelAction = createAction('EXPORT_TO_EXCEL');
 export const exportToExcelSuccess = createAction('EXPORT_TO_EXCEL_SUCCESS');
-
-export const meterDetailMeasurementRequest =
-  createAction('METER_DETAIL_MEASUREMENT_REQUEST');
-
-export const METER_DETAIL_MEASUREMENT_SUCCESS = 'METER_DETAIL_MEASUREMENT_SUCCESS';
-
-export const meterDetailMeasurementSuccess =
-  payloadActionOf<MeasurementResponse>(METER_DETAIL_MEASUREMENT_SUCCESS);
-
-export const METER_DETAIL_MEASUREMENT_FAILURE = 'METER_DETAIL_MEASUREMENT_FAILURE';
-export const meterDetailMeasurementFailure =
-  payloadActionOf<Maybe<ErrorResponse>>(METER_DETAIL_MEASUREMENT_FAILURE);
-
-export const METER_DETAIL_MEASUREMENT_CLEAR_ERROR = 'METER_DETAIL_MEASUREMENT_CLEAR_ERROR';
-export const meterDetailMeasurementClearError =
-  emptyActionOf(METER_DETAIL_MEASUREMENT_CLEAR_ERROR);
-
-export const meterDetailExportToExcelAction = createAction('METER_DETAIL_EXPORT_TO_EXCEL');
-
-export const METER_DETAIL_EXPORT_TO_EXCEL_SUCCESS = 'METER_DETAIL_EXPORT_TO_EXCEL_SUCCESS';
-export const meterDetailExportToExcelSuccess = emptyActionOf(METER_DETAIL_EXPORT_TO_EXCEL_SUCCESS);
-
-export const exportToExcel = () =>
-  (dispatch, getState: GetState) => {
-    if (!getState().measurement.isExportingToExcel) {
-      dispatch(exportToExcelAction());
-    }
-  };
 
 const measurementMeterUri = (
   quantity: Quantity,
@@ -294,3 +271,10 @@ export const fetchMeasurementsForReport = (measurementParameters: MeasurementPar
     },
     shouldFetchMeasurementsReport
   );
+
+export const exportToExcel = () =>
+  (dispatch, getState: GetState) => {
+    if (!getState().measurement.isExportingToExcel) {
+      dispatch(exportToExcelAction());
+    }
+  };

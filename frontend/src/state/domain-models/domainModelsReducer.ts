@@ -1,12 +1,12 @@
 import {combineReducers} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
-import {meterDetailMeasurement} from '../../usecases/meter/measurements/meterDetailMeasurementReducer';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {meterDetailMeasurement} from '../../usecases/meter/measurements/meterDetailMeasurementReducer';
 import {search} from '../../usecases/search/searchActions';
 import {QueryParameter} from '../../usecases/search/searchModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
