@@ -88,7 +88,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
         validators={requiredValidator}
         errorMessages={requiredMessage}
         autoComplete="new-password"
-        onChange={this.onChange}
+        onChange={this.onChangePassword}
       />
     );
 
@@ -105,7 +105,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             validators={requiredValidator}
             errorMessages={requiredMessage}
             autoComplete="new-password"
-            onChange={this.onChange}
+            onChange={this.onChangeName}
           />
           <ValidatedFieldInput
             floatingLabelText={emailLabel}
@@ -115,7 +115,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             validators={requiredEmailValidator}
             errorMessages={requiredEmailMessage}
             autoComplete="new-password"
-            onChange={this.onChange}
+            onChange={this.onChangeEmail}
           />
 
           <ValidatedInputSelectable
@@ -174,7 +174,11 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
 
   changeLanguage = (event, index, value) => this.setState({language: value});
 
-  onChange = (event) => this.setState({[event.target.id]: event.target.value});
+  onChangePassword = (event) => this.setState({password: event.target.value});
+
+  onChangeName = (event) => this.setState({name: event.target.value});
+
+  onChangeEmail = (event) => this.setState({email: event.target.value});
 
   wrappedSubmit = (event) => {
     event.preventDefault();

@@ -27,7 +27,7 @@ interface DispatchToProps {
   login: (email: string, password: string) => void;
 }
 
-interface LoginState {
+interface State {
   email: string;
   password: string;
 }
@@ -38,72 +38,63 @@ type Props =
   & InjectedAuthRouterProps
   & RouteComponentProps<{organisation: string}>;
 
-class LoginContainerComponent extends React.Component<Props, LoginState> {
+const LoginContainerComponent = ({auth: {error}, match: {params: {organisation}}, login}: Props) => {
+  const [state, setState] = React.useState<State>({email: '', password: ''});
 
-  state: LoginState = {email: '', password: ''};
+  const onChangeEmail = (event: any): void => setState({...state, email: event.target.value});
+  const onChangePassword = (event: any): void => setState({...state, password: event.target.value});
 
-  render() {
-    const {auth: {error}, match: {params: {organisation}}} = this.props;
-    const {email, password} = this.state;
-    return (
-      <ColumnCenter className={classNames('LoginContainer')}>
-        <Paper zDepth={5} className="LoginPaper">
-          <RowCenter className="customerLogo">
-            <Logo className="login" src={getLoginLogoPath(organisation)}/>
-          </RowCenter>
-          <form onSubmit={this.onSubmit}>
-            <TextFieldInput
-              id="email"
-              floatingLabelText={firstUpperTranslated('email')}
-              fullWidth={true}
-              hintText={firstUpperTranslated('your email address')}
-              value={email}
-              onChange={this.onChange}
-              onKeyPress={this.onKeyPress}
-            />
-            <TextFieldInput
-              id="password"
-              className="TextField"
-              floatingLabelText={firstUpperTranslated('password')}
-              fullWidth={true}
-              hintText={firstUpperTranslated('your password')}
-              value={password}
-              onChange={this.onChange}
-              onKeyPress={this.onKeyPress}
-              type="password"
-            />
-            <FlatButton
-              fullWidth={true}
-              label={translate('login')}
-              style={buttonStyle}
-              type="submit"
-            />
-            <ErrorMessage {...error} style={{marginTop: 16}}/>
-          </form>
-        </Paper>
-      </ColumnCenter>
-    );
-  }
-
-  onChange = (event: any): void => this.setState({[event.target.id]: event.target.value});
-
-  login = (): void => {
-    const {email, password} = this.state;
-    this.props.login(email, password);
-  }
-
-  onKeyPress = (event: any): void => {
+  const onKeyPress = (event: any): void => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      this.login();
+      login(state.email, state.password);
     }
-  }
+  };
 
-  onSubmit = (event: any): void => {
+  const onSubmit = (event: any): void => {
     event.preventDefault();
-    this.login();
-  }
-}
+    login(state.email, state.password);
+  };
+
+  return (
+    <ColumnCenter className={classNames('LoginContainer')}>
+      <Paper zDepth={5} className="LoginPaper">
+        <RowCenter className="customerLogo">
+          <Logo className="login" src={getLoginLogoPath(organisation)}/>
+        </RowCenter>
+        <form onSubmit={onSubmit}>
+          <TextFieldInput
+            id="email"
+            floatingLabelText={firstUpperTranslated('email')}
+            fullWidth={true}
+            hintText={firstUpperTranslated('your email address')}
+            value={state.email}
+            onChange={onChangeEmail}
+            onKeyPress={onKeyPress}
+          />
+          <TextFieldInput
+            id="password"
+            className="TextField"
+            floatingLabelText={firstUpperTranslated('password')}
+            fullWidth={true}
+            hintText={firstUpperTranslated('your password')}
+            value={state.password}
+            onChange={onChangePassword}
+            onKeyPress={onKeyPress}
+            type="password"
+          />
+          <FlatButton
+            fullWidth={true}
+            label={translate('login')}
+            style={buttonStyle}
+            type="submit"
+          />
+          <ErrorMessage {...error} style={{marginTop: 16}}/>
+        </form>
+      </Paper>
+    </ColumnCenter>
+  );
+};
 
 const mapStateToProps = (state: RootState): StateToProps => ({auth: state.auth});
 

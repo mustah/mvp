@@ -98,7 +98,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
             hintText={nameLabel}
             id="name"
             value={name}
-            onChange={this.onChange}
+            onChange={this.onChangeName}
           />
           <TextFieldInput
             autoComplete="off"
@@ -106,7 +106,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
             hintText={codeLabel}
             id="slug"
             value={slug.toString()}
-            onChange={this.onChange}
+            onChange={this.onChangeSlug}
           />
           <SelectFieldInput
             options={organisationOptions}
@@ -127,13 +127,13 @@ export class OrganisationEditForm extends React.Component<Props, State> {
     );
   }
 
-  changeParent = (event, index, value) =>
-    this.setState({parent: organisationById(value, this.props.organisations)})
+  changeParent = (event, index, value) => this.setState({parent: organisationById(value, this.props.organisations)});
 
-  changeSelection = (event, index, value) =>
-    this.setState({selectionId: value})
+  changeSelection = (event, index, value) => this.setState({selectionId: value});
 
-  onChange = (event) => this.setState({[event.target.id]: event.target.value});
+  onChangeName = (event) => this.setState({name: event.target.value});
+
+  onChangeSlug = (event) => this.setState({slug: event.target.value});
 
   wrappedSubmit = (event) => {
     event.preventDefault();
