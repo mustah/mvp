@@ -1,4 +1,4 @@
-import {sortBy, toArray} from 'lodash';
+import {sortBy, toArray, uniqBy} from 'lodash';
 import {LegendPayload} from 'recharts';
 import {colors} from '../../../app/themes';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -84,7 +84,7 @@ const makeLegendPayloads = ({average, measurements}: MeasurementResponse): Legen
     ({quantity}) => quantity,
   ), {});
 
-  return toArray({...meterLegends, ...aggregateLegends});
+  return uniqBy(toArray({...meterLegends, ...aggregateLegends}), 'value');
 };
 
 const makeAxes = (graphContents: GraphContents, unit: string): void => {
