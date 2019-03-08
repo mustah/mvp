@@ -1,13 +1,13 @@
+import {createStandardAction} from 'typesafe-actions';
 import {GetState} from '../../reducers/rootReducer';
 import {changeTranslationLanguage, getI18nLanguage} from '../../services/translationService';
-import {Callback, payloadActionOf} from '../../types/Types';
+import {Callback} from '../../types/Types';
 import {LanguageCode} from './languageModels';
 
-export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE';
-
-const changeLanguageRequest = payloadActionOf<LanguageCode>(CHANGE_LANGUAGE);
+export const changeLanguageRequest = createStandardAction('CHANGE_LANGUAGE_REQUEST')<LanguageCode>();
 
 const reloadPage = () => window.location.reload();
+
 export const changeLanguage = (language: LanguageCode, onComplete: Callback = reloadPage) =>
   (dispatch, getState: GetState) => {
     const {language: stateLanguage} = getState().language;

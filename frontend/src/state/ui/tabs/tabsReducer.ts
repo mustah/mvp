@@ -1,6 +1,7 @@
+import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Action} from '../../../types/Types';
-import {CHANGE_TAB} from './tabsActions';
+import {changeTab as changeTabAction} from './tabsActions';
 import {TabName, TabSelection, TabsState} from './tabsModels';
 
 export const initialState: TabsState = {
@@ -24,7 +25,7 @@ const changeTab = (state: TabsState = initialState, action: Action<TabSelection>
 
 export const tabs = (state: TabsState = initialState, action: ActionType): TabsState => {
   switch (action.type) {
-    case CHANGE_TAB:
+    case getType(changeTabAction):
       return changeTab(state, (action as Action<TabSelection>));
     default:
       return state;

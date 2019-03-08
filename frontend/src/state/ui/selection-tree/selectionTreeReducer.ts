@@ -1,6 +1,7 @@
+import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Action, uuid} from '../../../types/Types';
-import {SELECTION_TREE_TOGGLE_ENTRY} from './selectionTreeActions';
+import {selectedIds} from './selectionTreeActions';
 import {SelectionTreeUiState} from './selectionTreeModels';
 
 const initialState: SelectionTreeUiState = {
@@ -14,7 +15,7 @@ export const selectionTree = (
   action: ActionTypes,
 ): SelectionTreeUiState => {
   switch (action.type) {
-    case SELECTION_TREE_TOGGLE_ENTRY:
+    case getType(selectedIds):
       return {
         ...state,
         openListItems: (action as Action<uuid[]>).payload,

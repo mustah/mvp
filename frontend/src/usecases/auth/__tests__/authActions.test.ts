@@ -10,7 +10,7 @@ import {authenticate} from '../../../services/restClient';
 import {DomainModelsState} from '../../../state/domain-models/domainModels';
 import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {Role, User} from '../../../state/domain-models/user/userModels';
-import {CHANGE_LANGUAGE} from '../../../state/language/languageActions';
+import {changeLanguageRequest} from '../../../state/language/languageActions';
 import {LanguageState} from '../../../state/language/languageModels';
 import {authSetUser, login, loginFailure, loginRequest, loginSuccess, logout, logoutUser} from '../authActions';
 import {Unauthorized} from '../authModels';
@@ -94,7 +94,7 @@ describe('authActions', () => {
 
       expect(store.getActions()).toEqual([
         loginRequest(),
-        {type: CHANGE_LANGUAGE, payload: 'sv'},
+        changeLanguageRequest('sv'),
         loginSuccess({token, user}),
       ]);
     });

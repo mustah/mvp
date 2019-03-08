@@ -1,6 +1,6 @@
 import configureStore, {MockStore} from 'redux-mock-store';
 import {UseCases} from '../../../../types/Types';
-import {CHANGE_TAB, changeTabGateway, changeTabMeter} from '../tabsActions';
+import {changeTab, changeTabGateway, changeTabMeter} from '../tabsActions';
 import {TabName} from '../tabsModels';
 
 describe('tabsActions', () => {
@@ -17,13 +17,9 @@ describe('tabsActions', () => {
 
       store.dispatch(action);
 
-      expect(store.getActions()).toEqual([{
-        type: CHANGE_TAB,
-        payload: {
-          tab: TabName.graph,
-          useCase: UseCases.collection,
-        },
-      }]);
+      expect(store.getActions()).toEqual([
+        changeTab({tab: TabName.graph, useCase: UseCases.collection}),
+      ]);
     });
 
     it('changes tab in validation use case', () => {
@@ -31,13 +27,9 @@ describe('tabsActions', () => {
 
       store.dispatch(action);
 
-      expect(store.getActions()).toEqual([{
-        type: CHANGE_TAB,
-        payload: {
-          tab: TabName.list,
-          useCase: UseCases.validation,
-        },
-      }]);
+      expect(store.getActions()).toEqual([
+        changeTab({tab: TabName.list, useCase: UseCases.validation}),
+      ]);
     });
 
   });

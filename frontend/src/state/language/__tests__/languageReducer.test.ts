@@ -1,4 +1,4 @@
-import {CHANGE_LANGUAGE} from '../languageActions';
+import {changeLanguageRequest} from '../languageActions';
 import {LanguageState} from '../languageModels';
 import {language} from '../languageReducer';
 
@@ -14,6 +14,6 @@ describe('languageReducer', () => {
     const initialState: LanguageState = language(undefined, {type: 'unknown'});
 
     const expected: LanguageState = {language: {code: 'sv'}};
-    expect(language(initialState, {type: CHANGE_LANGUAGE, payload: 'sv'})).toEqual(expected);
+    expect(language(initialState, changeLanguageRequest('sv'))).toEqual(expected);
   });
 });

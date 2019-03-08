@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import {RootState} from '../../../../reducers/rootReducer';
 import {uuid} from '../../../../types/Types';
 import {UiState} from '../../uiReducer';
-import {SELECTION_TREE_TOGGLE_ENTRY, toggleExpanded} from '../selectionTreeActions';
+import {selectedIds, toggleExpanded} from '../selectionTreeActions';
 
 describe('selectionTreeActions', () => {
 
@@ -21,12 +21,7 @@ describe('selectionTreeActions', () => {
 
       store.dispatch(toggleExpanded(1));
 
-      expect(store.getActions()).toEqual([
-        {
-          type: SELECTION_TREE_TOGGLE_ENTRY,
-          payload: [1],
-        }
-      ]);
+      expect(store.getActions()).toEqual([selectedIds([1])]);
     });
 
     it('will remove when the selected item id is already selected', () => {
@@ -34,12 +29,7 @@ describe('selectionTreeActions', () => {
 
       store.dispatch(toggleExpanded(1));
 
-      expect(store.getActions()).toEqual([
-        {
-          type: SELECTION_TREE_TOGGLE_ENTRY,
-          payload: [2],
-        }
-      ]);
+      expect(store.getActions()).toEqual([selectedIds([2])]);
     });
   });
 
