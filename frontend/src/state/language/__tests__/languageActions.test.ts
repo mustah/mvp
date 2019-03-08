@@ -4,7 +4,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {i18nMock, initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../services/restClient';
-import {CHANGE_LANGUAGE, changeLanguage} from '../languageActions';
+import {changeLanguage, changeLanguageRequest} from '../languageActions';
 import {languages, LanguageState} from '../languageModels';
 
 describe('languageActions', () => {
@@ -44,7 +44,7 @@ describe('languageActions', () => {
     it('updates language when requested language differs from redux state language', () => {
       store.dispatch(changeLanguage(languages.sv.code, () => void(0)));
 
-      expect(store.getActions()).toEqual([{type: CHANGE_LANGUAGE, payload: 'sv'}]);
+      expect(store.getActions()).toEqual([changeLanguageRequest('sv')]);
       expect(i18nMock.language).toEqual('sv');
     });
 
@@ -52,7 +52,7 @@ describe('languageActions', () => {
       store = configureMockStore({language: {language: 'sv'}});
       store.dispatch(changeLanguage(languages.sv.code, () => void(0)));
 
-      expect(store.getActions()).toEqual([{type: CHANGE_LANGUAGE, payload: 'sv'}]);
+      expect(store.getActions()).toEqual([changeLanguageRequest('sv')]);
       expect(i18nMock.language).toEqual('sv');
     });
   });

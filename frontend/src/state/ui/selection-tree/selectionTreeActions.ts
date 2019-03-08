@@ -1,10 +1,9 @@
+import {createStandardAction} from 'typesafe-actions';
 import {toggle} from '../../../helpers/collections';
 import {GetState} from '../../../reducers/rootReducer';
-import {payloadActionOf, uuid} from '../../../types/Types';
+import {uuid} from '../../../types/Types';
 
-export const SELECTION_TREE_TOGGLE_ENTRY = 'SELECTION_TREE_TOGGLE_ENTRY';
-
-export const selectedIds = payloadActionOf<uuid[]>(SELECTION_TREE_TOGGLE_ENTRY);
+export const selectedIds = createStandardAction('SELECTION_TREE_TOGGLE_ENTRY')<uuid[]>();
 
 export const toggleExpanded = (id: uuid) =>
   (dispatch, getState: GetState): void =>

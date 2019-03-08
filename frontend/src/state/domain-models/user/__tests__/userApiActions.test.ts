@@ -8,7 +8,7 @@ import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {authSetUser} from '../../../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
-import {CHANGE_LANGUAGE} from '../../../language/languageActions';
+import {changeLanguageRequest} from '../../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
 import {DomainModelsState} from '../../domainModels';
 import {
@@ -178,7 +178,7 @@ describe('userApiActions', () => {
         updateUser.request(),
         updateUser.success(updatedUser),
         authSetUser(updatedUser),
-        {type: CHANGE_LANGUAGE, payload: 'sv'},
+        changeLanguageRequest('sv'),
         showSuccessMessage('Updaterade profilen'),
       ]);
     });

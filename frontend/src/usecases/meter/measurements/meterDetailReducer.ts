@@ -5,7 +5,7 @@ import {SelectionInterval} from '../../../state/user-selection/userSelectionMode
 import {Action} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
 import {setMeterDetailsTimePeriod} from './meterDetailActions';
-import {MeterDetailState} from './MeterDetailModels';
+import {MeterDetailState} from './meterDetailModels';
 
 const initialState: MeterDetailState = {
   timePeriod: {period: Period.latest},

@@ -3,7 +3,7 @@ import {Reducer} from 'redux';
 import {createMigrate, MigrationDispatch, persistCombineReducers} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import {PersistConfig, PersistedState} from 'redux-persist/lib/types';
-import {MeterDetailState} from '../usecases/meter/measurements/MeterDetailModels';
+import {MeterDetailState} from '../usecases/meter/measurements/meterDetailModels';
 import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
 import {PaginatedDomainModelsState} from '../state/domain-models-paginated/paginatedDomainModels';
 import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';

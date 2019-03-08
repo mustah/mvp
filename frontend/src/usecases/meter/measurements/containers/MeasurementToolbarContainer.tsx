@@ -5,8 +5,9 @@ import {changeCollectionToolbarView} from '../../../../state/ui/toolbar/toolbarA
 import {OnChangeToolbarView, ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith} from '../../../../types/Types';
+import {exportToExcel} from '../meterDetailMeasurementActions';
 import {MeasurementToolbar} from './MeasurementToolbar';
-import {exportToExcel, setMeterDetailsTimePeriod} from '../meterDetailActions';
+import {setMeterDetailsTimePeriod} from '../meterDetailActions';
 
 interface StateToProps {
   hasMeasurements: boolean;

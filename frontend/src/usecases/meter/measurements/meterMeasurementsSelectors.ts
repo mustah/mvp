@@ -6,7 +6,7 @@ import {MeasurementParameters, MeasurementResponse} from '../../../state/ui/grap
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {toLegendItemAllQuantities} from '../../report/helpers/legendHelper';
 import {OwnProps} from './containers/MeterMeasurementsContainer';
-import {MeterDetailState} from './MeterDetailModels';
+import {MeterDetailState} from './meterDetailModels';
 
 const getMeter = (props: OwnProps) => props.meter;
 const getPeriod = (state: MeterDetailState) => state.timePeriod;
