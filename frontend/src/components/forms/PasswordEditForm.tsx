@@ -59,7 +59,7 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
             value={password}
             validators={requiredValidator}
             errorMessages={requiredMessage}
-            onChange={this.onChange}
+            onChange={this.onChangePassword}
           />
           <ValidatedFieldInput
             id="passwordConfirm"
@@ -69,7 +69,7 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
             value={passwordConfirm}
             validators={requiredValidator}
             errorMessages={requiredMessage}
-            onChange={this.onChange}
+            onChange={this.onChangePasswordConfirm}
           />
           <Row className="Error-message-container">
             <ErrorMessage message={error}/>
@@ -85,7 +85,9 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
     );
   }
 
-  onChange = (event) => this.setState({[event.target.id]: event.target.value, error: ''});
+  onChangePassword = (event) => this.setState({password: event.target.value, error: ''});
+
+  onChangePasswordConfirm = (event) => this.setState({passwordConfirm: event.target.value, error: ''});
 
   wrappedSubmit = (event) => {
     event.preventDefault();

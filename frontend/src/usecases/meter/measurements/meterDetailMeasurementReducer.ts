@@ -1,66 +1,52 @@
-import {getType} from 'typesafe-actions';
-import {Maybe} from '../../../helpers/Maybe';
+import {ActionType, getType} from 'typesafe-actions';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {domainModelsGetEntitiesSuccess} from '../../../state/domain-models/domainModelsActions';
-
-import {MeasurementResponse, MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
-import {ActionTypes, initialState} from '../../../state/ui/graph/measurement/measurementReducer';
-import {Action, ErrorResponse} from '../../../types/Types';
-import {
-  removeAllByType,
-  selectResolution,
-  setReportTimePeriod,
-  toggleComparePeriod,
-  toggleQuantityById,
-  toggleQuantityByType
-} from '../../report/reportActions';
+import {MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
+import {initialState} from '../../../state/ui/graph/measurement/measurementReducer';
+import * as reportActions from '../../report/reportActions';
 import {search} from '../../search/searchActions';
 import {setMeterDetailsTimePeriod} from './meterDetailActions';
-import {
-  meterDetailExportToExcelAction,
-  meterDetailExportToExcelSuccess,
-  meterDetailMeasurementFailure,
-  meterDetailMeasurementRequest,
-  meterDetailMeasurementSuccess
-} from './meterDetailMeasurementActions';
+import * as actions from './meterDetailMeasurementActions';
+
+type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search | typeof setMeterDetailsTimePeriod>;
 
 export const meterDetailMeasurement = (
   state: MeasurementState = initialState,
   action: ActionTypes
 ): MeasurementState => {
   switch (action.type) {
-    case getType(meterDetailMeasurementRequest):
+    case getType(actions.meterDetailMeasurementRequest):
       return {
         ...state,
         isFetching: true,
       };
-    case getType(meterDetailMeasurementSuccess):
+    case getType(actions.meterDetailMeasurementSuccess):
       return {
         ...state,
-        measurementResponse: (action as Action<MeasurementResponse>).payload,
+        measurementResponse: action.payload,
         isFetching: false,
         isSuccessfullyFetched: true,
       };
-    case getType(meterDetailMeasurementFailure):
+    case getType(actions.meterDetailMeasurementFailure):
       return {
         ...state,
-        error: (action as Action<Maybe<ErrorResponse>>).payload,
+        error: action.payload,
         isFetching: false,
         isSuccessfullyFetched: false,
       };
-    case getType(meterDetailExportToExcelAction):
+    case getType(actions.meterDetailExportToExcelAction):
       return {...state, isExportingToExcel: true};
-    case getType(meterDetailExportToExcelSuccess):
+    case getType(actions.meterDetailExportToExcelSuccess):
       return {...state, isExportingToExcel: false};
     case domainModelsGetEntitiesSuccess(EndPoints.meterDetails):
     case getType(setMeterDetailsTimePeriod):
-    case getType(selectResolution):
-    case getType(toggleComparePeriod):
-    case getType(setReportTimePeriod):
-    case getType(removeAllByType):
-    case getType(toggleQuantityByType):
-    case getType(toggleQuantityById):
+    case getType(reportActions.selectResolution):
+    case getType(reportActions.toggleComparePeriod):
+    case getType(reportActions.setReportTimePeriod):
+    case getType(reportActions.removeAllByType):
+    case getType(reportActions.toggleQuantityByType):
+    case getType(reportActions.toggleQuantityById):
     case getType(search):
       return initialState;
     default:

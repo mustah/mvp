@@ -1,30 +1,12 @@
-import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {ActionType, getType} from 'typesafe-actions';
 import {Maybe} from '../../../../helpers/Maybe';
 import {resetReducer} from '../../../../reducers/resetReducer';
-import {Action, ErrorResponse} from '../../../../types/Types';
-import {
-  addLegendItems,
-  removeAllByType,
-  selectResolution,
-  setReportTimePeriod,
-  toggleComparePeriod,
-  toggleQuantityById,
-  toggleQuantityByType,
-  toggleShowAverage
-} from '../../../../usecases/report/reportActions';
+import * as reportActions from '../../../../usecases/report/reportActions';
 import {search} from '../../../../usecases/search/searchActions';
-import {
-  exportToExcelAction,
-  exportToExcelSuccess,
-  measurementClearError,
-  measurementFailure,
-  measurementRequest,
-  measurementSuccess
-} from './measurementActions';
-import {MeasurementResponse, MeasurementState} from './measurementModels';
+import * as actions from './measurementActions';
+import {MeasurementState} from './measurementModels';
 
-export type ActionTypes = | EmptyAction<string> | Action<MeasurementResponse | Maybe<ErrorResponse>>;
+type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>;
 
 export const initialState: MeasurementState = {
   isFetching: false,
@@ -38,43 +20,40 @@ export const initialState: MeasurementState = {
   isExportingToExcel: false,
 };
 
-export const measurement = (
-  state: MeasurementState = initialState,
-  action: ActionTypes
-): MeasurementState => {
+export const measurement = (state: MeasurementState = initialState, action: ActionTypes): MeasurementState => {
   switch (action.type) {
-    case getType(measurementRequest):
+    case getType(actions.measurementRequest):
       return {
         ...state,
         isFetching: true,
       };
-    case getType(measurementSuccess):
+    case getType(actions.measurementSuccess):
       return {
         ...state,
-        measurementResponse: (action as Action<MeasurementResponse>).payload,
+        measurementResponse: action.payload,
         isFetching: false,
         isSuccessfullyFetched: true,
       };
-    case getType(measurementFailure):
+    case getType(actions.measurementFailure):
       return {
         ...state,
-        error: (action as Action<Maybe<ErrorResponse>>).payload,
+        error: action.payload,
         isFetching: false,
         isSuccessfullyFetched: false,
       };
-    case getType(exportToExcelAction):
+    case getType(actions.exportToExcelAction):
       return {...state, isExportingToExcel: true};
-    case getType(exportToExcelSuccess):
+    case getType(actions.exportToExcelSuccess):
       return {...state, isExportingToExcel: false};
-    case getType(measurementClearError):
-    case getType(selectResolution):
-    case getType(toggleComparePeriod):
-    case getType(toggleShowAverage):
-    case getType(setReportTimePeriod):
-    case getType(addLegendItems):
-    case getType(removeAllByType):
-    case getType(toggleQuantityByType):
-    case getType(toggleQuantityById):
+    case getType(actions.measurementClearError):
+    case getType(reportActions.selectResolution):
+    case getType(reportActions.toggleComparePeriod):
+    case getType(reportActions.toggleShowAverage):
+    case getType(reportActions.setReportTimePeriod):
+    case getType(reportActions.addLegendItems):
+    case getType(reportActions.removeAllByType):
+    case getType(reportActions.toggleQuantityByType):
+    case getType(reportActions.toggleQuantityById):
     case getType(search):
       return initialState;
     default:
