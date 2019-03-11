@@ -41,13 +41,6 @@ export const meterDetailMeasurement = (
       return {...state, isExportingToExcel: false};
     case domainModelsGetEntitiesSuccess(EndPoints.meterDetails):
     case getType(setMeterDetailsTimePeriod):
-    case getType(reportActions.selectResolution):
-    case getType(reportActions.toggleComparePeriod):
-    case getType(reportActions.setReportTimePeriod):
-    case getType(reportActions.removeAllByType):
-    case getType(reportActions.toggleQuantityByType):
-    case getType(reportActions.toggleQuantityById):
-    case getType(search):
       return initialState;
     default:
       return resetReducer(state, action, initialState);
