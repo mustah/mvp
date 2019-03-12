@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
@@ -120,6 +121,23 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
+  public Page<CollectionStatsDto> findAllCollectionStats(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    return new PageAdapter<>(
+      logicalMeterJpaRepository.findAllCollectionStats(
+        parameters,
+        PageRequest.of(
+          pageable.getPageNumber(),
+          pageable.getPageSize(),
+          SortMapper.getAsSpringSort(pageable.getSort())
+        )
+      )
+    );
+  }
+
+  @Override
   public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
     Collection<LogicalMeterEntity> meters = logicalMeterJpaRepository.findAll(parameters);
 
@@ -185,6 +203,12 @@ public class LogicalMeterRepository implements LogicalMeters {
       .orElse(emptyList());
   }
 
+  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
+    RequestParameters parameters
+  ) {
+    return logicalMeterJpaRepository.findAllCollectionStatsPerDate(parameters);
+  }
+
   @Transactional
   @Override
   @Caching(evict = {
@@ -220,23 +244,8 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Page<CollectionStatsDto> findAllCollectionStats(RequestParameters parameters,
-                                                        Pageable pageable) {
-    return new PageAdapter<>(
-      logicalMeterJpaRepository.findAllCollectionStats(
-        parameters,
-        PageRequest.of(
-          pageable.getPageNumber(),
-          pageable.getPageSize(),
-          SortMapper.getAsSpringSort(pageable.getSort())
-        )
-      )
-    );
-  }
-
-  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
-    RequestParameters parameters) {
-    return logicalMeterJpaRepository.findAllCollectionStatsPerDate(parameters);
+  public List<QuantityParameter> getPreferredQuantityParameters(RequestParameters parameters) {
+    return logicalMeterJpaRepository.getPreferredQuantityParameters(parameters);
   }
 
   private List<LogicalMeter> withStatusesOnly(

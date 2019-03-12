@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
@@ -81,6 +82,13 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public Page<CollectionStatsDto> findAllCollectionStats(
+    RequestParameters parameters, Pageable pageable
+  ) {
+    return null;
+  }
+
+  @Override
   public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
     return filter(isWithinOrganisation(parameters))
       .collect(toList());
@@ -120,21 +128,15 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public LogicalMeter delete(LogicalMeter logicalMeter) {
-    throw new NotImplementedYet();
-  }
-
-  @Override
-  public Page<CollectionStatsDto> findAllCollectionStats(
-    RequestParameters parameters, Pageable pageable
+  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
+    RequestParameters parameters
   ) {
     return null;
   }
 
   @Override
-  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
-    RequestParameters parameters) {
-    return null;
+  public LogicalMeter delete(LogicalMeter logicalMeter) {
+    throw new NotImplementedYet();
   }
 
   @Override
@@ -146,6 +148,11 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
     filter(isSameOrganisationId(organisationId))
       .filter(lm -> lm.getMeterDefinition().id.equals(fromMeterDefinition.id))
       .forEach(lm -> saveMock(lm.toBuilder().meterDefinition(toMeterDefinition).build()));
+  }
+
+  @Override
+  public List<QuantityParameter> getPreferredQuantityParameters(RequestParameters parameters) {
+    return emptyList();
   }
 
   @Override

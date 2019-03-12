@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
@@ -55,4 +56,6 @@ public interface LogicalMeterJpaRepository {
     Long fromMeterDefinitionId,
     Long toMeterDefinitionId
   );
+
+  List<QuantityParameter> getPreferredQuantityParameters(RequestParameters parameters);
 }
