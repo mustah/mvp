@@ -7,6 +7,7 @@ import {Row} from '../layouts/row/Row';
 
 interface Props {
   meter: Meter;
+  subPath?: string;
 }
 
 const labelStyle: React.CSSProperties = {
@@ -21,15 +22,16 @@ const iconStyle: React.CSSProperties = {
   padding: 0,
 };
 
-export const MeterListItem = ({meter: {facility, id}}: Props) => (
-  <Row>
-    <Link to={`${routes.meter}/${id}`} className="link">
-      <ButtonInfo
-        label={facility}
-        iconStyle={iconStyle}
-        labelStyle={labelStyle}
-        title={facility.toString()}
-      />
-    </Link>
-  </Row>
-);
+export const MeterListItem = ({meter: {facility, id}, subPath = ''}: Props) =>
+  (
+    <Row>
+      <Link to={`${routes.meter}/${id}${subPath}`} className="link">
+        <ButtonInfo
+          label={facility}
+          iconStyle={iconStyle}
+          labelStyle={labelStyle}
+          title={facility.toString()}
+        />
+      </Link>
+    </Row>
+  );

@@ -7,11 +7,12 @@ import {MeterMeasurementsContainer} from '../containers/MeterMeasurementsContain
 
 const isVisible = (show: boolean): string => show ? 'flex' : 'none';
 
-export const MeasurementContent = ({view, meter}: Props) => (
-  <Column>
-    <MeasurementToolbarContainer/>
-    <Column style={{display: isVisible(view === ToolbarView.table)}}>
-      <MeterMeasurementsContainer meter={meter} />
+export const MeasurementContent = ({view, meter, useCollectionPeriod}: Props) =>
+  (
+    <Column>
+      <MeasurementToolbarContainer useCollectionPeriod={useCollectionPeriod}/>
+      <Column style={{display: isVisible(view === ToolbarView.table)}}>
+        <MeterMeasurementsContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
+      </Column>
     </Column>
-  </Column>
-);
+  );

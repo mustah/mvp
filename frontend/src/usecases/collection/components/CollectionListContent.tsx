@@ -11,6 +11,7 @@ import {
   OnChangePage,
   Pagination
 } from '../../../state/ui/pagination/paginationModels';
+import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {
   CallbackWith,
   ClearErrorPaginated,
@@ -30,6 +31,7 @@ export interface CollectionStateToProps {
   pagination: Pagination;
   error: Maybe<ErrorResponse>;
   entityType: EntityTypes;
+  timePeriod: SelectionInterval;
 }
 
 export interface CollectionDispatchToProps {

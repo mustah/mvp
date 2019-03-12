@@ -6,6 +6,7 @@ import {MeterDetailState} from './meterDetailModels';
 
 const initialState: MeterDetailState = {
   timePeriod: {period: Period.latest},
+  isTimePeriodDefault: true,
 };
 
 type ActionTypes = ActionType<typeof setMeterDetailsTimePeriod | typeof logoutUser>;
@@ -13,7 +14,11 @@ type ActionTypes = ActionType<typeof setMeterDetailsTimePeriod | typeof logoutUs
 export const meterDetail = (state: MeterDetailState = initialState, action: ActionTypes): MeterDetailState => {
   switch (action.type) {
     case getType(setMeterDetailsTimePeriod):
-      return {...state, timePeriod: action.payload};
+      return {
+        ...state,
+        timePeriod: action.payload,
+        isTimePeriodDefault: false,
+      };
     case getType(logoutUser):
       return initialState;
     default:

@@ -48,6 +48,7 @@ interface MapProps {
 interface OwnProps extends MapProps {
   addToReport: OnClickWith<LegendItem>;
   syncWithMetering: OnClickWithId;
+  useCollectionPeriod?: boolean;
 }
 
 interface DispatchToProps {
@@ -105,7 +106,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
 
   render() {
     const {selectedTab} = this.state;
-    const {meter, meterMapMarker, addToReport, syncWithMetering} = this.props;
+    const {meter, meterMapMarker, addToReport, syncWithMetering, useCollectionPeriod} = this.props;
 
     const gateways: GatewayMandatory[] = [];
     const {gateway} = meter;
@@ -149,7 +150,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             </TabSettings>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
-            <MeasurementsContainer meter={meter} />
+            <MeasurementsContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Grid data={eventLog} scrollable="none">
