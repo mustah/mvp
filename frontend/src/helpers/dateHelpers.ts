@@ -22,7 +22,7 @@ const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRan
     case Period.currentMonth:
       return {
         start: zonedDate.startOf('month').startOf('day').toDate(),
-        end: zonedDate.clone().endOf('month').startOf('day').toDate(),
+        end: zonedDate.clone().endOf('month').add(1, 'days').startOf('day').toDate(),
       };
     case Period.currentWeek:
       return {
@@ -31,14 +31,14 @@ const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRan
       };
     case Period.previous7Days:
       return {
-        start: zonedDate.clone().startOf('day').subtract(6, 'days').toDate(),
+        start: zonedDate.clone().startOf('day').subtract(7, 'days').toDate(),
         end: zonedDate.clone().startOf('day').toDate(),
       };
     case Period.previousMonth:
       const prevMonth = zonedDate.clone().subtract(1, 'month');
       return {
         start: prevMonth.clone().startOf('month').toDate(),
-        end: prevMonth.clone().endOf('month').startOf('day').toDate(),
+        end: prevMonth.clone().endOf('month').add(1, 'days').startOf('day').toDate(),
       };
     case Period.custom:
       return customDateRange.map(({start, end}) => ({

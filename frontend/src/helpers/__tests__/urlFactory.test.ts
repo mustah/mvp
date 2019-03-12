@@ -224,7 +224,7 @@ describe('urlFactory', () => {
       });
       expect(prevMonthRange).toEqual([
         'after=2018-01-01T00%3A00%3A00.000%2B01%3A00',
-        'before=2018-01-31T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-02-01T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
 
@@ -235,7 +235,7 @@ describe('urlFactory', () => {
         customDateRange: Maybe.nothing(),
       });
       expect(prevWeek).toEqual([
-        'after=2018-01-27T00%3A00%3A00.000%2B01%3A00',
+        'after=2018-01-26T00%3A00%3A00.000%2B01%3A00',
         'before=2018-02-02T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
@@ -261,7 +261,7 @@ describe('urlFactory', () => {
       });
       expect(currentMonthApiParameters).toEqual([
         'after=2018-02-01T00%3A00%3A00.000%2B01%3A00',
-        'before=2018-02-28T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-03-01T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
 

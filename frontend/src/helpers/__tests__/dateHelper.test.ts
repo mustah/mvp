@@ -34,7 +34,7 @@ describe('dateHelper', () => {
         period: Period.currentMonth,
         customDateRange: Maybe.nothing(),
       });
-      expect(timePeriod).toEqual('2013-11-01 - 2013-11-30');
+      expect(timePeriod).toEqual('2013-11-01 - 2013-12-01');
     });
 
     it('can be consumed by the MVP REST API', () => {
@@ -67,7 +67,7 @@ describe('dateHelper', () => {
           period: Period.previousMonth,
           customDateRange: Maybe.nothing(),
         });
-        expect(prevMonthRange).toEqual('2013-02-01 - 2013-02-28');
+        expect(prevMonthRange).toEqual('2013-02-01 - 2013-03-01');
       });
 
       it('knows about previous 7 days', () => {
@@ -76,7 +76,7 @@ describe('dateHelper', () => {
           period: Period.previous7Days,
           customDateRange: Maybe.nothing(),
         });
-        expect(prevWeek).toEqual('2013-03-08 - 2013-03-14');
+        expect(prevWeek).toEqual('2013-03-07 - 2013-03-14');
       });
 
       it('knows about current week', () => {
@@ -95,7 +95,7 @@ describe('dateHelper', () => {
           period: Period.currentMonth,
           customDateRange: Maybe.nothing(),
         });
-        expect(currentMonthApiParameters).toEqual('2017-11-01 - 2017-11-30');
+        expect(currentMonthApiParameters).toEqual('2017-11-01 - 2017-12-01');
       });
 
       it('knows about last 24 h', () => {
@@ -148,7 +148,7 @@ describe('dateHelper', () => {
         const actual: DateRange = makeCompareDateRange(period, start);
 
         expect(displayDate(actual.start)).toBe('2019-02-01 00:00');
-        expect(displayDate(actual.end)).toBe('2019-02-28 00:00');
+        expect(displayDate(actual.end)).toBe('2019-03-01 00:00');
       });
 
       it('has date range for previous month period ', () => {
@@ -157,7 +157,7 @@ describe('dateHelper', () => {
         const actual: DateRange = makeCompareDateRange(period, start);
 
         expect(displayDate(actual.start)).toBe('2019-01-01 00:00');
-        expect(displayDate(actual.end)).toBe('2019-01-31 00:00');
+        expect(displayDate(actual.end)).toBe('2019-02-01 00:00');
       });
 
       it('has date range for current week period ', () => {
