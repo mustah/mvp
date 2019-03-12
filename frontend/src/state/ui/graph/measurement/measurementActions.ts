@@ -214,7 +214,7 @@ const fetchMeasurements = (
       const compare: GraphDataRequests = compareMeterRequests(parameters);
 
       if (meters.length || meterAverage.length || average.length || compare.length) {
-        dispatch(measurementRequest());
+        dispatch(request());
         try {
           const [meterResponses, meterAverageResponses, averageResponses, compareResponses]: GraphDataResponse[][] =
             await Promise.all([
