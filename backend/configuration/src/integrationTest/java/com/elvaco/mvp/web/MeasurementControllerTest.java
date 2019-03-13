@@ -3,10 +3,13 @@ package com.elvaco.mvp.web;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -21,12 +24,19 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.DisplayMode.CONSUMPTION;
+import static com.elvaco.mvp.core.domainmodels.DisplayMode.READOUT;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
 import static com.elvaco.mvp.core.domainmodels.Quantity.DIFFERENCE_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.EXTERNAL_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.HUMIDITY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
+import static com.elvaco.mvp.core.domainmodels.Units.DEGREES_CELSIUS;
+import static com.elvaco.mvp.core.domainmodels.Units.KELVIN;
+import static com.elvaco.mvp.core.domainmodels.Units.KILOWATT_HOURS;
+import static com.elvaco.mvp.core.domainmodels.Units.MEGAWATT_HOURS;
+import static com.elvaco.mvp.core.domainmodels.Units.PERCENT;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,8 +52,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   private static final double DIFF_TEMP_VALUE_KELVIN = 558.74;
   private static final double HUMIDITY_VALUE = 55.3;
   private static final double TEMP_VALUE = 21.7;
-  private static final String DEGREES_CELSIUS = "°C";
-  private static final String PERCENT_HUMIDITY = "%";
 
   @After
   public void tearDown() {
@@ -132,7 +140,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(getListAsSuperAdmin(
       "/measurements?logicalMeterId=" + firstOrganisationsMeter.id
-        + "," + secondOrganisationsMeter.id
+        + "&logicalMeterId=" + secondOrganisationsMeter.id
         + "&quantity=Difference+temperature"
         + "&resolution=hour"
         + "&after=" + date
@@ -268,7 +276,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(contents).filteredOn(dto -> dto.quantity.equals(HUMIDITY.name))
       .extracting(d -> d.unit, d -> d.values.size(), d -> d.values.get(0).value)
-      .containsOnly(tuple(PERCENT_HUMIDITY, 1, HUMIDITY_VALUE));
+      .containsOnly(tuple(PERCENT, 1, HUMIDITY_VALUE));
   }
 
   @Test
@@ -315,6 +323,66 @@ public class MeasurementControllerTest extends IntegrationTest {
         )
       )
     );
+  }
+
+  @Test
+  public void fetchMeasurementsUsesPreferredQuantityUnitsForAllMeters() {
+    ZonedDateTime date = context().now();
+
+    var meterDefinition1 = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+      .quantities(Set.of(
+        new DisplayQuantity(DIFFERENCE_TEMPERATURE, READOUT, 1, DEGREES_CELSIUS),
+        new DisplayQuantity(ENERGY, CONSUMPTION, 2, MEGAWATT_HOURS)
+      )));
+
+    var meterDefinition2 = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+      .quantities(Set.of(
+        new DisplayQuantity(DIFFERENCE_TEMPERATURE, READOUT, 2, KELVIN),
+        new DisplayQuantity(ENERGY, CONSUMPTION, 3, KILOWATT_HOURS)
+      )));
+
+    LogicalMeter meter11 = given(logicalMeter().meterDefinition(meterDefinition1));
+    LogicalMeter meter12 = given(logicalMeter().meterDefinition(meterDefinition1));
+    LogicalMeter meter2 = given(logicalMeter().meterDefinition(meterDefinition2));
+
+    given(
+      diffTempMeasurement(meter11, date),
+      energyMeasurement(meter11, date)
+    );
+
+    given(
+      diffTempMeasurement(meter12, date),
+      energyMeasurement(meter12, date)
+    );
+
+    given(
+      diffTempMeasurement(meter2, date),
+      energyMeasurement(meter2, date)
+    );
+
+    List<MeasurementSeriesDto> contents =
+      getListAsSuperAdmin(
+        "/measurements?quantity=Difference+temperature,Energy"
+          + "&logicalMeterId=" + meter11.id
+          + "&logicalMeterId=" + meter12.id
+          + "&logicalMeterId=" + meter2.id
+          + "&resolution=hour"
+          + "&after=" + date
+          + "&before=" + date.plusHours(1));
+
+    assertThat(contents)
+      .extracting(dto -> dto.id, dto -> dto.quantity, dto -> dto.unit)
+      .containsExactlyInAnyOrder(
+        tuple(meter11.id.toString(), DIFFERENCE_TEMPERATURE.name, DEGREES_CELSIUS),
+        tuple(meter12.id.toString(), DIFFERENCE_TEMPERATURE.name, DEGREES_CELSIUS),
+        tuple(meter2.id.toString(), DIFFERENCE_TEMPERATURE.name, DEGREES_CELSIUS),
+
+        tuple(meter11.id.toString(), ENERGY.name, MEGAWATT_HOURS),
+        tuple(meter12.id.toString(), ENERGY.name, MEGAWATT_HOURS),
+        tuple(meter2.id.toString(), ENERGY.name, MEGAWATT_HOURS)
+      );
   }
 
   @Test
@@ -394,7 +462,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getBody().message).isEqualTo("Missing 'logicalMeterId' parameter.");
+    assertThat(response.getBody().message).isEqualTo("Missing 'after' parameter.");
   }
 
   @Test
@@ -545,7 +613,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   ) {
     return measurement(meter)
       .created(date)
-      .unit(PERCENT_HUMIDITY)
+      .unit(PERCENT)
       .quantity(HUMIDITY.name)
       .value(HUMIDITY_VALUE);
   }

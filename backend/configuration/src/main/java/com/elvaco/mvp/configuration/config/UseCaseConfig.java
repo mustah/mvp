@@ -89,7 +89,7 @@ class UseCaseConfig {
 
   @Bean
   MeasurementUseCases measurementUseCases(AuthenticatedUser currentUser) {
-    return new MeasurementUseCases(currentUser, measurements);
+    return new MeasurementUseCases(currentUser, measurements, logicalMeters);
   }
 
   @Bean

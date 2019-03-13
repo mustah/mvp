@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
@@ -56,4 +57,6 @@ public interface LogicalMeters {
     MeterDefinition fromMeterDefinition,
     MeterDefinition toMeterDefinition
   );
+
+  List<QuantityParameter> getPreferredQuantityParameters(RequestParameters parameters);
 }

@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
@@ -63,7 +61,7 @@ public class MeasurementController {
 
     Map<String, QuantityParameter> quantityMap = getMappedQuantities(
       optionalQuantityParameters,
-      logicalMeters
+      parameters
     );
 
     ZonedDateTime stop = beforeOrNow(before);
@@ -92,7 +90,7 @@ public class MeasurementController {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
   public List<MeasurementSeriesDto> measurements(
-    @RequestParam(name = "logicalMeterId") List<UUID> logicalMeterIds,
+    @RequestParam MultiValueMap<String, String> requestParams,
     @RequestParam(name = "quantity") Optional<Set<QuantityParameter>> optionalQuantityParameters,
     @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
@@ -102,22 +100,23 @@ public class MeasurementController {
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
 
-    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(logicalMeterIds);
+    List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAllBy(parameters);
 
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, identity()));
 
     Map<String, QuantityParameter> quantityMap = getMappedQuantities(
       optionalQuantityParameters.orElse(emptySet()),
-      logicalMeters
+      parameters
     );
 
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
 
     MeasurementParameter parameter = new MeasurementParameter(
-      logicalMeterIds,
+      logicalMeters.stream().map(l -> l.id).collect(toList()),
       new ArrayList<>(quantityMap.values()),
       start,
       stop,
@@ -148,40 +147,25 @@ public class MeasurementController {
 
   private Map<String, QuantityParameter> getMappedQuantities(
     Set<QuantityParameter> quantityParameters,
-    List<LogicalMeter> logicalMeters
+    RequestParameters parameters
   ) {
-    Collector<QuantityParameter, ?, Map<String, QuantityParameter>> quantityParameterMapCollector =
-      toMap(qParam -> qParam.name, qParam -> qParam);
-
-    Map<String, QuantityParameter> meterQuantitites = logicalMeters.stream()
-      .flatMap(logicalMeter -> logicalMeter.getQuantities()
-        .stream()
-        .map(QuantityParameter::of))
-      .collect(Collectors.toSet())
-      .stream()
-      .collect(quantityParameterMapCollector);
+    Map<String, QuantityParameter> preferredQuantityParameters =
+      measurementUseCases.getPreferredQuantityParameters(parameters);
 
     if (quantityParameters.isEmpty()) {
-      return meterQuantitites;
+      return preferredQuantityParameters;
     }
 
     return quantityParameters.stream()
-      .filter(qp -> meterQuantitites.containsKey(qp.name))
-      .map(qp -> {
-        var meterQuantity = meterQuantitites.get(qp.name);
-        return QuantityParameter.builder()
-          .name(qp.name)
-          .displayMode(qp.displayMode != null ? qp.displayMode : meterQuantity.displayMode)
-          .unit(qp.unit != null ? qp.unit : meterQuantity.unit)
-          .build();
-      })
-      .collect(quantityParameterMapCollector);
-  }
-
-  private List<LogicalMeter> findLogicalMetersByIds(List<UUID> logicalMeterIds) {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .setAll(LOGICAL_METER_ID, logicalMeterIds.stream().map(UUID::toString).collect(toList()));
-    return logicalMeterUseCases.findAllBy(parameters);
+      .filter(qp -> preferredQuantityParameters.containsKey(qp.name))
+      .map(qp -> QuantityParameter.builder()
+        .name(qp.name)
+        .unit(qp.unit != null ? qp.unit : preferredQuantityParameters.get(qp.name).unit)
+        .displayMode(qp.displayMode != null
+          ? qp.displayMode
+          : preferredQuantityParameters.get(qp.name).displayMode)
+        .build())
+      .collect(toMap(qp -> qp.name, qp -> qp));
   }
 
   @Nullable

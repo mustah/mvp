@@ -69,7 +69,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
       logicalMeterUseCases,
       physicalMeterUseCases,
       organisationUseCases,
-      new MeasurementUseCases(authenticatedUser, measurements),
+      new MeasurementUseCases(authenticatedUser, measurements, logicalMeters),
       gatewayUseCases,
       meterDefinitionUseCases,
       unitConverter,

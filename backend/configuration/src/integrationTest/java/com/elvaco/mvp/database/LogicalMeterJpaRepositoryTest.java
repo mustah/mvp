@@ -1,7 +1,18 @@
 package com.elvaco.mvp.database;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
+import com.elvaco.mvp.core.domainmodels.DisplayMode;
+import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Medium;
+import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.Units;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.mappers.GatewayEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
@@ -13,7 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
@@ -111,6 +125,46 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
     assertThat(gatewayJpaRepository.findById(gateway.id).get().serial)
       .isEqualTo("newSerial");
+  }
+
+  @Test
+  public void getPreferredQuantityParametersForLogicalMeters() {
+    var displayQuantity1 = new DisplayQuantity(
+      Quantity.POWER,
+      DisplayMode.READOUT,
+      2,
+      Units.WATT
+    );
+    var displayQuantity2 = new DisplayQuantity(
+      Quantity.POWER,
+      DisplayMode.READOUT,
+      2,
+      Units.KILOWATT
+    );
+
+    var meterDefintion1 = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+      .quantities(Set.of(displayQuantity1)));
+    var meterDefintion2 = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+      .quantities(Set.of(displayQuantity2)));
+    var meter1a = given(logicalMeter().meterDefinition(meterDefintion1));
+    var meter2 = given(logicalMeter().meterDefinition(meterDefintion2));
+    var meter1b = given(logicalMeter().meterDefinition(meterDefintion1));
+
+    RequestParameters parameters = idParametersOf(meter1a, meter2, meter1b);
+
+    assertThat(logicalMeterJpaRepository.getPreferredQuantityParameters(parameters))
+      .hasSize(1)
+      .extracting(qp -> qp.name, qp -> qp.unit, qp -> qp.isConsumption())
+      .containsExactly(tuple(Quantity.POWER.name, Units.WATT, false));
+  }
+
+  private RequestParameters idParametersOf(LogicalMeter... meters) {
+    return RequestParametersAdapter.of(Map.of(
+      LOGICAL_METER_ID.toString(),
+      Arrays.stream(meters).map(meter -> meter.id.toString()).collect(toList())
+    ));
   }
 
   private static void commitTransaction() {

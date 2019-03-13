@@ -11,7 +11,9 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
@@ -42,7 +44,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
+import static com.elvaco.mvp.database.entity.jooq.Tables.DISPLAY_QUANTITY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEDIUM;
+import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
+import static com.elvaco.mvp.database.entity.jooq.Tables.QUANTITY;
 import static com.elvaco.mvp.database.entity.jooq.tables.Gateway.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_METER;
@@ -326,6 +331,39 @@ class LogicalMeterJooqJpaRepository
       .where(LOGICAL_METER.ORGANISATION_ID.eq(organisationId))
       .and(LOGICAL_METER.METER_DEFINITION_ID.eq(fromMeterDefinitionId))
       .execute();
+  }
+
+  @Override
+  public List<QuantityParameter> getPreferredQuantityParameters(RequestParameters parameters) {
+    Field<Long> cnt = DSL.field("cnt", Long.class);
+
+    var query = dsl.select(
+      DSL.count(QUANTITY.NAME).as(cnt),
+      QUANTITY.NAME,
+      DISPLAY_QUANTITY.DISPLAY_UNIT,
+      DISPLAY_QUANTITY.DISPLAY_MODE
+    ).distinctOn(QUANTITY.NAME)
+      .from(LOGICAL_METER);
+
+    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
+
+    var query2 = query
+      .leftJoin(DISPLAY_QUANTITY).on(METER_DEFINITION.ID.eq(DISPLAY_QUANTITY.METER_DEFINITION_ID))
+      .leftJoin(QUANTITY).on(QUANTITY.ID.eq(DISPLAY_QUANTITY.QUANTITY_ID))
+      .groupBy(QUANTITY.NAME, DISPLAY_QUANTITY.DISPLAY_UNIT, DISPLAY_QUANTITY.DISPLAY_MODE)
+      .orderBy(
+        QUANTITY.NAME,
+        cnt.desc(),
+        DISPLAY_QUANTITY.DISPLAY_UNIT,
+        DISPLAY_QUANTITY.DISPLAY_MODE
+      );
+
+    return query2.fetch().stream()
+      .map(record -> new QuantityParameter(
+        record.value2(),
+        record.value3(),
+        DisplayMode.from(record.value4())
+      )).collect(toList());
   }
 
   private Page<String> fetchAllBy(
