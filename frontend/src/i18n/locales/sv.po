@@ -660,6 +660,9 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
+msgid "back"
+msgstr "tillbaka"
+
 msgctxt "°plural"
 msgid "city°"
 msgstr "städer"
