@@ -1,4 +1,5 @@
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {Dashboard} from './dashboard/dashboardModels';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {MeasurementState} from '../ui/graph/measurement/measurementModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
@@ -7,6 +8,7 @@ import {Medium, MeterDefinition, Quantity} from './meter-definitions/meterDefini
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
+import {Widget} from './widget/WidgetModels';
 
 export interface ObjectsById<T extends Identifiable> {
   [id: string]: T;
@@ -24,11 +26,14 @@ export interface DomainModel<T extends Identifiable> {
   result: uuid[];
 }
 
-export interface NormalizedState<T extends Identifiable> extends DomainModel<T> {
+export interface RequestsHttp {
   isFetching: boolean;
   isSuccessfullyFetched: boolean;
-  total: number;
   error?: ErrorResponse;
+}
+
+export interface NormalizedState<T extends Identifiable> extends DomainModel<T>, RequestsHttp {
+  total: number;
 }
 
 export interface DomainModelsState {
@@ -43,6 +48,8 @@ export interface DomainModelsState {
   quantities: NormalizedState<Quantity>;
   collectionStats: NormalizedState<CollectionStat>;
   meterDetailMeasurement: MeasurementState;
+  dashboards: NormalizedState<Dashboard>;
+  widgets: NormalizedState<Widget>;
 }
 
 export const enum RequestType {

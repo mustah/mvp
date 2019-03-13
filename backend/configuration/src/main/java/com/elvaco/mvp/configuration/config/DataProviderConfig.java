@@ -9,6 +9,7 @@ import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Locations;
@@ -25,7 +26,9 @@ import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
+import com.elvaco.mvp.database.repository.access.DashboardRepository;
 import com.elvaco.mvp.database.repository.access.GatewayRepository;
 import com.elvaco.mvp.database.repository.access.GatewayStatusLogsRepository;
 import com.elvaco.mvp.database.repository.access.LocationRepository;
@@ -43,7 +46,9 @@ import com.elvaco.mvp.database.repository.access.RootOrganisationRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.access.UserSelectionRepository;
+import com.elvaco.mvp.database.repository.access.WidgetRepository;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
+import com.elvaco.mvp.database.repository.jpa.DashboardJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.DisplayQuantityJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
@@ -63,6 +68,7 @@ import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.WidgetJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MediumEntityMapper;
@@ -101,6 +107,8 @@ class DataProviderConfig {
   private final SummaryJpaRepository summaryJpaRepository;
   private final PropertiesJpaRepository propertiesJpaRepository;
   private final QuantityJpaRepository quantityJpaRepository;
+  private final DashboardJpaRepository dashboardJpaRepository;
+  private final WidgetJpaRepository widgetJpaRepository;
   private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
   private final UnitConverter unitConverter;
   private final EntityManager entityManager;
@@ -273,5 +281,15 @@ class DataProviderConfig {
   @Bean
   Quantities quantities(QuantityEntityMapper quantityEntityMapper) {
     return new QuantityRepository(quantityJpaRepository, quantityEntityMapper);
+  }
+
+  @Bean
+  Dashboards dashboards() {
+    return new DashboardRepository(dashboardJpaRepository);
+  }
+
+  @Bean
+  Widgets widgets() {
+    return new WidgetRepository(widgetJpaRepository);
   }
 }

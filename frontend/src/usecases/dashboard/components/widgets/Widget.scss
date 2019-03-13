@@ -18,7 +18,11 @@
   &.MapWidget {
     padding-bottom: 0;
     min-height: 600px;
-    min-width: 774px;
+    min-width: 872px;
+
+    & .Map {
+      height: 628px;
+    }
   }
 
   a, a:visited {

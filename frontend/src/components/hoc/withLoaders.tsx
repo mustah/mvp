@@ -1,10 +1,11 @@
 import * as React from 'react';
 import {Fetching} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
-import {LoadingLarge, LoadingSmall} from '../loading/Loading';
+import {LoadingLarge, LoadingSmall, LoadingWidget} from '../loading/Loading';
 
 const LargeLoader = () => <RowCenter><LoadingLarge/></RowCenter>;
 const SmallLoader = () => <RowCenter><LoadingSmall/></RowCenter>;
+const WidgetLoader = () => <RowCenter><LoadingWidget/></RowCenter>;
 
 const withLoader =
   <P extends {}>(
@@ -21,3 +22,7 @@ export const withLargeLoader =
 export const withSmallLoader =
   <P extends {}>(Component: React.ComponentType<P>): React.SFC<P & Fetching> =>
     withLoader(SmallLoader, Component);
+
+export const withWidgetLoader =
+  <P extends {}>(Component: React.ComponentType<P>): React.SFC<P & Fetching> =>
+    withLoader(WidgetLoader, Component);

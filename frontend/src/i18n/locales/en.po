@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-02-12T08:44:47.630Z\n"
+"POT-Creation-Date: 2019-03-18T15:14:12.424Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,11 +11,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "successfully deleted the widget"
+msgstr "successfully deleted the widget"
+
+msgid "failed to delete the widget"
+msgstr "failed to delete the widget"
+
+msgid "failed to add dashboard: {{error}}"
+msgstr "failed to add dashboard: {{error}}"
+
+msgid "edit mode"
+msgstr "edit mode"
+
+msgid "collection status"
+msgstr "collection status"
+
+msgid "add widget"
+msgstr "add widget"
+
+msgid "widget settings"
+msgstr "widget settings"
+
+msgid "failed to add widget: {{error}}"
+msgstr "failed to add widget: {{error}}"
+
+msgid "failed to update widget: {{error}}"
+msgstr "failed to update widget: {{error}}"
+
+msgid "failed to update dashboard: {{error}}"
+msgstr "failed to update dashboard: {{error}}"
+
 msgid "compare period"
 msgstr "compare period"
-
-msgid "add new widget"
-msgstr "add new widget"
 
 msgid "within"
 msgstr "within"
@@ -26,20 +53,8 @@ msgstr "delete quantity"
 msgid "edit quantity"
 msgstr "edit quantity"
 
-msgid "add quantity"
-msgstr "add quantity"
-
-msgid "consumption"
-msgstr "consumption"
-
-msgid "quantity"
-msgstr "quantity"
-
 msgid "precision"
 msgstr "precision"
-
-msgid "display unit"
-msgstr "display unit"
 
 msgid "default"
 msgstr "default"
@@ -53,12 +68,6 @@ msgstr "edit meter definitions"
 msgid "meter definitions"
 msgstr "meter definitions"
 
-msgid "add meter definition"
-msgstr "add meter definition"
-
-msgid "successfully deleted the meter definition {{name}}"
-msgstr "successfully deleted the meter definition '{{name}}'"
-
 msgid "failed to delete the meter definition: {{error}}"
 msgstr "failed to delete the meter definition: {{error}}"
 
@@ -71,35 +80,14 @@ msgstr "failed to create meter definition: {{error}}"
 msgid "successfully updated the meter definition {{name}}"
 msgstr "successfully updated the meter definition '{{name}}'"
 
-msgid "failed to update meter definition: {{error}}"
-msgstr "failed to update meter definition: {{error}}"
-
-msgid "meter definitions"
-msgstr "meter definitions"
-
 msgid "your saved reports will appear here"
 msgstr "your saved reports will appear here"
-
-msgid "delete meter"
-msgstr "delete meter"
 
 msgid "are you sure you want to delete the meter {{facility}}"
 msgstr "are you sure you want to delete the meter '{{facility}}'"
 
 msgid "successfully deleted the meter {{facility}}"
 msgstr "successfully deleted the meter '{{facility}}'"
-
-msgid "failed to delete the meter: {{error}}"
-msgstr "failed to delete the meter: {{error}}"
-
-msgid "email not valid"
-msgstr "email not valid"
-
-msgid "required field"
-msgstr "required field"
-
-msgid "admin"
-msgstr "admin"
 
 msgid "metering"
 msgstr "metering"
@@ -110,26 +98,17 @@ msgstr "latency"
 msgid "sync"
 msgstr "sync"
 
-msgid "save report"
-msgstr "save report"
-
-msgid "export to excel"
-msgstr "export to Excel"
-
 msgid "delete meter"
 msgstr "delete meter"
 
 msgid "add to report"
 msgstr "add to report"
 
-msgid "add all to report"
-msgstr "add all to report"
-
 msgid "sync all meters on this page"
 msgstr "sync all meters on this page"
 
-msgid "login"
-msgstr "login"
+msgid "add all to report"
+msgstr "add all to report"
 
 msgid "retry"
 msgstr "retry"
@@ -182,11 +161,20 @@ msgstr "are you sure you want to delete this item"
 msgid "all"
 msgstr "all"
 
-msgid "select quantities"
-msgstr "select quantities"
-
 msgid "version"
 msgstr "version"
+
+msgid "name"
+msgstr "name"
+
+msgid "organisation"
+msgstr "organisation"
+
+msgid "medium"
+msgstr "type"
+
+msgid "required field"
+msgstr "required field"
 
 msgid "organisation name"
 msgstr "organisation name"
@@ -206,23 +194,14 @@ msgstr "new password"
 msgid "confirm new password"
 msgstr "confirm new password"
 
-msgid "required field"
-msgstr "required field"
-
 msgid "change password"
 msgstr "change password"
 
 msgid "passwords don't match"
 msgstr "passwords don't match"
 
-msgid "name"
-msgstr "name"
-
 msgid "email"
 msgstr "email"
-
-msgid "organisation"
-msgstr "organisation"
 
 msgid "user roles"
 msgstr "user roles"
@@ -266,8 +245,8 @@ msgstr "list"
 msgid "map"
 msgstr "map"
 
-msgid "measurements"
-msgstr "measurements"
+msgid "collection"
+msgstr "collection"
 
 msgid "all timestamps are displayed in UTC+1"
 msgstr "all timestamps are displayed in UTC+1"
@@ -284,9 +263,6 @@ msgstr "serial"
 msgid "product model"
 msgstr "product model"
 
-msgid "collection"
-msgstr "collection"
-
 msgid "status change"
 msgstr "status change"
 
@@ -302,20 +278,11 @@ msgstr "facility ID"
 msgid "manufacturer"
 msgstr "manufacturer"
 
-msgid "medium"
-msgstr "type"
-
 msgid "alarm"
 msgstr "alarm"
 
 msgid "collection percentage"
 msgstr "collection %"
-
-msgid "hour in short"
-msgstr "h"
-
-msgid "minute in short"
-msgstr "m"
 
 msgid "resolution"
 msgstr "resolution"
@@ -350,6 +317,9 @@ msgstr "phone number"
 msgid "no gateway connected"
 msgstr "no gateway connected"
 
+msgid "measurements"
+msgstr "measurements"
+
 msgid "events"
 msgstr "events"
 
@@ -362,11 +332,8 @@ msgstr "date"
 msgid "event"
 msgstr "event"
 
-msgid "readout"
-msgstr "readout"
-
-msgid "facility"
-msgstr "facility"
+msgid "back"
+msgstr "back"
 
 msgid "Volume short"
 msgstr "Volume"
@@ -410,6 +377,12 @@ msgstr "close"
 msgid "no"
 msgstr "no"
 
+msgid "hour in short"
+msgstr "h"
+
+msgid "minute in short"
+msgstr "m"
+
 msgid "ok"
 msgstr "ok"
 
@@ -438,11 +411,14 @@ msgid ""
 msgstr ""
 "looks like the server is taking to long to respond, please try again in soon"
 
-msgid "successfully deleted the meter {{facility}}"
-msgstr "successfully deleted the meter '{{facility}}'"
-
 msgid "failed to delete the meter: {{error}}"
 msgstr "failed to delete the meter: {{error}}"
+
+msgid "successfully deleted the meter definition {{name}}"
+msgstr "successfully deleted the meter definition '{{name}}'"
+
+msgid "failed to update meter definition: {{error}}"
+msgstr "failed to update meter definition: {{error}}"
 
 msgid "no parent organisation"
 msgstr "no parent organisation"
@@ -513,6 +489,9 @@ msgstr "add organisation"
 msgid "add user"
 msgstr "add user"
 
+msgid "add meter definition"
+msgstr "add meter definition"
+
 msgid "edit organisation"
 msgstr "edit organisation"
 
@@ -524,6 +503,18 @@ msgstr "slug"
 
 msgid "organisations"
 msgstr "organisations"
+
+msgid "add quantity"
+msgstr "add quantity"
+
+msgid "quantity"
+msgstr "quantity"
+
+msgid "display unit"
+msgstr "display unit"
+
+msgid "consumption"
+msgstr "consumption"
 
 msgid "edit user"
 msgstr "edit user"
@@ -543,8 +534,32 @@ msgstr "your email address"
 msgid "your password"
 msgstr "your password"
 
+msgid "login"
+msgstr "login"
+
+msgid "facility"
+msgstr "facility"
+
+msgid "graph"
+msgstr "graph"
+
+msgid "table"
+msgstr "table"
+
+msgid "export to excel"
+msgstr "export to Excel"
+
 msgid "dashboard"
 msgstr "dashboard"
+
+msgid "edit widget"
+msgstr "edit widget"
+
+msgid "delete widget"
+msgstr "delete widget"
+
+msgid "add new widget"
+msgstr "add new widget"
 
 msgid "all meters"
 msgstr "all meters"
@@ -558,9 +573,6 @@ msgstr "no gateways"
 msgid "report"
 msgstr "report"
 
-msgid "your saved reports will appear here"
-msgstr "your saved reports will appear here"
-
 msgid "{{count}} meter of your selection, are not displayed in the map"
 msgstr "{{count}} meter of your selection, are not displayed in the map"
 
@@ -573,62 +585,26 @@ msgstr "{{count}} gateway is not displayed in the map due to low accuracy"
 msgid "meter will soon be synchronized"
 msgstr "meter will soon be synchronized"
 
-msgid "are you sure you want to delete the meter {{facility}}"
-msgstr "are you sure you want to delete the meter '{{facility}}'"
-
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} meter will soon be synchronized"
 
-msgid "remove all"
-msgstr "remove all"
-
-msgid "hide all"
-msgstr "hide all"
-
-msgid "object type"
-msgstr "type"
-
-msgid "id"
-msgstr "id"
-
-msgid "value"
-msgstr "value"
-
-msgid "no measurements"
-msgstr "no measurements"
+msgid "readout"
+msgstr "readout"
 
 msgid "filter"
 msgstr "filter"
 
-msgid "graph"
-msgstr "graph"
+msgid "average"
+msgstr "average"
 
-msgid "table"
-msgstr "table"
+msgid "hide all"
+msgstr "hide all"
 
-msgid "select meters"
-msgstr "select meters"
+msgid "remove all"
+msgstr "remove all"
 
 msgid "only {{limit}} meters can be selected at the same time"
 msgstr "only {{limit}} meters can be selected at the same time"
-
-msgid "electricity"
-msgstr "electricity"
-
-msgid "hot water"
-msgstr "hot water"
-
-msgid "water"
-msgstr "water"
-
-msgid "district heating"
-msgstr "district heating"
-
-msgid "gas"
-msgstr "gas"
-
-msgid "room sensor"
-msgstr "room sensor"
 
 msgid "search result"
 msgstr "search result"
@@ -666,35 +642,20 @@ msgstr "create new selection"
 msgid "edit user selection"
 msgstr "edit user selection"
 
-msgid "show all in report"
-msgstr "show all in report"
+msgid "show average in report"
+msgstr "show average in report"
 
 msgid "delete user selection"
 msgstr "delete selection"
 
-msgid "no saved selections"
-msgstr "no saved selections"
-
-msgid "show average in report"
-msgstr "show average in report"
-
-msgid "average"
-msgstr "average"
-
 msgid "admin"
 msgstr "admin"
-
-msgid "metering"
-msgstr "metering"
 
 msgid "profile"
 msgstr "profile"
 
 msgid "logout"
 msgstr "logout"
-
-msgid "back"
-msgstr "back"
 
 msgctxt "°plural"
 msgid "city°"
@@ -732,75 +693,5 @@ msgctxt "°plural"
 msgid "during {{count}} days (or more)°"
 msgstr "during {{count}} days (or more)"
 
-#~ msgid "{{count}} gateway of your selection, are not displayed in the map"
-#~ msgstr "{{count}} gateway of your selection, are not displayed in the map"
-
-
-#~ msgid "saved selections"
-#~ msgstr "saved selections"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} gateway of your selection, are not displayed in the map°"
-#~ msgstr "{{count}} gateways of your selection, are not displayed in the map"
-
-#~ msgid "passwords are not equal"
-#~ msgstr "The passwords are not equal"
-
-#~ msgid "old password"
-#~ msgstr "password"
-
-#~ msgid "{{pending}} of {{count}}"
-#~ msgstr "{{pending}} of {{count}}"
-
-#~ msgid "measurement missing"
-#~ msgstr "measurement missing"
-
-#~ msgid "during"
-#~ msgstr "during"
-
-#~ msgid "days"
-#~ msgstr "days"
-
-#~ msgid "selection overview"
-#~ msgstr "selection overview"
-
-#~ msgctxt "°plural"
-#~ msgid "{{pending}} of {{count}}°"
-#~ msgstr "{{pending}} of {{count}}"
-
-#~ msgctxt "°plural"
-#~ msgid "measurement missing°"
-#~ msgstr "measurements missing"
-
-#~ msgid "other"
-#~ msgstr "other"
-
-#~ msgid "meter value"
-#~ msgstr "meter value"
-
-#~ msgid "status"
-#~ msgstr "status"
-
-#~ msgid "never collected"
-#~ msgstr "never collected"
-
-#~ msgid "none"
-#~ msgstr "none"
-
-#~ msgid "inside temperature"
-#~ msgstr "inside temperature"
-
-#~ msgid "info"
-#~ msgstr "info"
-
-#~ msgid "show on map"
-#~ msgstr "show on map"
-
-#~ msgid "cities"
-#~ msgstr "cities"
-
-#~ msgid "product models"
-#~ msgstr "product models"
-
-#~ msgid "no data found for selected meters during chosen interval"
-#~ msgstr "no data found for selected meters during chosen interval"
+msgid "object type"
+msgstr "type"

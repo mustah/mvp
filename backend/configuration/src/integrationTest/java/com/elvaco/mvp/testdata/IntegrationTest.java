@@ -15,6 +15,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -26,8 +27,10 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
+import com.elvaco.mvp.database.repository.jpa.DashboardJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
@@ -39,6 +42,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.WidgetJpaRepository;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 
@@ -100,6 +104,12 @@ public abstract class IntegrationTest implements ContextDsl {
   protected MeterDefinitionJpaRepository meterDefinitionJpaRepository;
 
   @Autowired
+  protected DashboardJpaRepository dashboardJpaRepository;
+
+  @Autowired
+  protected WidgetJpaRepository widgetJpaRepository;
+
+  @Autowired
   protected Users users;
 
   @Autowired
@@ -131,6 +141,12 @@ public abstract class IntegrationTest implements ContextDsl {
 
   @Autowired
   protected GatewayStatusLogs gatewayStatusLogs;
+
+  @Autowired
+  protected Dashboards dashboards;
+
+  @Autowired
+  protected Widgets widgets;
 
   @Autowired
   protected MediumProvider mediumProvider;
@@ -272,6 +288,8 @@ public abstract class IntegrationTest implements ContextDsl {
     physicalMeterJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
+    dashboardJpaRepository.deleteAll();
+    widgetJpaRepository.deleteAll();
     removeNonSystemMeterDefinitions();
   }
 
@@ -322,7 +340,9 @@ public abstract class IntegrationTest implements ContextDsl {
         measurements,
         gateways,
         gatewayStatusLogs,
-        meterDefinitions
+        meterDefinitions,
+        dashboards,
+        widgets
       );
     }
     return integrationTestFixtureContextFactory;

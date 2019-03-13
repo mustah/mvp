@@ -80,6 +80,7 @@ export interface OldSelectionParameters {
   secondaryAddresses: uuid[];
 }
 
+// TODO specify that customDateRange needs to exist if period === Period.custom
 export interface SelectionInterval {
   period: Period;
   customDateRange?: DateRange;

@@ -6,6 +6,7 @@ import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
+import {Dashboard} from './dashboard/dashboardModels';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterDetailMeasurement} from '../../usecases/meter/measurements/meterDetailMeasurementReducer';
 import {search} from '../../usecases/search/searchActions';
@@ -28,6 +29,7 @@ import {Medium, MeterDefinition, Quantity} from './meter-definitions/meterDefini
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {User} from './user/userModels';
+import {Widget} from './widget/WidgetModels';
 
 export const initialDomain = <T extends Identifiable>(): NormalizedState<T> => ({
   result: [],
@@ -190,6 +192,18 @@ const resetStateOnLogoutReducer = <S extends Identifiable>(
   }
 };
 
+const resetWidgetReducer = <S extends Identifiable>(
+  state: NormalizedState<S> = initialDomain<S>(),
+  {type}: ActionTypes<S>,
+): NormalizedState<S> => {
+  switch (type) {
+    case getType(logoutUser):
+      return initialDomain<S>();
+    default:
+      return state;
+  }
+};
+
 export const meters = reducerFor<MeterDetails>(
   'meters',
   EndPoints.meters,
@@ -250,6 +264,18 @@ export const collectionStats = reducerFor<CollectionStat>(
   resetStateReducer
 );
 
+export const dashboards = reducerFor<Dashboard>(
+  'dashboards',
+  EndPoints.dashboard,
+  resetStateOnLogoutReducer
+);
+
+export const widgets = reducerFor<Widget>(
+  'widgets',
+  EndPoints.widgets,
+  resetWidgetReducer
+);
+
 export const domainModels = combineReducers<DomainModelsState>({
   gatewayMapMarkers,
   meters,
@@ -262,4 +288,6 @@ export const domainModels = combineReducers<DomainModelsState>({
   users,
   collectionStats,
   mediums,
+  dashboards,
+  widgets,
 });

@@ -5,6 +5,7 @@ import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -18,6 +19,7 @@ import com.elvaco.mvp.core.spi.repository.Properties;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
@@ -53,6 +55,8 @@ class UseCaseConfig {
   private final MeterStatusLogs meterStatusLogs;
   private final TokenService tokenService;
   private final UserSelections userSelections;
+  private final Dashboards dashboards;
+  private final Widgets widgets;
   private final Locations locations;
   private final Properties properties;
   private final MeterAlarmLogs meterAlarmLogs;
@@ -104,7 +108,7 @@ class UseCaseConfig {
 
   @Bean
   DashboardUseCases dashboardUseCases(AuthenticatedUser currentUser) {
-    return new DashboardUseCases(logicalMeters, currentUser);
+    return new DashboardUseCases(currentUser, dashboards, widgets);
   }
 
   @Bean

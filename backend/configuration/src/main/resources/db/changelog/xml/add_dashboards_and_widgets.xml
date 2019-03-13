@@ -1,0 +1,93 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create table dashboard" author="Åsa Godin">
+    <createTable tableName="dashboard">
+      <column name="id" type="uuid">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="owner_user_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="organisation_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name" type="text"/>
+      <column name="layout" type="${jsonb_type}">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="dashboard"
+      baseColumnNames="owner_user_id"
+      constraintName="dashboard_mvp_user_id_fkey"
+      referencedTableName="mvp_user"
+      referencedColumnNames="id"
+      onDelete="CASCADE"
+    />
+
+    <addForeignKeyConstraint
+      baseTableName="dashboard"
+      baseColumnNames="organisation_id"
+      constraintName="dashboard_organisation_id_fkey"
+      referencedTableName="organisation"
+      referencedColumnNames="id"
+      onDelete="CASCADE"
+    />
+  </changeSet>
+
+  <changeSet id="Create table widget" author="Åsa Godin">
+    <createTable tableName="widget">
+      <column name="id" type="uuid">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="dashboard_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="owner_user_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="organisation_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="title" type="text"/>
+      <column name="settings" type="${jsonb_type}">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="widget"
+      baseColumnNames="dashboard_id"
+      constraintName="widget_dashboard_id_fkey"
+      referencedTableName="dashboard"
+      referencedColumnNames="id"
+      onDelete="CASCADE"
+    />
+
+    <addForeignKeyConstraint
+      baseTableName="widget"
+      baseColumnNames="owner_user_id"
+      constraintName="widget_mvp_user_id_fkey"
+      referencedTableName="mvp_user"
+      referencedColumnNames="id"
+      onDelete="CASCADE"
+    />
+
+    <addForeignKeyConstraint
+      baseTableName="widget"
+      baseColumnNames="organisation_id"
+      constraintName="widget_organisation_id_fkey"
+      referencedTableName="organisation"
+      referencedColumnNames="id"
+      onDelete="CASCADE"
+    />
+  </changeSet>
+
+</databaseChangeLog>

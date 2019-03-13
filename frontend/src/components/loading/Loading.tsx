@@ -28,3 +28,17 @@ export const LoadingSmall = () => (
     color={colors.blueA700}
   />
 );
+const widgetLoadingStyle: React.CSSProperties = {
+  marginTop: 30,
+  marginBottom: 30,
+  height: 58,
+};
+
+export const LoadingWidget = () => (
+  <CircularProgress
+    size={24}
+    thickness={2}
+    style={widgetLoadingStyle}
+    color={colors.blueA700}
+  />
+);

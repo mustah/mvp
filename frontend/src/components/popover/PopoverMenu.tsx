@@ -8,7 +8,7 @@ import {Row} from '../layouts/row/Row';
 import './PopoverMenu.scss';
 import origin = __MaterialUI.propTypes.origin;
 
-export interface IconProps {
+export interface IconProps extends React.CSSProperties {
   disabled?: boolean;
 }
 

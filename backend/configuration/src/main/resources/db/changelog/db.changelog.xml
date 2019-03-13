@@ -81,6 +81,7 @@
   <include file="xml/add_index_for_measurements.xml" relativeToChangelogFile="true"/>
   <include file="xml/drop_index_for_measurements.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_better_index_for_measurements.xml" relativeToChangelogFile="true"/>
+  <include file="xml/add_dashboards_and_widgets.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

@@ -13,6 +13,8 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
+import com.elvaco.mvp.core.domainmodels.Dashboard;
+import com.elvaco.mvp.core.domainmodels.Dashboard.DashboardBuilder;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Gateway.GatewayBuilder;
@@ -34,7 +36,11 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
+import com.elvaco.mvp.core.domainmodels.Widget;
+import com.elvaco.mvp.core.domainmodels.Widget.WidgetBuilder;
+import com.elvaco.mvp.core.domainmodels.WidgetType;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
+import com.elvaco.mvp.core.util.Json;
 import com.elvaco.mvp.core.util.Slugify;
 
 import static java.util.UUID.randomUUID;
@@ -279,6 +285,26 @@ public interface TestFixtures {
       .primaryKey(logicalMeter.activePhysicalMeter(now()).orElseThrow().primaryKey())
       .start(now())
       .mask(0);
+  }
+
+  default DashboardBuilder dashboard() {
+    return Dashboard.builder()
+      .id(randomUUID())
+      .ownerUserId(randomUUID())
+      .organisationId(organisationId())
+      .name(randomUUID().toString())
+      .layout(Json.OBJECT_MAPPER.createObjectNode());
+  }
+
+  default WidgetBuilder widget() {
+    return Widget.builder()
+      .id(randomUUID())
+      .dashboardId(randomUUID())
+      .ownerUserId(randomUUID())
+      .organisationId(organisationId())
+      .type(WidgetType.COLLECTION)
+      .title(randomUUID().toString())
+      .settings(Json.OBJECT_MAPPER.createObjectNode());
   }
 
   default UnitConverter unitConverter(boolean isSameDimension) {

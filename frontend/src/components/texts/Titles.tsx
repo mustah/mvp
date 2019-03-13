@@ -12,7 +12,7 @@ interface TitleProps {
 
 export const MainTitle = ({children, subtitle}: TitleProps) => (
   <Row className="MainTitle">
-    <Xlarge className="Bold">{children}</Xlarge>
+    <Xlarge>{children}</Xlarge>
     {subtitle && <Small className="Subtitle-description">{subtitle}</Small>}
   </Row>
 );

@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
+import com.elvaco.mvp.core.domainmodels.Dashboard;
+import com.elvaco.mvp.core.domainmodels.Dashboard.DashboardBuilder;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Gateway.GatewayBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -21,7 +23,10 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
+import com.elvaco.mvp.core.domainmodels.Widget;
+import com.elvaco.mvp.core.domainmodels.Widget.WidgetBuilder;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 
 import static com.elvaco.mvp.core.util.Json.toJsonNode;
@@ -53,6 +58,10 @@ public interface ContextDsl {
     UserBuilder... userBuilder
   ) {
     return context().given(organisationBuilder, userBuilder);
+  }
+
+  default User given(UserBuilder userBuilder) {
+    return context().given(userBuilder);
   }
 
   default Organisation given(OrganisationBuilder organisationBuilder) {
@@ -101,8 +110,24 @@ public interface ContextDsl {
     return context().given(meterDefinitionBuilder);
   }
 
+  default Dashboard given(DashboardBuilder dashboardBuilder) {
+    return context().given(dashboardBuilder);
+  }
+
+  default Widget given(WidgetBuilder widgetBuilder) {
+    return context().given(widgetBuilder);
+  }
+
   default LogicalMeterBuilder logicalMeter() {
     return context().logicalMeter();
+  }
+
+  default DashboardBuilder dashboard() {
+    return context().dashboard();
+  }
+
+  default WidgetBuilder widget() {
+    return context().widget();
   }
 
   default UserBuilder user() {

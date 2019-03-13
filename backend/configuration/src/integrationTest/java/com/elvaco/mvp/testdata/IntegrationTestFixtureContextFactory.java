@@ -4,6 +4,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -15,6 +16,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
@@ -41,6 +43,8 @@ class IntegrationTestFixtureContextFactory {
   private final Gateways gateways;
   private final GatewayStatusLogs gatewayStatusLogs;
   private final MeterDefinitions meterDefinitions;
+  private final Dashboards dashboards;
+  private final Widgets widgets;
 
   @Transactional
   public IntegrationTestFixtureContext create(String callSiteIdentifier) {
@@ -96,7 +100,9 @@ class IntegrationTestFixtureContextFactory {
       meterDefinitions,
       organisations,
       users,
-      userSelections
+      userSelections,
+      dashboards,
+      widgets
     );
   }
 

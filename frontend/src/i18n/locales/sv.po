@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-02-12T08:44:47.630Z\n"
+"POT-Creation-Date: 2019-03-18T15:09:40.416Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,6 +10,36 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
+
+msgid "failed to add dashboard: {{error}}"
+msgstr "misslyckades lägga till dashboard: {{error}}"
+
+msgid "successfully deleted the widget"
+msgstr "lyckades ta bort widgeten"
+
+msgid "failed to delete the widget"
+msgstr "lyckades inte ta bort widgeten"
+
+msgid "edit mode"
+msgstr "redigeringsläge"
+
+msgid "collection status"
+msgstr "insamlingsstatus"
+
+msgid "add widget"
+msgstr "lägg till widget"
+
+msgid "widget settings"
+msgstr "inställningar för widget"
+
+msgid "failed to update widget: {{error}}"
+msgstr "misslyckades uppdatera widget"
+
+msgid "failed to add widget: {{error}}"
+msgstr "misslyckades lägga till widget"
+
+msgid "failed to update dashboard: {{error}}"
+msgstr "lyckades inte uppdatera dashboarden: {{error}}"
 
 msgid "compare period"
 msgstr "jämför period"
@@ -104,17 +134,17 @@ msgstr "mätning"
 msgid "sync"
 msgstr "synka"
 
+msgid "delete meter"
+msgstr "ta bort mätare"
+
 msgid "add to report"
 msgstr "lägg till i rapport"
-
-msgid "add all to report"
-msgstr "lägg till alla i rapport"
 
 msgid "sync all meters on this page"
 msgstr "synka alla mätare på denna sida"
 
-msgid "login"
-msgstr "logga in"
+msgid "add all to report"
+msgstr "lägg till alla i rapport"
 
 msgid "retry"
 msgstr "försök igen"
@@ -167,11 +197,23 @@ msgstr "är du säker på att du vill ta bort detta objekt"
 msgid "all"
 msgstr "alla"
 
-msgid "select quantities"
-msgstr "välj storheter"
-
 msgid "version"
 msgstr "version"
+
+msgid "name"
+msgstr "namn"
+
+msgid "organisation"
+msgstr "organisation"
+
+msgid "medium"
+msgstr "medium"
+
+msgid "required field"
+msgstr "obligatoriskt fält"
+
+msgid "default"
+msgstr "standard"
 
 msgid "organisation name"
 msgstr "organisationsnamn"
@@ -197,14 +239,8 @@ msgstr "ändra lösenord"
 msgid "passwords don't match"
 msgstr "lösenorden är inte lika"
 
-msgid "name"
-msgstr "namn"
-
 msgid "email"
 msgstr "e-post"
-
-msgid "organisation"
-msgstr "organisation"
 
 msgid "user roles"
 msgstr "användarroller"
@@ -248,8 +284,8 @@ msgstr "lista"
 msgid "map"
 msgstr "karta"
 
-msgid "measurements"
-msgstr "mätvärden"
+msgid "collection"
+msgstr "insamling"
 
 msgid "all timestamps are displayed in UTC+1"
 msgstr "alla tider visas i UTC+1"
@@ -266,9 +302,6 @@ msgstr "serienummer"
 msgid "product model"
 msgstr "modell"
 
-msgid "collection"
-msgstr "insamling"
-
 msgid "status change"
 msgstr "statusförändring"
 
@@ -284,20 +317,11 @@ msgstr "anläggnings-ID"
 msgid "manufacturer"
 msgstr "tillverkare"
 
-msgid "medium"
-msgstr "medium"
-
 msgid "alarm"
 msgstr "larm"
 
 msgid "collection percentage"
 msgstr "insamling %"
-
-msgid "hour in short"
-msgstr "h"
-
-msgid "minute in short"
-msgstr "m"
 
 msgid "resolution"
 msgstr "upplösning"
@@ -332,6 +356,9 @@ msgstr "telefonnummer"
 msgid "no gateway connected"
 msgstr "ingen gateway är ansluten"
 
+msgid "measurements"
+msgstr "mätvärden"
+
 msgid "events"
 msgstr "händelser"
 
@@ -344,11 +371,8 @@ msgstr "datum"
 msgid "event"
 msgstr "händelse"
 
-msgid "readout"
-msgstr "avläsning"
-
-msgid "facility"
-msgstr "anläggning"
+msgid "back"
+msgstr "tillbaka"
 
 msgid "Volume short"
 msgstr "Volume"
@@ -392,6 +416,12 @@ msgstr "close"
 msgid "no"
 msgstr "nej"
 
+msgid "hour in short"
+msgstr "h"
+
+msgid "minute in short"
+msgstr "m"
+
 msgid "ok"
 msgstr "ok"
 
@@ -418,6 +448,30 @@ msgstr "du har ingen internetuppkoppling"
 msgid ""
 "looks like the server is taking to long to respond, please try again in soon"
 msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"
+
+msgid "successfully deleted the meter {{facility}}"
+msgstr "lyckades ta bort mätare '{{facility}}'"
+
+msgid "failed to delete the meter: {{error}}"
+msgstr "lyckades inte ta bort mätaren: {{error}}"
+
+msgid "successfully deleted the meter definition {{name}}"
+msgstr "lyckades ta bort mätardefinitionen '{{name}}'"
+
+msgid "failed to delete the meter definition: {{error}}"
+msgstr "lyckades inte ta bort mätardefinitionen: {{error}}"
+
+msgid "successfully created the meter definition {{name}}"
+msgstr "skapade mätardefinitionen '{{name}}'"
+
+msgid "failed to create meter definition: {{error}}"
+msgstr "misslyckades skapa mätardefinitionen: {{error}}"
+
+msgid "successfully updated the meter definition {{name}}"
+msgstr "lyckades uppdatera mätardefinitionen '{{name}}'"
+
+msgid "failed to update meter definition: {{error}}"
+msgstr "misslyckades med att uppdatera mätardefinitionen: {{error}}"
 
 msgid "no parent organisation"
 msgstr "ingen huvudorganisation"
@@ -488,6 +542,18 @@ msgstr "lägg till organisation"
 msgid "add user"
 msgstr "lägg till användare"
 
+msgid "edit meter definition"
+msgstr "redigera mätardefinition"
+
+msgid "delete meter definition"
+msgstr "ta bort mätardefinition"
+
+msgid "add meter definition"
+msgstr "lägg till mätardefinition"
+
+msgid "meter definitions"
+msgstr "mätardefinitioner"
+
 msgid "edit organisation"
 msgstr "redigera organisation"
 
@@ -499,6 +565,21 @@ msgstr "kod"
 
 msgid "organisations"
 msgstr "organisationer"
+
+msgid "add quantity"
+msgstr "lägg till kvantitet"
+
+msgid "quantity"
+msgstr "storhet"
+
+msgid "display unit"
+msgstr "visningsenhet"
+
+msgid "consumption"
+msgstr "förbrukning"
+
+msgid "precision"
+msgstr "precision"
 
 msgid "edit user"
 msgstr "redigera användare"
@@ -518,8 +599,32 @@ msgstr "din e-post"
 msgid "your password"
 msgstr "ditt lösenord"
 
+msgid "login"
+msgstr "logga in"
+
+msgid "facility"
+msgstr "anläggning"
+
+msgid "graph"
+msgstr "graf"
+
+msgid "table"
+msgstr "tabell"
+
+msgid "export to excel"
+msgstr "exportera till Excel"
+
 msgid "dashboard"
 msgstr "dashboard"
+
+msgid "edit widget"
+msgstr "redigera widget"
+
+msgid "delete widget"
+msgstr "ta bort widget"
+
+msgid "add new widget"
+msgstr "lägg till widget"
 
 msgid "all meters"
 msgstr "alla mätare"
@@ -532,9 +637,6 @@ msgstr "inga gateways"
 
 msgid "report"
 msgstr "rapport"
-
-msgid "your saved reports will appear here"
-msgstr "dina sparade rapporter kommer att synas här"
 
 msgid "{{count}} meter of your selection, are not displayed in the map"
 msgstr "{{count}} mätare av ditt ursprungliga urval, visas inte på kartan"
@@ -549,59 +651,32 @@ msgstr "{{count}} gateway av ditt ursprungliga urval, visas inte på kartan"
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
+msgid "are you sure you want to delete the meter {{facility}}"
+msgstr "är du säkert på att du vill ta bort mätare '{{facility}}'"
+
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
 
-msgid "remove all"
-msgstr "ta bort alla"
-
-msgid "hide all"
-msgstr "göm alla"
-
-msgid "object type"
-msgstr "typ"
-
-msgid "id"
-msgstr "id"
-
-msgid "value"
-msgstr "värde"
-
-msgid "no measurements"
-msgstr "inga mätvärden"
+msgid "readout"
+msgstr "avläsning"
 
 msgid "filter"
 msgstr "filtrera"
 
-msgid "graph"
-msgstr "graf"
+msgid "average"
+msgstr "medelvärde"
 
-msgid "table"
-msgstr "tabell"
+msgid "compare period"
+msgstr "jämför period"
 
-msgid "select meters"
-msgstr "välj mätare"
+msgid "hide all"
+msgstr "göm alla"
+
+msgid "remove all"
+msgstr "ta bort alla"
 
 msgid "only {{limit}} meters can be selected at the same time"
 msgstr "endast {{limit}} mätare kan väljas samtidigt"
-
-msgid "electricity"
-msgstr "el"
-
-msgid "hot water"
-msgstr "varmvatten"
-
-msgid "water"
-msgstr "vatten"
-
-msgid "district heating"
-msgstr "fjärrvärme"
-
-msgid "gas"
-msgstr "gas"
-
-msgid "room sensor"
-msgstr "rumsgivare"
 
 msgid "search result"
 msgstr "sökresultat"
@@ -633,38 +708,32 @@ msgstr "under en dag (eller mer)"
 msgid "clear threshold"
 msgstr "rensa gränsvärde"
 
+msgid "within"
+msgstr "under"
+
 msgid "create new selection"
 msgstr "skapa nytt urval"
 
 msgid "edit user selection"
 msgstr "redigera urval"
 
-msgid "show all in report"
-msgstr "visa alla i rapport"
+msgid "show average in report"
+msgstr "visa medelvärde i rapport"
 
 msgid "delete user selection"
 msgstr "ta bort urval"
 
-msgid "no saved selections"
-msgstr "inga sparade urval"
-
-msgid "show average in report"
-msgstr "visa medelvärde i rapport"
-
-msgid "average"
-msgstr "medelvärde"
-
 msgid "admin"
 msgstr "admin"
+
+msgid "metering"
+msgstr "mätning"
 
 msgid "profile"
 msgstr "profil"
 
 msgid "logout"
 msgstr "logga ut"
-
-msgid "back"
-msgstr "tillbaka"
 
 msgctxt "°plural"
 msgid "city°"
@@ -704,74 +773,5 @@ msgctxt "°plural"
 msgid "during {{count}} days (or more)°"
 msgstr "under {{count}} dagar (eller mer)"
 
-#~ msgid "{{count}} gateway of your selection, are not displayed in the map"
-#~ msgstr "{{count}} gateway of your selection, are not displayed in the map"
-
-#~ msgid "saved selections"
-#~ msgstr "sparade urval"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} gateway of your selection, are not displayed in the map°"
-#~ msgstr "{{count}} gateways av ditt ursprungliga urval, visas inte på kartan"
-
-#~ msgid "passwords are not equal"
-#~ msgstr "lösenorden är inte lika"
-
-#~ msgid "old password"
-#~ msgstr "lösenord"
-
-#~ msgid "{{pending}} of {{count}}"
-#~ msgstr "{{pending}} av {{count}}"
-
-#~ msgid "measurement missing"
-#~ msgstr "mätvärde saknas"
-
-#~ msgid "during"
-#~ msgstr "under"
-
-#~ msgid "days"
-#~ msgstr "dagar"
-
-#~ msgid "selection overview"
-#~ msgstr "urvalsöversikt"
-
-#~ msgctxt "°plural"
-#~ msgid "{{pending}} of {{count}}°"
-#~ msgstr "{{pending}} av {{count}}"
-
-#~ msgctxt "°plural"
-#~ msgid "measurement missing°"
-#~ msgstr "mätvärden saknas"
-
-#~ msgid "other"
-#~ msgstr "övriga"
-
-#~ msgid "meter value"
-#~ msgstr "mätvärde"
-
-#~ msgid "status"
-#~ msgstr "status"
-
-#~ msgid "never collected"
-#~ msgstr "ej insamlad"
-
-#~ msgid "none"
-#~ msgstr "ingen"
-
-#~ msgid "inside temperature"
-#~ msgstr "temp. inomhus"
-
-#~ msgid "info"
-#~ msgstr "info"
-
-#~ msgid "show on map"
-#~ msgstr "visa på karta"
-
-#~ msgid "cities"
-#~ msgstr "städer"
-
-#~ msgid "product models"
-#~ msgstr "produktmodeller"
-
-#~ msgid "no data found for selected meters during chosen interval"
-#~ msgstr "ingen data finns för valda mätare under tidsperioden"
+msgid "object type"
+msgstr "typ"
