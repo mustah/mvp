@@ -1,6 +1,7 @@
 import {DataResult, process, State} from '@progress/kendo-data-query';
 import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
 import Drawer from 'material-ui/Drawer';
+import IconButton from 'material-ui/IconButton';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
@@ -17,6 +18,7 @@ import {QuantityCell, quantityColumnWidth, renderColumns, RowProps, rowRenderer}
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
 import {isMedium, LegendType} from '../reportModels';
 import './Legend.scss';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 const legendGridStyle: React.CSSProperties = {
   ...gridStyle,
@@ -131,6 +133,9 @@ export const Legend = ({
       width={width}
       overlayStyle={{backgroundColor: 'transparent'}}
     >
+      <IconButton onClick={showHideLegend} className={'close-button'}>
+        <NavigationClose/>
+      </IconButton>
       <Column className="Legend Grouping-grid">
         <Grid
           data={dataResult}
