@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.util;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.TimeZone;
 
 import lombok.experimental.UtilityClass;
@@ -22,5 +23,17 @@ public final class Dates {
 
   public static ZonedDateTime epoch() {
     return ZonedDateTime.ofInstant(Instant.EPOCH, UTC.toZoneId());
+  }
+
+  public static ZonedDateTime earliest(Collection<ZonedDateTime> dateTimes) {
+    return dateTimes.stream()
+      .min(ZonedDateTime::compareTo)
+      .orElseThrow(() -> new IllegalArgumentException("Empty collection"));
+  }
+
+  public static ZonedDateTime latest(Collection<ZonedDateTime> dateTimes) {
+    return dateTimes.stream()
+      .max(ZonedDateTime::compareTo)
+      .orElseThrow(() -> new IllegalArgumentException("Empty collection"));
   }
 }

@@ -85,19 +85,11 @@ public class JooqUtils {
     Temporal from,
     Temporal to,
     String resolution,
-    boolean isConsumption,
     String valueFieldName
   ) {
-    String expr;
-    if (isConsumption) {
-      expr = "generate_series({0} at time zone 'UTC',"
-        + "{1} at time zone 'UTC' + cast({2} as interval),"
-        + "{2}::interval) as " + valueFieldName;
-    } else {
-      expr = "generate_series({0} at time zone 'UTC',"
-        + "{1} at time zone 'UTC',"
-        + "{2}::interval) as " + valueFieldName;
-    }
+    String expr = "generate_series({0} at time zone 'UTC',"
+      + "{1} at time zone 'UTC',"
+      + "{2}::interval) as " + valueFieldName;
     return table(
       expr,
       from,

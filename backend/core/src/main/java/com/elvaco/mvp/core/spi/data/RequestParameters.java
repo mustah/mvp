@@ -55,6 +55,10 @@ public interface RequestParameters {
     }
   }
 
+  default RequestParameters setPeriod(ZonedDateTime start, ZonedDateTime stop) {
+    return add(AFTER, start.toString()).add(BEFORE, stop.toString());
+  }
+
   default Optional<SelectionPeriod> getPeriod() {
     Optional<ZonedDateTime> start = getAsZonedDateTime(AFTER);
     Optional<ZonedDateTime> stop = getAsZonedDateTime(BEFORE);

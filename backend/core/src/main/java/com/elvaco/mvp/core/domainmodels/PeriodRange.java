@@ -88,6 +88,16 @@ public class PeriodRange implements Serializable {
     return this == EMPTY;
   }
 
+  public Optional<ZonedDateTime> getFirstIncluded() {
+    return getStartDateTime()
+      .map(dateTime -> start.isInclusive ? dateTime : dateTime.plusNanos(1));
+  }
+
+  public Optional<ZonedDateTime> getLastIncluded() {
+    return getStopDateTime()
+      .map(dateTime -> stop.isInclusive ? dateTime : dateTime.minusNanos(1));
+  }
+
   public Optional<ZonedDateTime> getStartDateTime() {
     return Optional.ofNullable(start.dateTime);
   }

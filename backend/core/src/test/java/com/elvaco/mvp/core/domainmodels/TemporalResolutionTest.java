@@ -4,11 +4,9 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
-import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.TemporalResolution.defaultResolutionFor;
-import static com.elvaco.mvp.core.domainmodels.TemporalResolution.fromString;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TemporalResolutionTest {
@@ -77,20 +75,5 @@ public class TemporalResolutionTest {
     ZonedDateTime end = START.minusDays(2);
     assertThat(defaultResolutionFor(Duration.between(START, end)))
       .isEqualTo(TemporalResolution.hour);
-  }
-
-  @Test
-  public void fromString_InvalidArgument() {
-    SoftAssertions.assertSoftly(softly -> {
-      softly.assertThat(fromString("")).isNotPresent();
-      softly.assertThat(fromString("blaha")).isNotPresent();
-      // plural given, when singular would be correct
-      softly.assertThat(fromString("hours")).isNotPresent();
-    });
-  }
-
-  @Test
-  public void fromString_Valid() {
-    assertThat(fromString("hour")).isPresent().contains(TemporalResolution.hour);
   }
 }

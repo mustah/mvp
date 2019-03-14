@@ -1,13 +1,18 @@
 package com.elvaco.mvp.core.util;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.util.Dates.earliest;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
+import static com.elvaco.mvp.core.util.Dates.latest;
 import static com.elvaco.mvp.testing.util.DateHelper.utcZonedDateTimeOf;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class DatesTest {
 
@@ -39,5 +44,43 @@ public class DatesTest {
   public void format() {
     String utcTime = formatUtc(utcZonedDateTimeOf("2018-02-12T14:14:25Z"));
     assertThat(utcTime).isEqualTo("2018-02-12T14:14:25Z");
+  }
+
+  @Test
+  public void earliest_EmptyThrows() {
+    assertThatThrownBy(() -> earliest(emptyList())).isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  public void earliest_GetsEarliest() {
+    ZonedDateTime early = ZonedDateTime.now();
+    ZonedDateTime later = early.plusHours(1);
+    assertThat(earliest(List.of(later, early))).isEqualTo(early);
+  }
+
+  @Test
+  public void earliest_GetsEarliestWhenDuplicatesExist() {
+    ZonedDateTime early = ZonedDateTime.now();
+    ZonedDateTime later = early.plusHours(1);
+    assertThat(earliest(List.of(early, later, early))).isEqualTo(early);
+  }
+
+  @Test
+  public void latest_EmptyThrows() {
+    assertThatThrownBy(() -> latest(emptyList())).isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  public void latest_GetsLatest() {
+    ZonedDateTime early = ZonedDateTime.now();
+    ZonedDateTime later = early.plusHours(1);
+    assertThat(latest(List.of(later, early))).isEqualTo(later);
+  }
+
+  @Test
+  public void latest_GetsLatestWhenDuplicatesExist() {
+    ZonedDateTime early = ZonedDateTime.now();
+    ZonedDateTime later = early.plusHours(1);
+    assertThat(latest(List.of(later, early, later))).isEqualTo(later);
   }
 }

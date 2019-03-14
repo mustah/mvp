@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import com.elvaco.mvp.core.exception.EmailAddressAlreadyExists;
 import com.elvaco.mvp.core.exception.InvalidDisplayQuantity;
+import com.elvaco.mvp.core.exception.InvalidId;
 import com.elvaco.mvp.core.exception.InvalidMeterDefinition;
 import com.elvaco.mvp.core.exception.InvalidUserSelection;
 import com.elvaco.mvp.core.exception.NoPhysicalMeters;
@@ -135,6 +136,11 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler(NoSuchQuantity.class)
   public ResponseEntity<ErrorMessageDto> handle(NoSuchQuantity exception) {
+    return badRequest(exception);
+  }
+
+  @ExceptionHandler(InvalidId.class)
+  public ResponseEntity<ErrorMessageDto> handle(InvalidId exception) {
     return badRequest(exception);
   }
 

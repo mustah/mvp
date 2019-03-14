@@ -2,7 +2,8 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.UUID;
+
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MeasurementParameter {
 
-  private final List<UUID> logicalMeterIds;
+  private final RequestParameters parameters;
   private final List<QuantityParameter> quantities;
   private final ZonedDateTime from;
   private final ZonedDateTime to;

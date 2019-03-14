@@ -97,4 +97,20 @@ public class PeriodRangeTest {
     ZonedDateTime dateTime = ZonedDateTime.parse("2018-01-01T08:00:00Z");
     assertThat(PeriodRange.halfOpenFrom(null, dateTime).isRightOpen()).isFalse();
   }
+
+  @Test
+  public void closedBoundsOverInfinityIsConvertedToOpen() {
+    ZonedDateTime dateTime = ZonedDateTime.parse("2018-01-01T08:00:00Z");
+    assertThat(PeriodRange.closedFrom(null, dateTime)).isEqualTo(
+      new PeriodRange(PeriodBound.exclusiveOf(null), PeriodBound.inclusiveOf(dateTime))
+    );
+
+    assertThat(PeriodRange.closedFrom(dateTime, null)).isEqualTo(
+      new PeriodRange(PeriodBound.inclusiveOf(dateTime), PeriodBound.exclusiveOf(null))
+    );
+
+    assertThat(PeriodRange.closedFrom(null, null)).isEqualTo(
+      new PeriodRange(PeriodBound.exclusiveOf(null), PeriodBound.exclusiveOf(null))
+    );
+  }
 }

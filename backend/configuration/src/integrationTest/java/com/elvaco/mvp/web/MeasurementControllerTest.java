@@ -40,8 +40,8 @@ import static com.elvaco.mvp.core.domainmodels.Units.PERCENT;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.Assertions.within;
-import static org.assertj.core.groups.Tuple.tuple;
 
 public class MeasurementControllerTest extends IntegrationTest {
 
@@ -70,6 +70,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .getList(
         "/measurements?resolution=hour"
           + "&logicalMeterId=" + meter.id
+          + "&quantity=Difference+temperature"
           + "&after=" + date
           + "&before=" + date.plusHours(1),
         MeasurementDto.class
@@ -191,12 +192,12 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
         + "logicalMeterId=" + heatMeter.id
+        + "&quantity=Difference+temperature,Energy"
         + "&after=" + date
         + "&before=" + date.plusHours(1)
         + "&resolution=hour");
 
     assertThat(contents)
-      .hasSize(MeterDefinition.DEFAULT_DISTRICT_HEATING.quantities.size())
       .contains(
         new MeasurementSeriesDto(
           heatMeter.id.toString(),
@@ -206,17 +207,6 @@ public class MeasurementControllerTest extends IntegrationTest {
           MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
           asList(
             new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
-            new MeasurementValueDto(date.plusHours(1).toInstant(), null)
-          )
-        ),
-        new MeasurementSeriesDto(
-          heatMeter.id.toString(),
-          "Energy",
-          "kWh",
-          getExpecedLabel(heatMeter),
-          MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
-          asList(
-            new MeasurementValueDto(date.toInstant(), null),
             new MeasurementValueDto(date.plusHours(1).toInstant(), null)
           )
         )

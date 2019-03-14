@@ -2,9 +2,11 @@ package com.elvaco.mvp.access;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -18,6 +20,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.exception.UnitConversionError;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Test;
@@ -27,6 +30,8 @@ import static com.elvaco.mvp.core.domainmodels.DisplayMode.READOUT;
 import static com.elvaco.mvp.core.domainmodels.Units.CUBIC_METRES;
 import static com.elvaco.mvp.core.domainmodels.Units.KILOWATT;
 import static com.elvaco.mvp.core.domainmodels.Units.WATT;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -58,7 +63,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.id),
+          idParametersOf(meter),
           quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
@@ -81,7 +86,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.id),
+          idParametersOf(meter),
           quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(4),
@@ -111,7 +116,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.id),
+          idParametersOf(meter),
           quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
@@ -138,7 +143,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.id),
+          idParametersOf(meter),
           quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
@@ -166,7 +171,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.id),
+          idParametersOf(meter),
           quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
@@ -193,7 +198,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.id),
+          idParametersOf(meter),
           quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
@@ -213,7 +218,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(2),
@@ -238,7 +243,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(1),
@@ -265,7 +270,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
-        List.of(meterOne.id, meterTwo.id),
+        idParametersOf(meterOne, meterTwo),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(2),
@@ -301,7 +306,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
-        List.of(meterOne.id, meterTwo.id),
+        idParametersOf(meterOne, meterTwo),
         quantityParametersOf(VOLUME_DISPLAY),
         start,
         start.plusHours(1),
@@ -342,18 +347,18 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
-        List.of(logicalMeter.id),
+        idParametersOf(logicalMeter),
         quantityParametersOf(POWER_DISPLAY),
         start.minusDays(2),
         start.plusDays(1),
         TemporalResolution.day
       ));
 
-    assertThat(result.get(getKey(logicalMeter, physicalMeterOne.address, Quantity.POWER)))
+    assertThat(result.get(getKey(logicalMeter, physicalMeterOne, Quantity.POWER)))
       .extracting(l -> l.value)
       .containsExactly(2.0, 4.0);
 
-    assertThat(result.get(getKey(logicalMeter, physicalMeterTwo.address, Quantity.POWER)))
+    assertThat(result.get(getKey(logicalMeter, physicalMeterTwo, Quantity.POWER)))
       .extracting(l -> l.value)
       .containsExactly(6.0, 12.0);
   }
@@ -376,18 +381,18 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
-        List.of(logicalMeter.id),
+        idParametersOf(logicalMeter),
         quantityParametersOf(VOLUME_DISPLAY),
         start.minusDays(2),
         start,
         TemporalResolution.day
       ));
 
-    assertThat(result.get(getKey(logicalMeter, physicalMeterOne.address, Quantity.VOLUME)))
+    assertThat(result.get(getKey(logicalMeter, physicalMeterOne, Quantity.VOLUME)))
       .extracting(l -> l.value)
       .containsExactly(2.0, null);
 
-    assertThat(result.get(getKey(logicalMeter, physicalMeterTwo.address, Quantity.VOLUME)))
+    assertThat(result.get(getKey(logicalMeter, physicalMeterTwo, Quantity.VOLUME)))
       .extracting(l -> l.value)
       .containsExactly(6.0);
   }
@@ -437,7 +442,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(displayQuantity),
         start,
         start.plusSeconds(1),
@@ -474,7 +479,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
       new MeasurementParameter(
-        List.of(meter.id),
+        idParametersOf(meter),
         quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(1),
@@ -510,16 +515,32 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     ));
   }
 
-  private MeasurementKey getKey(
-    LogicalMeter meter,
-    String physicalMeterAddress,
-    Quantity quantity
-  ) {
-    return new MeasurementKey(meter.id, physicalMeterAddress, quantity.name);
-  }
-
   private MeasurementKey getKey(LogicalMeter meter, Quantity quantity) {
     assertThat(meter.physicalMeters.size()).isEqualTo(1);
-    return new MeasurementKey(meter.id, meter.physicalMeters.get(0).address, quantity.name);
+    return getKey(meter, meter.physicalMeters.get(0), quantity);
+  }
+
+  private MeasurementKey getKey(
+    LogicalMeter meter,
+    PhysicalMeter physicalMeter,
+    Quantity quantity
+  ) {
+    return new MeasurementKey(
+      meter.id,
+      physicalMeter.address,
+      physicalMeter.activePeriod,
+      quantity.name,
+      meter.externalId,
+      meter.location.getCity(),
+      meter.location.getAddress(),
+      meter.getMedium().name
+    );
+  }
+
+  private RequestParameters idParametersOf(LogicalMeter... meters) {
+    return RequestParametersAdapter.of(Map.of(
+      LOGICAL_METER_ID.toString(),
+      Arrays.stream(meters).map(meter -> meter.id.toString()).collect(toList())
+    ));
   }
 }

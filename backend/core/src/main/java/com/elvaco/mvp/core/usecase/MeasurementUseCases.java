@@ -32,14 +32,22 @@ public class MeasurementUseCases {
     return measurements.findAll(parameters.ensureOrganisationFilters(currentUser));
   }
 
-  public Map<String, List<MeasurementValue>> findAverageForPeriod(MeasurementParameter parameter) {
-    return measurements.findAverageForPeriod(parameter);
+  public Map<String, List<MeasurementValue>> findAverageForPeriod(
+    MeasurementParameter parameter
+  ) {
+    return measurements.findAverageForPeriod(
+      parameter.toBuilder()
+        .parameters(parameter.getParameters().ensureOrganisationFilters(currentUser))
+        .build()
+    );
   }
 
   public Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(
     MeasurementParameter parameter
   ) {
-    return measurements.findSeriesForPeriod(parameter);
+    return measurements.findSeriesForPeriod(parameter.toBuilder()
+      .parameters(parameter.getParameters().ensureOrganisationFilters(currentUser))
+      .build());
   }
 
   public Map<String, QuantityParameter> getPreferredQuantityParameters(
