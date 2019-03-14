@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
-import {TemporalResolution} from '../../../components/dates/dateModels';
 import {identity} from '../../../helpers/commonHelpers';
+import {readIntervalToTemporal} from '../../../helpers/dateHelpers';
 import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
 import {MeasurementParameters, MeasurementResponse} from '../../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
@@ -22,7 +22,7 @@ export const getMeasurementParameters =
     getPeriod,
     (meter: MeterDetails, timePeriod: SelectionInterval) => ({
       legendItems: [toLegendItemAllQuantities(meter)],
-      resolution: TemporalResolution.day,
+      resolution: readIntervalToTemporal(meter.readIntervalMinutes),
       dateRange: timePeriod,
       shouldComparePeriod: false,
       shouldShowAverage: false,

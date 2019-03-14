@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../../reducers/rootReducer';
-import {changeCollectionToolbarView} from '../../../../state/ui/toolbar/toolbarActions';
+import {changeMeterMeasurementsToolbarView} from '../../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith} from '../../../../types/Types';
@@ -30,7 +30,7 @@ export type Props = StateToProps & DispatchToProps;
 
 const mapStateToProps = ({
   meterDetail: {isTimePeriodDefault, timePeriod},
-  ui: {toolbar: {collection: {view}}},
+  ui: {toolbar: {meterMeasurement: {view}}},
   domainModels: {meterDetailMeasurement: {isFetching, measurementResponse: {measurements}}},
   collection
 }: RootState,            {useCollectionPeriod}: OwnProps): StateToProps => ({
@@ -41,7 +41,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  changeToolbarView: changeCollectionToolbarView,
+  changeToolbarView: changeMeterMeasurementsToolbarView,
   exportToExcel,
   setMeterDetailsTimePeriod,
 }, dispatch);
