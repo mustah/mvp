@@ -15,6 +15,6 @@ export interface OwnProps {
 
 export type Props = StateToProps & OwnProps;
 
-const mapStateToProps = ({ui: {toolbar: {collection: {view}}}}: RootState): StateToProps => ({view});
+const mapStateToProps = ({ui: {toolbar: {meterMeasurement: {view}}}}: RootState): StateToProps => ({view});
 
 export const MeasurementsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(MeasurementContent);
