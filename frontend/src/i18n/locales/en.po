@@ -690,6 +690,9 @@ msgstr "profile"
 msgid "logout"
 msgstr "logout"
 
+msgid "back"
+msgstr "back"
+
 msgctxt "°plural"
 msgid "city°"
 msgstr "cities"
