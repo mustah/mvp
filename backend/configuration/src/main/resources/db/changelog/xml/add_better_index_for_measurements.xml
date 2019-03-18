@@ -1,0 +1,13 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Add  more selective measurement index" author="Anton Löfgren">
+    <sql>
+      create unique index if not exists
+      measurement_physical_meter_id_quantity_created_value_idx
+      on measurement (physical_meter_id,quantity,created,value);
+    </sql>
+  </changeSet>
+</databaseChangeLog>
