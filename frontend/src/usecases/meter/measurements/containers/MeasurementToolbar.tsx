@@ -60,7 +60,6 @@ export const MeasurementToolbar = ({
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
         <PeriodSelection
-          disabled={!hasMeasurements}
           customDateRange={customDateRange}
           period={timePeriod.period}
           selectPeriod={selectPeriod}
