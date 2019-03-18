@@ -1,22 +1,13 @@
 package com.elvaco.mvp.configuration.config;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.AmqpMessagePublisher;
 import com.elvaco.mvp.configuration.config.properties.RabbitConsumerProperties;
-import com.elvaco.mvp.consumers.rabbitmq.message.AlarmMessageConsumer;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringAlarmMessageConsumer;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageConsumer;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageListener;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringReferenceInfoMessageConsumer;
-import com.elvaco.mvp.consumers.rabbitmq.message.ReferenceInfoMessageConsumer;
-import com.elvaco.mvp.core.access.MediumProvider;
-import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
@@ -24,20 +15,8 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
-import com.elvaco.mvp.core.spi.geocode.GeocodeService;
-import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.unitconverter.UnitConverter;
-import com.elvaco.mvp.core.usecase.GatewayUseCases;
-import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
-import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.usecase.MeterDefinitionUseCases;
-import com.elvaco.mvp.core.usecase.OrganisationUseCases;
-import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
-import com.elvaco.mvp.core.usecase.PropertiesUseCases;
-import com.elvaco.mvp.core.util.MessageThrottler;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
-import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 
@@ -55,11 +34,13 @@ import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,74 +56,6 @@ import static java.util.UUID.randomUUID;
 class RabbitMqConfig {
 
   private final RabbitConsumerProperties consumerProperties;
-  private final LogicalMeterUseCases logicalMeterUseCases;
-  private final PhysicalMeterUseCases physicalMeterUseCases;
-  private final OrganisationUseCases organisationUseCases;
-  private final MeasurementUseCases measurementUseCases;
-  private final GatewayUseCases gatewayUseCases;
-  private final MeterDefinitionUseCases meterDefinitionUseCases;
-  private final GeocodeService geocodeService;
-  private final PropertiesUseCases propertiesUseCases;
-  private final MeterAlarmLogs meterAlarmLogs;
-  private final UnitConverter unitConverter;
-  private final MediumProvider mediumProvider;
-  private final SystemMeterDefinitionProvider meterDefinitionProvider;
-
-  @Bean
-  MeasurementMessageConsumer measurementMessageConsumer() {
-    return new MeteringMeasurementMessageConsumer(
-      logicalMeterUseCases,
-      physicalMeterUseCases,
-      organisationUseCases,
-      measurementUseCases,
-      gatewayUseCases,
-      meterDefinitionUseCases,
-      unitConverter,
-      mediumProvider
-    );
-  }
-
-  @Bean
-  ReferenceInfoMessageConsumer referenceInfoMessageConsumer(
-    JobService<MeteringReferenceInfoMessageDto> meterSyncJobService
-  ) {
-    return new MeteringReferenceInfoMessageConsumer(
-      logicalMeterUseCases,
-      physicalMeterUseCases,
-      organisationUseCases,
-      gatewayUseCases,
-      geocodeService,
-      propertiesUseCases,
-      meterSyncJobService,
-      mediumProvider,
-      meterDefinitionUseCases
-    );
-  }
-
-  @Bean
-  AlarmMessageConsumer alarmMessageConsumer() {
-    return new MeteringAlarmMessageConsumer(
-      physicalMeterUseCases,
-      organisationUseCases,
-      meterAlarmLogs
-    );
-  }
-
-  @Bean
-  MessageListener messageListener(
-    MeasurementMessageConsumer measurementMessageConsumer,
-    ReferenceInfoMessageConsumer referenceInfoMessageConsumer,
-    AlarmMessageConsumer alarmMessageConsumer,
-    MessageThrottler<String, GetReferenceInfoDto> meteringMessageThrottler
-  ) {
-    return new MeteringMessageListener(
-      new MeteringMessageParser(),
-      measurementMessageConsumer,
-      referenceInfoMessageConsumer,
-      alarmMessageConsumer,
-      meteringMessageThrottler
-    );
-  }
 
   @Bean
   MessageListenerAdapter listenerAdapter(
@@ -246,13 +159,23 @@ class RabbitMqConfig {
     listenerAdapter.setResponseExchange(consumerProperties.getResponseExchange());
     listenerAdapter.setResponseRoutingKey(consumerProperties.getResponseRoutingKey());
     container.setQueues(incomingQueue);
-    container.setDefaultRequeueRejected(consumerProperties.getRequeueRejected());
+    container.setDefaultRequeueRejected(true);
     container.setMessageListener(listenerAdapter);
     container.setTransactionManager(transactionManager);
     container.setChannelTransacted(true);
     container.setAlwaysRequeueWithTxManagerRollback(consumerProperties.getRequeueRejected());
     container.setPrefetchCount(consumerProperties.getPrefetchCount());
     container.setTxSize(consumerProperties.getTxSize());
+    container.setConcurrency("1-4");
+    container.setAdviceChain(
+      RetryInterceptorBuilder
+        .stateful()
+        .messageKeyGenerator(message -> Arrays.toString(message.getBody()))
+        .maxAttempts(4)
+        .backOffOptions(1000, 1.5, 3000)
+        .recoverer(new RejectAndDontRequeueRecoverer())
+        .build()
+    );
     return container;
   }
 
