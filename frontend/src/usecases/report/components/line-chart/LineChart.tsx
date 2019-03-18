@@ -76,15 +76,15 @@ export const LineChart =
     renderTooltipContent,
     setTooltipPayload,
   }: GraphContentProps) => {
-    const {resized} = useResizeWindow();
+    const {resized, height} = useResizeWindow();
 
     const {axes: {left, right}} = linesProps;
     const leftLabel: LabelProps = {value: left, position: 'insideLeft', angle: -90, dx: 10};
     const rightLabel: LabelProps = {value: right, position: 'insideRight', angle: 90, dy: -10};
 
     return (
-      <ColumnCenter className="align-items" key={`${key}-${resized}`}>
-        <ResponsiveContainer aspect={2.5} width="95%" height="99%">
+      <ColumnCenter className="align-items" style={{height: height - 260}} key={`${key}-${resized}`}>
+        <ResponsiveContainer width="95%" height="99%" >
           <ReChartLineChart
             width={10}
             height={50}
