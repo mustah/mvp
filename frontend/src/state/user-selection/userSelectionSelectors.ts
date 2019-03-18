@@ -26,6 +26,7 @@ import {
   ThresholdQuery,
   UriLookupState,
   UriLookupStatePaginated,
+  UriLookupStatePaginatedWithPeriod,
   UserSelection,
   UserSelectionState
 } from './userSelectionModels';
@@ -116,6 +117,39 @@ const determineActivePeriod = (
   return defaultPeriod;
 };
 
+const getPaginatedParametersWithPeriod = (toEntityParameters: EntityApiParametersFactory) =>
+  createSelector<UriLookupStatePaginatedWithPeriod,
+    string,
+    Pagination,
+    ApiRequestSortingOptions[] | undefined,
+    SelectedParameters,
+    CurrentPeriod,
+    EncodedUriParameters>(
+    ({query}) => query!,
+    ({pagination}) => pagination,
+    ({sort}) => sort,
+    getSelectionParameters,
+    ({period}) => period,
+    (query, pagination, sort, {dateRange, threshold, ...rest}, period) => {
+      const thresholdParameter = toThresholdParameter(threshold);
+      const parametersToEncode = [
+        ...toSortParameters(sort),
+        ...toPeriodApiParameters(period),
+        ...toPaginationApiParameters(pagination),
+      ];
+      return query
+        ? encodedUriParametersFrom([
+          ...parametersToEncode,
+          ...toWildcardApiParameter(query)
+        ])
+        : encodedUriParametersFrom([
+          ...thresholdParameter,
+          ...toEntityParameters(rest),
+          ...parametersToEncode,
+        ]);
+    },
+  );
+
 const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) =>
   createSelector<UriLookupStatePaginated,
     string,
@@ -172,7 +206,8 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     },
   );
 
-export const getPaginatedCollectionStatParameters = getPaginatedParameters(entityApiParametersCollectionStatFactory);
+export const getPaginatedCollectionStatParameters =
+  getPaginatedParametersWithPeriod(entityApiParametersCollectionStatFactory);
 
 export const getPaginatedMeterParameters = getPaginatedParameters(entityApiParametersMetersFactory);
 

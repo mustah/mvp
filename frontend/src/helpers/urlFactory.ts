@@ -64,10 +64,6 @@ const requestParametersBySelectionParameters: ParameterNames = {
   threshold: RequestParameter.threshold,
 };
 
-const meterDetailMeasurementParameters: ParameterNames = {
-  ...requestParametersBySelectionParameters,
-};
-
 const collectionStatParameters: ParameterNames = {
   ...requestParametersBySelectionParameters,
 };
@@ -158,10 +154,6 @@ export const toThresholdParameter = (threshold: ThresholdQuery | undefined): Enc
   isValidThreshold(threshold)
     ? ['threshold=' + encodeURIComponent(thresholdAsString(threshold!))]
     : [];
-
-export const entityApiParametersMeterDetailMeasurementsFactory =
-  (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>
-    parametersById(selectionParameters, meterDetailMeasurementParameters);
 
 export const entityApiParametersCollectionStatFactory =
   (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>

@@ -1,5 +1,6 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {
   fetchCollectionStatsFacilityPaged,
@@ -11,7 +12,7 @@ import {
   getPageResult,
   getPaginatedEntities
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {collectionStatClearError, } from '../../../state/domain-models/collection-stat/collectionStatActions';
+import {collectionStatClearError} from '../../../state/domain-models/collection-stat/collectionStatActions';
 import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
 import {changePage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, Pagination} from '../../../state/ui/pagination/paginationModels';
@@ -43,7 +44,13 @@ const mapStateToProps = (
   return ({
     entities: getPaginatedEntities<CollectionStat>(collectionStatFacilities),
     result: getPageResult(collectionStatFacilities, page),
-    parameters: getPaginatedCollectionStatParameters({sort, pagination, userSelection, query}),
+    parameters: getPaginatedCollectionStatParameters({
+      sort,
+      pagination,
+      userSelection,
+      query,
+      period: {customDateRange: Maybe.maybe(timePeriod.customDateRange), period: timePeriod.period}
+    }),
     sort,
     isFetching: getPageIsFetching(collectionStatFacilities, page),
     pagination,

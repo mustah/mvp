@@ -1,4 +1,5 @@
 import {DateRange, Period} from '../../components/dates/dateModels';
+import {CurrentPeriod} from '../../helpers/dateHelpers';
 import {IdNamed, Selected, uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';
 import {Address, City} from '../domain-models/location/locationModels';
@@ -102,6 +103,10 @@ export interface UriLookupState extends UserSelectionState, Query {
 export interface UriLookupStatePaginated extends UriLookupState {
   pagination: Pagination;
   sort?: ApiRequestSortingOptions[];
+}
+
+export interface UriLookupStatePaginatedWithPeriod extends UriLookupStatePaginated {
+  period: CurrentPeriod;
 }
 
 export type SelectionListItem = SelectionItem & Selected;
