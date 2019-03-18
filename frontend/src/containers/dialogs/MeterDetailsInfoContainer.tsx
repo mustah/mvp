@@ -9,7 +9,7 @@ import {ErrorLabel} from '../../components/texts/ErrorLabel';
 import {CityInfo} from '../../components/texts/Labels';
 import {BoldFirstUpper} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
-import {formatCollectionPercentage, formatReadInterval} from '../../helpers/formatters';
+import {formatReadInterval} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
@@ -19,7 +19,6 @@ import {MeterDetails} from '../../state/domain-models/meter-details/meterDetails
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisation} from '../../state/domain-models/organisation/organisationsApiActions';
 import {User} from '../../state/domain-models/user/userModels';
-import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
 import {useFetchOrganisation} from './fetchDialogDataHook';
@@ -64,13 +63,6 @@ const MeterDetailsInfo = ({
   useFetchOrganisation({fetchOrganisation, user, organisationId});
 
   const organisationName = organisation.map(({name}) => name).orElse(translate('unknown'));
-
-  const formattedCollectionPercentage = formatCollectionPercentage(
-    collectionPercentage,
-    readIntervalMinutes,
-    isSuperAdmin(user),
-  );
-
   const sum = alarms ? alarms.reduce((previous, current) => previous + current.mask, 0) : 0;
 
   const alarmCode = alarms && alarms.length
@@ -109,9 +101,6 @@ const MeterDetailsInfo = ({
         </Column>
         <Info className="First-column" label={translate('resolution')}>
           <BoldFirstUpper>{formatReadInterval(readIntervalMinutes)}</BoldFirstUpper>
-        </Info>
-        <Info label={translate('collection percentage')}>
-          <BoldFirstUpper>{formattedCollectionPercentage}</BoldFirstUpper>
         </Info>
       </Row>
       <Row>
