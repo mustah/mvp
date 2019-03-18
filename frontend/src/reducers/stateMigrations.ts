@@ -1,4 +1,5 @@
 import {PersistedState} from 'redux-persist';
+import {Period} from '../components/dates/dateModels';
 import {mapSelectedIdToAddress, mapSelectedIdToCity} from '../state/domain-models/selections/selectionsApiActions';
 import {initialState} from '../state/ui/tabs/tabsReducer';
 import {OldSelectionParameters, UserSelection} from '../state/user-selection/userSelectionModels';
@@ -101,6 +102,22 @@ export const migrations = {
       },
     };
   },
+  6: (state: PersistedState | any) => {
+    const {userSelection: {userSelection}} = state;
+    const selectionParameters = userSelection.selectionParameters;
+    return {
+      ...state,
+      userSelection: {
+        userSelection: {
+          ...userSelection,
+          selectionParameters: {
+            ...selectionParameters,
+            dateRange: {period: Period.now}
+          }
+        }
+      },
+    };
+  }
 };
 
-export const currentVersion: number = 5;
+export const currentVersion: number = 6;

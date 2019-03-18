@@ -88,6 +88,11 @@ const toSortParameters = (sort: ApiRequestSortingOptions[] | undefined): Encoded
 
 const defaultPeriod: CurrentPeriod = {
   customDateRange: Maybe.nothing(),
+  period: Period.now,
+};
+
+const latestPeriod: CurrentPeriod = {
+  customDateRange: Maybe.nothing(),
   period: Period.latest,
 };
 
@@ -175,10 +180,9 @@ export const getPaginatedGatewayParameters = getPaginatedParameters(entityApiPar
 
 export const getMeterParameters = getParameters(entityApiParametersMetersFactory);
 
-export const allCurrentMeterParameters = encodedUriParametersFrom(toPeriodApiParameters({
-  period: Period.latest,
-  customDateRange: Maybe.nothing()
-}));
+export const allCurrentMeterParameters = encodedUriParametersFrom(toPeriodApiParameters(defaultPeriod));
+
+export const dashboardAllMetersParameters = encodedUriParametersFrom(toPeriodApiParameters(latestPeriod));
 
 export const getGatewayParameters = getParameters(entityApiParametersGatewaysFactory);
 

@@ -49,11 +49,16 @@ const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRan
         end: zonedDate.clone().startOf('day').toDate()
       });
     case Period.latest:
-    default:
       const yesterday = zonedDate.clone().subtract(1, 'days');
       return {
         start: yesterday.startOf('day').toDate(),
         end: zonedDate.clone().startOf('day').toDate(),
+      };
+    case Period.now:
+    default:
+      return {
+        start: zonedDate.toDate(),
+        end: zonedDate.toDate(),
       };
   }
 };
