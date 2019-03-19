@@ -1,5 +1,6 @@
 import {Location} from 'history';
 import {isEqual} from 'lodash';
+import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers, Reducer} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
@@ -229,6 +230,7 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityFailure(endPoint):
       case domainModelsPaginatedDeleteFailure(endPoint):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
+      case LOCATION_CHANGE:
       case getType(search):
         return {...makeInitialState<T>()};
       default:
