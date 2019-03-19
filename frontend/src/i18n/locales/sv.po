@@ -224,6 +224,9 @@ msgstr "inga mätvärden förväntades under den valda perioden"
 msgid "no meters"
 msgstr "inga mätare"
 
+msgid "invalid meter"
+msgstr "ogiltig mätare"
+
 msgid "find meters"
 msgstr "hitta mätare"
 

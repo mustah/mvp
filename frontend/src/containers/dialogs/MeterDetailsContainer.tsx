@@ -1,9 +1,11 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
+import {firstUpperTranslated} from '../../services/translationService';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {fetchMeter} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
@@ -35,9 +37,6 @@ interface OwnProps extends SelectedId {
 type Props = StateToProps & DispatchToProps & OwnProps;
 
 const MeterDetailsContent = (props: Props) => {
-  if (props.meter.isNothing()) {
-    return null;
-  }
   const newProps = {...props, meter: props.meter.get()};
   return (
     <div>
@@ -47,7 +46,12 @@ const MeterDetailsContent = (props: Props) => {
   );
 };
 
-const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
+const noSuchMeterMessage = (id: Maybe<uuid>): string =>
+  firstUpperTranslated('invalid meter') + id.map(id => ' "' + id + '"').orElse('');
+
+const MeterDetailsContentWrapper = withEmptyContent<Props & WithEmptyContentProps>(MeterDetailsContent);
+
+const LoadingMeterDetails = withLargeLoader<StateToProps & WithEmptyContentProps>(MeterDetailsContentWrapper);
 
 const MeterDetailsComponent = (props: Props) => {
   const {fetchMeter, selectedId} = props;
@@ -57,7 +61,13 @@ const MeterDetailsComponent = (props: Props) => {
     });
   });
 
-  return <LoadingMeterDetails {...props}/>;
+  return (
+    <LoadingMeterDetails
+      {...props}
+      isFetching={props.isFetching}
+      hasContent={!props.meter.isNothing()}
+      noContentText={noSuchMeterMessage(props.selectedId)}
+    />);
 };
 
 const mapStateToProps = (
