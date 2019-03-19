@@ -1,15 +1,15 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Maybe} from '../../helpers/Maybe';
-import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
+import {firstUpperTranslated} from '../../services/translationService';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
-import {fetchMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
+import {fetchMeter} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
-import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {CallbackWithId, CallbackWithIds, OnClickWith, uuid} from '../../types/Types';
+import {CallbackWithId, OnClickWith, uuid} from '../../types/Types';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {syncWithMetering} from '../../usecases/meter/meterActions';
 import {addToReport} from '../../usecases/report/reportActions';
@@ -22,11 +22,10 @@ interface StateToProps {
   isFetching: boolean;
   meter: Maybe<MeterDetails>;
   meterMapMarker: Maybe<MapMarker>;
-  periodDateRange: SelectionInterval;
 }
 
 interface DispatchToProps {
-  fetchMeterDetails: CallbackWithIds;
+  fetchMeter: CallbackWithId;
   addToReport: OnClickWith<LegendItem>;
   syncWithMetering: CallbackWithId;
 }
@@ -38,9 +37,6 @@ interface OwnProps extends SelectedId {
 type Props = StateToProps & DispatchToProps & OwnProps;
 
 const MeterDetailsContent = (props: Props) => {
-  if (props.meter.isNothing()) {
-    return null;
-  }
   const newProps = {...props, meter: props.meter.get()};
   return (
     <div>
@@ -50,17 +46,28 @@ const MeterDetailsContent = (props: Props) => {
   );
 };
 
-const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
+const noSuchMeterMessage = (id: Maybe<uuid>): string =>
+  firstUpperTranslated('invalid meter') + id.map(id => ' "' + id + '"').orElse('');
+
+const MeterDetailsContentWrapper = withEmptyContent<Props & WithEmptyContentProps>(MeterDetailsContent);
+
+const LoadingMeterDetails = withLargeLoader<StateToProps & WithEmptyContentProps>(MeterDetailsContentWrapper);
 
 const MeterDetailsComponent = (props: Props) => {
-  const {periodDateRange, fetchMeterDetails, selectedId} = props;
+  const {fetchMeter, selectedId} = props;
   React.useEffect(() => {
     selectedId.do((id: uuid) => {
-      fetchMeterDetails([id], makeApiParametersOf(periodDateRange));
+      fetchMeter(id);
     });
   });
 
-  return <LoadingMeterDetails {...props}/>;
+  return (
+    <LoadingMeterDetails
+      {...props}
+      isFetching={props.isFetching}
+      hasContent={!props.meter.isNothing()}
+      noContentText={noSuchMeterMessage(props.selectedId)}
+    />);
 };
 
 const mapStateToProps = (
@@ -72,7 +79,6 @@ const mapStateToProps = (
 ): StateToProps =>
   ({
     isFetching: meters.isFetching,
-    periodDateRange,
     meter: selectedId
       .flatMap((id: uuid) => getDomainModelById<MeterDetails>(id)(meters)),
     meterMapMarker: selectedId
@@ -81,7 +87,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addToReport,
-  fetchMeterDetails,
+  fetchMeter,
   syncWithMetering,
 }, dispatch);
 

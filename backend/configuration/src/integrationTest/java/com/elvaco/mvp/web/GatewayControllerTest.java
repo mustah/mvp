@@ -99,7 +99,7 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(response.getTotalPages()).isEqualTo(1);
 
     List<IdStatus> gatewayIds = response.getContent().stream()
-      .map(gateway -> new IdStatus(gateway.id, gateway.status))
+      .map(gateway -> new IdStatus(gateway.id, gateway.status.name))
       .collect(toList());
 
     assertThat(gatewayIds).containsExactlyInAnyOrder(
@@ -149,7 +149,7 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(response.getTotalPages()).isEqualTo(1);
 
     List<IdStatus> gatewayIds = response.getContent().stream()
-      .map(gw -> new IdStatus(gw.id, gw.status))
+      .map(gw -> new IdStatus(gw.id, gw.status.name))
       .collect(toList());
 
     assertThat(gatewayIds).containsExactlyInAnyOrder(

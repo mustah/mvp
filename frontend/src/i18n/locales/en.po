@@ -242,6 +242,9 @@ msgstr "no measurements expected for the selected period"
 msgid "no meters"
 msgstr "no meters"
 
+msgid "invalid meter"
+msgstr "invalid meter"
+
 msgid "find meters"
 msgstr "find meters"
 

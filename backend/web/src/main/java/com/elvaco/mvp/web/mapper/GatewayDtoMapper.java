@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
+import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 
 import lombok.experimental.UtilityClass;
@@ -73,7 +74,7 @@ public class GatewayDtoMapper {
       .id(gateway.id)
       .productModel(formatProductModel(gateway.productModel))
       .serial(gateway.serial)
-      .status(gatewayStatusLog.status.name)
+      .status(new IdNamedDto(gatewayStatusLog.status.name))
       .statusChanged(formatUtc(gatewayStatusLog.start))
       .ip(gateway.ip)
       .phoneNumber(gateway.phoneNumber)
