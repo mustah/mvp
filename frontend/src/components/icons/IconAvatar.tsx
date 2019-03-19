@@ -5,12 +5,12 @@ import {colors} from '../../app/themes';
 
 const avatarStyle: React.CSSProperties = {
   padding: 0,
-  height: 24,
-  width: 24,
+  height: 36,
+  width: 36,
 };
 
 export const IconAvatar = () => (
-  <IconButton style={avatarStyle}>
+  <IconButton style={avatarStyle} iconStyle={avatarStyle}>
     <ActionAccountCircle color={colors.white} style={avatarStyle}/>
   </IconButton>
 );
