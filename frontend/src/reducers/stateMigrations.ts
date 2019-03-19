@@ -2,6 +2,7 @@ import {PersistedState} from 'redux-persist';
 import {Period} from '../components/dates/dateModels';
 import {mapSelectedIdToAddress, mapSelectedIdToCity} from '../state/domain-models/selections/selectionsApiActions';
 import {initialState} from '../state/ui/tabs/tabsReducer';
+import {ToolbarView} from '../state/ui/toolbar/toolbarModels';
 import {OldSelectionParameters, UserSelection} from '../state/user-selection/userSelectionModels';
 import {IdNamed, toIdNamed, uuid} from '../types/Types';
 
@@ -117,7 +118,21 @@ export const migrations = {
         }
       },
     };
+  },
+  7: (state: PersistedState | any) => {
+    const {ui} = state;
+    const toolbar = ui.toolbar;
+    return {
+      ...state,
+      ui: {
+        ...ui,
+        toolbar: {
+          ...toolbar,
+          meterMeasurement: toolbar.meterMeasurement || {view: ToolbarView.table}
+        }
+      }
+    };
   }
 };
 
-export const currentVersion: number = 6;
+export const currentVersion: number = 7;
