@@ -11,7 +11,6 @@ import {IconAvatar} from '../../../components/icons/IconAvatar';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row, RowCenter} from '../../../components/layouts/row/Row';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../../../components/popover/PopoverMenu';
-import {Small} from '../../../components/texts/Texts';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {User} from '../../../state/domain-models/user/userModels';
@@ -29,19 +28,20 @@ interface DispatchToProps {
   logout: OnClick;
 }
 
-const makeAvatarIcon = (name: string) => (props: Clickable) => (
-  <ColumnCenter {...props}>
+const makeAvatarTitle = ({name, email}: User): string => `${name} (${email})`;
+
+const makeAvatarIcon = (user: User) => (props: Clickable) => (
+  <ColumnCenter {...props} title={makeAvatarTitle(user)}>
     <RowCenter>
       <IconAvatar/>
     </RowCenter>
-    <Small className="Username">{name}</Small>
   </ColumnCenter>
 );
 
 type Props = StateToProps & DispatchToProps;
 
-const Profile = ({user: {name}, logout}: Props) => {
-  const Icon = makeAvatarIcon(name);
+const Profile = ({user, logout}: Props) => {
+  const Icon = makeAvatarIcon(user);
 
   const wrappedLogout = () => logout();
 
