@@ -10,6 +10,7 @@ import {getDomainModelById} from '../../state/domain-models/domainModelsSelector
 import {fetchMeter} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {CallbackWithId, OnClickWith, uuid} from '../../types/Types';
+import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {syncWithMetering} from '../../usecases/meter/meterActions';
 import {addToReport} from '../../usecases/report/reportActions';
@@ -26,6 +27,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchMeter: CallbackWithId;
+  fetchMapMarker: CallbackWithId;
   addToReport: OnClickWith<LegendItem>;
   syncWithMetering: CallbackWithId;
 }
@@ -54,9 +56,10 @@ const MeterDetailsContentWrapper = withEmptyContent<Props & WithEmptyContentProp
 const LoadingMeterDetails = withLargeLoader<StateToProps & WithEmptyContentProps>(MeterDetailsContentWrapper);
 
 const MeterDetailsComponent = (props: Props) => {
-  const {fetchMeter, selectedId} = props;
+  const {fetchMeter, fetchMapMarker, selectedId} = props;
   React.useEffect(() => {
     selectedId.do((id: uuid) => {
+      fetchMapMarker(id);
       fetchMeter(id);
     });
   });
@@ -88,6 +91,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addToReport,
   fetchMeter,
+  fetchMapMarker: fetchMeterMapMarker,
   syncWithMetering,
 }, dispatch);
 
