@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @RestApi("/api/v1/meters")
@@ -45,18 +44,11 @@ public class LogicalMeterController {
       .map(LogicalMeterDtoMapper::toPagedDto);
   }
 
-  @GetMapping("/details")
-  public List<LogicalMeterDto> logicalMetersWithDetails(
-    @RequestParam MultiValueMap<String, String> requestParams
-  ) {
-    var parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
-    return logicalMeterUseCases.findAllWithDetails(parameters).stream()
-      .map(logicalMeter ->
-        parameters.getPeriod()
-          .map(p -> LogicalMeterDtoMapper.toDto(logicalMeter, p.stop))
-          .orElse(LogicalMeterDtoMapper.toDto(logicalMeter))
-      )
-      .collect(toList());
+  @GetMapping("{id}")
+  public LogicalMeterDto logicalMeterDetails(@PathVariable UUID id) {
+    return logicalMeterUseCases.findById(id)
+      .map(LogicalMeterDtoMapper::toDto)
+      .orElseThrow(() -> new MeterNotFound(id));
   }
 
   @DeleteMapping("{id}")
@@ -86,5 +78,4 @@ public class LogicalMeterController {
       RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID)
     );
   }
-
 }

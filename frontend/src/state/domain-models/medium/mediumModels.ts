@@ -1,9 +1,5 @@
 import {EndPoints} from '../../../services/endPoints';
-import {
-  clearError,
-  fetchEntityIfNeeded,
-  fetchIfNeeded,
-} from '../domainModelsActions';
+import {clearError, fetchIfNeeded} from '../domainModelsActions';
 import {Medium} from '../meter-definitions/meterDefinitionModels';
 import {mediumsDataFormatter} from './mediumSchema';
 
@@ -14,5 +10,3 @@ export const fetchMediums = fetchIfNeeded<Medium>(
   'mediums',
   mediumsDataFormatter,
 );
-
-export const fetchMedium = fetchEntityIfNeeded(EndPoints.mediums, 'mediums');

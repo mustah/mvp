@@ -4,17 +4,16 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Period} from '../../../../components/dates/dateModels';
 import {momentAtUtcPlusOneFrom} from '../../../../helpers/dateHelpers';
-import {makeApiParametersOf} from '../../../../helpers/urlFactory';
 import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
-import {EncodedUriParameters, IdNamed, Status, toIdNamed, uuid} from '../../../../types/Types';
+import {Status, toIdNamed, uuid} from '../../../../types/Types';
 import {Medium} from '../../../ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
-import {Normalized, NormalizedState} from '../../domainModels';
-import {domainModelsGetEntitiesSuccess, domainModelsRequest} from '../../domainModelsActions';
+import {NormalizedState} from '../../domainModels';
+import {domainModelsGetEntitySuccess, domainModelsRequest} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
-import {fetchMeterDetails} from '../meterDetailsApiActions';
+import {fetchMeter} from '../meterDetailsApiActions';
 import {MeterDetails} from '../meterDetailsModels';
 
 describe('meterDetailsApiActions', () => {
@@ -50,7 +49,7 @@ describe('meterDetailsApiActions', () => {
     );
 
   beforeEach(() => {
-    store = configureMockStoreWith({...initialDomain()});
+    store = configureMockStoreWith({...initialDomain<MeterDetails>()});
     mockRestClient = new MockAdapter(axios);
     authenticate('test');
 
@@ -61,7 +60,7 @@ describe('meterDetailsApiActions', () => {
 
   });
 
-  describe('fetchMeterDetails', () => {
+  describe('fetchMeter', () => {
 
     const meter = {
       id: 1,
@@ -73,7 +72,7 @@ describe('meterDetailsApiActions', () => {
       gateway: {
         serial: 'ser123',
         productModel: 'pro123',
-        status: Status.ok,
+        status: toIdNamed(Status.ok),
         id: 2,
         phoneNumber: '911',
         ip: '127.0.0.1',
@@ -90,70 +89,33 @@ describe('meterDetailsApiActions', () => {
       },
     };
 
-    const status: IdNamed = toIdNamed(Status.ok);
-
-    const fetchMeterWithResponseOk = async (ids: uuid[], parameters: EncodedUriParameters) => {
-      mockRestClient.onGet().reply(200, [meter]);
-      return store.dispatch(fetchMeterDetails(ids, parameters));
+    const fetchMeterWithResponseOk = async (id: uuid) => {
+      mockRestClient.onGet().reply(200, meter);
+      return store.dispatch(fetchMeter(id));
     };
 
-    it('does not normalize response', async () => {
-      await fetchMeterWithResponseOk([meter.id], '');
-
-      const payload: Normalized<MeterDetails> = {
-        entities: {
-          meters: {
-            [meter.id]: {...meter, gateway: {...meter.gateway, status}},
-          },
-        },
-        result: [meter.id],
-      };
-
-      expect(store.getActions()).toEqual([
-        {type: domainModelsRequest(EndPoints.meterDetails)},
-        {type: domainModelsGetEntitiesSuccess(EndPoints.meterDetails), payload},
-      ]);
-    });
-
     it('fetches meter if not yet fetched', async () => {
-      const parameters: EncodedUriParameters = makeApiParametersOf(dateRange);
+      await fetchMeterWithResponseOk(meter.id);
 
-      await fetchMeterWithResponseOk([meter.id], parameters);
-
-      const payload: Normalized<MeterDetails> = {
-        entities: {
-          meters: {
-            [`${meter.id}`]: {...meter, gateway: {...meter.gateway, status}},
-          },
-        },
-        result: [meter.id],
-      };
+      const payload: MeterDetails = {...meter, gateway: {...meter.gateway}};
 
       expect(store.getActions()).toEqual([
-        {type: domainModelsRequest(EndPoints.meterDetails)},
-        {type: domainModelsGetEntitiesSuccess(EndPoints.meterDetails), payload},
+        {type: domainModelsRequest(EndPoints.meters)},
+        {type: domainModelsGetEntitySuccess(EndPoints.meters), payload},
       ]);
     });
 
-    it('does not fetch if meter details was already fetched, even if parameters change', async () => {
+    it('does not fetch if meter details was already fetched', async () => {
       const alreadyFetchedMeter: NormalizedState<MeterDetails> = {
         ...initialDomain(),
         result: [meter.id],
         entities: {
-          [meter.id]: {...meter, gateway: {...meter.gateway, status}},
+          [meter.id]: {...meter, gateway: {...meter.gateway}},
         },
       };
       store = configureMockStoreWith(alreadyFetchedMeter);
 
-      const parameters: EncodedUriParameters = makeApiParametersOf({
-        period: Period.custom,
-        customDateRange: {
-          start: new Date(0),
-          end: new Date(100),
-        },
-      });
-
-      await fetchMeterWithResponseOk([meter.id], parameters);
+      await fetchMeterWithResponseOk(meter.id);
 
       expect(store.getActions()).toEqual([]);
     });
@@ -165,7 +127,7 @@ describe('meterDetailsApiActions', () => {
       };
       store = configureMockStoreWith(metersFetchingState);
 
-      await fetchMeterWithResponseOk([meter.id], '');
+      await fetchMeterWithResponseOk(meter.id);
 
       expect(store.getActions()).toEqual([]);
     });

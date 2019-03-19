@@ -6,14 +6,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {CallbackWithData, ErrorResponse} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
-import {
-  clearError,
-  deleteRequest,
-  fetchEntityIfNeeded,
-  fetchIfNeeded,
-  postRequest,
-  putRequest
-} from '../domainModelsActions';
+import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domainModelsActions';
 import {MeterDefinition, MeterDefinitionMaybeId} from './meterDefinitionModels';
 import {meterDefinitionsDataFormatter} from './meterDefinitionSchema';
 
@@ -24,8 +17,6 @@ export const fetchMeterDefinitions = fetchIfNeeded<MeterDefinition>(
   'meterDefinitions',
   meterDefinitionsDataFormatter,
 );
-
-export const fetchMeterDefinition = fetchEntityIfNeeded(EndPoints.meterDefinitions, 'meterDefinitions');
 
 export const deleteMeterDefinition = deleteRequest<MeterDefinition>(EndPoints.meterDefinitions, {
     afterSuccess: (meterDefinition: MeterDefinition, dispatch: Dispatch<RootState>) => {

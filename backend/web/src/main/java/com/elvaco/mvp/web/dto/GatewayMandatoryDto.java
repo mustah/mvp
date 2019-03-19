@@ -18,7 +18,7 @@ public class GatewayMandatoryDto {
   public UUID id;
   public String productModel;
   public String serial;
-  public String status;
+  public IdNamedDto status;
   public String statusChanged;
   public String ip;
   public String phoneNumber;

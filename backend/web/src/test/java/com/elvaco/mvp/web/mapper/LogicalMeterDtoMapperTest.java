@@ -16,6 +16,7 @@ import com.elvaco.mvp.web.dto.EventLogDto;
 import com.elvaco.mvp.web.dto.EventType;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
+import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
@@ -102,7 +103,7 @@ public class LogicalMeterDtoMapperTest {
       .id(randomUUID())
       .productModel("CMi2110")
       .serial("123123")
-      .status(StatusType.OK.name)
+      .status(new IdNamedDto(StatusType.OK.name))
       .statusChanged(formatUtc(statusChanged))
       .build();
     expected.collectionPercentage = 75.0;

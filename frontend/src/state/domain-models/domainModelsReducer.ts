@@ -1,3 +1,4 @@
+import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
@@ -106,6 +107,13 @@ const removeEntity =
       total: result.length,
     };
   };
+const clearDomainModelErrors = <T extends Identifiable>(
+  state: NormalizedState<T>
+): NormalizedState<T> =>
+  ({
+    ...state,
+    error: undefined
+  });
 
 const setError = <T extends Identifiable>(
   state: NormalizedState<T>,
@@ -133,6 +141,7 @@ const reducerFor = <T extends Identifiable>(
     state: NormalizedState<T> = initialDomain<T>(),
     action: ActionTypes<T>,
   ): NormalizedState<T> => {
+
     switch (action.type) {
       case domainModelsRequest(endPoint):
         return {...state, isFetching: true};
@@ -150,6 +159,8 @@ const reducerFor = <T extends Identifiable>(
         return removeEntity<T>(state, action as Action<T>);
       case domainModelsFailure(endPoint):
         return setError(state, action as Action<ErrorResponse>);
+      case LOCATION_CHANGE:
+        return clearDomainModelErrors<T>(state);
       case domainModelsClearError(endPoint):
       case getType(search):
         return initialDomain<T>();
@@ -180,7 +191,7 @@ const resetStateOnLogoutReducer = <S extends Identifiable>(
 
 export const meters = reducerFor<MeterDetails>(
   'meters',
-  EndPoints.meterDetails,
+  EndPoints.meters,
   resetStateReducer,
 );
 
