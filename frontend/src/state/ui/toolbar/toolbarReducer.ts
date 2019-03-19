@@ -10,7 +10,7 @@ import {ToolbarState, ToolbarView} from './toolbarModels';
 export const initialState: ToolbarState = {
   measurement: {view: ToolbarView.graph},
   collection: {view: ToolbarView.graph},
-  meterMeasurement: {view: ToolbarView.table}
+  meterMeasurement: {view: ToolbarView.table},
 };
 
 type ActionTypes = Action<ToolbarView>;
@@ -22,7 +22,7 @@ export const toolbar = (state: ToolbarState = initialState, action: ActionTypes)
     case getType(changeCollectionToolbarView):
       return {...state, collection: {...state.collection, view: action.payload}};
     case getType(changeMeterMeasurementsToolbarView):
-      return {...state, collection: {...state.meterMeasurement, view: action.payload}};
+      return {...state, meterMeasurement: {...state.meterMeasurement, view: action.payload}};
     default:
       return state;
   }
