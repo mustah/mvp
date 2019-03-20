@@ -16,6 +16,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.impl.DSL;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
@@ -96,6 +97,13 @@ public class JooqUtils {
       to,
       resolution
     );
+  }
+
+  public static Field<OffsetDateTime> atTimeZone(
+    Field<String> tzField,
+    Field<OffsetDateTime> field
+  ) {
+    return DSL.field("timezone({0}, {1})", OffsetDateTime.class, tzField, field);
   }
 
   private static Condition getCondition(
