@@ -107,6 +107,7 @@ const removeEntity =
       total: result.length,
     };
   };
+
 const clearDomainModelErrors = <T extends Identifiable>(
   state: NormalizedState<T>
 ): NormalizedState<T> =>

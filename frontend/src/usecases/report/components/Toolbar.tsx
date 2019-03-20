@@ -122,7 +122,7 @@ export const Toolbar = ({
             style={{maxWidth: 200, marginRight: 4}}
           />
         </Row>
-        <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
+        <ResolutionSelection disabled={!hasLegendItems} resolution={resolution} selectResolution={selectResolution}/>
         <PeriodSelection
           disabled={!hasLegendItems}
           customDateRange={customDateRange}
