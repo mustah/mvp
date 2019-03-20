@@ -37,6 +37,7 @@ import com.elvaco.mvp.database.util.SqlErrorMapper;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.DatePart;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record10;
@@ -45,6 +46,7 @@ import org.jooq.Result;
 import org.jooq.ResultQuery;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.impl.DSL;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
@@ -56,6 +58,7 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.MEDIUM;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.QUANTITY;
+import static com.elvaco.mvp.database.repository.jooq.JooqUtils.atTimeZone;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
@@ -307,6 +310,17 @@ public class MeasurementRepository implements Measurements {
     logicalMeterFilters.accept(toFilters(parameter.getParameters()))
       .andJoinsOn(measurementSeries);
 
+    OffsetDateTime start = parameter.getResolution()
+      .getStart(parameter.getFrom());
+    OffsetDateTime stop = parameter.getResolution().getStart(parameter.getTo());
+
+    Condition condition = valueDate.greaterOrEqual(start)
+      .and(valueDate.lessOrEqual(stop));
+
+    if (start.isEqual(stop)) {
+      condition = valueDate.eq(start);
+    }
+
     return dsl.select(
       logicalMeterId,
       physicalMeterAddress,
@@ -319,10 +333,7 @@ public class MeasurementRepository implements Measurements {
       value,
       valueDate
     ).from(withAdditionalJoins(measurementSeries, parameter))
-      .where(
-        valueDate.greaterOrEqual(parameter.getResolution().getStart(parameter.getFrom())),
-        valueDate.lessOrEqual(parameter.getResolution().getStart(parameter.getTo()))
-      )
+      .where(condition)
       .orderBy(valueDate.asc());
   }
 
@@ -400,9 +411,28 @@ public class MeasurementRepository implements Measurements {
       .innerJoin(MEASUREMENT)
       .on(MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
         .and(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, MEASUREMENT.CREATED))
-        .and(MEASUREMENT.CREATED.lessOrEqual(stop))
+        .and(
+          MEASUREMENT.CREATED.eq(atTimeZone(
+            iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
+            DSL.trunc(
+              atTimeZone(iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET), MEASUREMENT.CREATED),
+              toDatePart(parameter.getResolution())
+            )
+          ))
+        ).and(MEASUREMENT.CREATED.lessOrEqual(stop))
         .and(MEASUREMENT.CREATED.greaterOrEqual(parameter.getFrom().toOffsetDateTime()))
         .and(MEASUREMENT.QUANTITY.equal(QUANTITY.ID)));
+  }
+
+  private DatePart toDatePart(TemporalResolution resolution) {
+    if (resolution == TemporalResolution.hour) {
+      return DatePart.HOUR;
+    } else if (resolution == TemporalResolution.day) {
+      return DatePart.DAY;
+    } else if (resolution == TemporalResolution.month) {
+      return DatePart.MONTH;
+    }
+    throw new IllegalArgumentException("Unknown resolution: " + resolution.toString());
   }
 
   private Field<Double> getValueField(boolean isConsumption) {
@@ -509,5 +539,9 @@ public class MeasurementRepository implements Measurements {
       .map(MeasurementUnit::getValue)
       .orElse(null);
     return new MeasurementValue(value, when);
+  }
+
+  private static Field<String> iso8601OffsetToPosixOffset(Field<String> iso8600Offset) {
+    return iso8600Offset.cast(Integer.class).neg().cast(String.class);
   }
 }

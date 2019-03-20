@@ -14,7 +14,6 @@ import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
@@ -41,7 +40,6 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
-  private final LogicalMeterUseCases logicalMeterUseCases;
 
   @GetMapping("/average")
   public List<MeasurementSeriesDto> average(

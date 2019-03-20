@@ -36,14 +36,19 @@ public class LogicalMeterUseCases {
     return logicalMeters.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
   }
 
-  public Page<CollectionStatsDto> findAllCollectionStats(RequestParameters parameters,
-                                                         Pageable pageable) {
-    return logicalMeters.findAllCollectionStats(parameters.ensureOrganisationFilters(currentUser),
-      pageable);
+  public Page<CollectionStatsDto> findAllCollectionStats(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    return logicalMeters.findAllCollectionStats(
+      parameters.ensureOrganisationFilters(currentUser),
+      pageable
+    );
   }
 
   public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
-    RequestParameters parameters) {
+    RequestParameters parameters
+  ) {
     return logicalMeters.findAllCollectionStatsPerDate(
       parameters.ensureOrganisationFilters(currentUser));
   }

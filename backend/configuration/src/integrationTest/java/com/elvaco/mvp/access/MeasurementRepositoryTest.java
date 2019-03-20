@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.DoubleStream;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
@@ -326,6 +327,35 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       .containsExactly(
         10.0,
         10.0
+      );
+  }
+
+  @Test
+  public void consumptionSeriesWithDayResolution() {
+    ZonedDateTime start = context().now();
+    var meterOne = given(logicalMeter());
+
+    given(series(
+      meterOne,
+      Quantity.VOLUME,
+      start,
+      DoubleStream.iterate(1, d -> d + 1).limit(25).toArray()
+    ));
+
+    Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        idParametersOf(meterOne),
+        quantityParametersOf(VOLUME_DISPLAY),
+        start,
+        start.plusDays(1).minusSeconds(1),
+        TemporalResolution.day
+      )
+    );
+
+    assertThat(result.get(getKey(meterOne, Quantity.VOLUME)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        24.0 // 25.0 at hour 0 of day 1 - 1.0 at hour 0 of day 0 = 24.0.
       );
   }
 
