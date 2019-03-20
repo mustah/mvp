@@ -7,7 +7,7 @@ import {RowMiddle} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {displayDate} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
-import {translate} from '../../../services/translationService';
+import {capitalized, translate} from '../../../services/translationService';
 import {
   getGroupHeaderTitle,
   getMediumType,
@@ -76,8 +76,9 @@ export const renderColumns = (measurements: MeasurementsApiResponse): [ListItem[
 
   measurements.forEach(({id, label, medium: type, unit, values, quantity}: MeasurementResponsePart) => {
     if (columns[quantity] === undefined) {
-      const title = `${translate(`${quantity} short`)} (${unit})`;
-      columns[quantity] = <GridColumn key={`${id}-${title}`} title={title} field={`values.${quantity}`}/>;
+      const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
+      columns[quantity] =
+        <GridColumn headerClassName="quantity" key={`${id}-${title}`} title={title} field={`values.${quantity}`}/>;
     }
 
     values.forEach(({when, value}) => {
