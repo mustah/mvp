@@ -160,6 +160,17 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       .containsExactly(tuple(Quantity.POWER.name, Units.WATT, false));
   }
 
+  @Test
+  public void getPreferredQuantityParametersForLogicalMeters_withoutDisplayQuantities() {
+    var meterDefintion = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.UNKNOWN_MEDIUM)));
+    var meter = given(logicalMeter().meterDefinition(meterDefintion));
+
+    RequestParameters parameters = idParametersOf(meter);
+
+    assertThat(logicalMeterJpaRepository.getPreferredQuantityParameters(parameters)).hasSize(0);
+  }
+
   private RequestParameters idParametersOf(LogicalMeter... meters) {
     return RequestParametersAdapter.of(Map.of(
       LOGICAL_METER_ID.toString(),
