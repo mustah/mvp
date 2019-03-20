@@ -348,7 +348,7 @@ class LogicalMeterJooqJpaRepository
     logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
 
     var query2 = query
-      .leftJoin(DISPLAY_QUANTITY).on(METER_DEFINITION.ID.eq(DISPLAY_QUANTITY.METER_DEFINITION_ID))
+      .join(DISPLAY_QUANTITY).on(METER_DEFINITION.ID.eq(DISPLAY_QUANTITY.METER_DEFINITION_ID))
       .leftJoin(QUANTITY).on(QUANTITY.ID.eq(DISPLAY_QUANTITY.QUANTITY_ID))
       .groupBy(QUANTITY.NAME, DISPLAY_QUANTITY.DISPLAY_UNIT, DISPLAY_QUANTITY.DISPLAY_MODE)
       .orderBy(
