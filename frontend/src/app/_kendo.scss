@@ -40,6 +40,10 @@ $pager-number-hovered-text: $primary-fg-active;
   }
 }
 
+.Dialog .k-widget.k-grid .k-grid-header tr th {
+  top: -28px;
+}
+
 .k-widget {
   &.k-grid {
     border-width: 0;
