@@ -31,6 +31,24 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
   const gridContent: React.ReactNode[] = [
     (
       <GridColumn
+        headerClassName="hidden"
+        className="hidden"
+        field="label"
+        key="label"
+        title={firstUpperTranslated('name')}
+      />
+    ),
+    (
+      <GridColumn
+        headerClassName="hidden"
+        className="hidden"
+        field="type"
+        key="type"
+        title={firstUpperTranslated('object type')}
+      />
+    ),
+    (
+      <GridColumn
         headerClassName="left-most"
         className="left-most"
         field="when"
@@ -43,10 +61,9 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
 
   const state: State = {group: [{field: 'label', dir: 'desc'}], sort: [{field: 'label', dir: 'asc'}]};
   const dataResult: DataResult = process(listItems, state);
-
   return (
     <Column className="Grouping-grid">
-      <ExcelExport data={dataResult.data} ref={exporter} {...state}>
+      <ExcelExport data={listItems} ref={exporter}>
         <Grid
           scrollable="none"
           data={dataResult}
