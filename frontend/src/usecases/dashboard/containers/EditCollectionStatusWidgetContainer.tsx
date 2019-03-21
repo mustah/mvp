@@ -13,7 +13,7 @@ import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {WidgetType} from '../../../state/widget/configuration/widgetConfigurationReducer';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../types/Types';
 import {CollectionStatusWidgetSettings} from './CollectionStatusContainer';
-import '../components/widgets/EditWidget.scss'
+import '../components/widgets/EditWidget.scss';
 
 const noop = () => null;
 

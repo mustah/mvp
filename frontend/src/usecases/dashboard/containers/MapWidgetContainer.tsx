@@ -7,6 +7,7 @@ import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/w
 import {Row} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {Maybe} from '../../../helpers/Maybe';
+import {makeApiParametersOf} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {DomainModel, RequestsHttp} from '../../../state/domain-models/domainModels';
@@ -160,13 +161,10 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
         ...userSelection,
         selectionParameters: {
           ...userSelection.selectionParameters,
-          dateRange: {
-            period: Period.latest,
-          },
         },
       },
     })
-    : '';
+    : makeApiParametersOf({period: Period.now});
 
   const title = userSelection
     ? userSelection.name
