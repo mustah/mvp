@@ -34,6 +34,7 @@ $pager-number-hovered-text: $primary-fg-active;
 
 .k-header {
   text-transform: capitalize;
+
   &.quantity {
     text-transform: none;
   }
@@ -132,6 +133,10 @@ $pager-number-hovered-text: $primary-fg-active;
       &.left-most {
         padding-left: $xs-space;
       }
+
+      &.hidden {
+        display: none;
+      }
     }
 
     tr.last {
@@ -143,6 +148,10 @@ $pager-number-hovered-text: $primary-fg-active;
     td {
       &.left-most {
         padding-left: $xs-space;
+      }
+
+      &.hidden {
+        display: none;
       }
     }
   }

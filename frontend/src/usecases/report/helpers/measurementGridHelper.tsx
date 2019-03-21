@@ -1,4 +1,10 @@
-import {GridCellProps, GridColumn, GridHeaderCellProps, GridRowProps} from '@progress/kendo-react-grid';
+import {
+  GridCellProps,
+  GridColumn,
+  GridColumnProps,
+  GridHeaderCellProps,
+  GridRowProps
+} from '@progress/kendo-react-grid';
 import {GridRowType} from '@progress/kendo-react-grid/dist/es/interfaces/GridRowType';
 import {toArray} from 'lodash';
 import * as React from 'react';
@@ -47,7 +53,7 @@ export const cellRender = (td, {columnIndex, dataItem, rowType}: GridCellProps) 
 
 export const rowRender = (tr: React.ReactElement<HTMLTableRowElement>, {dataItem, rowType}: GridRowProps) => {
   if (isGroupHeader(rowType)) {
-    const mediumText = getGroupHeaderTitle(dataItem.items.length && dataItem.items[0].type);
+    const mediumText = dataItem.items.length && dataItem.items[0].type;
     return (
       <tr className="GroupHeader">
         <td colSpan={14}>
@@ -70,30 +76,37 @@ interface ListItem {
   type: LegendType;
 }
 
-export const renderColumns = (measurements: MeasurementsApiResponse): [ListItem[], React.ReactNode[]] => {
-  const rows: Dictionary<ListItem> = {};
-  const columns: Dictionary<React.ReactNode> = {};
+export const renderColumns =
+  (measurements: MeasurementsApiResponse): [ListItem[], Array<React.ReactElement<GridColumnProps>>] => {
+    const rows: Dictionary<ListItem> = {};
+    const columns: Dictionary<React.ReactElement<GridColumnProps>> = {};
 
-  measurements.forEach(({id, label, medium: type, unit, values, quantity}: MeasurementResponsePart) => {
-    if (columns[quantity] === undefined) {
-      const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
-      columns[quantity] =
-        <GridColumn headerClassName="quantity" key={`${id}-${title}`} title={title} field={`values.${quantity}`}/>;
-    }
+    measurements.forEach(({id, label, medium: type, unit, values, quantity}: MeasurementResponsePart) => {
+      if (columns[quantity] === undefined) {
+        const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
+        columns[quantity] = (
+          <GridColumn
+            headerClassName="quantity"
+            key={`${id}-${title}`}
+            title={title}
+            field={`values.${quantity}`}
+          />
+        );
+      }
 
-    values.forEach(({when, value}) => {
-      const rowKey = `${when}-${label}`;
-      const legendType = type ? getMediumType(type) : 'aggregate';
-      const listItem: ListItem = rows[rowKey] || {
-        label,
-        type: legendType,
-        when: displayDate(when * 1000),
-        values: {},
-      };
-      listItem.values[quantity] = value !== undefined ? roundMeasurement(value) : '-';
-      rows[rowKey] = listItem;
+      values.forEach(({when, value}) => {
+        const rowKey = `${when}-${label}`;
+        const legendType = type ? getMediumType(type) : 'aggregate';
+        const listItem: ListItem = rows[rowKey] || {
+          label,
+          type: getGroupHeaderTitle(legendType),
+          when: displayDate(when * 1000),
+          values: {},
+        };
+        listItem.values[quantity] = value !== undefined ? roundMeasurement(value) : '-';
+        rows[rowKey] = listItem;
+      });
     });
-  });
 
-  return [toArray(rows).reverse(), toArray(columns)];
-};
+    return [toArray(rows).reverse(), toArray(columns)];
+  };
