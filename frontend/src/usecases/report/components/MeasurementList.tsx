@@ -98,7 +98,7 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
   const dataResult: DataResult = process(listItems, state);
   return (
     <Column className="Grouping-grid">
-      <ExcelExport data={listItems} ref={exporter}>
+      <ExcelExport data={listItems} ref={exporter} filterable={true}>
         <Grid
           scrollable="none"
           data={dataResult}
