@@ -84,8 +84,14 @@ export const renderColumns =
     measurements.forEach(({id, label, medium: type, unit, values, quantity}: MeasurementResponsePart) => {
       if (columns[quantity] === undefined) {
         const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
-        columns[quantity] =
-        <GridColumn headerClassName="quantity" key={`${id}-${title}`} title={title} field={`values.${quantity}`}/>;
+        columns[quantity] = (
+          <GridColumn
+            headerClassName="quantity"
+            key={`${id}-${title}`}
+            title={title}
+            field={`values.${quantity}`}
+          />
+        );
       }
 
       values.forEach(({when, value}) => {
