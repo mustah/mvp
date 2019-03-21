@@ -220,8 +220,6 @@ export const NewDashboard = (props: DashboardProps) => {
     };
 
   const saveWidgetConfiguration = (widgetSettings: WidgetMandatory) => {
-    // TODO bind dashboardId, id etc here, so that the edit-container becomes blissfully unaware
-
     if (myWidgets.result.find(id => id === widgetSettings.id) === undefined) {
       addWidgetToDashboard(widgetSettings);
       const newLayout: Layout[] = addToNextRow(widgetSettings, layout);
