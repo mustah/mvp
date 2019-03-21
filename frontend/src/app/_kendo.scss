@@ -34,6 +34,9 @@ $pager-number-hovered-text: $primary-fg-active;
 
 .k-header {
   text-transform: capitalize;
+  &.quantity {
+    text-transform: none;
+  }
 }
 
 .k-widget {

@@ -15,6 +15,9 @@ export const firstUpper = (original: string): string =>
     ? original
     : original[0].toUpperCase() + original.substr(1);
 
+export const capitalized = (original: string): string =>
+  original.split(' ').map(firstUpper).join(' ');
+
 export const firstUpperTranslated = (key: string, options?: i18next.TranslationOptions): string =>
   firstUpper(translate(key, options));
 
