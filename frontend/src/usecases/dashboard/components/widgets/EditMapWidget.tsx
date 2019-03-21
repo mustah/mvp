@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {ButtonCancel, ButtonConfirm} from '../../../../components/buttons/DialogButtons';
 import {Dialog} from '../../../../components/dialog/Dialog';
 import {SelectFieldInput} from '../../../../components/inputs/InputSelectable';
-import {Subtitle} from '../../../../components/texts/Titles';
+import {MainTitle} from '../../../../components/texts/Titles';
 import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {NormalizedState} from '../../../../state/domain-models/domainModels';
@@ -11,6 +11,7 @@ import {UserSelection} from '../../../../state/user-selection/userSelectionModel
 import {WidgetType} from '../../../../state/widget/configuration/widgetConfigurationReducer';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../../types/Types';
 import {MapWidgetSettings} from '../../containers/MapWidgetContainer';
+import './EditWidget.scss';
 
 const ALL_METERS = -1;
 
@@ -66,8 +67,9 @@ const EditMapWidget = (props: Props) => {
       close={onCancel}
       isOpen={isOpen}
       actions={actions}
+      contentClassName={'widget-edit'}
     >
-      <Subtitle>{firstUpperTranslated('widget settings')}</Subtitle>
+      <MainTitle>{firstUpperTranslated('widget settings')}</MainTitle>
       <SelectFieldInput
         options={selectionOptions}
         floatingLabelText={selectionLabel}
