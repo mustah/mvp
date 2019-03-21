@@ -12,7 +12,7 @@ export const getSelectedMapMarker = (state: MapState): Maybe<uuid> =>
   Maybe.maybe(state.selectedMarker);
 
 export const getBounds =
-  createSelector<NormalizedState<MapMarker>, DomainModel<MapMarker>, Bounds>(
+  createSelector<DomainModel<MapMarker>, DomainModel<MapMarker>, Bounds>(
     getDomainModel,
     ({entities}: DomainModel<MapMarker>) => boundsFromMarkers(entities),
   );

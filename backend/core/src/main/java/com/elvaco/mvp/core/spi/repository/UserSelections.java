@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 
 public interface UserSelections {
+
   Optional<UserSelection> findByIdAndOwnerUserIdAndOrganisationId(
     UUID id,
     UUID ownerUserId,

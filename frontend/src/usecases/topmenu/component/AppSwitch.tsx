@@ -33,19 +33,20 @@ const MenuIcon = ({onClick}: Clickable) => (
   </ColumnCenter>
 );
 
-interface Props {
+interface Props extends Clickable {
   leftIcon?: React.ReactElement<any>;
   text: string;
   to: string;
 }
 
-const LinkMenuItem = ({leftIcon, text, to}: Props) => (
+const LinkMenuItem = ({leftIcon, text, to, onClick}: Props) => (
   <Link to={to} className="link">
     <MenuItem
       leftIcon={leftIcon}
       className="first-uppercase"
       innerDivStyle={topMenuInnerDivStyle}
       style={topMenuItemDivStyle}
+      onClick={onClick}
     >
       {text}
     </MenuItem>
@@ -53,9 +54,10 @@ const LinkMenuItem = ({leftIcon, text, to}: Props) => (
 );
 
 export const AppSwitch = () => {
-  const renderPopoverContent: RenderFunction<OnClick> = () => ([
+  const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => ([
       (
         <LinkMenuItem
+          onClick={onClick}
           to={routes.home}
           text={translate('metering')}
           leftIcon={<IconMeter style={topMenuItemIconStyle}/>}
@@ -64,6 +66,7 @@ export const AppSwitch = () => {
       ),
       (
         <LinkMenuItem
+          onClick={onClick}
           to={routes.admin}
           text={translate('admin')}
           leftIcon={<ActionDashboard style={topMenuItemIconStyle}/>}

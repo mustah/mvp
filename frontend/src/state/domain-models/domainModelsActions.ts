@@ -10,13 +10,14 @@ import {
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
-  Identifiable, Omit,
+  Identifiable,
+  Omit,
   payloadActionOf,
   uuid,
 } from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
-import {DomainModelsState, Normalized, NormalizedState, RequestType} from './domainModels';
+import {DomainModelsState, Normalized, NormalizedState, RequestsHttp, RequestType} from './domainModels';
 
 type ActionTypeFactory = (endPoint: EndPoints) => string;
 
@@ -97,7 +98,7 @@ const asyncRequest = async <REQUEST_MODEL, DATA>(
   }
 };
 
-const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<Identifiable>): boolean =>
+export const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: RequestsHttp): boolean =>
   !isSuccessfullyFetched && !isFetching && !error;
 
 const shouldFetchEntity = (

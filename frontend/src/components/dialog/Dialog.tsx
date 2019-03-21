@@ -6,7 +6,7 @@ import DialogAction = __MaterialUI.DialogAction;
 
 export interface DialogProps {
   actions?: Array<DialogAction | React.ReactElement<any>>;
-  autoScrollBodyContent: boolean;
+  autoScrollBodyContent?: boolean;
   children?: Children;
   close: OnClick;
   contentClassName?: string;
@@ -19,7 +19,7 @@ export const Dialog =
       className="Dialog-root"
       contentClassName={classNames('Dialog', contentClassName)}
       actions={actions}
-      autoScrollBodyContent={autoScrollBodyContent}
+      autoScrollBodyContent={autoScrollBodyContent || true}
       onRequestClose={close}
       open={isOpen}
     >

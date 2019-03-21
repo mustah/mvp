@@ -80,6 +80,10 @@ export class Maybe<T> implements MaybeApi<T> {
     return this.isJust() ? this.get() : undefined;
   }
 
+  getOrElseNull(): T | null {
+    return this.isJust() ? this.get() : null;
+  }
+
   orElseGet(f: () => T): T {
     return this.isJust() ? this.get() : f();
   }

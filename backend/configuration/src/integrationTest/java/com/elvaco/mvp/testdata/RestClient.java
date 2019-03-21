@@ -98,6 +98,10 @@ public final class RestClient {
     template.put(apiUrlOf(url), request);
   }
 
+  public <T1, T2> ResponseEntity<T2> put(UrlTemplate urlTemplate, T1 body, Class<T2> responseType) {
+    return put(urlTemplate.template(), body, responseType);
+  }
+
   public <T1, T2> ResponseEntity<T2> put(String url, T1 body, Class<T2> responseType) {
     RequestEntity<T1> request = RequestEntity
       .put(URI.create(apiUrlOf(url)))
@@ -112,6 +116,16 @@ public final class RestClient {
       HttpMethod.DELETE,
       null,
       responseType
+    );
+  }
+
+  public <T> ResponseEntity<T> delete(UrlTemplate urlTemplate, Class<T> responseType) {
+    return template.exchange(
+      baseUrl + urlTemplate.template(),
+      HttpMethod.DELETE,
+      null,
+      responseType,
+      urlTemplate.variables()
     );
   }
 

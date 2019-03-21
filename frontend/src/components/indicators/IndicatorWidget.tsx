@@ -9,7 +9,7 @@ import './IndicatorWidget.scss';
 import {WidgetModel} from './indicatorWidgetModels';
 import classNames = require('classnames');
 
-interface Props extends ClassNamed, WithChildren {
+export interface IndicatorWidgetProps extends ClassNamed, WithChildren {
   widget: WidgetModel;
   title: string;
 }
@@ -31,7 +31,7 @@ const NoExpectedMeasurementsWidget = ({className, title}: EmptyStateProps) => (
   </Column>
 );
 
-export const IndicatorWidget = ({className, title, widget: {collectionPercentage}}: Props) => {
+export const IndicatorWidget = ({className, title, widget: {collectionPercentage}}: IndicatorWidgetProps) => {
   if (isNaN(collectionPercentage)) {
     return <NoExpectedMeasurementsWidget title={title} className={className}/>;
   }

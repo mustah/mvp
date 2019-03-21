@@ -20,7 +20,7 @@ export const enum EndPoints {
   measurements = '/measurements',
   measurementsAverage = '/measurements/average',
   organisations = '/organisations',
-  dashboard = '/dashboards/current',
+  dashboard = '/dashboards',
   userSelections = '/user/selections',
   users = '/users',
   changePassword = '/users/change-password',
@@ -29,4 +29,5 @@ export const enum EndPoints {
   meterDefinitions = '/meter-definitions',
   mediums = '/meter-definitions/medium',
   quantities = '/meter-definitions/quantities',
+  widgets = '/dashboards/widgets',
 }

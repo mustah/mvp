@@ -84,7 +84,7 @@ const MapContent = ({gateway, gatewayMapMarker}: OwnProps) => (
   </Map>
 );
 
-type  MapProps = OwnProps & WithEmptyContentProps;
+type MapProps = OwnProps & WithEmptyContentProps;
 type Props = SuperAdmin & OwnProps;
 
 const MapContentWrapper = withEmptyContent<MapProps>(MapContent);

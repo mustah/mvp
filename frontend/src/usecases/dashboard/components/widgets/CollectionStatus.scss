@@ -1,13 +1,14 @@
 @import "../../../../app/variables";
 
-.OverviewWidgets {
+.CollectionStatus {
   width: $overview-widget-width;
   .Widget {
-    padding-top: 0;
+    width: $overview-widget-width;
 
     .Indicator-wrapper {
       .Indicator {
         cursor: default;
+        border-radius: 0 0 $border-radius $border-radius;
       }
     }
   }

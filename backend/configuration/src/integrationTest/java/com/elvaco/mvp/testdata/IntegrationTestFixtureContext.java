@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
+import com.elvaco.mvp.core.domainmodels.Dashboard;
+import com.elvaco.mvp.core.domainmodels.Dashboard.DashboardBuilder;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Gateway.GatewayBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -21,6 +23,9 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.domainmodels.Widget;
+import com.elvaco.mvp.core.domainmodels.Widget.WidgetBuilder;
+import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -32,6 +37,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 import com.elvaco.mvp.testing.fixture.TestFixtures;
@@ -59,6 +65,8 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   private final Organisations organisations;
   private final Users users;
   private final UserSelections userSelections;
+  private final Dashboards dashboards;
+  private final Widgets widgets;
 
   @Override
   public Organisation defaultOrganisation() {
@@ -195,6 +203,14 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   User given(UserBuilder userBuilder) {
     User user = userBuilder.build();
     return users.save(user).withPassword(user.password);
+  }
+
+  Dashboard given(DashboardBuilder dashboardBuilder) {
+    return dashboards.save(dashboardBuilder.build());
+  }
+
+  Widget given(WidgetBuilder widgetBuilder) {
+    return widgets.save(widgetBuilder.build());
   }
 
   private static PhysicalMeter connect(LogicalMeter logicalMeter, PhysicalMeter physicalMeter) {

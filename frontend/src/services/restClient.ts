@@ -8,6 +8,7 @@ import axios, {
 } from 'axios';
 import {config} from '../config/config';
 import {InvalidToken} from '../exceptions/InvalidToken';
+import {idGenerator} from '../helpers/idGenerator';
 import {texts} from '../helpers/texts';
 import {Dictionary, ErrorResponse} from '../types/Types';
 
@@ -51,6 +52,10 @@ class RestClientDelegate implements AxiosInstance {
 
   getParallel<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
     return this.doGet(url, url, config);
+  }
+
+  getForced<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
+    return this.doGet(idGenerator.uuid().toString(), url, config);
   }
 
   delete(url: string, config?: AxiosRequestConfig): AxiosPromise {
@@ -100,6 +105,7 @@ const axiosConfig = config().axios;
 
 interface AxiosInstanceWrapper extends AxiosInstance {
   getParallel<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>;
+  getForced<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>;
 }
 
 export let restClient: AxiosInstanceWrapper = new RestClientDelegate(axios.create(axiosConfig));

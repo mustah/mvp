@@ -1,182 +1,497 @@
 package com.elvaco.mvp.web;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
-import java.util.stream.DoubleStream;
+import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.Dashboard;
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.domainmodels.UserSelection;
+import com.elvaco.mvp.core.domainmodels.Widget;
+import com.elvaco.mvp.core.util.Json;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
-import com.elvaco.mvp.testing.fixture.UserTestData;
 import com.elvaco.mvp.web.dto.DashboardDto;
+import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
 
-import org.junit.After;
-import org.junit.Ignore;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
-import static com.elvaco.mvp.core.util.Json.toJsonNode;
-import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
-import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
-import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
-@SuppressWarnings("ALL")
 public class DashboardControllerTest extends IntegrationTest {
 
-  @After
-  public void tearDown() {
-    measurementJpaRepository.deleteAll();
+  @Test
+  public void get_dashboards() {
+    User user = given(user());
+    User otherUser = given(user());
+    Dashboard myDashboard = given(dashboard().ownerUserId(user.id));
+
+    given(dashboard().ownerUserId(otherUser.id));
+
+    List<DashboardDto> response = as(user).getList(
+      dashboardsUrl(),
+      DashboardDto.class
+    ).getBody();
+
+    assertThat(response).hasSize(1)
+      .extracting(d -> d.id)
+      .containsExactly(myDashboard.id);
   }
 
   @Test
-  public void collectionStatusNoPeriod_ReturnsEmptyCollectionStatus() {
-    ResponseEntity<DashboardDto> response = asUser()
-      .get("/dashboards/current", DashboardDto.class);
+  public void get_widgets() {
+    User user = given(user());
+    Dashboard myDashboard1 = given(dashboard().ownerUserId(user.id));
+    Widget widget1 = given(widget().dashboardId(myDashboard1.id).ownerUserId(user.id));
+    Widget widget2 = given(widget().dashboardId(myDashboard1.id).ownerUserId(user.id));
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    WidgetDto widget = response.getBody().widgets.get(0);
-    assertThat(widget).isEqualTo(
-      new WidgetDto(
-        WidgetType.COLLECTION.name,
-        Double.NaN
-      )
+    Dashboard myDashboard2 = given(dashboard().ownerUserId(user.id));
+    given(widget().dashboardId(myDashboard2.id).ownerUserId(user.id));
+
+    User anotherUser = given(user());
+    Dashboard anotherUsersDashboard = given(dashboard().ownerUserId(anotherUser.id));
+    given(widget().dashboardId(anotherUsersDashboard.id).ownerUserId(anotherUser.id));
+
+    List<WidgetDto> response = as(user).getList(
+      widgetsForDashboardUrl(myDashboard1.id),
+      WidgetDto.class
+    ).getBody();
+
+    assertThat(response).hasSize(2)
+      .extracting(w -> w.id)
+      .containsExactly(widget1.id, widget2.id);
+  }
+
+  @Test
+  public void get_dashboards_noDashboardFound() {
+    List<DashboardDto> response = asUser().getList(
+      dashboardsUrl(),
+      DashboardDto.class
+    ).getBody();
+
+    assertThat(response).hasSize(0);
+  }
+
+  @Test
+  public void add_dashboard() {
+    User user = given(user());
+    DashboardDto dto = new DashboardDto(randomUUID(), randomName(), randomLayout(), emptyList());
+
+    ResponseEntity<DashboardDto> response = as(user).post(
+      dashboardsUrl(),
+      dto,
+      DashboardDto.class
     );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(response.getBody()).isEqualTo(dto);
+
+    assertThat(dashboardJpaRepository.findById(dto.id)).isPresent().get()
+      .extracting(d -> d.ownerUserId, d -> d.organisationId, d -> d.layout.getJson())
+      .containsExactly(user.id, user.organisation.id, dto.layout);
   }
 
   @Test
-  public void collectionStatusNoMeters_ReturnsEmptyCollectionStatus() {
-    ZonedDateTime start = context().now();
-    ZonedDateTime end = start.plusHours(2);
-    ResponseEntity<DashboardDto> response = asUser()
-      .get(Url.builder()
-        .path("/dashboards/current")
-        .period(start, end)
-        .build(), DashboardDto.class);
+  public void add_dashboard_handleNullWidgets() {
+    User user = given(user());
+    DashboardDto dto = new DashboardDto(randomUUID(), randomName(), randomLayout(), null);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    WidgetDto widget = response.getBody().widgets.get(0);
-    assertThat(widget).isEqualTo(
-      new WidgetDto(
-        WidgetType.COLLECTION.name,
-        Double.NaN
-      )
+    ResponseEntity<DashboardDto> response = as(user).post(
+      dashboardsUrl(),
+      dto,
+      DashboardDto.class
     );
-  }
 
-  @Ignore
-  @Test
-  public void findCollectionStatsEnsureOrganisationFiltersAreApplied() {
-    UserSelection selection = UserSelection.builder()
-      .selectionParameters(toJsonNode(CITIES_JSON_STRING))
-      .organisationId(MARVEL.id)
-      .build();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(response.getBody()).isEqualToIgnoringNullFields(dto);
 
-    Organisation organisation = MARVEL.toBuilder()
-      .selection(selection)
-      .parent(ELVACO)
-      .build();
-
-    User user = UserTestData.subOrgUser().organisation(organisation).build();
-
-    var url = Url.builder()
-      .path("/dashboards/current")
-      .parameter(CITY, "norge,oslo")
-      .parameter(BEFORE, "2018-01-01T00:00:00Z")
-      .parameter(AFTER, "2018-12-31T00:00:00Z")
-      .build();
-
-    var response = as(user).get(url, DashboardDto.class);
-
-    assertThat(response.getBody().widgets).isEmpty();
+    assertThat(dashboardJpaRepository.findById(dto.id)).isPresent().get()
+      .extracting(d -> d.ownerUserId, d -> d.organisationId, d -> d.layout.getJson())
+      .containsExactly(user.id, user.organisation.id, dto.layout);
   }
 
   @Test
-  public void findAllWithCollectionStatusForMediumGas() {
-    var meter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
-    ZonedDateTime start = context().now();
-    ZonedDateTime end = start.plusDays(1);
-    given(series(
-      meter,
-      Quantity.VOLUME,
-      start,
-      DoubleStream.iterate(0, d -> d + 1.0).limit(12).toArray()
-    ));
+  public void add_dashboard_saves_widgets() {
+    User user = given(user());
+    UUID dashboardId = randomUUID();
+    WidgetDto widget1 = new WidgetDto(
+      randomUUID(),
+      dashboardId,
+      WidgetType.COLLECTION.toString(),
+      randomName(),
+      randomSettings()
+    );
 
-    ResponseEntity<DashboardDto> response = asUser()
-      .get(
-        Url.builder()
-          .path("/dashboards/current")
-          .period(start, end)
-          .parameter("medium", "Gas")
-          .build(),
-        DashboardDto.class
-      );
+    WidgetDto widget2 = new WidgetDto(
+      randomUUID(),
+      dashboardId,
+      WidgetType.COLLECTION.toString(),
+      randomName(),
+      randomSettings()
+    );
+
+    DashboardDto dto = new DashboardDto(
+      dashboardId,
+      randomName(),
+      randomLayout(),
+      asList(widget1, widget2)
+    );
+
+    ResponseEntity<DashboardDto> response = as(user).post(
+      dashboardsUrl(),
+      dto,
+      DashboardDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(response.getBody()).isEqualToIgnoringGivenFields(dto, "widgets");
+
+    assertThat(widgetJpaRepository.findByDashboardIdAndOwnerUserIdAndOrganisationId(
+      dashboardId,
+      user.id,
+      user.organisation.id
+    )).extracting(w -> w.id)
+      .containsExactlyInAnyOrder(widget1.id, widget2.id);
+  }
+
+  @Test
+  public void add_widget() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(user.id));
+    WidgetDto dto = new WidgetDto(
+      randomUUID(),
+      dashboard.id,
+      WidgetType.COLLECTION.toString(),
+      randomName(),
+      randomSettings()
+    );
+
+    ResponseEntity<WidgetDto> response = as(user).post(
+      widgetsUrl(),
+      dto,
+      WidgetDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(response.getBody()).isEqualTo(dto);
+    assertThat(widgetJpaRepository.findById(dto.id).get())
+      .extracting(w -> w.dashboardId, w -> w.organisationId, w -> w.settings.getJson())
+      .containsExactly(dashboard.id, user.organisation.id, dto.settings);
+  }
+
+  @Test
+  public void add_widget_DashboardDoesNotExist() {
+    WidgetDto dto = new WidgetDto(
+      randomUUID(),
+      randomUUID(),
+      WidgetType.COLLECTION.toString(),
+      randomName(),
+      randomSettings()
+    );
+    ResponseEntity<ErrorMessageDto> response = asUser().post(
+      widgetsUrl(),
+      dto,
+      ErrorMessageDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(response.getBody().message)
+      .contains("not allowed to save Widget")
+      .contains(dto.id.toString());
+  }
+
+  @Test
+  public void add_widget_notMyDashboard() {
+    User user = given(user());
+    User otherUser = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
+
+    WidgetDto dto = new WidgetDto(
+      randomUUID(),
+      dashboard.id,
+      WidgetType.COLLECTION.toString(),
+      randomName(),
+      randomSettings()
+    );
+
+    ResponseEntity<ErrorMessageDto> response = as(user).post(
+      widgetsUrl(),
+      dto,
+      ErrorMessageDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(response.getBody().message)
+      .contains("not allowed to save Widget")
+      .contains(dto.dashboardId.toString());
+  }
+
+  @Test
+  public void delete_dashboard() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(user.id));
+    given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
+
+    ResponseEntity<DashboardDto> response = as(user).delete(
+      dashboardsUrl(dashboard.id),
+      DashboardDto.class
+    );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().widgets.get(0))
-      .isEqualTo(new WidgetDto(
-        WidgetType.COLLECTION.name,
-        50
+    assertThat(response.getBody()).extracting(d -> d.id).isEqualTo(dashboard.id);
+
+    assertThat(dashboards.findAll()).hasSize(0);
+    assertThat(widgets.findAll()).hasSize(0);
+  }
+
+  @Test
+  public void delete_dashboard_failForAnotherUser() {
+    User user = given(user());
+    User otherUser = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
+
+    ResponseEntity<ErrorMessageDto> response = as(user).delete(
+      dashboardsUrl(dashboard.id),
+      ErrorMessageDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(response.getBody().message).contains("dashboard with id '" + dashboard.id);
+  }
+
+  @Test
+  public void delete_widget() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(user.id));
+    Widget widget1 = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
+    Widget widget2 = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
+
+    ResponseEntity<WidgetDto> response = as(user).delete(
+      widgetsUrl(widget2.id),
+      WidgetDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).extracting(w -> w.id).isEqualTo(widget2.id);
+
+    List<WidgetDto> getResponse = as(user).getList(
+      widgetsForDashboardUrl(dashboard.id),
+      WidgetDto.class
+    ).getBody();
+
+    assertThat(getResponse).hasSize(1).extracting(w -> w.id).containsExactly(widget1.id);
+    assertThat(widgets.findByDashboardIdAndOwnerUserIdAndOrganisationId(
+      dashboard.id,
+      user.id,
+      user.organisation.id
+    )).extracting(w -> w.id).containsExactly(widget1.id);
+  }
+
+  @Test
+  public void delete_widget_failForAnotherUser() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(given(user()).id));
+    Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(dashboard.ownerUserId));
+
+    ResponseEntity<ErrorMessageDto> response = as(user).delete(
+      widgetsUrl(widget.id),
+      ErrorMessageDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(response.getBody().message).contains("widget with id '" + widget.id);
+  }
+
+  @Test
+  public void update_dashboard() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(user.id));
+
+    DashboardDto dto = new DashboardDto(dashboard.id, randomName(), randomLayout(), null);
+
+    ResponseEntity<DashboardDto> response = as(user).put(
+      dashboardsUrl(),
+      dto,
+      DashboardDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(dashboardJpaRepository.findAll())
+      .extracting(d -> d.ownerUserId, d -> d.organisationId, d -> d.name, d -> d.layout.getJson())
+      .containsExactly(tuple(user.id, user.organisation.id, dto.name, dto.layout));
+  }
+
+  @Test
+  public void update_dashboard_doesNotUpdateWidgets() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(user.id));
+    Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
+
+    DashboardDto dto = new DashboardDto(dashboard.id, randomName(), randomLayout(), null);
+
+    ResponseEntity<DashboardDto> response = as(user).put(
+      dashboardsUrl(),
+      dto,
+      DashboardDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(widgetJpaRepository.findById(widget.id)).isPresent().get()
+      .extracting(w -> w.organisationId, w -> w.ownerUserId, w -> w.settings.getJson())
+      .containsExactly(user.organisation.id, user.id, widget.settings);
+
+    dto = new DashboardDto(dashboard.id, randomName(), randomLayout(), emptyList());
+
+    response = as(user).put(
+      dashboardsUrl(),
+      dto,
+      DashboardDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(widgetJpaRepository.findById(widget.id)).isPresent().get()
+      .extracting(w -> w.organisationId, w -> w.ownerUserId, w -> w.settings.getJson())
+      .containsExactly(user.organisation.id, user.id, widget.settings);
+  }
+
+  @Test
+  public void update_dashboard_failForAnotherUser() {
+    User user = given(user());
+    User otherUser = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
+
+    DashboardDto dto = new DashboardDto(dashboard.id, randomName(), randomLayout(), null);
+
+    ResponseEntity<ErrorMessageDto> response = as(user).put(
+      dashboardsUrl(),
+      dto,
+      ErrorMessageDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(response.getBody().message)
+      .contains("not allowed to update")
+      .contains(dashboard.id.toString());
+  }
+
+  @Test
+  public void update_widget() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(user.id));
+    Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
+
+    WidgetDto dto = new WidgetDto(
+      widget.id,
+      dashboard.id,
+      WidgetType.MAP.toString(),
+      randomName(),
+      randomSettings()
+    );
+
+    ResponseEntity<WidgetDto> response = as(user).put(
+      widgetsUrl(),
+      dto,
+      WidgetDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(widgetJpaRepository.findAll())
+      .extracting(
+        w -> w.id,
+        w -> w.ownerUserId,
+        w -> w.organisationId,
+        w -> w.type.toString(),
+        w -> w.title,
+        w -> w.settings.getJson()
+      )
+      .containsExactly(tuple(
+        widget.id,
+        user.id,
+        user.organisation.id,
+        WidgetType.MAP.toString(),
+        dto.title,
+        dto.settings
       ));
   }
 
   @Test
-  public void findAllWithCollectionStatus() {
-    ZonedDateTime start = context().now();
-    ZonedDateTime end = start.plusDays(2);
+  public void update_widget_failForAnotherUser() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(given(user()).id));
+    Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(dashboard.ownerUserId));
 
-    PhysicalMeter phys24 = physicalMeter().readIntervalMinutes(1440).build();
-    List<LogicalMeter> meters = new ArrayList<>(given(
-      logicalMeter(),
-      logicalMeter().physicalMeters((List<PhysicalMeter>) Arrays.asList(phys24))
-    ));
-    //36 out of 48  (75%)
-    given(series(
-      meters.get(0),
-      Quantity.POWER,
-      start,
-      DoubleStream.iterate(0, d -> d + 1.0).limit(36).toArray()
+    WidgetDto dto = new WidgetDto(
+      widget.id,
+      dashboard.id,
+      WidgetType.COLLECTION.toString(),
+      randomName(),
+      randomSettings()
+    );
 
-    ));
-    //One out of two (50%)
-    given(series(
-      meters.get(1),
-      Quantity.POWER,
-      start,
-      DoubleStream.iterate(0, d -> d + 1.0).limit(1).toArray()
+    ResponseEntity<ErrorMessageDto> response = as(user).put(
+      widgetsUrl(),
+      dto,
+      ErrorMessageDto.class
+    );
 
-    ));
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(response.getBody().message)
+      .contains("not allowed to save Widget")
+      .contains(widget.id.toString());
+  }
 
-    ResponseEntity<DashboardDto> response = asUser()
-      .get(
-        Url.builder().path("/dashboards/current")
-          .period(start, end).build(),
-        DashboardDto.class
-      );
+  private String randomName() {
+    return randomUUID().toString();
+  }
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  private ObjectNode randomLayout() {
+    try {
+      return (ObjectNode) Json.OBJECT_MAPPER.readTree(
+        "{\"layout\":\"test layout " + randomUUID() + "\"}");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
-    DashboardDto dashboardDtos = response.getBody();
+  private ObjectNode randomSettings() {
+    try {
+      return (ObjectNode) Json.OBJECT_MAPPER.readTree(
+        "{\"settings\":\"test settings " + randomUUID() + "\"}");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
-    assertThat(dashboardDtos.widgets.get(0))
-      .isEqualTo(new WidgetDto(
-        WidgetType.COLLECTION.name,
-        62.5
-      ));
+  private static Url dashboardsUrl() {
+    return Url.builder().path("/dashboards").build();
+  }
+
+  private static Url dashboardsUrl(UUID dashboardId) {
+    return Url.builder().path("/dashboards/" + dashboardId).build();
+  }
+
+  private static Url widgetsUrl() {
+    return Url.builder().path("/dashboards/widgets").build();
+  }
+
+  private static Url widgetsUrl(UUID widgetId) {
+    return Url.builder()
+      .path("/dashboards/widgets/" + widgetId)
+      .build();
+  }
+
+  private static Url widgetsForDashboardUrl(UUID dashboardId) {
+    return Url.builder()
+      .path("/dashboards/widgets")
+      .parameter("dashboardId", dashboardId)
+      .build();
   }
 }

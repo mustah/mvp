@@ -2,7 +2,8 @@ package com.elvaco.mvp.web.dto;
 
 public enum WidgetType {
 
-  COLLECTION("collection");
+  COLLECTION("collection"),
+  MAP("map");
 
   public final String name;
 
