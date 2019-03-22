@@ -21,7 +21,7 @@ import {
 } from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWith, EncodedUriParameters, ErrorResponse, OnClick, uuid} from '../../../types/Types';
 import {getCollectionStatRequestParameters} from '../collectionSelectors';
-import {CollectionStatLineChart} from '../components/CollectionStatLineChart';
+import {CollectionStatBarChart} from '../components/CollectionStatBarChart';
 import {addAllToReport} from '../../report/reportActions';
 import {LegendItem} from '../../report/reportModels';
 
@@ -61,4 +61,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const CollectionGraphContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionStatLineChart);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionStatBarChart);
