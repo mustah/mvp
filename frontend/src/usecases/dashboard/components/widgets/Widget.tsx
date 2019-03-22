@@ -86,7 +86,7 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
 
   return (
     <Widget className={className}>
-      <RowMiddle className="space-between">
+      <RowMiddle className="space-between draggableWidgetArea">
         <WidgetTitle>{title}</WidgetTitle>
         <ActionsDropdown renderPopoverContent={renderPopoverContent}/>
       </RowMiddle>
