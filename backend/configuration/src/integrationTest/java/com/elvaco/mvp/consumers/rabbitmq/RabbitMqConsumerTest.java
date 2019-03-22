@@ -63,6 +63,10 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
     publishMessage(toJson(message).getBytes());
 
+    assertOrganisationWithSlugWasCreated("some-organisation");
+    UUID organisationId = organisationJpaRepository.findBySlug("some-organisation").get().id;
+    assertLogicalMeterWasCreated(organisationId, "facility-id");
+
     MeteringReferenceInfoMessageDto newMessage = getMeteringReferenceInfoMessageDto()
       .withMeter(null)
       .withFacility(new FacilityDto(
@@ -75,10 +79,6 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       .withGatewayStatus(new GatewayStatusDto("123987", "Gateway 3100", "OK", "8.8.8.8", ""));
 
     publishMessage(toJson(newMessage).getBytes());
-
-    assertOrganisationWithSlugWasCreated("some-organisation");
-
-    UUID organisationId = organisationJpaRepository.findBySlug("some-organisation").get().id;
 
     assertLogicalMeterLocation(
       organisationId,
