@@ -4,8 +4,8 @@ import * as React from 'react';
 import {
   AxisDomain,
   CartesianGrid,
-  Line,
-  LineChart,
+  Bar,
+  BarChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -34,7 +34,7 @@ interface CollectionStatData {
 
 const ticks: number[] = [0, 20, 40, 60, 80, 100];
 const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
-const domains: [AxisDomain, AxisDomain] = ['dataMin', 'dataMax'];
+const domains: [AxisDomain, AxisDomain] = ['dataMin - 100000', 'dataMax + 100000'];
 
 const style: React.CSSProperties = {
   padding: 8,
@@ -62,11 +62,11 @@ const CustomizedTooltip = (props) => {
   return null;
 };
 
-const WrappableCollectionStatLineChart = ({data}: CollectionStatData) =>
+const WrappableCollectionStatBarChart = ({data}: CollectionStatData) =>
   (
     <ColumnCenter className="align-items">
       <ResponsiveContainer aspect={2.5} width="95%" height="99%">
-        <LineChart
+        <BarChart
           width={10}
           height={50}
           data={data}
@@ -86,22 +86,22 @@ const WrappableCollectionStatLineChart = ({data}: CollectionStatData) =>
           />
           <CartesianGrid strokeDasharray="3 3"/>
           <Tooltip content={<CustomizedTooltip/>}/>
-          <Line
+          <Bar
             dataKey="collectionPercentage"
-            stroke={colorFor('collectionPercentage')}
-            strokeWidth={2}
-            type="monotone"
+            minPointSize={3}
+            fill={colorFor('collectionPercentage')}
+            barSize={100}
           />
-        </LineChart>
+        </BarChart>
       </ResponsiveContainer>
       <TimestampInfoMessage/>
     </ColumnCenter>
   );
 
-const WrappedCollectionStatLineChart = withEmptyContent<CollectionStatData & WithEmptyContentProps>(
-  WrappableCollectionStatLineChart);
+const WrappedCollectionStatBarChart = withEmptyContent<CollectionStatData & WithEmptyContentProps>(
+  WrappableCollectionStatBarChart);
 
-export const CollectionStatLineChart = (props: Props) => {
+export const CollectionStatBarChart = (props: Props) => {
   const {
     isFetching,
     parameters,
@@ -119,7 +119,7 @@ export const CollectionStatLineChart = (props: Props) => {
 
   return (
     <Loader isFetching={isFetching}>
-      <WrappedCollectionStatLineChart
+      <WrappedCollectionStatBarChart
         data={data}
         hasContent={data.length > 0}
         noContentText={firstUpperTranslated('no meters')}

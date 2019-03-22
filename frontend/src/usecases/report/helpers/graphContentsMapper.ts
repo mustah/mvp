@@ -26,6 +26,7 @@ export const colorFor = colorize({
   [Quantity.differenceTemperature as string]: '#2979FF',
   [Quantity.externalTemperature as string]: colors.red,
   [Quantity.relativeHumidity as string]: colors.orange,
+  ['collectionPercentage']: '#b6e2cc'
 });
 
 const yAxisIdLookup = (axes: AxesProps, unit: string): 'left' | 'right' | undefined => {
