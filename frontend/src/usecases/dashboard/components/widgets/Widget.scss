@@ -17,12 +17,6 @@
 
   &.MapWidget {
     padding-bottom: 0;
-    min-height: 600px;
-    min-width: 872px;
-
-    & .Map {
-      height: 628px;
-    }
   }
 
   .Subtitle-text {
@@ -60,4 +54,10 @@
 
 .draggableWidgetArea {
   cursor: move;
+}
+
+.react-grid-item .react-resizable-handle
+{
+  bottom: -6px;
+  right: -5px;
 }

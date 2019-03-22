@@ -17,6 +17,12 @@ export interface LayoutProps {
   h: number;
 }
 
+export const widgetHeighToPx = (height: number): number =>
+  height * 118 + ((height - 1) * 62);
+
+export const widgetWidthToPx = (width: number): number =>
+  width * 168 + ((width - 1) * 10);
+
 export interface WidgetMandatory {
   id: uuid;
   dashboardId: uuid;
