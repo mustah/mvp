@@ -75,8 +75,8 @@ public class MvpApplication implements WebMvcConfigurer {
       .addResourceLocations("classpath:/static/")
       .setCacheControl(
         CacheControl.maxAge(0, TimeUnit.DAYS)
-        .cachePrivate()
-        .mustRevalidate())
+          .cachePrivate()
+          .mustRevalidate())
       .resourceChain(true)
       .addResolver(new PushStateResourceResolver());
   }
