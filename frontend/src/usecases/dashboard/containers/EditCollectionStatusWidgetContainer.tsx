@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {ButtonCancel, ButtonConfirm} from '../../../components/buttons/DialogButtons';
+import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {Dialog} from '../../../components/dialog/Dialog';
 import {SelectFieldInput} from '../../../components/inputs/InputSelectable';
@@ -12,10 +13,8 @@ import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {WidgetType} from '../../../state/widget/configuration/widgetConfigurationReducer';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../types/Types';
-import {CollectionStatusWidgetSettings} from './CollectionStatusContainer';
 import '../components/widgets/EditWidget.scss';
-
-const noop = () => null;
+import {CollectionStatusWidgetSettings} from './CollectionStatusContainer';
 
 const ALL_METERS = -1;
 
@@ -40,6 +39,13 @@ const EditCollectionStatusWidget = ({
   ];
   const selectionLabel = firstUpperTranslated('selection');
   const [selectionId, selectSelection] = React.useState(settings.selectionId);
+  const [selectionInterval, selectSelectionInterval] = React.useState(settings.selectionInterval);
+
+  const selectPeriod = (period: Period) => selectSelectionInterval({period});
+  const setCustomDateRange = (customDateRange: DateRange) => selectSelectionInterval({
+    period: Period.custom,
+    customDateRange
+  });
 
   const onChange = (event, index, value) => {
     selectSelection(value);
@@ -51,7 +57,7 @@ const EditCollectionStatusWidget = ({
     const widget: CollectionStatusWidgetSettings = {
       id,
       settings: {
-        selectionInterval: settings.selectionInterval,
+        selectionInterval,
       },
       type: WidgetType.COLLECTION,
       dashboardId,
@@ -87,12 +93,11 @@ const EditCollectionStatusWidget = ({
         value={selectedSelection}
       />
       <PeriodSelection
-        customDateRange={Maybe.nothing()}
-        period={settings.selectionInterval.period}
-        selectPeriod={noop}
-        setCustomDateRange={noop}
-        style={{marginBottom: 0}}
-        disabled={true}
+        customDateRange={Maybe.maybe(selectionInterval.customDateRange)}
+        period={selectionInterval.period}
+        selectPeriod={selectPeriod}
+        setCustomDateRange={setCustomDateRange}
+        style={{marginLeft: 0, marginBottom: 0}}
       />
     </Dialog>
   );
