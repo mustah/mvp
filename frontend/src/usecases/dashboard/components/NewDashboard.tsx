@@ -1,6 +1,5 @@
 import {isEqual} from 'lodash';
 import Add from 'material-ui/svg-icons/content/add';
-import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
 import ReactGridLayout, {Layout} from 'react-grid-layout';
 /* tslint:disable */
@@ -232,13 +231,6 @@ export const NewDashboard = (props: DashboardProps) => {
     closeConfigurationDialog();
   };
 
-  const [isInEditMode, toggleEditMode] = React.useState(false);
-
-  const toggleDashboardEditMode = () => {
-    toggleEditMode(!isInEditMode);
-    return false;
-  };
-
   let layout: Layout[] = [];
   const onLayoutChange = (layout: Layout[]) => {
     if (hasContent(isFetching, myDashboard, myWidgets)
@@ -256,7 +248,7 @@ export const NewDashboard = (props: DashboardProps) => {
   if (hasContent(isFetching, myDashboard, myWidgets)) {
     layout = myDashboard.layout.layout.map((widgetLayout: Layout) => ({
       ...widgetLayout,
-      isDraggable: isInEditMode,
+      isDraggable: true,
       isResizable: false, // TODO allow resizing myWidgets later on
     }));
   }
@@ -352,14 +344,6 @@ export const NewDashboard = (props: DashboardProps) => {
               iconProps={{color: colors.lightBlack, style: iconSizeMedium}}
             />
           </Column>
-          <Column>
-            <Toggle
-              title={firstUpperTranslated('edit mode')}
-              defaultToggled={false}
-              onToggle={toggleDashboardEditMode}
-              style={{maxWidth: 200, marginRight: 16}}
-            />
-          </Column>
         </Row>
       </Row>
 
@@ -369,6 +353,7 @@ export const NewDashboard = (props: DashboardProps) => {
         cols={6}
         rowHeight={170}
         onLayoutChange={onLayoutChange}
+        draggableHandle={'.draggableWidgetArea'}
       >
         {widgetsA}
       </ReactGridLayout>

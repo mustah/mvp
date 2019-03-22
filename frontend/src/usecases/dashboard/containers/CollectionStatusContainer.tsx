@@ -1,23 +1,26 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {routes} from '../../../app/routes';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
 import {IndicatorWidget, IndicatorWidgetProps} from '../../../components/indicators/IndicatorWidget';
 import {WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {makeApiParametersOf} from '../../../helpers/urlFactory';
+import {history} from '../../../index';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {collectionStatClearError, } from '../../../state/domain-models/collection-stat/collectionStatActions';
 import {RequestsHttp} from '../../../state/domain-models/domainModels';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
+import {resetSelection, selectSavedSelection} from '../../../state/user-selection/userSelectionActions';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {getCollectionStatParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {WidgetMandatory, WidgetType} from '../../../state/widget/configuration/widgetConfigurationReducer';
 import {fetchCollectionStatsWidget, FetchWidgetIfNeeded} from '../../../state/widget/data/widgetDataActions';
 import {WidgetData} from '../../../state/widget/data/widgetDataReducer';
-import {Callback, CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
+import {Callback, CallbackWith, CallbackWithId, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
 import '../components/widgets/CollectionStatus.scss';
 import {WidgetWithTitle} from '../components/widgets/Widget';
 
@@ -26,18 +29,20 @@ interface WidgetProps {
   title: string;
   openConfiguration: OnClick;
   deleteWidget: Callback;
+  onClickWidget: OnClick;
   isFetching: boolean;
 }
 
-const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, isFetching}: WidgetProps) =>
+const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, onClickWidget, isFetching}: WidgetProps) =>
   (
     <Row>
       <WidgetWithTitle
         title={title}
         configure={openConfiguration}
         deleteWidget={deleteWidget}
-      >
-        <LoadingIndicator isFetching={isFetching} widget={widget} title={translate('collection')}/>
+      > <div onClick={onClickWidget} className={'widget-link'}>
+          <LoadingIndicator isFetching={isFetching} widget={widget} title={translate('collection')}/>
+      </div>
       </WidgetWithTitle>
     </Row>
   );
@@ -65,6 +70,8 @@ const CollectionStatus = (props: Props) => {
     title,
     openConfiguration,
     onDelete,
+    selectSavedSelection,
+    resetSelection,
   } = props;
 
   React.useEffect(() => {
@@ -80,6 +87,15 @@ const CollectionStatus = (props: Props) => {
 
   const onClickDeleteWidget = () => onDelete(settings);
 
+  const onClickWidget = () => {
+    if (settings.settings.selectionId) {
+      selectSavedSelection(settings.settings.selectionId);
+    } else {
+      resetSelection();
+    }
+    history.push(routes.meter);
+  };
+
   return (
     <Column className="CollectionStatus">
         <ColumnCenter className="flex-1">
@@ -89,6 +105,7 @@ const CollectionStatus = (props: Props) => {
             title={title}
             deleteWidget={onClickDeleteWidget}
             openConfiguration={openConfiguration}
+            onClickWidget={onClickWidget}
           />
         </ColumnCenter>
     </Column>
@@ -111,6 +128,8 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchCollectionStatsWidget: CallbackWith<FetchWidgetIfNeeded>;
+  selectSavedSelection: CallbackWithId;
+  resetSelection: Callback;
 }
 
 const mapStateToProps = (
@@ -148,6 +167,8 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: collectionStatClearError, // TODO add id here
   fetchCollectionStatsWidget,
+  selectSavedSelection,
+  resetSelection,
   deleteWidget,
 }, dispatch);
 
