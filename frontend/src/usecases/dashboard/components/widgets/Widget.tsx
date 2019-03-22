@@ -18,7 +18,7 @@ import {ActionsDropdown} from '../../../../components/actions-dropdown/ActionsDr
 import {useConfirmDialog} from '../../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
-import {Subtitle} from '../../../../components/texts/Titles';
+import {WidgetTitle} from '../../../../components/texts/Titles';
 import {translate} from '../../../../services/translationService';
 import {Callback, Children, ClassNamed, OnClick, RenderFunction} from '../../../../types/Types';
 import './Widget.scss';
@@ -87,7 +87,7 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
   return (
     <Widget className={className}>
       <RowMiddle className="space-between">
-        <Subtitle className="Widget-subtitle">{title}</Subtitle>
+        <WidgetTitle>{title}</WidgetTitle>
         <ActionsDropdown renderPopoverContent={renderPopoverContent}/>
       </RowMiddle>
       {children}

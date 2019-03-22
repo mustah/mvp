@@ -23,7 +23,8 @@ import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {Widget} from '../../../state/domain-models/widget/WidgetModels';
 import {
   WidgetMandatory,
-  WidgetSettings, widgetSizeMap,
+  WidgetSettings,
+  widgetSizeMap,
   WidgetType
 } from '../../../state/widget/configuration/widgetConfigurationReducer';
 import {OnClick, RenderFunction, uuid} from '../../../types/Types';
@@ -34,6 +35,12 @@ import {DashboardProps} from '../dashboardEnhancers';
 import {EditMapWidgetContainer} from './widgets/EditMapWidget';
 
 type ElementFromWidgetType = (settings: WidgetSettings['type']) => any;
+
+const makeLayoutComparable = (layout: Layout): Layout => {
+  const {maxH, maxW, minH, minW, isResizable, isDraggable, ...comparableProps} = {...layout};
+  delete comparableProps.static;
+  return comparableProps;
+};
 
 const newWidgetMenu =
   (openDialogWithWidgetType: ElementFromWidgetType): RenderFunction<OnClick> =>
@@ -213,8 +220,6 @@ export const NewDashboard = (props: DashboardProps) => {
     };
 
   const saveWidgetConfiguration = (widgetSettings: WidgetMandatory) => {
-    // TODO bind dashboardId, id etc here, so that the edit-container becomes blissfully unaware
-
     if (myWidgets.result.find(id => id === widgetSettings.id) === undefined) {
       addWidgetToDashboard(widgetSettings);
       const newLayout: Layout[] = addToNextRow(widgetSettings, layout);
@@ -236,10 +241,9 @@ export const NewDashboard = (props: DashboardProps) => {
 
   let layout: Layout[] = [];
   const onLayoutChange = (layout: Layout[]) => {
-    if (hasContent(isFetching, myDashboard, myWidgets) && !isEqual(
-      myDashboard.layout.layout.sort(),
-      layout.sort()
-    ) && layout.length > 0) {
+    if (hasContent(isFetching, myDashboard, myWidgets)
+        && !isEqual(myDashboard.layout.layout.map(makeLayoutComparable).sort(), layout.map(makeLayoutComparable).sort())
+        && layout.length > 0) {
       updateDashboard({...myDashboard, layout: {layout}});
     }
   };
@@ -312,9 +316,6 @@ export const NewDashboard = (props: DashboardProps) => {
 
   // TODO style myWidgets so that they fit some standard layout width/height
 
-  // TODO onLayoutChange() for saving new layout https://github.com/STRML/react-grid-layout#grid-layout-props
-  // on <ReactGridLayout/>
-
   const addNewWidget = newWidgetMenu((type: WidgetType) => {
     const widgetSettings: WidgetSettings =
       type === WidgetType.COLLECTION
@@ -344,20 +345,20 @@ export const NewDashboard = (props: DashboardProps) => {
         <MainTitle>{translate('dashboard')}</MainTitle>
         <Row>
           <Column title={firstUpperTranslated('add widget')}>
-          <ActionsDropdown
-            renderPopoverContent={addNewWidget}
-            className="SelectionResultActionDropdown"
-            icon={Add}
-            iconProps={{color: colors.lightBlack, style: iconSizeMedium}}
-          />
+            <ActionsDropdown
+              renderPopoverContent={addNewWidget}
+              className="SelectionResultActionDropdown"
+              icon={Add}
+              iconProps={{color: colors.lightBlack, style: iconSizeMedium}}
+            />
           </Column>
           <Column>
-          <Toggle
-            title={firstUpperTranslated('edit mode')}
-            defaultToggled={false}
-            onToggle={toggleDashboardEditMode}
-            style={{maxWidth: 200, marginRight: 16}}
-          />
+            <Toggle
+              title={firstUpperTranslated('edit mode')}
+              defaultToggled={false}
+              onToggle={toggleDashboardEditMode}
+              style={{maxWidth: 200, marginRight: 16}}
+            />
           </Column>
         </Row>
       </Row>
