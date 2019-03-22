@@ -52,5 +52,6 @@ export const makeLeafletCompatibleMarkersFrom = (markers: Dictionary<MapMarker> 
   const mapMarkers = isMapMarker(markers) ? {markers} : markers;
   return Object.keys(mapMarkers)
     .map((key: string) => mapMarkers[key])
+    .filter((marker) => isMapMarker(marker))
     .map(makeMarker);
 };
