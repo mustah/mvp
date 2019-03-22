@@ -22,7 +22,6 @@ import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.exception.MissingParameter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +41,6 @@ public class ApiExceptionHandler {
 
   private static final Pattern STRIP_AFTER_SEMI_COLON = Pattern.compile("([^;]+);");
   private static final Map<String, String> TYPE_TO_HUMAN_TYPE_MAP = new HashMap<>();
-  private static final String GENERAL_ERROR_MESSAGE = "An error occured, please contact support";
 
   static {
     TYPE_TO_HUMAN_TYPE_MAP.put("java.time.ZonedDateTime", "timestamp");
@@ -188,18 +186,12 @@ public class ApiExceptionHandler {
     return badRequest(exception);
   }
 
-  @ExceptionHandler(DataIntegrityViolationException.class)
-  public ResponseEntity<ErrorMessageDto> handle(DataIntegrityViolationException exception) {
-    log.warn("DataIntegrityViolationException occurred while processing request", exception);
-    return internalServerError(GENERAL_ERROR_MESSAGE);
-  }
-
   private <T extends Exception> ResponseEntity<ErrorMessageDto> handleOrRethrowGeneralException(
     T exception
   ) throws T {
     log.warn("Exception occurred while processing request", exception);
-    ApiExceptionInformation exceptionInformation
-      = resolveHttpStatus(exception).orElseThrow(() -> exception);
+    ApiExceptionInformation exceptionInformation = resolveHttpStatus(exception)
+      .orElseThrow(() -> exception);
     return new ResponseEntity<>(exceptionInformation.dto, exceptionInformation.status);
   }
 
