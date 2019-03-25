@@ -133,9 +133,9 @@ public class StepDefinitions {
       .click();
   }
 
-  @Then("I should be logged in as '(.*)'")
-  public void thenIShouldBeLoggedInAs(String username) {
-    assertClassElementHasText("Profile", username);
+  @Then("I should see the Dashboard")
+  public void thenIShouldBeLoggedInAs() {
+    assertClassElementHasText("PageContent", "dashboard");
   }
 
   @Then("I should see error message '(.*)'")

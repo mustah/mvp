@@ -33,7 +33,7 @@ def perform_requests(user, password, mvp_url):
 
     fail_if_slower_than_ms = {
         '/api/v1/authenticate': 1200,
-        '/api/v1/dashboards/current': 1200,
+        '/api/v1/dashboards': 1200,
         '/api/v1/map-markers/meters': 1200,
         '/api/v1/meters': 1200,
         '/api/v1/meters?after=2018-12-06T00%3A00%3A00.000%2B01%3A00&before=2018-12-07T00%3A00%3A00.000%2B01%3A00': 1200,

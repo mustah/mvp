@@ -15,7 +15,7 @@ Feature: Acceptance test
     Scenario Outline: Login to EVO
         Given I am on the login page
         When I login as user '<email>' and password '<password>'
-        Then I should be logged in as '<name>'
+        Then I should see the Dashboard
 
         Examples:
             | email          | password      | name    |
