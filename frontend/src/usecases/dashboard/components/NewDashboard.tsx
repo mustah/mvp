@@ -23,6 +23,7 @@ import {Widget} from '../../../state/domain-models/widget/WidgetModels';
 import {
   widgetHeighToPx,
   WidgetMandatory,
+  widgetMargins,
   WidgetSettings,
   widgetSizeMap,
   WidgetType,
@@ -37,11 +38,8 @@ import {EditMapWidgetContainer} from './widgets/EditMapWidget';
 
 type ElementFromWidgetType = (settings: WidgetSettings['type']) => any;
 
-const makeLayoutComparable = (layout: Layout): Layout => {
-  const {...comparableProps} = {...layout};
-  delete comparableProps.static;
-  return comparableProps;
-};
+const makeLayoutComparable = ({h, w, x, y}: Layout): Layout =>
+  ({h, w, x, y});
 
 const newWidgetMenu =
   (openDialogWithWidgetType: ElementFromWidgetType): RenderFunction<OnClick> =>
@@ -357,11 +355,13 @@ export const NewDashboard = (props: DashboardProps) => {
 
       <ReactGridLayout
         layout={layout}
-        width={1080}
+        width={1200}
         cols={6}
         rowHeight={170}
         onLayoutChange={onLayoutChange}
-        draggableHandle={'.draggableWidgetArea'}
+        draggableHandle={'.grid-draggable'}
+        margin={widgetMargins}
+        draggableCancel={'.grid-not-draggable'}
       >
         {widgetsA}
       </ReactGridLayout>
