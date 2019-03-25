@@ -12,7 +12,7 @@ import {Foldable} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
 import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
 import {isDefined} from '../../../helpers/commonHelpers';
-import {translate} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';
 import {
   fetchAddresses,
@@ -131,7 +131,7 @@ export const SelectionContent = ({
           <SearchableDropdownSelector
             fetchItems={fetchSecondaryAddresses}
             selectedItems={secondaryAddresses}
-            selectionText={`${translate('secondary address')}: `}
+            selectionText={`${firstUpperTranslated('meter id')}: `}
             select={selectSecondaryAddresses}
           />
           <SearchableDropdownSelector

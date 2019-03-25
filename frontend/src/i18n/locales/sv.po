@@ -336,7 +336,7 @@ msgid "labels"
 msgstr "etiketter"
 
 msgid "meter id"
-msgstr "mätar-id"
+msgstr "mätar-ID"
 
 msgid "m-bus device type"
 msgstr "m-bus mätartyp"
@@ -692,9 +692,6 @@ msgstr "ångra ändringar"
 
 msgid "give the selection a name"
 msgstr "namnge ditt urval"
-
-msgid "secondary address"
-msgstr "sekundäradress"
 
 msgid "thresholds"
 msgstr "gränsvärden"
