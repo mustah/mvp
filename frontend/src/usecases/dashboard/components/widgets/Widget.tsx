@@ -86,9 +86,9 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
 
   return (
     <Widget className={className}>
-      <RowMiddle className="space-between draggableWidgetArea">
+      <RowMiddle className="space-between grid-draggable">
         <WidgetTitle>{title}</WidgetTitle>
-        <ActionsDropdown renderPopoverContent={renderPopoverContent}/>
+        <ActionsDropdown className={'grid-not-draggable'} renderPopoverContent={renderPopoverContent}/>
       </RowMiddle>
       {children}
       <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={confirm}/>
