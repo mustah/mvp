@@ -297,7 +297,7 @@ msgid "labels"
 msgstr "labels"
 
 msgid "meter id"
-msgstr "meter-id"
+msgstr "meter-ID"
 
 msgid "m-bus device type"
 msgstr "m-bus device type"
@@ -620,9 +620,6 @@ msgstr "discard changes"
 
 msgid "give the selection a name"
 msgstr "give the selection a name"
-
-msgid "secondary address"
-msgstr "secondary address"
 
 msgid "thresholds"
 msgstr "thresholds"
