@@ -6,7 +6,7 @@ import {isOnSearchPage} from '../../app/routes';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
-import {search} from '../../usecases/search/searchActions';
+import {search} from '../search/searchActions';
 import {failureAction, requestAction, successAction} from '../api/apiActions';
 import {
   domainModelsPaginatedDeleteFailure,

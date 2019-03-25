@@ -19,7 +19,7 @@ export const MvpPages = () => (
     <Route exact={true} path={`${routes.report}/:id?`} component={ReportPage}/>
     <Route exact={true} path={routes.selection} component={SelectionPage}/>
     <Route exact={true} path={routes.userProfile} component={EditProfileContainer}/>
-    <Route exact={true} path={`${routes.searchResult}/:searchQuery?`} component={SearchResultContainer}/>
+    <Route exact={true} path={`${routes.searchResult}/:searchQuery`} component={SearchResultContainer}/>
     <Redirect to={routes.home}/>
   </Switch>
 );

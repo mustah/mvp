@@ -1,6 +1,6 @@
 import {LOCATION_CHANGE} from 'react-router-redux';
 import {routes} from '../../../app/routes';
-import {logoutUser} from '../../auth/authActions';
+import {logoutUser} from '../../../usecases/auth/authActions';
 import {search as searchAction} from '../searchActions';
 import {makeMeterQuery, QueryParameter} from '../searchModels';
 import {initialState, search, SearchState} from '../searchReducer';

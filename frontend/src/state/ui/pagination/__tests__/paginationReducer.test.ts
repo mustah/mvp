@@ -1,6 +1,6 @@
 import {mockSelectionAction} from '../../../../__tests__/testActions';
-import {search} from '../../../../usecases/search/searchActions';
-import {makeMeterQuery} from '../../../../usecases/search/searchModels';
+import {search} from '../../../search/searchActions';
+import {makeMeterQuery} from '../../../search/searchModels';
 import {changePage, updatePageMetaData} from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
 import {initialPaginationState, pagination, paginationPageSize} from '../paginationReducer';

@@ -9,9 +9,9 @@ import {
   RESET_SELECTION,
   SELECT_SAVED_SELECTION,
   setThresholdAction,
-} from '../../state/user-selection/userSelectionActions';
+} from '../user-selection/userSelectionActions';
 import {Action} from '../../types/Types';
-import {logoutUser} from '../auth/authActions';
+import {logoutUser} from '../../usecases/auth/authActions';
 import {search as searchAction} from './searchActions';
 import {Query, QueryParameter} from './searchModels';
 

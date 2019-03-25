@@ -29,7 +29,7 @@ import {MeterDetailState} from '../usecases/meter/measurements/meterDetailModels
 import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
 import {ReportState} from '../usecases/report/reportModels';
 import {report} from '../usecases/report/reportReducer';
-import {search, SearchState} from '../usecases/search/searchReducer';
+import {search, SearchState} from '../state/search/searchReducer';
 import {currentVersion, migrations} from './stateMigrations';
 
 export interface RootState {

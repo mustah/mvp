@@ -29,8 +29,8 @@ export const routes = {
   adminMeterDefinitionsModify: '/admin/meter-definitions/modify',
 };
 
-const searchResultRegexp = new RegExp(`${routes.searchResult}.*`);
-export const isOnSearchPage = ({pathname}: Location): boolean => pathname.match(searchResultRegexp) !== null;
+const searchResultRegExp = new RegExp(`${routes.searchResult}.*`);
+export const isOnSearchPage = ({pathname}: Location): boolean => pathname.match(searchResultRegExp) !== null;
 
 const organisationLogo = {
   'wayne-industries': wayneIndustries,

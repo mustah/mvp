@@ -9,7 +9,7 @@ import {Maybe} from '../../helpers/Maybe';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {search} from '../../usecases/search/searchActions';
+import {search} from '../search/searchActions';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
