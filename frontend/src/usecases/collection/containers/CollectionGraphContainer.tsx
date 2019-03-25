@@ -7,46 +7,48 @@ import {
   fetchCollectionStats
 } from '../../../state/domain-models/collection-stat/collectionStatActions';
 import {
-  CollectionStat, CollectionStatParameters,
+  CollectionStat,
+  CollectionStatParameters,
   FetchCollectionStats
 } from '../../../state/domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
-import {
-  exportToExcelSuccess,
-} from '../../../state/ui/graph/measurement/measurementActions';
-import {
-  getCollectionStatParameters,
-  getUserSelectionId
-} from '../../../state/user-selection/userSelectionSelectors';
+import {getCollectionStatParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWith, EncodedUriParameters, ErrorResponse, OnClick, uuid} from '../../../types/Types';
-import {getCollectionStatRequestParameters} from '../collectionSelectors';
-import {CollectionStatBarChart} from '../components/CollectionStatBarChart';
 import {addAllToReport} from '../../report/reportActions';
 import {LegendItem} from '../../report/reportModels';
+import {exportToExcelSuccess} from '../collectionActions';
+import {getCollectionStatRequestParameters} from '../collectionSelectors';
+import {CollectionStatBarChart} from '../components/CollectionStatBarChart';
 
 export interface StateToProps {
-  isFetching: boolean;
+  collectionStats: ObjectsById<CollectionStat>;
   error: Maybe<ErrorResponse>;
+  isExportingToExcel: boolean;
+  isFetching: boolean;
   parameters: EncodedUriParameters;
   requestParameters: CollectionStatParameters;
-  collectionStats: ObjectsById<CollectionStat>;
   userSelectionId: uuid;
 }
 
 export interface DispatchToProps {
-  clearError: OnClick;
-  fetchCollectionStats: FetchCollectionStats;
   addAllToReport: CallbackWith<LegendItem[]>;
+  clearError: OnClick;
   exportToExcelSuccess: Callback;
+  fetchCollectionStats: FetchCollectionStats;
 }
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
-  const {domainModels: {collectionStats}, userSelection: {userSelection}} = rootState;
+  const {
+    collection: {isExportingToExcel},
+    domainModels: {collectionStats},
+    userSelection: {userSelection}
+  } = rootState;
   return ({
-    error: getError(collectionStats),
-    isFetching: collectionStats.isFetching,
     collectionStats: collectionStats.entities,
+    error: getError(collectionStats),
+    isExportingToExcel,
+    isFetching: collectionStats.isFetching,
     parameters: getCollectionStatParameters({userSelection}),
     requestParameters: getCollectionStatRequestParameters(rootState),
     userSelectionId: getUserSelectionId(rootState.userSelection),
@@ -54,10 +56,10 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  clearError: collectionStatClearError,
-  fetchCollectionStats,
   addAllToReport,
+  clearError: collectionStatClearError,
   exportToExcelSuccess,
+  fetchCollectionStats,
 }, dispatch);
 
 export const CollectionGraphContainer =

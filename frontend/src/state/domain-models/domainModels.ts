@@ -1,9 +1,9 @@
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {Dashboard} from './dashboard/dashboardModels';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {MeasurementState} from '../ui/graph/measurement/measurementModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
 import {CollectionStat} from './collection-stat/collectionStatModels';
+import {Dashboard} from './dashboard/dashboardModels';
 import {Medium, MeterDefinition, Quantity} from './meter-definitions/meterDefinitionModels';
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';

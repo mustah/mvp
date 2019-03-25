@@ -14,16 +14,50 @@ import {
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {collectionStatClearError} from '../../../state/domain-models/collection-stat/collectionStatActions';
 import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {changePage} from '../../../state/ui/pagination/paginationActions';
-import {EntityTypes, Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
-import {getPaginatedCollectionStatParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {ComponentId} from '../../../types/Types';
 import {
-  CollectionDispatchToProps,
-  CollectionListContent,
-  CollectionStateToProps
-} from '../components/CollectionListContent';
+  ApiRequestSortingOptions,
+  EntityTypes,
+  OnChangePage,
+  Pagination
+} from '../../../state/ui/pagination/paginationModels';
+import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
+import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
+import {getPaginatedCollectionStatParameters} from '../../../state/user-selection/userSelectionSelectors';
+import {
+  Callback,
+  CallbackWith,
+  ClearErrorPaginated,
+  ComponentId,
+  EncodedUriParameters,
+  ErrorResponse,
+  FetchPaginated,
+  uuid
+} from '../../../types/Types';
+import {exportToExcelSuccess} from '../collectionActions';
+import {CollectionListContent} from '../components/CollectionListContent';
+
+export interface StateToProps {
+  result: uuid[];
+  entities: ObjectsById<CollectionStat>;
+  isExportingToExcel: boolean;
+  isFetching: boolean;
+  parameters: EncodedUriParameters;
+  sort?: ApiRequestSortingOptions[];
+  pagination: Pagination;
+  error: Maybe<ErrorResponse>;
+  entityType: EntityTypes;
+  timePeriod: SelectionInterval;
+}
+
+export interface DispatchToProps {
+  changePage: OnChangePage;
+  clearError: ClearErrorPaginated;
+  exportToExcelSuccess: Callback;
+  fetchCollectionStatsFacilityPaged: FetchPaginated;
+  sortTable: CallbackWith<ApiRequestSortingOptions[]>;
+}
 
 const mapStateToProps = (
   {
@@ -32,10 +66,10 @@ const mapStateToProps = (
     paginatedDomainModels: {collectionStatFacilities},
     ui: {pagination: paginationModel},
     search: {validation: {query}},
-    collection: {timePeriod}
+    collection: {isExportingToExcel, timePeriod}
   }: RootState,
   {componentId}: ComponentId,
-): CollectionStateToProps => {
+): StateToProps => {
   const entityType: EntityTypes = 'collectionStatFacilities';
   const pagination: Pagination = getPagination({componentId, entityType, pagination: paginationModel});
   const {page} = pagination;
@@ -52,6 +86,7 @@ const mapStateToProps = (
       period: {customDateRange: Maybe.maybe(timePeriod.customDateRange), period: timePeriod.period}
     }),
     sort,
+    isExportingToExcel,
     isFetching: getPageIsFetching(collectionStatFacilities, page),
     pagination,
     error: getPageError<CollectionStat>(collectionStatFacilities, page),
@@ -60,16 +95,13 @@ const mapStateToProps = (
   });
 };
 
-const mapDispatchToProps = (dispatch): CollectionDispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changePage,
-  sortTable: sortTableCollectionStats,
   clearError: collectionStatClearError,
+  exportToExcelSuccess,
   fetchCollectionStatsFacilityPaged,
+  sortTable: sortTableCollectionStats,
 }, dispatch);
 
-export const CollectionListContainer = connect<CollectionStateToProps, CollectionDispatchToProps>(
-  mapStateToProps,
-  mapDispatchToProps
-)(
-  CollectionListContent
-);
+export const CollectionListContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionListContent);

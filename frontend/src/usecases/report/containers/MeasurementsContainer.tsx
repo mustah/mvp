@@ -35,11 +35,11 @@ export interface StateToProps {
 }
 
 export interface DispatchToProps {
+  addAllToReport: CallbackWith<LegendItem[]>;
   clearError: OnClick;
+  exportToExcelSuccess: Callback;
   fetchMeasurements: FetchMeasurements;
   fetchUserSelections: Fetch;
-  addAllToReport: CallbackWith<LegendItem[]>;
-  exportToExcelSuccess: Callback;
 }
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
@@ -62,11 +62,11 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  addAllToReport,
   clearError: measurementClearError,
+  exportToExcelSuccess,
   fetchMeasurements: fetchMeasurementsForReport,
   fetchUserSelections,
-  addAllToReport,
-  exportToExcelSuccess,
 }, dispatch);
 
 export const GraphContainer =

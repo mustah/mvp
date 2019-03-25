@@ -49,6 +49,13 @@
       true,
       "never-prefix"
     ],
+    "max-line-length": [
+      true,
+      {
+        "limit": 120,
+        "ignore-pattern": "^import "
+      }
+    ],
     "member-access": [
       true,
       "no-public"

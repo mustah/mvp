@@ -22,9 +22,10 @@ export const ToolbarIconButton = ({
   tooltip,
 }: IconButtonProps & Selectable) => (
   <IconButton
+    className={classNames('ToolbarIconButton', {disabled}, {isSelected})}
+    disabled={disabled}
     iconStyle={iconStyle}
     onClick={onClick}
-    className={classNames('ToolbarIconButton', disabled ? 'disabled' : '', {isSelected})}
     tooltip={tooltip}
     tooltipPosition="bottom-center"
     style={{...roundedIconStyle, ...style}}

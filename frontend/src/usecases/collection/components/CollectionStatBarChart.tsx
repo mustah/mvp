@@ -1,16 +1,7 @@
 import {toArray} from 'lodash';
 import {Paper} from 'material-ui';
 import * as React from 'react';
-import {
-  AxisDomain,
-  CartesianGrid,
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import {AxisDomain, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {paperStyle} from '../../../app/themes';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
@@ -25,8 +16,6 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
 import {colorFor} from '../../report/helpers/graphContentsMapper';
 import {DispatchToProps, StateToProps} from '../containers/CollectionGraphContainer';
-
-export type Props = StateToProps & DispatchToProps;
 
 interface CollectionStatData {
   data: CollectionStat[];
@@ -98,21 +87,22 @@ const WrappableCollectionStatBarChart = ({data}: CollectionStatData) =>
     </ColumnCenter>
   );
 
-const WrappedCollectionStatBarChart = withEmptyContent<CollectionStatData & WithEmptyContentProps>(
-  WrappableCollectionStatBarChart);
+const WrappedCollectionStatBarChart =
+  withEmptyContent<CollectionStatData & WithEmptyContentProps>(WrappableCollectionStatBarChart);
 
-export const CollectionStatBarChart = (props: Props) => {
-  const {
-    isFetching,
-    parameters,
-    requestParameters,
-    fetchCollectionStats,
-    collectionStats,
-  } = props;
+type Props = StateToProps & DispatchToProps;
 
+export const CollectionStatBarChart = ({
+  collectionStats,
+  exportToExcelSuccess,
+  fetchCollectionStats,
+  isExportingToExcel,
+  isFetching,
+  parameters,
+  requestParameters,
+}: Props) => {
   React.useEffect(() => {
-    fetchCollectionStats(encodeRequestParameters(
-      requestParametersFrom(requestParameters.selectionParameters)));
+    fetchCollectionStats(encodeRequestParameters(requestParametersFrom(requestParameters.selectionParameters)));
   }, [requestParameters, parameters]);
 
   const data = toArray(collectionStats);

@@ -4,6 +4,7 @@ import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import * as React from 'react';
 import {Column} from '../../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
+import {useExportToExcel} from '../../../hooks/exportToExcelHook';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {MeasurementsApiResponse} from '../../../state/ui/graph/measurement/measurementModels';
 import {Callback} from '../../../types/Types';
@@ -34,9 +35,9 @@ const formatCell = (cell: WorkbookSheetRowCell, index: number) => {
   }
 };
 
-const saveExcel = (ref: React.Ref<{}>) => {
+const save = (exporter: React.Ref<{}>) => {
   // TODO[!must!]: Our types for React's hooks are wrong. It is solved in the newest version of react.
-  const component = ((ref as any).current as ExcelExport);
+  const component = ((exporter as any).current as ExcelExport);
   const options = component.workbookOptions();
 
   const sheets = options.sheets;
@@ -54,14 +55,7 @@ const saveExcel = (ref: React.Ref<{}>) => {
 export const MeasurementList = ({measurements, exportToExcelSuccess, isExportingToExcel}: MeasurementListProps) => {
   const [listItems, quantityColumns] = React.useMemo(() => renderColumns(measurements), [measurements]);
 
-  const exporter = React.useRef();
-
-  React.useEffect(() => {
-    if (isExportingToExcel) {
-      saveExcel(exporter);
-      exportToExcelSuccess();
-    }
-  }, [isExportingToExcel]);
+  const exporter = useExportToExcel({isExportingToExcel, exportToExcelSuccess, save});
 
   const gridContent: React.ReactNode[] = [
     (

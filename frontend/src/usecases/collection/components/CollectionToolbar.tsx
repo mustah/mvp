@@ -11,13 +11,16 @@ import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/lay
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
+import {DispatchToProps, StateToProps} from '../containers/CollectionToolbarContainer';
 import './CollectionToolbar.scss';
-import {Props} from '../containers/CollectionToolbarContainer';
+
+type Props = StateToProps & DispatchToProps;
 
 export const CollectionToolbar = ({
   changeToolbarView,
   hasCollectionStats,
   exportToExcel,
+  isExportingToExcel,
   isFetching,
   view,
   setCollectionTimePeriod,
@@ -25,7 +28,6 @@ export const CollectionToolbar = ({
 }: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
-  const excelExport = () => exportToExcel();
   const selectPeriod = (period: Period) => setCollectionTimePeriod({period});
   const setCustomDateRange = (customDateRange: DateRange) => setCollectionTimePeriod({
     period: Period.custom,
@@ -59,8 +61,8 @@ export const CollectionToolbar = ({
         <RowMiddle>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
-            disabled={isFetching || !hasCollectionStats}
-            onClick={excelExport}
+            disabled={isFetching || isExportingToExcel || !hasCollectionStats}
+            onClick={exportToExcel}
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >

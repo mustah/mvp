@@ -54,7 +54,6 @@ export const Toolbar = ({
 }: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
-  const excelExport = () => exportToExcel();
   const selectPeriod = (period: Period) => setReportTimePeriod({period});
   const setCustomDateRange = (customDateRange: DateRange) => setReportTimePeriod({
     period: Period.custom,
@@ -94,7 +93,7 @@ export const Toolbar = ({
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
             disabled={isFetching || isExportingToExcel || !hasMeasurements}
-            onClick={excelExport}
+            onClick={exportToExcel}
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >

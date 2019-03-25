@@ -10,19 +10,19 @@ import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../../components/
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
-import {Props} from './MeasurementToolbarContainer';
+import {Props} from '../containers/MeterMeasurementsToolbarContainer';
 
-export const MeasurementToolbar = ({
+export const MeterMeasurementsToolbar = ({
   changeToolbarView,
   hasMeasurements,
   exportToExcel,
+  isExportingToExcel,
   isFetching,
   view,
   setMeterDetailsTimePeriod,
   timePeriod,
 }: Props) => {
   const selectTable = () => changeToolbarView(ToolbarView.table);
-  const excelExport = () => exportToExcel();
   const selectPeriod = (period: Period) => setMeterDetailsTimePeriod({period});
   const setCustomDateRange = (customDateRange: DateRange) => setMeterDetailsTimePeriod({
     period: Period.custom,
@@ -48,8 +48,8 @@ export const MeasurementToolbar = ({
         <RowMiddle>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
-            disabled={isFetching || !hasMeasurements}
-            onClick={excelExport}
+            disabled={isFetching || isExportingToExcel || !hasMeasurements}
+            onClick={exportToExcel}
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >
