@@ -1,8 +1,9 @@
 import {PersistedState} from 'redux-persist';
+import {Omit} from 'utility-types';
 import {Period} from '../components/dates/dateModels';
 import {mapSelectedIdToAddress, mapSelectedIdToCity} from '../state/domain-models/selections/selectionsApiActions';
 import {initialState} from '../state/ui/tabs/tabsReducer';
-import {ToolbarView} from '../state/ui/toolbar/toolbarModels';
+import {ToolbarState, ToolbarView} from '../state/ui/toolbar/toolbarModels';
 import {OldSelectionParameters, UserSelection} from '../state/user-selection/userSelectionModels';
 import {IdNamed, toIdNamed, uuid} from '../types/Types';
 
@@ -10,6 +11,11 @@ const convert = (name: keyof OldSelectionParameters, selectionParameters): IdNam
   selectionParameters[name]
     ? selectionParameters[name].map((id: uuid) => ({...toIdNamed(id as string)}))
     : [];
+
+const toolbarState: Omit<ToolbarState, 'meterMeasurement'> = {
+  measurement: {view: ToolbarView.graph},
+  collection: {view: ToolbarView.graph},
+};
 
 export const oldParameterNames: Array<keyof OldSelectionParameters> = [
   'facilities',
@@ -132,7 +138,21 @@ export const migrations = {
         }
       }
     };
+  },
+  8: (state: PersistedState | any) => {
+    const {ui} = state;
+    const toolbar = ui.toolbar || toolbarState;
+    return {
+      ...state,
+      ui: {
+        ...ui,
+        toolbar: {
+          ...toolbar,
+          meterMeasurement: toolbar.meterMeasurement || {view: ToolbarView.table},
+        }
+      }
+    };
   }
 };
 
-export const currentVersion: number = 7;
+export const currentVersion: number = 8;
