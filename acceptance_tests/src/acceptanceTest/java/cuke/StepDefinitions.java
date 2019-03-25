@@ -133,9 +133,9 @@ public class StepDefinitions {
       .click();
   }
 
-  @Then("I should see the Dashboard")
-  public void thenIShouldBeLoggedInAs() {
-    assertClassElementHasText("PageContent", "dashboard");
+  @Then("I should be logged in")
+  public void thenIShouldBeLoggedIn() {
+    assertClassElementExists("SideMenuContainer");
   }
 
   @Then("I should see error message '(.*)'")
@@ -146,6 +146,11 @@ public class StepDefinitions {
   private void assertClassElementHasText(String className, String text) {
     WebElement contextElement = driver.findElement(By.className(className));
     assertThat(contextElement.getText()).isEqualTo(text);
+  }
+
+  private void assertClassElementExists(String className) {
+    WebElement contextElement = driver.findElement(By.className(className));
+    assertThat(contextElement.isDisplayed()).isTrue();
   }
 
   private static String getHostName() throws UnknownHostException {
