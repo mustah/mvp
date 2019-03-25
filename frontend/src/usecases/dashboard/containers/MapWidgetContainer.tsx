@@ -37,6 +37,8 @@ export interface MapWidgetSettings extends WidgetMandatory {
 }
 
 interface OwnProps {
+  height: number;
+  width: number;
   settings: MapWidgetSettings;
   openConfiguration: OnClick;
   onDelete: CallbackWith<WidgetMandatory>;
@@ -47,6 +49,8 @@ interface MapContentProps {
   lowConfidenceText?: string;
   viewCenter?: GeoPosition;
   markers: DomainModel<MapMarker>;
+  height?: number;
+  width?: number;
 }
 
 interface StateToProps extends MapContentProps {
@@ -69,11 +73,13 @@ type MapContentWrapperProps = MapContentProps & WithEmptyContentProps;
 
 type Props = MapContentProps & OwnProps & StateToProps & DispatchToProps;
 
-const MapContent = ({bounds, viewCenter, lowConfidenceText, markers: {entities}}: MapContentProps) => (
+const MapContent = ({bounds, viewCenter, lowConfidenceText, markers: {entities}, height, width}: MapContentProps) => (
   <Map
     bounds={bounds}
     lowConfidenceText={lowConfidenceText}
     viewCenter={viewCenter}
+    height={height}
+    width={width}
   >
     <ClusterContainer markers={entities.meterMapMarkers}/>
   </Map>
@@ -99,6 +105,8 @@ const MapWidget = (props: Props) => {
     settings,
     parameters,
     onDelete,
+    width,
+    height,
   } = props;
 
   React.useEffect(() => {
@@ -125,6 +133,8 @@ const MapWidget = (props: Props) => {
     hasContent: markers.result.length > 0,
     noContentText: firstUpperTranslated('no meters'),
     viewCenter,
+    height,
+    width,
   };
 
   const onClickDeleteWidget = () => onDelete(settings);
@@ -138,7 +148,7 @@ const MapWidget = (props: Props) => {
         deleteWidget={onClickDeleteWidget}
       >
         <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-          <MapContentWrapper {...wrapperProps}/>
+            <MapContentWrapper {...wrapperProps} />
         </RetryLoader>
         {dialog}
       </WidgetWithTitle>
@@ -195,4 +205,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const MapWidgetContainer =
-  connect<StateToProps, DispatchToProps>(() => mapStateToProps, mapDispatchToProps)(MapWidget);
+  connect<StateToProps, DispatchToProps, OwnProps>(() => mapStateToProps, mapDispatchToProps)(MapWidget);

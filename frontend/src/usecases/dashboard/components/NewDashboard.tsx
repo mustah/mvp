@@ -21,10 +21,12 @@ import {Dashboard} from '../../../state/domain-models/dashboard/dashboardModels'
 import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {Widget} from '../../../state/domain-models/widget/WidgetModels';
 import {
+  widgetHeighToPx,
   WidgetMandatory,
   WidgetSettings,
   widgetSizeMap,
-  WidgetType
+  WidgetType,
+  widgetWidthToPx
 } from '../../../state/widget/configuration/widgetConfigurationReducer';
 import {OnClick, RenderFunction, uuid} from '../../../types/Types';
 import {CollectionStatusContainer, CollectionStatusWidgetSettings} from '../containers/CollectionStatusContainer';
@@ -36,7 +38,7 @@ import {EditMapWidgetContainer} from './widgets/EditMapWidget';
 type ElementFromWidgetType = (settings: WidgetSettings['type']) => any;
 
 const makeLayoutComparable = (layout: Layout): Layout => {
-  const {maxH, maxW, minH, minW, isResizable, isDraggable, ...comparableProps} = {...layout};
+  const {...comparableProps} = {...layout};
   delete comparableProps.static;
   return comparableProps;
 };
@@ -194,10 +196,18 @@ export const NewDashboard = (props: DashboardProps) => {
   };
 
   const renderWidget =
-    (dashboardId: uuid, settings: WidgetSettings, openConfiguration: (settings: WidgetSettings) => OnClick) => {
+    (
+      dashboardId: uuid,
+      settings: WidgetSettings,
+      openConfiguration: (settings: WidgetSettings) => OnClick,
+      width: number,
+      height: number
+    ) => {
       if (settings.type === WidgetType.MAP) {
         return (
           <MapWidgetContainer
+            width={widgetWidthToPx(width)}
+            height={widgetHeighToPx(height)}
             settings={settings}
             onDelete={deleteWidgetConfiguration}
             openConfiguration={openConfiguration(settings)}
@@ -245,14 +255,6 @@ export const NewDashboard = (props: DashboardProps) => {
     dashboardId = myDashboard.id;
   }
 
-  if (hasContent(isFetching, myDashboard, myWidgets)) {
-    layout = myDashboard.layout.layout.map((widgetLayout: Layout) => ({
-      ...widgetLayout,
-      isDraggable: true,
-      isResizable: false, // TODO allow resizing myWidgets later on
-    }));
-  }
-
   // TODO trigger fetching this when layout is non-empty (and widgetsettings is empty)
   let widgetsWithSettings: {[key: string]: WidgetSettings} = {};
 
@@ -261,14 +263,22 @@ export const NewDashboard = (props: DashboardProps) => {
     widgetsWithSettings = myWidgets.entities;
   }
 
+  if (hasContent(isFetching, myDashboard, myWidgets)) {
+    layout = myDashboard.layout.layout.map((widgetLayout: Layout) => ({
+      ...widgetLayout,
+      isDraggable: true,
+      isResizable: widgetsWithSettings[widgetLayout.i as string].type === WidgetType.MAP ? true : false,
+    }));
+  }
+
   // TODO handle empty
   // TODO filter widgets that do not exists in both 'layout' and 'myWidgets'
   let widgetsA;
   if (hasContent(isFetching, myDashboard, myWidgets)) {
     widgetsA = layout.map(
-      ({i}) => (
+      ({i, w, h}) => (
         <div key={i}>
-          {renderWidget(dashboardId, widgetsWithSettings[i as string], showConfigurationDialog)}
+          {renderWidget(dashboardId, widgetsWithSettings[i as string], showConfigurationDialog, w, h)}
         </div>
       )
     );
@@ -305,8 +315,6 @@ export const NewDashboard = (props: DashboardProps) => {
       )
     )
     .getOrElseNull();
-
-  // TODO style myWidgets so that they fit some standard layout width/height
 
   const addNewWidget = newWidgetMenu((type: WidgetType) => {
     const widgetSettings: WidgetSettings =
