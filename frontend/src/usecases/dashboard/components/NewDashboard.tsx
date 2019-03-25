@@ -22,7 +22,7 @@ import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {Widget} from '../../../state/domain-models/widget/WidgetModels';
 import {
   widgetHeighToPx,
-  WidgetMandatory,
+  WidgetMandatory, widgetMargins,
   WidgetSettings,
   widgetSizeMap,
   WidgetType,
@@ -357,11 +357,12 @@ export const NewDashboard = (props: DashboardProps) => {
 
       <ReactGridLayout
         layout={layout}
-        width={1080}
+        width={1200}
         cols={6}
         rowHeight={170}
         onLayoutChange={onLayoutChange}
         draggableHandle={'.draggableWidgetArea'}
+        margin={widgetMargins}
       >
         {widgetsA}
       </ReactGridLayout>

@@ -17,11 +17,13 @@ export interface LayoutProps {
   h: number;
 }
 
+export const widgetMargins: [number, number] = [24, 24];
+
 export const widgetHeighToPx = (height: number): number =>
-  height * 118 + ((height - 1) * 62);
+  height * 170 + (24 * (height - 1)) - 52;
 
 export const widgetWidthToPx = (width: number): number =>
-  width * 168 + ((width - 1) * 10);
+  width * 172 + (24 * (width - 1));
 
 export interface WidgetMandatory {
   id: uuid;
