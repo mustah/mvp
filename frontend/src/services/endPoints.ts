@@ -13,7 +13,7 @@ export const enum EndPoints {
   syncMeters = '/meters/sync',
   meterMapMarkers = '/map-markers/meters',
   gatewayMapMarkers = '/map-markers/gateways',
-  summaryMeters = '/summary/meters',
+  summary = '/summary',
   gateways = '/gateways',
   authenticate = '/authenticate',
   logout = '/logout',

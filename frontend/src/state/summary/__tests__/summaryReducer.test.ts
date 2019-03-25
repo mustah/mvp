@@ -19,7 +19,7 @@ import {initialState, summary} from '../summaryReducer';
 describe('summaryReducer', () => {
 
   const actions: RequestHandler<SelectionSummary> =
-    makeActionsOf<SelectionSummary>(EndPoints.summaryMeters);
+    makeActionsOf<SelectionSummary>(EndPoints.summary);
 
   describe('unknown action type', () => {
 

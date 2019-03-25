@@ -138,14 +138,12 @@ class DataProviderConfig {
 
   @Bean
   LogicalMeters logicalMeters(
-    LogicalMeterEntityMapper logicalMeterEntityMapper,
-    MeterDefinitions meterDefinitions
+    LogicalMeterEntityMapper logicalMeterEntityMapper
   ) {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       summaryJpaRepository,
-      logicalMeterEntityMapper,
-      meterDefinitions
+      logicalMeterEntityMapper
     );
   }
 

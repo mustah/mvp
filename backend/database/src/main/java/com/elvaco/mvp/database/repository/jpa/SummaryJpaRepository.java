@@ -1,9 +1,12 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import com.elvaco.mvp.core.domainmodels.MeterSummary;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.core.filter.Filters;
 
 public interface SummaryJpaRepository {
 
-  MeterSummary summary(RequestParameters parameters);
+  long meterCount(Filters parameters);
+
+  long cityCount(Filters parameters);
+
+  long addressCount(Filters parameters);
 }

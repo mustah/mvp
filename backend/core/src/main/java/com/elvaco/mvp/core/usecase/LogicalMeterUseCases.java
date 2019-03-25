@@ -107,6 +107,10 @@ public class LogicalMeterUseCases {
     );
   }
 
+  public Long meterCount(RequestParameters parameters) {
+    return logicalMeters.meterCount(parameters.ensureOrganisationFilters(currentUser));
+  }
+
   private boolean hasTenantAccess(UUID organisationId) {
     return currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(organisationId);
   }
