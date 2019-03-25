@@ -1,4 +1,3 @@
-import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
@@ -6,13 +5,13 @@ import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
-import {Dashboard} from './dashboard/dashboardModels';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterDetailMeasurement} from '../../usecases/meter/measurements/meterDetailMeasurementReducer';
 import {search} from '../../usecases/search/searchActions';
 import {QueryParameter} from '../../usecases/search/searchModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
 import {CollectionStat} from './collection-stat/collectionStatModels';
+import {Dashboard} from './dashboard/dashboardModels';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById} from './domainModels';
 import {
   domainModelsClearError,
@@ -110,14 +109,6 @@ const removeEntity =
     };
   };
 
-const clearDomainModelErrors = <T extends Identifiable>(
-  state: NormalizedState<T>
-): NormalizedState<T> =>
-  ({
-    ...state,
-    error: undefined
-  });
-
 const setError = <T extends Identifiable>(
   state: NormalizedState<T>,
   {payload: error}: Action<ErrorResponse>,
@@ -162,8 +153,6 @@ const reducerFor = <T extends Identifiable>(
         return removeEntity<T>(state, action as Action<T>);
       case domainModelsFailure(endPoint):
         return setError(state, action as Action<ErrorResponse>);
-      case LOCATION_CHANGE:
-        return clearDomainModelErrors<T>(state);
       case domainModelsClearError(endPoint):
       case getType(search):
         return initialDomain<T>();

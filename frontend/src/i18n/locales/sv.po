@@ -685,8 +685,8 @@ msgstr "ta bort alla"
 msgid "only {{limit}} meters can be selected at the same time"
 msgstr "endast {{limit}} mätare kan väljas samtidigt"
 
-msgid "search result"
-msgstr "sökresultat"
+msgid "search result: {{query}}"
+msgstr "sökresultat: {{query}}"
 
 msgid "reset selection"
 msgstr "rensa urval"

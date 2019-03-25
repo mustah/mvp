@@ -1,3 +1,4 @@
+import {Location} from 'history';
 import evoLogoBlue from '../assets/images/elvaco.evo_logo_blue_cmyk.svg';
 import evoLogo from '../assets/images/elvaco.evo_logo_wt.svg';
 import wayneIndustries from '../assets/images/wayne-industries.png';
@@ -27,6 +28,9 @@ export const routes = {
   adminMeterDefinitionsAdd: '/admin/meter-definitions/add',
   adminMeterDefinitionsModify: '/admin/meter-definitions/modify',
 };
+
+const searchResultRegexp = new RegExp(`${routes.searchResult}.*`);
+export const isOnSearchPage = ({pathname}: Location): boolean => pathname.match(searchResultRegexp) !== null;
 
 const organisationLogo = {
   'wayne-industries': wayneIndustries,

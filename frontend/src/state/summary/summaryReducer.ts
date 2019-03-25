@@ -2,7 +2,8 @@ import {Location} from 'history';
 import {LOCATION_CHANGE} from 'react-router-redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
-import {routes} from '../../app/routes';
+import {isOnSearchPage} from '../../app/routes';
+import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
 import {search} from '../../usecases/search/searchActions';
@@ -12,7 +13,6 @@ import {
   domainModelsPaginatedDeleteRequest,
   domainModelsPaginatedDeleteSuccess
 } from '../domain-models-paginated/paginatedDomainModelsEntityActions';
-import {resetReducer} from '../../reducers/resetReducer';
 import {SelectionSummary, SummaryState} from './summaryModels';
 
 export const initialState: SummaryState = {
@@ -24,8 +24,6 @@ export const initialState: SummaryState = {
 type ActionTypes =
   | EmptyAction<string>
   | Action<SelectionSummary | ErrorResponse | Location>;
-
-const getPathname = (action: ActionTypes): string => (action as Action<Location>).payload.pathname;
 
 export const summary = (state: SummaryState = initialState, action: ActionTypes): SummaryState => {
   switch (action.type) {
@@ -67,7 +65,7 @@ export const summary = (state: SummaryState = initialState, action: ActionTypes)
         isSuccessfullyFetched: false,
       };
     case LOCATION_CHANGE:
-      return getPathname(action) !== routes.searchResult ? initialState : state;
+      return isOnSearchPage((action as Action<Location>).payload) ? state : initialState;
     case getType(search):
       return initialState;
     default:

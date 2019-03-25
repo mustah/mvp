@@ -613,8 +613,8 @@ msgstr "remove all"
 msgid "only {{limit}} meters can be selected at the same time"
 msgstr "only {{limit}} meters can be selected at the same time"
 
-msgid "search result"
-msgstr "search result"
+msgid "search result: {{query}}"
+msgstr "search result: {{query}}"
 
 msgid "reset selection"
 msgstr "reset selection"

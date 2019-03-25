@@ -4,13 +4,14 @@ import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers, Reducer} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
+import {isOnSearchPage} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
+import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {search} from '../../usecases/search/searchActions';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
-import {resetReducer} from '../../reducers/resetReducer';
 import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
@@ -231,6 +232,9 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedDeleteFailure(endPoint):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
       case LOCATION_CHANGE:
+        return isOnSearchPage((action as Action<Location>).payload)
+          ? state
+          : {...makeInitialState<T>()};
       case getType(search):
         return {...makeInitialState<T>()};
       default:

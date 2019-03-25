@@ -1,6 +1,5 @@
 import {default as classNames} from 'classnames';
 import ActionSearch from 'material-ui/svg-icons/action/search';
-import ContentClear from 'material-ui/svg-icons/content/clear';
 import * as React from 'react';
 import {colors} from '../../app/themes';
 import {GlobalSearchProps} from '../../containers/GlobalSearchContainer';
@@ -25,7 +24,7 @@ const iconProps: SvgIconProps = {
 };
 
 export const GlobalSearch = (props: GlobalSearchProps) => {
-  const {value, onChange, onEnter, onClearValue} = useGlobalSearch(props);
+  const {value, onChange, onEnter} = useGlobalSearch(props);
 
   return (
     <RowMiddle className="GlobalSearch-Container">
@@ -33,12 +32,12 @@ export const GlobalSearch = (props: GlobalSearchProps) => {
         <input
           type="textfield"
           className="GlobalSearch-input"
-          value={value}
+          value={value && decodeURIComponent(value)}
           onChange={onChange}
           onKeyPress={onEnter}
           placeholder={firstUpperTranslated('find meters')}
         />
-        {value ? <ContentClear onClick={onClearValue} {...iconProps}/> : <ActionSearch {...iconProps}/>}
+        <ActionSearch {...iconProps}/>
       </Row>
     </RowMiddle>
   );

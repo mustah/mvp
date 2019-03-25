@@ -1,6 +1,4 @@
-import {LOCATION_CHANGE} from 'react-router-redux';
 import {mockSelectionAction} from '../../../__tests__/testActions';
-import {routes} from '../../../app/routes';
 import {getId, groupById} from '../../../helpers/collections';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, Status} from '../../../types/Types';
@@ -25,11 +23,9 @@ import {
   gatewayMapMarkers,
   initialDomain,
   meterMapMarkers,
-  meters,
   organisations,
   users
 } from '../domainModelsReducer';
-import {MeterDetails} from '../meter-details/meterDetailsModels';
 import {Organisation} from '../organisation/organisationModels';
 import {Role, User, UserState} from '../user/userModels';
 
@@ -241,21 +237,6 @@ describe('domainModelsReducer', () => {
       const state = meterMapMarkers(nextState, search(makeMeterQuery('test')));
 
       expect(state).toEqual(initialDomain<MapMarker>());
-    });
-  });
-
-  describe('meters', () => {
-
-    it('clears error on location changed', () => {
-      const errorState: NormalizedState<MeterDetails> = {
-        ...initialDomain<MeterDetails>(),
-        error: {message: 'an error'},
-      };
-
-      expect(meters(
-        errorState,
-        {type: LOCATION_CHANGE, payload: {pathname: routes.dashboard}}
-      )).toEqual(initialDomain<MeterDetails>());
     });
   });
 
