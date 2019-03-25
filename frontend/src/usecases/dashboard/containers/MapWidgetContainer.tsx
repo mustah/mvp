@@ -26,7 +26,6 @@ import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
 import {MapState} from '../../map/mapReducer';
-import {getMeterLowConfidenceTextInfo} from '../../map/mapSelectors';
 import {WidgetWithTitle} from '../components/widgets/Widget';
 
 export interface MapWidgetSettings extends WidgetMandatory {
@@ -46,7 +45,7 @@ interface OwnProps {
 
 interface MapContentProps {
   bounds?: Bounds;
-  lowConfidenceText?: string;
+  informationText?: string;
   viewCenter?: GeoPosition;
   markers: DomainModel<MapMarker>;
   height?: number;
@@ -73,10 +72,10 @@ type MapContentWrapperProps = MapContentProps & WithEmptyContentProps;
 
 type Props = MapContentProps & OwnProps & StateToProps & DispatchToProps;
 
-const MapContent = ({bounds, viewCenter, lowConfidenceText, markers: {entities}, height, width}: MapContentProps) => (
+const MapContent = ({bounds, viewCenter, informationText, markers: {entities}, height, width}: MapContentProps) => (
   <Map
     bounds={bounds}
-    lowConfidenceText={lowConfidenceText}
+    lowConfidenceText={informationText}
     viewCenter={viewCenter}
     height={height}
     width={width}
@@ -95,7 +94,7 @@ const MapWidget = (props: Props) => {
     error,
     isFetching,
     markers,
-    lowConfidenceText,
+    informationText,
     map,
     title,
     viewCenter,
@@ -128,7 +127,7 @@ const MapWidget = (props: Props) => {
 
   const wrapperProps: MapContentWrapperProps = {
     bounds,
-    lowConfidenceText,
+    informationText,
     markers,
     hasContent: markers.result.length > 0,
     noContentText: firstUpperTranslated('no meters'),
@@ -155,6 +154,9 @@ const MapWidget = (props: Props) => {
     </Row>
   );
 };
+
+const getInformationText = ({data: {result}}: WidgetData): string =>
+  firstUpperTranslated('showing {{count}} meters', {count: result.length});
 
 const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps => {
   const {
@@ -187,7 +189,8 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
       : undefined,
     error: getErrorCalle(data[id]),
     isFetching: data[id] && data[id].isFetching,
-    lowConfidenceText: getMeterLowConfidenceTextInfo(rootState),
+    informationText: data[id] && data[id].isSuccessfullyFetched
+      ? getInformationText(data[id]) : undefined,
     map,
     title,
     viewCenter: map.viewCenter,

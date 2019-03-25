@@ -41,6 +41,13 @@ msgstr "misslyckades lägga till widget"
 msgid "failed to update dashboard: {{error}}"
 msgstr "lyckades inte uppdatera dashboarden: {{error}}"
 
+msgid "showing {{count}} meters"
+msgstr "visar {{count}} mätare"
+
+msgctxt "°plural"
+msgid "showing {{count}} meters°"
+msgstr "visar {{count}} mätare"
+
 msgid "compare period"
 msgstr "jämför period"
 

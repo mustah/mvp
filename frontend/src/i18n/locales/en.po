@@ -41,6 +41,13 @@ msgstr "failed to update widget: {{error}}"
 msgid "failed to update dashboard: {{error}}"
 msgstr "failed to update dashboard: {{error}}"
 
+msgid "showing {{count}} meters"
+msgstr "showing {{count}} meter"
+
+msgctxt "°plural"
+msgid "showing {{count}} meters°"
+msgstr "showing {{count}} meters"
+
 msgid "compare period"
 msgstr "compare period"
 
