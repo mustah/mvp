@@ -2,10 +2,8 @@ import {isEqual} from 'lodash';
 import Add from 'material-ui/svg-icons/content/add';
 import * as React from 'react';
 import ReactGridLayout, {Layout} from 'react-grid-layout';
-/* tslint:disable */
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-/* tslint:enable */
 import {colors, iconSizeMedium} from '../../../app/themes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';

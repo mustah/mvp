@@ -45,6 +45,8 @@ interface WidgetWithTitleProps extends Props {
   deleteWidget: Callback;
 }
 
+const EditIcon = <ImageEdit color={colors.lightBlack} hoverColor={colors.iconHover} style={actionMenuItemIconStyle}/>;
+
 export const WidgetWithTitle = ({title, children, className, configure, deleteWidget}: WidgetWithTitleProps) => {
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(deleteWidget);
 
@@ -59,13 +61,11 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
       openConfirm(w);
     };
 
-    const edit = <ImageEdit color={colors.lightBlack} hoverColor={colors.iconHover} style={actionMenuItemIconStyle}/>;
-
-    const actionMenuItems = [
+    return [
       (
         <ActionMenuItem
           key="edit-widget"
-          leftIcon={edit}
+          leftIcon={EditIcon}
           name={translate('edit widget')}
           onClick={onClickEdit}
         />
@@ -80,8 +80,6 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
         />
       )
     ];
-
-    return actionMenuItems;
   };
 
   return (
