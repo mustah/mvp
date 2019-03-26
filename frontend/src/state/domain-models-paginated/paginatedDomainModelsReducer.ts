@@ -1,5 +1,5 @@
 import {Location} from 'history';
-import {isEqual} from 'lodash';
+import {isEqual, pick} from 'lodash';
 import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers, Reducer} from 'redux';
 import {getType} from 'typesafe-actions';
@@ -9,9 +9,9 @@ import {Maybe} from '../../helpers/Maybe';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {search} from '../search/searchActions';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
+import {search} from '../search/searchActions';
 import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
@@ -234,7 +234,10 @@ const reducerFor = <T extends Identifiable>(
       case LOCATION_CHANGE:
         return isOnSearchPage((action as Action<Location>).payload)
           ? state
-          : {...makeInitialState<T>()};
+          : {
+            ...makeInitialState<T>(),
+            ...pick(state, ['sort']),
+          };
       case getType(search):
         return {...makeInitialState<T>()};
       default:
