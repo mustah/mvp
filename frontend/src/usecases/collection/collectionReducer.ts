@@ -1,27 +1,29 @@
-import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
-import {Period, TemporalResolution} from '../../components/dates/dateModels';
-import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {Action} from '../../types/Types';
+import {ActionType, getType} from 'typesafe-actions';
+import {Period} from '../../components/dates/dateModels';
 import {logoutUser} from '../auth/authActions';
-import {setCollectionTimePeriod} from './collectionActions';
+import * as actions from './collectionActions';
 import {CollectionState} from './collectionModels';
 
 const initialState: CollectionState = {
-  timePeriod: {period: Period.latest},
   isTimePeriodDefault: true,
+  isExportingToExcel: false,
+  timePeriod: {period: Period.latest},
 };
 
-type ActionTypes = Action<TemporalResolution | SelectionInterval> | EmptyAction<string>;
+type ActionTypes = ActionType<typeof actions | typeof logoutUser>;
 
 export const collection = (state: CollectionState = initialState, action: ActionTypes): CollectionState => {
   switch (action.type) {
-    case getType(setCollectionTimePeriod):
+    case getType(actions.setCollectionTimePeriod):
       return {
         ...state,
-        timePeriod: {...(action as Action<SelectionInterval>).payload},
+        timePeriod: action.payload,
         isTimePeriodDefault: false,
       };
+    case getType(actions.exportToExcelAction):
+      return {...state, isExportingToExcel: true};
+    case getType(actions.exportToExcelSuccess):
+      return {...state, isExportingToExcel: false};
     case getType(logoutUser):
       return initialState;
     default:

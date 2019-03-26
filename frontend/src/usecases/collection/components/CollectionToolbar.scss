@@ -19,6 +19,15 @@
       }
     }
 
+    &.disabled, &.disabled:hover {
+      color: $border-color !important;
+      background-color: transparent !important;
+
+      svg {
+        fill: $border-color !important;
+      }
+    }
+
     &.isSelected {
       svg {
         fill: $blue-A700 !important;

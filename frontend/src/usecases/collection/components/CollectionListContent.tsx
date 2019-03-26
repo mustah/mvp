@@ -1,47 +1,12 @@
 import * as React from 'react';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {RetryLoader} from '../../../components/loading/Loader';
-import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
-import {
-  ApiRequestSortingOptions,
-  EntityTypes,
-  OnChangePage,
-  Pagination
-} from '../../../state/ui/pagination/paginationModels';
-import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
-import {
-  CallbackWith,
-  ClearErrorPaginated,
-  ComponentId,
-  EncodedUriParameters,
-  ErrorResponse, FetchPaginated,
-  uuid, WithChildren
-} from '../../../types/Types';
+import {ComponentId, WithChildren} from '../../../types/Types';
+import {DispatchToProps, StateToProps} from '../containers/CollectionListContainer';
 import {CollectionStatList} from './CollectionStatList';
 
-export interface CollectionStateToProps {
-  result: uuid[];
-  entities: ObjectsById<CollectionStat>;
-  isFetching: boolean;
-  parameters: EncodedUriParameters;
-  sort?: ApiRequestSortingOptions[];
-  pagination: Pagination;
-  error: Maybe<ErrorResponse>;
-  entityType: EntityTypes;
-  timePeriod: SelectionInterval;
-}
-
-export interface CollectionDispatchToProps {
-  changePage: OnChangePage;
-  clearError: ClearErrorPaginated;
-  sortTable: CallbackWith<ApiRequestSortingOptions[]>;
-  fetchCollectionStatsFacilityPaged: FetchPaginated;
-}
-
-export type CollectionListProps = CollectionStateToProps & CollectionDispatchToProps & ComponentId;
+export type CollectionListProps = StateToProps & DispatchToProps & ComponentId;
 
 const CollectionListWrapper = withEmptyContent<CollectionListProps & WithEmptyContentProps>(CollectionStatList);
 
@@ -72,7 +37,7 @@ export const CollectionListContent = (props: CollectionListProps & WithChildren)
 
   return (
     <RetryLoader isFetching={isFetching} clearError={clearError} error={error}>
-        <CollectionListWrapper {...wrapperProps}/>
+      <CollectionListWrapper {...wrapperProps}/>
     </RetryLoader>
   );
 };

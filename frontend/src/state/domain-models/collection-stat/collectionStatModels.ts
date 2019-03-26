@@ -3,11 +3,12 @@ import {NormalizedPaginatedState} from '../../domain-models-paginated/paginatedD
 import {SelectedParameters} from '../../user-selection/userSelectionModels';
 
 export interface CollectionStat extends Identifiable {
+  collectionPercentage: number;
   date: number;
   facility: string;
-  readIntervalMinutes: number;
-  collectionPercentage: number;
+  isExportingToExcel: boolean;
   latency: string;
+  readIntervalMinutes: number;
 }
 
 export interface CollectionStatParameters {

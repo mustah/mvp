@@ -29,8 +29,9 @@ import {OnLogout} from '../../usecases/auth/authModels';
 import {Map as MapComponent} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
+
+import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
 import {LegendItem} from '../../usecases/report/reportModels';
-import {MeasurementsContainer} from '../../usecases/meter/measurements/containers/MeasurementsContainer';
 
 export interface MeterDetailsState {
   selectedTab: TabName;
@@ -150,7 +151,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             </TabSettings>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
-            <MeasurementsContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
+            <MeterMeasurementsContentContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Grid data={eventLog} scrollable="none">

@@ -1,3 +1,4 @@
+import {ExcelExport} from '@progress/kendo-react-excel-export';
 import {
   Grid,
   GridCellProps,
@@ -12,6 +13,7 @@ import {gridStyle} from '../../../app/themes';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
 
 import {formatCollectionPercentage, formatReadInterval} from '../../../helpers/formatters';
+import {useExportToExcel} from '../../../hooks/exportToExcelHook';
 import {translate} from '../../../services/translationService';
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
 import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
@@ -42,6 +44,8 @@ const renderCollectionPercentage = ({dataItem: {collectionPercentage, readInterv
 export const CollectionStatList = ({
   componentId,
   changePage,
+  exportToExcelSuccess,
+  isExportingToExcel,
   result,
   entities,
   entityType,
@@ -50,6 +54,11 @@ export const CollectionStatList = ({
   sort,
   sortTable,
 }: CollectionListProps) => {
+  const exporter = useExportToExcel({
+    exportToExcelSuccess,
+    isExportingToExcel,
+    save: exporter => (exporter as any).current.save()
+  });
 
   const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
     changePage({
@@ -65,40 +74,42 @@ export const CollectionStatList = ({
   const gridData = {data, total};
 
   return (
-    <Grid
-      data={gridData}
+    <ExcelExport data={data} ref={exporter} filterable={true}>
+      <Grid
+        data={gridData}
 
-      pageable={total > size ? pageable : undefined}
-      pageSize={size}
-      take={size}
-      skip={page * size}
-      onPageChange={handlePageChange}
+        pageable={total > size ? pageable : undefined}
+        pageSize={size}
+        take={size}
+        skip={page * size}
+        onPageChange={handlePageChange}
 
-      sortable={sortable}
-      onSortChange={handleSortChange}
-      sort={sort}
+        sortable={sortable}
+        onSortChange={handleSortChange}
+        sort={sort}
 
-      scrollable="none"
-      style={gridStyle}
-    >
-      <GridColumn
-        field="facility"
-        title={translate('facility')}
-        cell={renderMeterListItem}
-        headerClassName="left-most"
-        className="left-most"
-      />
-      <GridColumn
-        field="readInterval"
-        title={translate('resolution')}
-        cell={renderReadInterval}
-        sortable={false}
-      />
-      <GridColumn
-        field="collectionPercentage"
-        title={translate('collection percentage')}
-        cell={renderCollectionPercentage}
-      />
-    </Grid>
+        scrollable="none"
+        style={gridStyle}
+      >
+        <GridColumn
+          field="facility"
+          title={translate('facility')}
+          cell={renderMeterListItem}
+          headerClassName="left-most"
+          className="left-most"
+        />
+        <GridColumn
+          field="readInterval"
+          title={translate('resolution')}
+          cell={renderReadInterval}
+          sortable={false}
+        />
+        <GridColumn
+          field="collectionPercentage"
+          title={translate('collection percentage')}
+          cell={renderCollectionPercentage}
+        />
+      </Grid>
+    </ExcelExport>
   );
 };

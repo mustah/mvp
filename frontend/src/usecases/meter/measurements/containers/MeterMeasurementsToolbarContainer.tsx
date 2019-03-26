@@ -5,13 +5,14 @@ import {changeMeterMeasurementsToolbarView} from '../../../../state/ui/toolbar/t
 import {OnChangeToolbarView, ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith} from '../../../../types/Types';
+import {MeterMeasurementsToolbar} from '../components/MeterMeasurementsToolbar';
 import {setMeterDetailsTimePeriod} from '../meterDetailActions';
 import {exportToExcel} from '../meterDetailMeasurementActions';
-import {MeasurementToolbar} from './MeasurementToolbar';
 
 interface StateToProps {
   hasMeasurements: boolean;
   view: ToolbarView;
+  isExportingToExcel: boolean;
   isFetching: boolean;
   timePeriod: SelectionInterval;
 }
@@ -28,16 +29,20 @@ interface OwnProps {
 
 export type Props = StateToProps & DispatchToProps;
 
-const mapStateToProps = ({
-  meterDetail: {isTimePeriodDefault, timePeriod},
-  ui: {toolbar: {meterMeasurement: {view}}},
-  domainModels: {meterDetailMeasurement: {isFetching, measurementResponse: {measurements}}},
-  collection
-}: RootState,            {useCollectionPeriod}: OwnProps): StateToProps => ({
-  hasMeasurements: measurements.length > 0,
+const mapStateToProps = (
+  {
+    meterDetail: {isTimePeriodDefault, timePeriod},
+    ui: {toolbar: {meterMeasurement: {view}}},
+    domainModels: {meterDetailMeasurement: {isFetching, isExportingToExcel, measurementResponse: {measurements}}},
+    collection
+  }: RootState,
+  {useCollectionPeriod}: OwnProps
+): StateToProps => ({
+  isExportingToExcel,
   isFetching,
-  view,
+  hasMeasurements: measurements.length > 0,
   timePeriod: (useCollectionPeriod && isTimePeriodDefault) ? collection.timePeriod : timePeriod,
+  view,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
@@ -46,5 +51,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   setMeterDetailsTimePeriod,
 }, dispatch);
 
-export const MeasurementToolbarContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeasurementToolbar);
+export const MeterMeasurementsToolbarContainer =
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeterMeasurementsToolbar);
