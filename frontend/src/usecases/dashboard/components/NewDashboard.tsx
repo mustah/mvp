@@ -41,6 +41,11 @@ type ElementFromWidgetType = (settings: WidgetSettings['type']) => any;
 const makeLayoutComparable = ({h, w, x, y}: Layout): Layout =>
   ({h, w, x, y});
 
+const gridStyle: React.CSSProperties = {
+  top: -24,
+  left: -24,
+};
+
 const newWidgetMenu =
   (openDialogWithWidgetType: ElementFromWidgetType): RenderFunction<OnClick> =>
     (closeMenu: OnClick) => {
@@ -367,6 +372,7 @@ export const NewDashboard = (props: DashboardProps) => {
         draggableHandle={'.grid-draggable'}
         margin={widgetMargins}
         draggableCancel={'.grid-not-draggable'}
+        style={gridStyle}
       >
         {widgetsA}
       </ReactGridLayout>
