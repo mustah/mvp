@@ -8,7 +8,7 @@ import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageLayout} from '../../../containers/PageLayout';
+import {PageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';

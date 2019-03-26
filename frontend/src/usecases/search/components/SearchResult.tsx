@@ -3,7 +3,7 @@ import * as React from 'react';
 import {mainContentPaperStyle} from '../../../app/themes';
 import {RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageLayout} from '../../../containers/PageLayout';
+import {PageLayout} from '../../../components/layouts/layout/PageLayout';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
 import {MeterTabsContainer} from '../../meter/containers/MeterTabsContainer';

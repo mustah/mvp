@@ -10,7 +10,7 @@ import {MeterDefinitionEditForm} from '../../../components/forms/MeterDefinition
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageLayout} from '../../../containers/PageLayout';
+import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';

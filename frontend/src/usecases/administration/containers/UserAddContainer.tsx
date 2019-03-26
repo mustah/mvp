@@ -7,7 +7,7 @@ import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageLayout} from '../../../containers/PageLayout';
+import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';

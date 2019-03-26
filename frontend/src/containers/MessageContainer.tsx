@@ -2,10 +2,10 @@ import Snackbar from 'material-ui/Snackbar';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {colors} from '../../app/themes';
-import {RootState} from '../../reducers/rootReducer';
-import {hideMessage} from '../../state/ui/message/messageActions';
-import {MessageState, MessageType} from '../../state/ui/message/messageModels';
+import {colors} from '../app/themes';
+import {RootState} from '../reducers/rootReducer';
+import {hideMessage} from '../state/ui/message/messageActions';
+import {MessageState, MessageType} from '../state/ui/message/messageModels';
 
 type StateToProps = MessageState;
 
