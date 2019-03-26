@@ -3,7 +3,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {restClient} from '../../../services/restClient';
 import {translate} from '../../../services/translationService';
 import {EncodedUriParameters, IdNamed, Status, toIdNamed, uuid} from '../../../types/Types';
-import {Query} from '../../../usecases/search/searchModels';
+import {Query} from '../../search/searchModels';
 import {SelectionListItem} from '../../user-selection/userSelectionModels';
 import {Address, City} from '../location/locationModels';
 

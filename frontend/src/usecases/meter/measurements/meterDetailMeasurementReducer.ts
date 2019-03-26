@@ -5,7 +5,7 @@ import {domainModelsGetEntitiesSuccess} from '../../../state/domain-models/domai
 import {MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
 import {initialState} from '../../../state/ui/graph/measurement/measurementReducer';
 import * as reportActions from '../../report/reportActions';
-import {search} from '../../search/searchActions';
+import {search} from '../../../state/search/searchActions';
 import {setMeterDetailsTimePeriod} from './meterDetailActions';
 import * as actions from './meterDetailMeasurementActions';
 

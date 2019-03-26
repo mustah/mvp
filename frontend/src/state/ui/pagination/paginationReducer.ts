@@ -3,8 +3,8 @@ import {EmptyAction} from 'typesafe-actions/dist/types';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {Action, UseCases} from '../../../types/Types';
-import {search} from '../../../usecases/search/searchActions';
-import {Query, QueryParameter} from '../../../usecases/search/searchModels';
+import {search} from '../../search/searchActions';
+import {Query, QueryParameter} from '../../search/searchModels';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {CHANGE_PAGE, UPDATE_PAGE_METADATA} from './paginationActions';
 import {

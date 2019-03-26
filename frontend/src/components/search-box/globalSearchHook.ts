@@ -16,11 +16,11 @@ export const useGlobalSearch = ({onSearch, onClear, query = ''}: GlobalSearchPro
 
   const onEnter = (event) => {
     const value = event.target.value;
-    if (event.key === 'Enter' && value !== query) {
+    if (event.key === 'Enter') {
       event.preventDefault();
       setValue(value);
       onSearch(value);
-      history.push(routes.searchResult);
+      history.push(`${routes.searchResult}/${encodeURIComponent(value)}`);
     }
   };
 

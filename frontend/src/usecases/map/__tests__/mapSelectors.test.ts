@@ -5,7 +5,7 @@ import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {DomainModelsState} from '../../../state/domain-models/domainModels';
 import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {initialState} from '../../../state/summary/summaryReducer';
-import {initialState as initialSearchState} from '../../search/searchReducer';
+import {initialState as initialSearchState} from '../../../state/search/searchReducer';
 import {MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
 import {getGatewayLowConfidenceTextInfo, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../mapSelectors';

@@ -1,7 +1,7 @@
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {CurrentPeriod} from '../../helpers/dateHelpers';
 import {IdNamed, Selected, uuid} from '../../types/Types';
-import {Query} from '../../usecases/search/searchModels';
+import {Query} from '../search/searchModels';
 import {Address, City} from '../domain-models/location/locationModels';
 import {Quantity} from '../ui/graph/measurement/measurementModels';
 import {ApiRequestSortingOptions, Pagination} from '../ui/pagination/paginationModels';

@@ -3,8 +3,8 @@ import {bindActionCreators} from 'redux';
 import {GlobalSearch} from '../components/search-box/GlobalSearch';
 import {RootState} from '../reducers/rootReducer';
 import {OnClick} from '../types/Types';
-import {clearValidationSearch, validationSearch} from '../usecases/search/searchActions';
-import {OnSearch, Query} from '../usecases/search/searchModels';
+import {clearValidationSearch, validationSearch} from '../state/search/searchActions';
+import {OnSearch, Query} from '../state/search/searchModels';
 
 interface DispatchToProps {
   onSearch: OnSearch;

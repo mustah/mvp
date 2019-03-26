@@ -2,7 +2,7 @@ import {ActionType, getType} from 'typesafe-actions';
 import {Maybe} from '../../../../helpers/Maybe';
 import {resetReducer} from '../../../../reducers/resetReducer';
 import * as reportActions from '../../../../usecases/report/reportActions';
-import {search} from '../../../../usecases/search/searchActions';
+import {search} from '../../../search/searchActions';
 import * as actions from './measurementActions';
 import {MeasurementState} from './measurementModels';
 

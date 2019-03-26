@@ -1,14 +1,12 @@
-import {LOCATION_CHANGE} from 'react-router-redux';
 import {mockSelectionAction} from '../../../__tests__/testActions';
-import {routes} from '../../../app/routes';
 import {getId, groupById} from '../../../helpers/collections';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, Status} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
-import {search} from '../../../usecases/search/searchActions';
-import {makeMeterQuery} from '../../../usecases/search/searchModels';
+import {search} from '../../search/searchActions';
+import {makeMeterQuery} from '../../search/searchModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {initialState as initialMeasurementState} from '../../ui/graph/measurement/measurementReducer';
 import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
@@ -25,11 +23,9 @@ import {
   gatewayMapMarkers,
   initialDomain,
   meterMapMarkers,
-  meters,
   organisations,
   users
 } from '../domainModelsReducer';
-import {MeterDetails} from '../meter-details/meterDetailsModels';
 import {Organisation} from '../organisation/organisationModels';
 import {Role, User, UserState} from '../user/userModels';
 
@@ -241,21 +237,6 @@ describe('domainModelsReducer', () => {
       const state = meterMapMarkers(nextState, search(makeMeterQuery('test')));
 
       expect(state).toEqual(initialDomain<MapMarker>());
-    });
-  });
-
-  describe('meters', () => {
-
-    it('clears error on location changed', () => {
-      const errorState: NormalizedState<MeterDetails> = {
-        ...initialDomain<MeterDetails>(),
-        error: {message: 'an error'},
-      };
-
-      expect(meters(
-        errorState,
-        {type: LOCATION_CHANGE, payload: {pathname: routes.dashboard}}
-      )).toEqual(initialDomain<MeterDetails>());
     });
   });
 
