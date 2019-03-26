@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.tuple;
 public class DashboardControllerTest extends IntegrationTest {
 
   @Test
-  public void get_dashboards() {
+  public void getDashboards() {
     User user = given(user());
     User otherUser = given(user());
     Dashboard myDashboard = given(dashboard().ownerUserId(user.id));
@@ -47,7 +47,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void get_widgets() {
+  public void getWidgets() {
     User user = given(user());
     Dashboard myDashboard1 = given(dashboard().ownerUserId(user.id));
     Widget widget1 = given(widget().dashboardId(myDashboard1.id).ownerUserId(user.id));
@@ -71,7 +71,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void get_dashboards_noDashboardFound() {
+  public void getDashboards_noDashboardFound() {
     List<DashboardDto> response = asUser().getList(
       dashboardsUrl(),
       DashboardDto.class
@@ -81,7 +81,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void add_dashboard() {
+  public void addDashboard() {
     User user = given(user());
     DashboardDto dto = new DashboardDto(randomUUID(), randomName(), randomLayout(), emptyList());
 
@@ -100,7 +100,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void add_dashboard_handleNullWidgets() {
+  public void addDashboard_handleNullWidgets() {
     User user = given(user());
     DashboardDto dto = new DashboardDto(randomUUID(), randomName(), randomLayout(), null);
 
@@ -119,7 +119,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void add_dashboard_saves_widgets() {
+  public void addDashboard_savesWidgets() {
     User user = given(user());
     UUID dashboardId = randomUUID();
     WidgetDto widget1 = new WidgetDto(
@@ -163,7 +163,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void add_widget() {
+  public void addWidget() {
     User user = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     WidgetDto dto = new WidgetDto(
@@ -188,7 +188,28 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void add_widget_DashboardDoesNotExist() {
+  public void addWidget_InvalidWidgetType() {
+    User user = given(user());
+    Dashboard dashboard = given(dashboard().ownerUserId(user.id));
+    WidgetDto dto = new WidgetDto(
+      randomUUID(),
+      dashboard.id,
+      "ThisIsNotARealWidgetType",
+      randomName(),
+      randomSettings()
+    );
+
+    ResponseEntity<WidgetDto> response = as(user).post(
+      widgetsUrl(),
+      dto,
+      WidgetDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
+  public void addWidget_DashboardDoesNotExist() {
     WidgetDto dto = new WidgetDto(
       randomUUID(),
       randomUUID(),
@@ -209,7 +230,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void add_widget_notMyDashboard() {
+  public void addWidget_notMyDashboard() {
     User user = given(user());
     User otherUser = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
@@ -235,7 +256,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_dashboard() {
+  public void deleteDashboard() {
     User user = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
@@ -253,7 +274,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_dashboard_failForAnotherUser() {
+  public void deleteDashboard_failForAnotherUser() {
     User user = given(user());
     User otherUser = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
@@ -268,7 +289,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_widget() {
+  public void deleteWidget() {
     User user = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     Widget widget1 = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
@@ -296,7 +317,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_widget_failForAnotherUser() {
+  public void deleteWidget_failForAnotherUser() {
     User user = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(given(user()).id));
     Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(dashboard.ownerUserId));
@@ -311,7 +332,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void update_dashboard() {
+  public void updateDashboard() {
     User user = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
 
@@ -330,7 +351,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void update_dashboard_doesNotUpdateWidgets() {
+  public void updateDashboard_doesNotUpdateWidgets() {
     User user = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
@@ -363,7 +384,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void update_dashboard_failForAnotherUser() {
+  public void updateDashboard_failForAnotherUser() {
     User user = given(user());
     User otherUser = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
@@ -383,7 +404,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void update_widget() {
+  public void updateWidget() {
     User user = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
@@ -423,7 +444,7 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void update_widget_failForAnotherUser() {
+  public void updateWidget_failForAnotherUser() {
     User user = given(user());
     Dashboard dashboard = given(dashboard().ownerUserId(given(user()).id));
     Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(dashboard.ownerUserId));
