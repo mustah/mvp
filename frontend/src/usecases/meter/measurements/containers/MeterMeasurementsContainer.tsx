@@ -31,7 +31,7 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
   const {useCollectionPeriod, meter} = ownProps;
   const period: SelectionInterval = useCollectionPeriod && isTimePeriodDefault ? collection.timePeriod : timePeriod;
 
-  return ({
+  return {
     hasLegendItems: true,
     hasContent: hasMeasurementValues(meterDetailMeasurement.measurementResponse),
     hiddenLines,
@@ -40,7 +40,7 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     requestParameters: getMeasurementParameters({meter, timePeriod: period}),
     userSelectionId: getUserSelectionId(rootState.userSelection),
     userSelections,
-  });
+  };
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

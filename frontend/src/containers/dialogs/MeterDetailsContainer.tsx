@@ -68,7 +68,7 @@ const MeterDetailsComponent = (props: Props) => {
     <LoadingMeterDetails
       {...props}
       isFetching={props.isFetching}
-      hasContent={!props.meter.isNothing()}
+      hasContent={props.meter.isJust()}
       noContentText={noSuchMeterMessage(props.selectedId)}
     />);
 };
