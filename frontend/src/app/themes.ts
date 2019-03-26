@@ -240,4 +240,4 @@ export const gridStyle: React.CSSProperties = {
   borderBottomRightRadius: borderRadius,
 };
 
-export const borderStyle = `1px solid ${colors.dividerColor}`;
+export const border = `1px solid ${colors.dividerColor}`;

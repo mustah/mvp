@@ -18,9 +18,9 @@ const iconStyle: React.CSSProperties = {width: 28, height: 28};
 
 export const ButtonClose = ({onClick}: DialogButtonProps) => (
   <IconButton
+    iconStyle={iconStyle}
     onClick={onClick}
     style={closeButtonStyle}
-    iconStyle={iconStyle}
   >
     <ContentClear color={colors.lightBlack} hoverColor={colors.iconHover}/>
   </IconButton>
