@@ -1,3 +1,4 @@
+import {LOCATION_CHANGE, LocationChangeAction} from 'react-router-redux';
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {makeMeter} from '../../../__tests__/testDataFactory';
 import {RequestParameter} from '../../../helpers/urlFactory';
@@ -390,6 +391,35 @@ describe('paginatedDomainModelsReducer', () => {
           {field: RequestParameter.address}
         ]
       );
+    });
+
+    it('keeps the sorting but throws out data when user navigates away', () => {
+      const locationChange: LocationChangeAction = {
+        type: LOCATION_CHANGE,
+        payload: {
+          pathname: 'a',
+          search: '',
+          state: {},
+          hash: '',
+        }
+      };
+
+      const stateWithResultAndSort: MetersState = {
+        ...makeInitialState(),
+        result: {
+          1: {
+            isFetching: false,
+            isSuccessfullyFetched: true,
+            result: [123, 456],
+          },
+        },
+        sort: [{field: RequestParameter.city}],
+      };
+
+      const stateAfterLocationChange: MetersState = meters(stateWithResultAndSort, locationChange);
+
+      expect(stateAfterLocationChange).toHaveProperty('sort', [{field: RequestParameter.city}]);
+      expect(stateAfterLocationChange).toHaveProperty('result', {});
     });
 
   });
