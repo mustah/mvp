@@ -12,7 +12,7 @@ import {Period} from '../../../components/dates/dateModels';
 import {Row} from '../../../components/layouts/row/Row';
 import {IconProps} from '../../../components/popover/PopoverMenu';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageLayout} from '../../../containers/PageLayout';
+import {PageLayout} from '../../../components/layouts/layout/PageLayout';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';

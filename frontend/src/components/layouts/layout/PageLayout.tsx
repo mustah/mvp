@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {Footer} from '../components/footer/Footer';
-import {Column} from '../components/layouts/column/Column';
-import {Layout} from '../components/layouts/layout/Layout';
-import {WithChildren} from '../types/Types';
-import {TopMenu} from '../usecases/topmenu/component/TopMenu';
-import {LogoContainer} from '../usecases/topmenu/containers/LogoContainer';
-import {GlobalSearchContainer} from './GlobalSearchContainer';
+import {GlobalSearchContainer} from '../../../containers/GlobalSearchContainer';
+import {WithChildren} from '../../../types/Types';
+import {TopMenu} from '../../../usecases/topmenu/component/TopMenu';
+import {LogoContainer} from '../../../usecases/topmenu/containers/LogoContainer';
+import {Footer} from '../../footer/Footer';
+import {Column} from '../column/Column';
+import {Layout} from './Layout';
 
 const Content = ({children}: WithChildren) => (
   <Column className="PageContent flex-1">

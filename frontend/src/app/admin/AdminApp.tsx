@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {Layout} from '../../components/layouts/layout/Layout';
 import {Row} from '../../components/layouts/row/Row';
-import {MessageContainer} from '../../containers/message/MessageContainer';
+import {MessageContainer} from '../../containers/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';

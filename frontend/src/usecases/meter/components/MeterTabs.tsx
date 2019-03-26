@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {MeterDetailsDialog} from '../../../components/dialog/DetailsDialog';
 import {MainContentTabs, MainContentTabsProps} from '../../../components/tabs/components/MainContentTabs';
-import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
+import {MeterListContainer} from '../../../containers/MeterListContainer';
 import './MeterTabs.scss';
 
 export const MeterTabs = (props: MainContentTabsProps) =>

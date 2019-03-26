@@ -10,7 +10,7 @@ import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {Foldable} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
-import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
+import {MeterListContainer} from '../../../containers/MeterListContainer';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';

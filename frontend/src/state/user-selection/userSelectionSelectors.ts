@@ -92,11 +92,6 @@ const defaultPeriod: CurrentPeriod = {
   period: Period.now,
 };
 
-const latestPeriod: CurrentPeriod = {
-  customDateRange: Maybe.nothing(),
-  period: Period.latest,
-};
-
 const determineActivePeriod = (
   hasWildcard: boolean,
   selectionPeriod: CurrentPeriod,
@@ -214,10 +209,6 @@ export const getPaginatedMeterParameters = getPaginatedParameters(entityApiParam
 export const getPaginatedGatewayParameters = getPaginatedParameters(entityApiParametersGatewaysFactory);
 
 export const getMeterParameters = getParameters(entityApiParametersMetersFactory);
-
-export const allCurrentMeterParameters = encodedUriParametersFrom(toPeriodApiParameters(defaultPeriod));
-
-export const dashboardAllMetersParameters = encodedUriParametersFrom(toPeriodApiParameters(latestPeriod));
 
 export const getGatewayParameters = getParameters(entityApiParametersGatewaysFactory);
 

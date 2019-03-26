@@ -1,9 +1,11 @@
 import * as React from 'react';
-import {Props} from '../../containers/SummaryContainer';
+import {DispatchToProps, StateToProps} from '../../containers/SummaryContainer';
 import {translate} from '../../services/translationService';
 import {Column} from '../layouts/column/Column';
 import {SmallLoader} from '../loading/SmallLoader';
 import {Summary} from './Summary';
+
+type Props = StateToProps & DispatchToProps;
 
 export const SummaryComponent = ({
   fetchSummary,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Redirect, Route, Switch} from 'react-router';
-import {SingleMeterContainer} from '../../containers/meters/SingleMeterContainer';
+import {MeterDetailsPage} from '../../usecases/meter/containers/MeterDetailsPage';
 import {NewDashboardContainer} from '../../usecases/dashboard/containers/NewDashboardContainer';
 import {MetersPage} from '../../usecases/meter/containers/MetersPage';
 import {ReportPage} from '../../usecases/report/containers/ReportPage';
@@ -14,8 +14,8 @@ export const MvpPages = () => (
     <Route exact={true} path={routes.home} component={NewDashboardContainer}/>
     <Route exact={true} path={routes.dashboard} component={NewDashboardContainer}/>
     <Route exact={true} path={routes.meter} component={MetersPage}/>
-    <Route exact={true} path={`${routes.meter}/:id?`} component={SingleMeterContainer}/>
-    <Route exact={true} path={`${routes.meter}/:id?/:collectionPeriod?`} component={SingleMeterContainer}/>
+    <Route exact={true} path={`${routes.meter}/:id?`} component={MeterDetailsPage}/>
+    <Route exact={true} path={`${routes.meter}/:id?/:collectionPeriod?`} component={MeterDetailsPage}/>
     <Route exact={true} path={`${routes.report}/:id?`} component={ReportPage}/>
     <Route exact={true} path={routes.selection} component={SelectionPage}/>
     <Route exact={true} path={routes.userProfile} component={EditProfileContainer}/>
