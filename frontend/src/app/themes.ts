@@ -1,6 +1,7 @@
 import {darkBlack, fullBlack} from 'material-ui/styles/colors';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import * as React from 'react';
+import SvgIconProps = __MaterialUI.SvgIconProps;
 
 interface Styles {
   [key: string]: React.CSSProperties;
@@ -241,3 +242,8 @@ export const gridStyle: React.CSSProperties = {
 };
 
 export const border = `1px solid ${colors.dividerColor}`;
+
+export const svgIconProps: SvgIconProps = {
+  color: colors.lightBlack,
+  hoverColor: colors.iconHover
+};

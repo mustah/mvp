@@ -3,7 +3,7 @@ import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import * as React from 'react';
-import {colors} from '../../app/themes';
+import {svgIconProps} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {OnClick} from '../../types/Types';
 import './DialogButtons.scss';
@@ -22,7 +22,7 @@ export const ButtonClose = ({onClick}: DialogButtonProps) => (
     onClick={onClick}
     style={closeButtonStyle}
   >
-    <ContentClear color={colors.lightBlack} hoverColor={colors.iconHover}/>
+    <ContentClear {...svgIconProps}/>
   </IconButton>
 );
 

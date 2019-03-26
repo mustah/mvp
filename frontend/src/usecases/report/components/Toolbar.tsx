@@ -6,7 +6,7 @@ import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
-import {colors, iconSizeMedium} from '../../../app/themes';
+import {colors, iconSizeMedium, svgIconProps} from '../../../app/themes';
 import {ToolbarActionButton} from '../../../components/buttons/ToolbarActionButton';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
@@ -97,7 +97,7 @@ export const Toolbar = ({
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >
-            <CloudDownload color={colors.lightBlack} hoverColor={colors.iconHover}/>
+            <CloudDownload {...svgIconProps}/>
           </ToolbarIconButton>
         </RowMiddle>
       </Row>

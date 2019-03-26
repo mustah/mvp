@@ -3,7 +3,7 @@ import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-b
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
-import {colors, iconSizeMedium} from '../../../app/themes';
+import {colors, iconSizeMedium, svgIconProps} from '../../../app/themes';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
@@ -66,7 +66,7 @@ export const CollectionToolbar = ({
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >
-            <CloudDownload color={colors.lightBlack} hoverColor={colors.iconHover}/>
+            <CloudDownload {...svgIconProps}/>
           </ToolbarIconButton>
         </RowMiddle>
       </Row>

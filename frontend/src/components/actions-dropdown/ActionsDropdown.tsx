@@ -6,14 +6,14 @@ import {IconProps, PopoverMenu} from '../popover/PopoverMenu';
 interface Props {
   renderPopoverContent: RenderFunction<OnClick>;
   className?: string;
-  icon?: any;
+  Icon?: any;
   iconProps?: IconProps;
 }
 
-export const ActionsDropdown = ({renderPopoverContent, className, icon, iconProps}: Props) => (
+export const ActionsDropdown = ({renderPopoverContent, className, Icon, iconProps}: Props) => (
   <PopoverMenu
     className={className}
-    IconComponent={icon || IconMore}
+    IconComponent={Icon || IconMore}
     iconProps={iconProps}
     renderPopoverContent={renderPopoverContent}
   />
