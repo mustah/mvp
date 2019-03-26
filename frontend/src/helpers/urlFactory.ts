@@ -45,6 +45,7 @@ export enum RequestParameter {
   sort = 'sort',
   threshold = 'threshold',
   resolution = 'resolution',
+  w = 'w',
 }
 
 const requestParametersBySelectionParameters: ParameterNames = {
@@ -62,6 +63,7 @@ const requestParametersBySelectionParameters: ParameterNames = {
   secondaryAddresses: RequestParameter.secondaryAddress,
   sort: RequestParameter.sort,
   threshold: RequestParameter.threshold,
+  w: RequestParameter.w,
 };
 
 const collectionStatParameters: ParameterNames = {
@@ -109,13 +111,14 @@ export const requestParametersFrom = (parameters: SelectedParameters): RequestPa
   }
   return Object.keys(parameters)
     .reduce(
-      (allParameters: RequestParameters, selectedParameter: keyof SelectedParameters) => ({
-        ...allParameters,
-        ...mapRequestParameters(
-          selectedParameter,
-          parameters[selectedParameter]
-        )
-      }),
+      (allParameters: RequestParameters, selectedParameter: keyof SelectedParameters) =>
+        ({
+          ...allParameters,
+          ...mapRequestParameters(
+            selectedParameter,
+            parameters[selectedParameter]
+          )
+        }),
       {}
     );
 };

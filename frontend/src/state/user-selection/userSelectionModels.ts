@@ -21,6 +21,7 @@ export const enum ParameterName {
   productModels = 'productModels',
   threshold = 'threshold',
   sort = 'sort',
+  query = 'w'
 }
 
 export type SelectionItem = IdNamed | City | Address;
@@ -69,6 +70,7 @@ export interface SelectedParameters {
   reported?: IdNamed[];
   secondaryAddresses?: IdNamed[];
   threshold?: ThresholdQuery;
+  w?: IdNamed[];
 }
 
 export interface OldSelectionParameters {
