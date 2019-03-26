@@ -1,22 +1,21 @@
 import {isEqual} from 'lodash';
+import FlatButton from 'material-ui/FlatButton';
 import Add from 'material-ui/svg-icons/content/add';
 import * as React from 'react';
 import ReactGridLayout, {Layout} from 'react-grid-layout';
-/* tslint:disable */
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-/* tslint:enable */
-import {colors, iconSizeMedium} from '../../../app/themes';
+import {bgHoverColor, borderRadius, svgIconProps} from '../../../app/themes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {Period} from '../../../components/dates/dateModels';
-import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
+import {IconProps} from '../../../components/popover/PopoverMenu';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageLayout} from '../../../containers/PageLayout';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {Maybe} from '../../../helpers/Maybe';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {translate} from '../../../services/translationService';
 import {Dashboard} from '../../../state/domain-models/dashboard/dashboardModels';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {Widget} from '../../../state/domain-models/widget/WidgetModels';
@@ -35,6 +34,7 @@ import {EditCollectionStatusWidgetContainer} from '../containers/EditCollectionS
 import {MapWidgetContainer, MapWidgetSettings} from '../containers/MapWidgetContainer';
 import {DashboardProps} from '../dashboardEnhancers';
 import {EditMapWidgetContainer} from './widgets/EditMapWidget';
+import './widgets/Widget.scss';
 
 type ElementFromWidgetType = (settings: WidgetSettings['type']) => any;
 
@@ -337,20 +337,25 @@ export const NewDashboard = (props: DashboardProps) => {
     editWidget(Maybe.just(widgetSettings));
   });
 
+  const iconProps: IconProps = {
+    color: svgIconProps.color,
+    icon: <Add color={svgIconProps.color}/>,
+    hoverColor: bgHoverColor,
+    label: translate('add new widget'),
+    labelStyle: {color: svgIconProps.color},
+    style: {borderRadius},
+  };
+
   return (
     <PageLayout>
       <Row className="space-between">
         <MainTitle>{translate('dashboard')}</MainTitle>
-        <Row>
-          <Column title={firstUpperTranslated('add widget')}>
-            <ActionsDropdown
-              renderPopoverContent={addNewWidget}
-              className="SelectionResultActionDropdown"
-              icon={Add}
-              iconProps={{color: colors.lightBlack, style: iconSizeMedium}}
-            />
-          </Column>
-        </Row>
+        <ActionsDropdown
+          className="AddNewWidgetButton"
+          renderPopoverContent={addNewWidget}
+          Icon={FlatButton}
+          iconProps={iconProps}
+        />
       </Row>
 
       <ReactGridLayout

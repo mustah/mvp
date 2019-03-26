@@ -1,18 +1,10 @@
 import {default as classNames} from 'classnames';
-import {FlatButton} from 'material-ui';
 import Card from 'material-ui/Card/Card';
 import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
 import * as React from 'react';
-import {
-  actionMenuItemIconStyle,
-  bgHoverColor,
-  borderRadius,
-  cardStyle,
-  colors,
-  dividerStyle
-} from '../../../../app/themes';
+import {actionMenuItemIconStyle, cardStyle, dividerStyle, svgIconProps} from '../../../../app/themes';
 import {ActionMenuItem} from '../../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown} from '../../../../components/actions-dropdown/ActionsDropdown';
 import {useConfirmDialog} from '../../../../components/dialog/confirmDialogHook';
@@ -22,7 +14,6 @@ import {WidgetTitle} from '../../../../components/texts/Titles';
 import {translate} from '../../../../services/translationService';
 import {Callback, Children, ClassNamed, OnClick, RenderFunction} from '../../../../types/Types';
 import './Widget.scss';
-import FlatButtonProps = __MaterialUI.FlatButtonProps;
 
 interface Props extends ClassNamed {
   children: Children;
@@ -45,6 +36,8 @@ interface WidgetWithTitleProps extends Props {
   deleteWidget: Callback;
 }
 
+const EditIcon = <ImageEdit {...svgIconProps} style={actionMenuItemIconStyle}/>;
+
 export const WidgetWithTitle = ({title, children, className, configure, deleteWidget}: WidgetWithTitleProps) => {
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(deleteWidget);
 
@@ -59,13 +52,11 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
       openConfirm(w);
     };
 
-    const edit = <ImageEdit color={colors.lightBlack} hoverColor={colors.iconHover} style={actionMenuItemIconStyle}/>;
-
-    const actionMenuItems = [
+    return [
       (
         <ActionMenuItem
           key="edit-widget"
-          leftIcon={edit}
+          leftIcon={EditIcon}
           name={translate('edit widget')}
           onClick={onClickEdit}
         />
@@ -80,8 +71,6 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
         />
       )
     ];
-
-    return actionMenuItems;
   };
 
   return (
@@ -95,23 +84,3 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
     </Widget>
   );
 };
-
-const emptyWidgetStyle: React.CSSProperties = {
-  borderStyle: 'dashed',
-  borderWidth: 2,
-  borderColor: colors.borderColor,
-  color: colors.borderColor,
-  borderRadius,
-  height: '100%',
-  width: '100%',
-};
-
-export const EmptyWidget = ({style, icon}: FlatButtonProps) => (
-  <FlatButton
-    className="EmptyWidget"
-    hoverColor={bgHoverColor}
-    icon={icon}
-    style={{...emptyWidgetStyle, ...style}}
-    label={translate('add new widget')}
-  />
-);

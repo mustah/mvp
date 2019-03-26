@@ -6,7 +6,9 @@ import {popoverStyle} from '../../app/themes';
 import {Clickable, OnClick, RenderFunction} from '../../types/Types';
 import {Row} from '../layouts/row/Row';
 import './PopoverMenu.scss';
+import FlatButtonProps = __MaterialUI.FlatButtonProps;
 import origin = __MaterialUI.propTypes.origin;
+import SvgIconProps = __MaterialUI.SvgIconProps;
 
 export interface IconProps extends React.CSSProperties {
   disabled?: boolean;
@@ -15,7 +17,7 @@ export interface IconProps extends React.CSSProperties {
 interface Props {
   renderPopoverContent: RenderFunction<OnClick>;
   IconComponent: React.StatelessComponent<Clickable>;
-  iconProps?: IconProps;
+  iconProps?: IconProps & (FlatButtonProps | SvgIconProps);
   onRequestClose?: OnClick;
   className?: string;
   popoverClassName?: string;

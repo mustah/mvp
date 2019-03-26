@@ -29,6 +29,8 @@
       "leaflet.markercluster",
       "lodash",
       "react-dates",
+      "react-grid-layout",
+      "react-resizable",
       "redux-persist",
       "moment",
       "typesafe-actions"

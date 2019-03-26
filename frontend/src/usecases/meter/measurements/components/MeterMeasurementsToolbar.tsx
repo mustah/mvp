@@ -2,7 +2,7 @@ import {default as classNames} from 'classnames';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
-import {colors, iconSizeMedium} from '../../../../app/themes';
+import {colors, iconSizeMedium, svgIconProps} from '../../../../app/themes';
 import {ToolbarIconButton} from '../../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
@@ -53,7 +53,7 @@ export const MeterMeasurementsToolbar = ({
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >
-            <CloudDownload color={colors.lightBlack} hoverColor={colors.iconHover}/>
+            <CloudDownload  {...svgIconProps}/>
           </ToolbarIconButton>
         </RowMiddle>
       </Row>

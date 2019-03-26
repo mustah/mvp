@@ -1,11 +1,11 @@
 import {DataResult, process, State} from '@progress/kendo-data-query';
 import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
 import Drawer from 'material-ui/Drawer';
-import IconButton from 'material-ui/IconButton';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
 import {borderRadius, drawerContainerStyle, gridStyle, iconStyle} from '../../../app/themes';
+import {ButtonClose} from '../../../components/buttons/ButtonClose';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonInfo} from '../../../components/buttons/ButtonInfo';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
@@ -18,7 +18,6 @@ import {QuantityCell, quantityColumnWidth, renderColumns, RowProps, rowRenderer}
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
 import {isMedium, LegendType} from '../reportModels';
 import './Legend.scss';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 const legendGridStyle: React.CSSProperties = {
   ...gridStyle,
@@ -47,6 +46,14 @@ const renderLabelCell = ({dataItem: {id, label, city, address, type}}: GridCellP
       </td>
     )
     : <td>-</td>;
+
+const buttonCloseStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: 12,
+  left: 8,
+  padding: 0,
+  zIndex: 3,
+};
 
 const state: State = {group: [{field: 'type'}]};
 
@@ -90,7 +97,7 @@ export const Legend = ({
     );
   };
 
-  const facilityColumnWidth = 144;
+  const facilityColumnWidth = 148;
   const width = facilityColumnWidth + quantityColumnWidth + (columnQuantities.length * quantityColumnWidth) + 34;
 
   const gridContent: React.ReactNode[] = [
@@ -131,12 +138,10 @@ export const Legend = ({
       open={isVisible}
       onRequestChange={showHideLegend}
       width={width}
-      overlayStyle={{backgroundColor: 'transparent'}}
+      overlayStyle={{display: 'none'}}
     >
-      <IconButton onClick={showHideLegend} className={'close-button'}>
-        <NavigationClose/>
-      </IconButton>
       <Column className="Legend Grouping-grid">
+        <ButtonClose onClick={showHideLegend} style={buttonCloseStyle}/>
         <Grid
           data={dataResult}
           groupable={true}
