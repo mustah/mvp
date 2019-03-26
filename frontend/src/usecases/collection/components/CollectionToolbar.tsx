@@ -73,7 +73,6 @@ export const CollectionToolbar = ({
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
         <PeriodSelection
-          disabled={!hasCollectionStats}
           customDateRange={customDateRange}
           period={timePeriod.period}
           selectPeriod={selectPeriod}
