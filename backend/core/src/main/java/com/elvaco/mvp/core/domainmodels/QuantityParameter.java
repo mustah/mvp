@@ -33,8 +33,16 @@ public class QuantityParameter {
   public static QuantityParameter of(String quantityUnitPair) {
     String[] parts = quantityUnitPair.split(QUANTITY_UNIT_DELIMITER);
     String quantityName = parts[0];
-    if (quantityName.isEmpty() || parts.length > 2) {
-      throw new RuntimeException("Invalid quantity/unit pair: '" + quantityUnitPair + "'");
+    if (quantityName.isEmpty() || parts.length > 3) {
+      throw new RuntimeException(
+        "Invalid quantity/unit pair/display mode: '" + quantityUnitPair + "'"
+      );
+    } else if (parts.length == 3) {
+      return new QuantityParameter(
+        quantityName,
+        parts[1],
+        DisplayMode.from(parts[2])
+      );
     } else if (parts.length == 2) {
       return new QuantityParameter(quantityName, parts[1], null);
     } else {

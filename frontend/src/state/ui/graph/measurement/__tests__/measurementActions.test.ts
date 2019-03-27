@@ -44,7 +44,7 @@ import {
   MeasurementState,
   MeasurementValue,
   Medium,
-  Quantity
+  Quantity, quantityAttributes
 } from '../measurementModels';
 import {initialState} from '../measurementReducer';
 
@@ -188,14 +188,20 @@ describe('measurementActions', () => {
           (url: string) => new URL(`${mockHost}${url}`),
         );
 
+        const volumeAttr = quantityAttributes[Quantity.volume];
+
         expect(externalTemperature.pathname).toEqual('/measurements');
-        expect(externalTemperature.searchParams.get('quantity')).toEqual(Quantity.volume);
+        expect(externalTemperature.searchParams.get('quantity'))
+          .toEqual(Quantity.volume + ':' + volumeAttr.unit + ':' + volumeAttr.displayMode);
         expect(externalTemperature.searchParams.get('logicalMeterId')).toEqual(gasMeter.id);
         expect(externalTemperature.searchParams.get('before')).toBeTruthy();
         expect(externalTemperature.searchParams.get('after')).toBeTruthy();
 
+        const externalTempAttr = quantityAttributes[Quantity.externalTemperature];
+
         expect(volume.pathname).toEqual('/measurements');
-        expect(volume.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
+        expect(volume.searchParams.get('quantity'))
+          .toEqual(Quantity.externalTemperature  + ':' + externalTempAttr.unit + ':' + externalTempAttr.displayMode);
         expect(volume.searchParams.get('logicalMeterId')).toEqual(roomSensorMeter.id);
         expect(volume.searchParams.get('before')).toBeTruthy();
         expect(volume.searchParams.get('after')).toBeTruthy();
