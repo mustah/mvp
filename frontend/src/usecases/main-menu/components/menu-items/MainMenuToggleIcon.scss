@@ -1,12 +1,23 @@
 @import "../../../../app/variables";
 
 .MainMenuToggleIcon {
-  top: 400px;
-  left: 5px;
   position: fixed;
+  bottom: $sm-space;
+  left: 12px;
   z-index: $main-menu-z-index;
 
   &.isSideMenuOpen {
-    left: $side-menu-width;
+    left: 174px;
+  }
+
+  &:hover {
+    .MainMenuToggleIcon-Button {
+      background-color: $primary-bg-hover !important;
+      box-shadow: $box-shadow-hover !important;
+
+      svg {
+        fill: $blackest !important;
+      }
+    }
   }
 }

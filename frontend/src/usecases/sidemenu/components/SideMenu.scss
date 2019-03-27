@@ -1,0 +1,9 @@
+@import '../../../app/variables';
+
+.SideMenu {
+  width: $lg-space;
+
+  &.isSideMenuOpen {
+    width: $side-menu-width + $lg-space;
+  }
+}

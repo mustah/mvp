@@ -6,6 +6,7 @@
 @import "input";
 @import "kendo";
 @import "react-grid-layout";
+@import "material-design";
 
 html, body, #app {
   width: 100%;
@@ -29,14 +30,6 @@ body {
   text-decoration: none;
 }
 
-.PageContent {
+.Content {
   padding: $lg-space + $main-menu-height $lg-space $lg-space $lg-space;
-}
-
-.SideMenuContainer {
-  width: 0;
-
-  &.isSideMenuOpen {
-    width: $side-menu-width;
-  }
 }

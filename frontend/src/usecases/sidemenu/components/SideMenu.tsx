@@ -1,12 +1,17 @@
+import {default as classNames} from 'classnames';
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
 import {drawerContainerStyle, sideMenuWidth} from '../../../app/themes';
-import {WithChildren} from '../../../types/Types';
-import {StateToProps} from '../containers/SideMenuContainer';
+import {StateToProps} from '../../../components/hoc/withSideMenu';
+import {ClassNamed, WithChildren} from '../../../types/Types';
+import './SideMenu.scss';
 
-export const SideMenu = ({isSideMenuOpen, children}: StateToProps & WithChildren) => (
+type Props = StateToProps & WithChildren & ClassNamed;
+
+export const SideMenu = ({className, isSideMenuOpen, children}: Props) => (
   <Drawer
-    containerStyle={drawerContainerStyle}
+    className={classNames('SideMenu', className)}
+    containerStyle={{...drawerContainerStyle, left: isSideMenuOpen ? 0 : 44}}
     docked={true}
     open={isSideMenuOpen}
     width={sideMenuWidth}
