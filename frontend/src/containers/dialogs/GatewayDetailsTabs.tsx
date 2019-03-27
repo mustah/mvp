@@ -10,7 +10,6 @@ import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {ErrorLabel} from '../../components/texts/ErrorLabel';
 import {Normal} from '../../components/texts/Texts';
 import {formatCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
@@ -49,7 +48,7 @@ const iconStyle: React.CSSProperties = {
   height: 24,
 };
 
-const renderAlarm = ({alarms}: Meter) => <MeterAlarm alarms={alarms}/>;
+const renderAlarm = ({alarms}: Meter) => <MeterAlarm items={alarms}/>;
 
 const renderFacility = ({id, facility}: Meter) => {
   const selectedId: Maybe<uuid> = Maybe.maybe(id);
@@ -69,7 +68,7 @@ const renderMeterAddressAndReported = ({address, isReported}: Meter) => {
   return (
     <RowMiddle>
       <Normal>{label}</Normal>
-      <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+      <MeterAlarm items={isReported} label={translate('reported')}/>
     </RowMiddle>
   );
 };
