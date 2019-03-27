@@ -249,41 +249,73 @@ describe('measurementSelectors', () => {
     describe('compare', () => {
 
       it('has data item for compare graph content', () => {
-          const startTimestamp: number = 1_516_521_585_000;
+        const startTimestamp: number = 1_516_521_585_000;
 
-          const measurements: MeasurementsApiResponse = [
-            makeResponseItem({values: [{when: startTimestamp, value: 111}]}),
-            makeResponseItem({values: [{when: startTimestamp + 1000, value: 222}], id: '2', label: 'b'}),
-          ];
+        const measurements: MeasurementsApiResponse = [
+          makeResponseItem({values: [{when: startTimestamp, value: 111}]}),
+          makeResponseItem({values: [{when: startTimestamp + 1000, value: 222}], id: '2', label: 'b'}),
+        ];
 
-          const compare: MeasurementsApiResponse = [
-            makeResponseItem({values: [{when: startTimestamp - 1000, value: 888}]}),
-            makeResponseItem({values: [{when: startTimestamp - 2000, value: 999}], id: '2', label: 'b'}),
-          ];
+        const compare: MeasurementsApiResponse = [
+          makeResponseItem({values: [{when: startTimestamp - 1000, value: 888}]}),
+          makeResponseItem({values: [{when: startTimestamp - 2000, value: 999}], id: '2', label: 'b'}),
+        ];
 
-          const expected: Array<Dictionary<number | TooltipMeta>> = [
-            {
-              'name': 1_516_521_585_000_000,
-              'measurement-Power-a-1': 111,
-              'measurement-Power-a-1-timestamp': NaN,
-              'measurement-Power-a-1-meta': {id: '1', quantity: Quantity.power},
-              'compare-Power-a-1': 888,
-              'compare-Power-a-1-timestamp': 1_516_521_584_000_000,
-              'compare-Power-a-1-meta': {id: '1', quantity: Quantity.power},
-            },
-            {
-              'name': 1_516_521_586_000_000,
-              'measurement-Power-b-2': 222,
-              'measurement-Power-b-2-timestamp': NaN,
-              'measurement-Power-b-2-meta': {id: '2', quantity: Quantity.power},
-              'compare-Power-b-2': 999,
-              'compare-Power-b-2-timestamp': 1_516_521_583_000_000,
-              'compare-Power-b-2-meta': {id: '2', quantity: Quantity.power},
-            }
-          ];
-          expect(toGraphContents({measurements, average: [], compare}).data).toEqual(expected);
-        },
-      );
+        const expected: Array<Dictionary<number | TooltipMeta>> = [
+          {
+            'name': 1_516_521_585_000_000,
+            'measurement-Power-a-1': 111,
+            'measurement-Power-a-1-timestamp': NaN,
+            'measurement-Power-a-1-meta': {id: '1', quantity: Quantity.power},
+            'compare-Power-a-1': 888,
+            'compare-Power-a-1-timestamp': 1_516_521_584_000_000,
+            'compare-Power-a-1-meta': {id: '1', quantity: Quantity.power},
+          },
+          {
+            'name': 1_516_521_586_000_000,
+            'measurement-Power-b-2': 222,
+            'measurement-Power-b-2-timestamp': NaN,
+            'measurement-Power-b-2-meta': {id: '2', quantity: Quantity.power},
+            'compare-Power-b-2': 999,
+            'compare-Power-b-2-timestamp': 1_516_521_583_000_000,
+            'compare-Power-b-2-meta': {id: '2', quantity: Quantity.power},
+          }
+        ];
+        expect(toGraphContents({measurements, average: [], compare}).data).toEqual(expected);
+      });
+
+      it('does not compare measurements that have not same number of measurement response results', () => {
+        const startTimestamp: number = 1_516_521_585_000;
+
+        const measurements: MeasurementsApiResponse = [
+          makeResponseItem({values: [{when: startTimestamp, value: 111}]}),
+        ];
+
+        const responseItemWillNotBeCompared = makeResponseItem({
+          values: [{when: startTimestamp - 2000, value: 222}],
+          id: '2',
+          label: 'b'
+        });
+
+        const compare: MeasurementsApiResponse = [
+          makeResponseItem({values: [{when: startTimestamp - 1000, value: 888}]}),
+          responseItemWillNotBeCompared,
+        ];
+
+        const expected: Array<Dictionary<number | TooltipMeta>> = [
+          {
+            'name': 1_516_521_585_000_000,
+            'measurement-Power-a-1': 111,
+            'measurement-Power-a-1-timestamp': NaN,
+            'measurement-Power-a-1-meta': {id: '1', quantity: Quantity.power},
+            'compare-Power-a-1': 888,
+            'compare-Power-a-1-timestamp': 1_516_521_584_000_000,
+            'compare-Power-a-1-meta': {id: '1', quantity: Quantity.power},
+          }
+        ];
+
+        expect(toGraphContents({measurements, average: [], compare}).data).toEqual(expected);
+      });
     });
 
   });
