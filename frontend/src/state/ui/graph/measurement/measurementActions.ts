@@ -190,8 +190,7 @@ const shouldFetchMeasurementsReport: FetchIfNeeded = (getState: GetState): boole
 };
 
 const shouldFetchMeasurementsMeterDetails: FetchIfNeeded = (getState: GetState): boolean => {
-  const {isFetching, isSuccessfullyFetched, error}: MeasurementState =
-    getState().domainModels.meterDetailMeasurement;
+  const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().domainModels.meterDetailMeasurement;
   return !isSuccessfullyFetched && !isFetching && error.isNothing();
 };
 
