@@ -94,9 +94,7 @@ type Props = StateToProps & DispatchToProps;
 
 export const CollectionStatBarChart = ({
   collectionStats,
-  exportToExcelSuccess,
   fetchCollectionStats,
-  isExportingToExcel,
   isFetching,
   requestParameters,
 }: Props) => {
