@@ -54,7 +54,7 @@ $pager-number-hovered-text: $primary-fg-active;
           background-color: $white;
           position: sticky;
           top: $main-menu-height;
-          border-bottom: 1px solid $border-color;
+          border-bottom: $border;
           z-index: 2;
         }
       }
@@ -118,7 +118,7 @@ $pager-number-hovered-text: $primary-fg-active;
 
     td {
       padding: $space 0 $sm-space $sm-space;
-      border-bottom: 1px solid $border-color;
+      border-bottom: $border;
 
       &.check-box-td {
         padding-left: $grid-cell-padding-x;
@@ -145,7 +145,7 @@ $pager-number-hovered-text: $primary-fg-active;
 
     tr.last {
       td {
-        border-bottom: 1px solid $border-color;
+        border-bottom: $border;
       }
     }
 
