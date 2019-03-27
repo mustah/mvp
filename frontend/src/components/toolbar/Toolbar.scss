@@ -1,13 +1,20 @@
-@import "../../../app/variables";
+@import '../../app/variables';
+
+$toolbar-height: 48px;
 
 .Toolbar {
-  height: 48px;
-  border-bottom: 1px solid $border-color;
+  height: $toolbar-height;
+  border-bottom: $border;
+  padding-right: $space;
 
   .Toolbar-ViewSettings {
-    border-right: 1px solid $border-color;
+    border-right: $border;
     padding-right: $space;
     margin-right: $space;
+  }
+
+  .Toolbar-RightPane {
+    align-self: center;
   }
 
   .ToolbarIconButton {
@@ -16,6 +23,15 @@
 
       svg {
         fill: $blue-A700 !important;
+      }
+    }
+
+    &.disabled, &.disabled:hover {
+      color: $border-color !important;
+      background-color: transparent !important;
+
+      svg {
+        fill: $border-color !important;
       }
     }
 
@@ -46,6 +62,22 @@
 
       svg {
         fill: $border-color !important;
+      }
+    }
+  }
+}
+
+@media all and (max-width: 1277px) {
+  .ReportTabs {
+    .Toolbar {
+      padding-right: 0;
+      margin-bottom: $xl-space;
+
+      .Toolbar-RightPane {
+        padding-top: 5px;
+        height: $toolbar-height;
+        border-bottom: $border;
+        width: 100%;
       }
     }
   }

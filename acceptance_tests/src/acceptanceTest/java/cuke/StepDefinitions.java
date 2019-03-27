@@ -135,7 +135,7 @@ public class StepDefinitions {
 
   @Then("I should be logged in")
   public void thenIShouldBeLoggedIn() {
-    assertClassElementExists("SideMenuContainer");
+    assertClassElementExists("SideMenu");
   }
 
   @Then("I should see error message '(.*)'")

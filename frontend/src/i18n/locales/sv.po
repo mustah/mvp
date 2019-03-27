@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "hide menu"
+msgstr "dölj meny"
+
 msgid "failed to add dashboard: {{error}}"
 msgstr "misslyckades lägga till dashboard: {{error}}"
 

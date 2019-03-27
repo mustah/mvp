@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "hide menu"
+msgstr "hide menu"
+
 msgid "successfully deleted the widget"
 msgstr "successfully deleted the widget"
 

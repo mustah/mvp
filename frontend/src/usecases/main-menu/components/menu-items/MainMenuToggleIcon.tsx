@@ -1,10 +1,12 @@
 import {default as classNames} from 'classnames';
 import {SvgIconProps} from 'material-ui';
+import FlatButton from 'material-ui/FlatButton';
 import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import * as React from 'react';
-import {colors, iconStyle} from '../../../../app/themes';
+import {boxShadow, colors, dividerBorder, iconStyle, svgIconProps} from '../../../../app/themes';
 import {RowRight} from '../../../../components/layouts/row/Row';
+import {translate} from '../../../../services/translationService';
 import {OnClick} from '../../../../types/Types';
 import './MainMenuToggleIcon.scss';
 
@@ -18,13 +20,17 @@ const style: React.CSSProperties = {
   cursor: 'pointer',
 };
 
+const buttonStyle: React.CSSProperties = {
+  minWidth: 44,
+  height: 44,
+  borderRadius: 44 / 2,
+  border: dividerBorder,
+  backgroundColor: colors.white,
+  boxShadow,
+};
+
 export const MainMenuToggleIcon = ({onClick, isSideMenuOpen}: Props) => {
-  const iconsProps: SvgIconProps = {
-    style,
-    onClick,
-    color: colors.blueA900,
-    hoverColor: colors.blueA700,
-  };
+  const iconsProps: SvgIconProps = {style, ...svgIconProps};
 
   const renderArrow = isSideMenuOpen
     ? (<NavigationChevronLeft {...iconsProps}/>)
@@ -32,7 +38,14 @@ export const MainMenuToggleIcon = ({onClick, isSideMenuOpen}: Props) => {
 
   return (
     <RowRight className={classNames('MainMenuToggleIcon', {isSideMenuOpen})}>
-      {renderArrow}
+      <FlatButton
+        className="MainMenuToggleIcon-Button"
+        onClick={onClick}
+        icon={renderArrow}
+        style={buttonStyle}
+        label={isSideMenuOpen ? translate('hide menu') : null}
+        labelPosition="before"
+      />
     </RowRight>
   );
 };

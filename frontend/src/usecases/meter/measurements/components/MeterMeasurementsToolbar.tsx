@@ -1,4 +1,3 @@
-import {default as classNames} from 'classnames';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
@@ -7,6 +6,7 @@ import {ToolbarIconButton} from '../../../../components/buttons/ToolbarIconButto
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../../components/layouts/row/Row';
+import '../../../../components/toolbar/Toolbar.scss';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
@@ -56,13 +56,13 @@ export const MeterMeasurementsToolbar = ({
         </RowMiddle>
       </Row>
 
-      <RowRight className={classNames('Tabs-DropdownMenus')}>
+      <RowRight className="Toolbar-RightPane">
         <PeriodSelection
           customDateRange={Maybe.maybe(timePeriod.customDateRange)}
           period={timePeriod.period}
           selectPeriod={selectPeriod}
           setCustomDateRange={setCustomDateRange}
-          style={{marginBottom: 0, marginLeft: 0, marginRight: 8}}
+          style={{marginBottom: 0, marginLeft: 0}}
         />
       </RowRight>
     </RowSpaceBetween>

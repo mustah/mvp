@@ -1,39 +1,35 @@
-import {default as classNames} from 'classnames';
 import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
-import ContentSave from 'material-ui/svg-icons/content/save';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
 import {colors, iconSizeMedium, svgIconProps} from '../../../app/themes';
-import {ToolbarActionButton} from '../../../components/buttons/ToolbarActionButton';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {IconProps} from '../../../components/popover/PopoverMenu';
+import '../../../components/toolbar/Toolbar.scss';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {Clickable} from '../../../types/Types';
 import {Props} from '../containers/ToolbarContainer';
-import './Toolbar.scss';
 
 const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
   <ToolbarIconButton
     disabled={disabled}
     iconStyle={iconSizeMedium}
     onClick={onClick}
-    style={{marginRight: 16}}
     tooltip={firstUpperTranslated('filter')}
   >
     <ContentFilterList color={disabled ? colors.borderColor : colors.lightBlack}/>
   </ToolbarIconButton>
 );
 
-export const Toolbar = ({
+export const ReportToolbar = ({
   canShowAverage,
   changeToolbarView,
   hasLegendItems,
@@ -85,11 +81,6 @@ export const Toolbar = ({
         </RowMiddle>
 
         <RowMiddle>
-          <ToolbarActionButton
-            disabled={true}
-            style={{minWidth: 44}}
-            icon={<ContentSave color={colors.borderColor}/>}
-          />
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
             disabled={isFetching || isExportingToExcel || !hasMeasurements}
@@ -102,7 +93,7 @@ export const Toolbar = ({
         </RowMiddle>
       </Row>
 
-      <RowRight className={classNames('Tabs-DropdownMenus')}>
+      <RowRight className="Toolbar-RightPane">
         <Row>
           <Toggle
             disabled={!canShowAverage}

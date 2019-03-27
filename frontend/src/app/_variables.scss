@@ -30,6 +30,7 @@ $border-color: $dark-grey;
 $link-color: $blue-A700;
 $main-menu-color: $blue-900;
 
+$border: 1px solid $border-color;
 
 $box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 $box-shadow-hover: 0px 1px 6px 0px rgba(0, 0, 0, 0.22), 0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 2px -1px rgba(0, 0, 0, 0.14);
@@ -82,7 +83,6 @@ $map-height: 300px;
 $map-width: 800px;
 
 $main-menu-height: 60px;
-$main-menu-width: 0; // need to change drawerWidth in themes.ts when changing this value
 $main-menu-z-index: 1400; // slightly larger than material design's app bar
 $main-menu-item-height: 56px;
 $list-item-height: 28px;

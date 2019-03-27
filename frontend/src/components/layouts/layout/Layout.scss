@@ -4,3 +4,12 @@
   display: flex;
   width: 100%;
 }
+
+.PageLayout {
+  width: 100%;
+  padding-left: 34px;
+
+  &.isSideMenuOpen {
+    padding-left: $side-menu-width;
+  }
+}

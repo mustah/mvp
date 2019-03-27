@@ -1,18 +1,13 @@
 import {isEqual} from 'lodash';
-import FlatButton from 'material-ui/FlatButton';
-import Add from 'material-ui/svg-icons/content/add';
 import * as React from 'react';
 import ReactGridLayout, {Layout} from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import {bgHoverColor, borderRadius, svgIconProps} from '../../../app/themes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
-import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {Period} from '../../../components/dates/dateModels';
-import {Row} from '../../../components/layouts/row/Row';
-import {IconProps} from '../../../components/popover/PopoverMenu';
-import {MainTitle} from '../../../components/texts/Titles';
 import {PageLayout} from '../../../components/layouts/layout/PageLayout';
+import {Row} from '../../../components/layouts/row/Row';
+import {MainTitle} from '../../../components/texts/Titles';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
@@ -33,6 +28,7 @@ import {CollectionStatusContainer, CollectionStatusWidgetSettings} from '../cont
 import {EditCollectionStatusWidgetContainer} from '../containers/EditCollectionStatusWidgetContainer';
 import {MapWidgetContainer, MapWidgetSettings} from '../containers/MapWidgetContainer';
 import {DashboardProps} from '../dashboardEnhancers';
+import {AddNewWidgetButton} from './AddNewWidgetButton';
 import {EditMapWidgetContainer} from './widgets/EditMapWidget';
 import './widgets/Widget.scss';
 
@@ -342,25 +338,11 @@ export const NewDashboard = (props: DashboardProps) => {
     editWidget(Maybe.just(widgetSettings));
   });
 
-  const iconProps: IconProps = {
-    color: svgIconProps.color,
-    icon: <Add color={svgIconProps.color}/>,
-    hoverColor: bgHoverColor,
-    label: translate('add new widget'),
-    labelStyle: {color: svgIconProps.color},
-    style: {borderRadius},
-  };
-
   return (
     <PageLayout>
       <Row className="space-between">
         <MainTitle>{translate('dashboard')}</MainTitle>
-        <ActionsDropdown
-          className="AddNewWidgetButton"
-          renderPopoverContent={addNewWidget}
-          Icon={FlatButton}
-          iconProps={iconProps}
-        />
+        <AddNewWidgetButton renderPopoverContent={addNewWidget}/>
       </Row>
 
       <ReactGridLayout

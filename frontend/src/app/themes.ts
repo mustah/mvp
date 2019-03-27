@@ -241,7 +241,8 @@ export const gridStyle: React.CSSProperties = {
   borderBottomRightRadius: borderRadius,
 };
 
-export const border = `1px solid ${colors.dividerColor}`;
+export const dividerBorder = `1px solid ${colors.dividerColor}`;
+export const border = `1px solid ${colors.borderColor}`;
 
 export const svgIconProps: SvgIconProps = {
   color: colors.lightBlack,
