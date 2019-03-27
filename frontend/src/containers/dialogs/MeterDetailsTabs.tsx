@@ -109,11 +109,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
     const {selectedTab} = this.state;
     const {meter, meterMapMarker, addToReport, syncWithMetering, useCollectionPeriod} = this.props;
 
-    const gateways: GatewayMandatory[] = [];
-    const {gateway} = meter;
-    if (gateway) {
-      gateways.push(gateway);
-    }
+    const gateways: GatewayMandatory[] = meter.gateway ? [meter.gateway] : [];
 
     const eventLog = toArray(eventsDataFormatter(meter).entities);
 
@@ -129,7 +125,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
     const gatewaysWrapperProps: MeterGatewayProps & WithEmptyContentProps = {
       gateways,
       noContentText: firstUpperTranslated('no gateway connected'),
-      hasContent: gateways.length > 0
+      hasContent: gateways.length > 0,
     };
 
     return (

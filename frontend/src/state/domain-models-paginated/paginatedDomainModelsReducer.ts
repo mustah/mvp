@@ -175,7 +175,7 @@ const metersReducer = <T extends Identifiable>(
 };
 
 const collectionStatFacilitiesReducer = <T extends Identifiable>(
-  state: NormalizedPaginatedState<T> = makeInitialState<T>(),
+  state: NormalizedPaginatedState<T>,
   action: ActionTypes<T>,
 ): NormalizedPaginatedState<T> => {
   switch (action.type) {

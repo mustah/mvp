@@ -29,8 +29,6 @@ export const MeterMeasurementsToolbar = ({
     customDateRange
   });
 
-  const customDateRange = Maybe.maybe(timePeriod.customDateRange);
-
   return (
     <RowSpaceBetween className="Toolbar">
       <Row>
@@ -60,7 +58,7 @@ export const MeterMeasurementsToolbar = ({
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
         <PeriodSelection
-          customDateRange={customDateRange}
+          customDateRange={Maybe.maybe(timePeriod.customDateRange)}
           period={timePeriod.period}
           selectPeriod={selectPeriod}
           setCustomDateRange={setCustomDateRange}
