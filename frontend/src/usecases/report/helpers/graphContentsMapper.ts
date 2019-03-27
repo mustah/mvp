@@ -178,10 +178,13 @@ export const toGraphContents =
         sortBy(values, it => it.when)
           .forEach((it, index) => {
             const timestamp: number = it.when * 1000;
-            const measurement = sortedMeasurementValues[measurementKey][index];
-            if (measurement) {
-              const when = measurement.when * 1000;
-              makeByDate({when, value: it.value!, dataKey, timestamp, id, quantity});
+            const sortedMeasurementValue = sortedMeasurementValues[measurementKey];
+            if (sortedMeasurementValue) {
+              const measurement = sortedMeasurementValue[index];
+              if (measurement) {
+                const when = measurement.when * 1000;
+                makeByDate({when, value: it.value!, dataKey, timestamp, id, quantity});
+              }
             }
           });
       }
