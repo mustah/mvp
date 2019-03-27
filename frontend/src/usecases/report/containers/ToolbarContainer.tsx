@@ -7,7 +7,7 @@ import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
-import {Toolbar} from '../components/Toolbar';
+import {ReportToolbar} from '../components/ReportToolbar';
 import {selectResolution, setReportTimePeriod, toggleComparePeriod, toggleShowAverage} from '../reportActions';
 import {getMeterLegendItems, hasLegendItems} from '../reportSelectors';
 
@@ -67,4 +67,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const ToolbarContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(Toolbar);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(ReportToolbar);

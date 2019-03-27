@@ -52,6 +52,8 @@ const save = (exporter: React.Ref<{}>) => {
   component.save(options);
 };
 
+const state: State = {group: [{field: 'label', dir: 'desc'}], sort: [{field: 'label', dir: 'asc'}]};
+
 export const MeasurementList = ({measurements, exportToExcelSuccess, isExportingToExcel}: MeasurementListProps) => {
   const [listItems, quantityColumns] = React.useMemo(() => renderColumns(measurements), [measurements]);
 
@@ -88,8 +90,8 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
     ...quantityColumns,
   ];
 
-  const state: State = {group: [{field: 'label', dir: 'desc'}], sort: [{field: 'label', dir: 'asc'}]};
   const dataResult: DataResult = process(listItems, state);
+
   return (
     <Column className="Grouping-grid">
       <ExcelExport data={listItems} ref={exporter} filterable={true}>

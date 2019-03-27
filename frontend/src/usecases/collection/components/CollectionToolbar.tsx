@@ -1,4 +1,3 @@
-import {default as classNames} from 'classnames';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
@@ -8,11 +7,11 @@ import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
+import '../../../components/toolbar/Toolbar.scss';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {DispatchToProps, StateToProps} from '../containers/CollectionToolbarContainer';
-import './CollectionToolbar.scss';
 
 type Props = StateToProps & DispatchToProps;
 
@@ -71,7 +70,7 @@ export const CollectionToolbar = ({
         </RowMiddle>
       </Row>
 
-      <RowRight className={classNames('Tabs-DropdownMenus')}>
+      <RowRight className="Toolbar-RightPane">
         <PeriodSelection
           customDateRange={customDateRange}
           period={timePeriod.period}

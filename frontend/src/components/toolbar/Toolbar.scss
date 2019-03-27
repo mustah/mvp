@@ -1,13 +1,20 @@
-@import "../../../app/variables";
+@import '../../app/variables';
+
+$toolbar-height: 48px;
 
 .Toolbar {
-  height: 48px;
+  height: $toolbar-height;
   border-bottom: 1px solid $border-color;
+  padding-right: $space;
 
   .Toolbar-ViewSettings {
     border-right: 1px solid $border-color;
     padding-right: $space;
     margin-right: $space;
+  }
+
+  .Toolbar-RightPane {
+    align-self: center;
   }
 
   .ToolbarIconButton {
@@ -16,6 +23,15 @@
 
       svg {
         fill: $blue-A700 !important;
+      }
+    }
+
+    &.disabled, &.disabled:hover {
+      color: $border-color !important;
+      background-color: transparent !important;
+
+      svg {
+        fill: $border-color !important;
       }
     }
 

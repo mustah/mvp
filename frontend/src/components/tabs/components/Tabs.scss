@@ -54,10 +54,6 @@
       justify-content: space-between;
       height: 44px;
     }
-
-    .Tabs-DropdownMenus {
-      align-self: center;
-    }
   }
 
   .TabContent {
@@ -70,7 +66,7 @@
 }
 
 .TabSettings {
-  padding-right: $space;
+  padding-right: $xs-space;
   flex: 1;
   align-items: flex-end;
 }
