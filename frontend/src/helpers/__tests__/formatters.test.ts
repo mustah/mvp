@@ -1,5 +1,12 @@
 import {momentAtUtcPlusOneFrom} from '../dateHelpers';
-import {cityWithoutCountry, formatCollectionPercentage, formatDate, round, roundMeasurement} from '../formatters';
+import {
+  cityWithoutCountry,
+  formatCollectionPercentage,
+  formatDate,
+  formatAndFloorPercentage,
+  round,
+  roundMeasurement
+} from '../formatters';
 
 describe('formatters', () => {
 
@@ -92,6 +99,10 @@ describe('formatters', () => {
       expect(formatCollectionPercentage(99.7, 15)).toBe('99.7%');
     });
 
+    it('it floors the second decimal', () => {
+      expect(formatCollectionPercentage(99.97, 15)).toBe('99.9%');
+    });
+
     it('user should not see an indicator when percentage > 100', () => {
       expect(formatCollectionPercentage(104.2, 15, false)).toBe('100%');
     });
@@ -102,6 +113,12 @@ describe('formatters', () => {
 
     it('super admin should not see an indicator when percentage <= 100', () => {
       expect(formatCollectionPercentage(84.2, 15, true)).toBe('84.2%');
+    });
+  });
+
+  describe('formatPercentage', () => {
+    it('it floors the second decimal', () => {
+      expect(formatAndFloorPercentage(99.97)).toBe('99.9%');
     });
   });
 
