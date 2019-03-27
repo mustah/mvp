@@ -4,7 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import * as React from 'react';
-import {border, boxShadow, colors, iconStyle, svgIconProps} from '../../../../app/themes';
+import {boxShadow, colors, dividerBorder, iconStyle, svgIconProps} from '../../../../app/themes';
 import {RowRight} from '../../../../components/layouts/row/Row';
 import {translate} from '../../../../services/translationService';
 import {OnClick} from '../../../../types/Types';
@@ -24,7 +24,7 @@ const buttonStyle: React.CSSProperties = {
   minWidth: 44,
   height: 44,
   borderRadius: 44 / 2,
-  border,
+  border: dividerBorder,
   backgroundColor: colors.white,
   boxShadow,
 };

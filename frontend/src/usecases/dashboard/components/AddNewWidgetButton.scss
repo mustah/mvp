@@ -1,0 +1,17 @@
+@import "../../../app/variables";
+
+.AddNewWidgetButton {
+  &:hover {
+    button {
+      border: 1px solid $primary-bg-active !important;
+    }
+
+    span {
+      color: $blackest !important;
+    }
+
+    svg {
+      fill: $blackest !important;
+    }
+  }
+}
