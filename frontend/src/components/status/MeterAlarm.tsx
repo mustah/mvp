@@ -1,3 +1,4 @@
+import {isPlainObject} from 'lodash';
 import * as React from 'react';
 import {translate} from '../../services/translationService';
 import {Alarm} from '../../state/domain-models-paginated/meter/meterModels';
@@ -13,8 +14,8 @@ interface Props {
 }
 
 interface MeterAlarmProps {
-  alarms?: Alarm[];
-  alarm?: Alarm;
+  items?: Alarm[] | Alarm | boolean;
+  label?: string;
 }
 
 const AlarmComponent = (props: Props) => (
@@ -23,8 +24,8 @@ const AlarmComponent = (props: Props) => (
   </Row>
 );
 
-export const MeterAlarm = ({alarms, alarm}: MeterAlarmProps) => (
-  (alarms && alarms.length) || alarm
-    ? <AlarmComponent label={translate('yes')} status={Status.error}/>
+export const MeterAlarm = ({items, label}: MeterAlarmProps) => (
+  Array.isArray(items) && items.length > 0 || items === true || isPlainObject(items)
+    ? <AlarmComponent label={label || translate('yes')} status={Status.error}/>
     : <BoldFirstUpper>-</BoldFirstUpper>
 );

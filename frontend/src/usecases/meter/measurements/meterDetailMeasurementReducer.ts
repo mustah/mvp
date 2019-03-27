@@ -1,15 +1,16 @@
 import {ActionType, getType} from 'typesafe-actions';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {EndPoints} from '../../../services/endPoints';
-import {domainModelsGetEntitiesSuccess} from '../../../state/domain-models/domainModelsActions';
+import {
+  domainModelsGetEntitiesSuccess,
+  domainModelsGetEntitySuccess
+} from '../../../state/domain-models/domainModelsActions';
 import {MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
 import {initialState} from '../../../state/ui/graph/measurement/measurementReducer';
-import * as reportActions from '../../report/reportActions';
-import {search} from '../../../state/search/searchActions';
 import {setMeterDetailsTimePeriod} from './meterDetailActions';
 import * as actions from './meterDetailMeasurementActions';
 
-type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search | typeof setMeterDetailsTimePeriod>;
+type ActionTypes = ActionType<typeof actions | typeof setMeterDetailsTimePeriod>;
 
 export const meterDetailMeasurement = (
   state: MeasurementState = initialState,
@@ -40,6 +41,7 @@ export const meterDetailMeasurement = (
     case getType(actions.meterDetailExportToExcelSuccess):
       return {...state, isExportingToExcel: false};
     case domainModelsGetEntitiesSuccess(EndPoints.meterDetails):
+    case domainModelsGetEntitySuccess(EndPoints.meters):
     case getType(setMeterDetailsTimePeriod):
       return initialState;
     default:

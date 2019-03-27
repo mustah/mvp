@@ -1,11 +1,15 @@
 @import "../../app/variables";
 
 .IconStatus {
+  height: 20px;
   border-radius: 20px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 10px;
   font-weight: bold;
-  padding: 2px 8px 3px 8px;
+  padding: 0 8px;
+  vertical-align: center;
   text-align: center;
   text-transform: uppercase;
   color: $white;

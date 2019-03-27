@@ -5,7 +5,6 @@ import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {MeterAlarm} from '../../components/status/MeterAlarm';
-import {ErrorLabel} from '../../components/texts/ErrorLabel';
 import {CityInfo} from '../../components/texts/Labels';
 import {BoldFirstUpper} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
@@ -108,7 +107,7 @@ const MeterDetailsInfo = ({
           <Subtitle>{translate('validation')}</Subtitle>
         </Column>
         <Info className="First-column" label={translate('alarm')}>
-          <MeterAlarm alarms={alarms}/>
+          <MeterAlarm items={alarms}/>
         </Info>
         <Info label={translate('alarm code')}>
           <BoldFirstUpper>{alarmCode}</BoldFirstUpper>
@@ -133,7 +132,9 @@ const MeterDetailsInfo = ({
         <Info label={translate('revision')}>
           <BoldFirstUpper>{revision || '-'}</BoldFirstUpper>
         </Info>
-        <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+        <Info label={translate('reported')}>
+          <MeterAlarm items={isReported}/>
+        </Info>
       </Row>
     </Column>
   );
