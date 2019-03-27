@@ -1,13 +1,11 @@
 import {default as classNames} from 'classnames';
 import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
-import ContentSave from 'material-ui/svg-icons/content/save';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
 import {colors, iconSizeMedium, svgIconProps} from '../../../app/themes';
-import {ToolbarActionButton} from '../../../components/buttons/ToolbarActionButton';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
@@ -85,11 +83,6 @@ export const Toolbar = ({
         </RowMiddle>
 
         <RowMiddle>
-          <ToolbarActionButton
-            disabled={true}
-            style={{minWidth: 44}}
-            icon={<ContentSave color={colors.borderColor}/>}
-          />
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
             disabled={isFetching || isExportingToExcel || !hasMeasurements}
