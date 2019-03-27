@@ -42,7 +42,8 @@ describe('urlFactory', () => {
           relationalOperator: '<' as RelationalOperator,
         },
         media: [toIdNamed('District heating')],
-        facilities: [toIdNamed(facilityId)]
+        facilities: [toIdNamed(facilityId)],
+        w: [toIdNamed('hej')]
       };
 
       const actualUrlParameters: RequestParameters = requestParametersFrom(selectedParameters);
@@ -50,6 +51,7 @@ describe('urlFactory', () => {
       expect(actualUrlParameters).toHaveProperty('threshold', 'Power < 3 kW');
       expect(actualUrlParameters).toHaveProperty('medium', ['District heating']);
       expect(actualUrlParameters).toHaveProperty('facility', [facilityId]);
+      expect(actualUrlParameters).toHaveProperty('w',  ['hej']);
     });
 
     it('does not include parameters that does not have values', () => {

@@ -98,12 +98,11 @@ export const CollectionStatBarChart = ({
   fetchCollectionStats,
   isExportingToExcel,
   isFetching,
-  parameters,
   requestParameters,
 }: Props) => {
   React.useEffect(() => {
     fetchCollectionStats(encodeRequestParameters(requestParametersFrom(requestParameters.selectionParameters)));
-  }, [requestParameters, parameters]);
+  }, [requestParameters]);
 
   const data = toArray(collectionStats);
 
