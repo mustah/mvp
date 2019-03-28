@@ -182,8 +182,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
   })
 
   onUpdateSearch = (searchText: string) => {
-    const {fetchItemsByQuery} = this.props;
-    fetchItemsByQuery!(
+    this.props.fetchItemsByQuery!(
       searchText,
       ({items, totalElements, query}: PagedResponse) => {
         if (query) {
@@ -231,7 +230,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
         onClick={onClick}
         key={`${index}-${id}`}
         style={style}
-        className={classNames('first-uppercase')}
+        className="first-uppercase"
         checked={selected}
       />
     );
