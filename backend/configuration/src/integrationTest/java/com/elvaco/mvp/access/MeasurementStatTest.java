@@ -223,6 +223,24 @@ public class MeasurementStatTest extends IntegrationTest {
   }
 
   @Test
+  public void consumptionFor24hUnknownMeter() {
+    PhysicalMeter meter = newUnknownMeter();
+
+    IntStream.range(0, 24).forEach(i -> measurements.save(
+      volumeMeasurementFor(meter)
+        .value((double) i)
+        .created(UTC_TIME.plusHours(i - 1))
+        .build())
+    );
+
+    List<MeasurementStatDto> result = fetchMeasurementStats();
+
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).receivedCount).isEqualTo(24);
+    assertThat(result.get(0).date).isEqualTo(UTC_TIME.truncatedTo(ChronoUnit.DAYS).toLocalDate());
+  }
+  
+  @Test
   public void consumptionAddInAGapFor24h() {
     PhysicalMeter meter = newConnectedMeter(60, "+00:00");
 
@@ -343,6 +361,26 @@ public class MeasurementStatTest extends IntegrationTest {
       .expectedCount(24)
       .quantityId(quantityProvider.getId(measurement.getQuantity()))
       .physicalMeterId(measurement.physicalMeter.id);
+  }
+
+  private PhysicalMeter newUnknownMeter() {
+    UUID logicalMeterId = UUID.randomUUID();
+    logicalMeters.save(LogicalMeter.builder()
+        .organisationId(context().organisationId())
+        .externalId(logicalMeterId.toString())
+        .meterDefinition(MeterDefinition.UNKNOWN)
+        .id(logicalMeterId)
+        .utcOffset("+01")
+        .build());
+    return physicalMeters.save(PhysicalMeter.builder()
+      .manufacturer("ELV")
+      .id(UUID.randomUUID())
+      .externalId(logicalMeterId.toString())
+      .organisationId(context().organisationId())
+      .address("1234")
+      .logicalMeterId(logicalMeterId)
+      .readIntervalMinutes(60)
+      .build());
   }
 
   private PhysicalMeter newConnectedMeter() {
