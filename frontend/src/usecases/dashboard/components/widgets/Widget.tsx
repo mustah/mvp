@@ -1,3 +1,4 @@
+import {default as classNames} from 'classnames';
 import Card from 'material-ui/Card/Card';
 import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
@@ -8,6 +9,7 @@ import {ActionMenuItem} from '../../../../components/actions-dropdown/ActionMenu
 import {ActionsDropdown} from '../../../../components/actions-dropdown/ActionsDropdown';
 import {useConfirmDialog} from '../../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
+import {Column} from '../../../../components/layouts/column/Column';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {WidgetTitle} from '../../../../components/texts/Titles';
 import {translate} from '../../../../services/translationService';
@@ -16,6 +18,7 @@ import './Widget.scss';
 
 interface Props extends WithChildren {
   containerStyle?: React.CSSProperties;
+  headerClassName?: string;
 }
 
 const Widget = ({children, containerStyle}: Props) => (
@@ -32,7 +35,14 @@ interface WidgetWithTitleProps extends Props {
 
 const EditIcon = <ImageEdit {...svgIconProps} style={actionMenuItemIconStyle}/>;
 
-export const WidgetWithTitle = ({title, children, configure, containerStyle, deleteWidget}: WidgetWithTitleProps) => {
+export const WidgetWithTitle = ({
+  title,
+  children,
+  configure,
+  containerStyle,
+  deleteWidget,
+  headerClassName,
+}: WidgetWithTitleProps) => {
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(deleteWidget);
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
@@ -69,10 +79,12 @@ export const WidgetWithTitle = ({title, children, configure, containerStyle, del
 
   return (
     <Widget containerStyle={containerStyle}>
-      <RowMiddle className="space-between grid-draggable">
-        <WidgetTitle>{title}</WidgetTitle>
-        <ActionsDropdown className={'grid-not-draggable'} renderPopoverContent={renderPopoverContent}/>
-      </RowMiddle>
+      <Column className={classNames('Widget-LeftBorder', headerClassName)}>
+        <RowMiddle className="Widget-Title space-between grid-draggable">
+          <WidgetTitle>{title}</WidgetTitle>
+          <ActionsDropdown className={'grid-not-draggable'} renderPopoverContent={renderPopoverContent}/>
+        </RowMiddle>
+      </Column>
       {children}
       <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={confirm}/>
     </Widget>

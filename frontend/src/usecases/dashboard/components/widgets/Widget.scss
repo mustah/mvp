@@ -1,9 +1,46 @@
 @import "../../../../app/variables";
 
 .Widget {
-  padding-top: $space;
   margin-bottom: $lg-space;
   min-width: $overview-widget-width;
+
+  .MapWrapper {
+    border-left: 5px solid $map-color;
+    border-bottom-left-radius: $border-radius;
+  }
+
+  .Widget-LeftBorder {
+    border-left: 5px solid transparent;
+    border-top-left-radius: $border-radius;
+
+    &.map {
+      border-color: $map-color;
+    }
+
+    &.count {
+      border-color: $count-color;
+    }
+
+    &.info {
+      border-color: $white;
+    }
+
+    &.ok {
+      border-color: $ok-color;
+    }
+
+    &.warning {
+      border-color: $warning-color;
+    }
+
+    &.error {
+      border-color: $error-color;
+    }
+  }
+
+  .Widget-Title {
+    padding-top: $space;
+  }
 
   .Subtitle-text {
     max-width: 120px;

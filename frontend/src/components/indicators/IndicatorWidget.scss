@@ -4,28 +4,27 @@
   margin-right: $space;
 
   .ok {
-    background-color: $green;
+    background-color: $ok-color;
     color: $white;
   }
 
   .count {
-    background-color: $primary-bg-active;
+    background-color: $count-color;
     color: $white;
   }
 
   .warning {
-    background-color: $orange;
+    background-color: $warning-color;
     color: $white;
   }
 
   .error {
-    background-color: $red;
+    background-color: $error-color;
     color: $white;
   }
 
   .Indicator {
     border-radius: $border-radius;
-    box-shadow: $box-shadow;
     cursor: pointer;
     justify-content: space-around;
     margin-bottom: $sm-space;
@@ -54,30 +53,6 @@
 
     .Indicator-icon {
       margin-right: $xs-space;
-    }
-  }
-
-  .Indicator-separator {
-    border-radius: $border-radius;
-    height: 8px;
-    background-color: transparent;
-
-    &.isSelected {
-      &.ok {
-        @extend .ok;
-      }
-
-      &.info {
-        background-color: $blue-A700;
-      }
-
-      &.warning {
-        @extend .warning;
-      }
-
-      &.error {
-        @extend .error;
-      }
     }
   }
 
