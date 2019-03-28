@@ -1,7 +1,7 @@
 import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {Dictionary} from '../../../../../types/Types';
 import {toGraphContents} from '../../../../../usecases/report/helpers/graphContentsMapper';
-import {GraphContents} from '../../../../../usecases/report/reportModels';
+import {GraphContents} from '../../../../report/reportModels';
 import {
   getMediumType,
   MeasurementResponse,

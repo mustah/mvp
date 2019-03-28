@@ -11,7 +11,7 @@ import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
-import {selectResolution} from '../../report/reportActions';
+import {selectResolution} from '../../../state/report/reportActions';
 import {GatewayTabs} from '../components/GatewayTabs';
 
 const mapStateToProps =

@@ -9,8 +9,8 @@ import {
   Quantity
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {IdNamed} from '../../../types/Types';
-import {LegendItem, LegendItemSettings, SavedReportsState} from '../reportModels';
-import {getLegendItems} from '../reportSelectors';
+import {LegendItem, LegendItemSettings, SavedReportsState} from '../../../state/report/reportModels';
+import {getLegendItems} from '../../../state/report/reportSelectors';
 
 export const legendViewSettings: LegendItemSettings = {
   isHidden: false,

@@ -14,7 +14,7 @@ import {search, SearchState} from '../state/search/searchReducer';
 import {SummaryState} from '../state/summary/summaryModels';
 import {summary} from '../state/summary/summaryReducer';
 import {MeasurementState} from '../state/ui/graph/measurement/measurementModels';
-import {measurement} from '../state/ui/graph/measurement/measurementReducer';
+import {measurement, selectionMeasurement} from '../state/ui/graph/measurement/measurementReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {UserSelectionState} from '../state/user-selection/userSelectionModels';
 import {userSelection} from '../state/user-selection/userSelectionReducer';
@@ -26,8 +26,8 @@ import {collection} from '../usecases/collection/collectionReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
 import {MeterDetailState} from '../usecases/meter/measurements/meterDetailModels';
 import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
-import {ReportState} from '../usecases/report/reportModels';
-import {report} from '../usecases/report/reportReducer';
+import {ReportState} from '../state/report/reportModels';
+import {report, selectionReport} from '../state/report/reportReducer';
 import {currentVersion, migrations} from './stateMigrations';
 
 export interface RootState {
@@ -37,10 +37,12 @@ export interface RootState {
   language: LanguageState;
   map: MapState;
   measurement: MeasurementState;
+  selectionMeasurement: MeasurementState;
   meterDetail: MeterDetailState;
   paginatedDomainModels: PaginatedDomainModelsState;
   previousSession: PreviousSessionState;
   report: ReportState;
+  selectionReport: ReportState;
   routing: RouterState;
   search: SearchState;
   summary: SummaryState;
@@ -72,7 +74,9 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     paginatedDomainModels,
     routing,
     report,
+    selectionReport,
     measurement,
+    selectionMeasurement,
     language,
     userSelection,
     summary,

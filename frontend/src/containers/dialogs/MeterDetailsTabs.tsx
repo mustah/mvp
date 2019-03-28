@@ -31,7 +31,7 @@ import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
-import {LegendItem} from '../../usecases/report/reportModels';
+import {LegendItem} from '../../state/report/reportModels';
 
 export interface MeterDetailsState {
   selectedTab: TabName;

@@ -13,15 +13,16 @@ import {
   MeasurementState
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
+import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWith, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
-import {addAllToReport} from '../reportActions';
-import {LegendItem} from '../reportModels';
-import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../reportSelectors';
+import {addAllToReport, ReportSector} from '../../../state/report/reportActions';
+import {LegendItem} from '../../../state/report/reportModels';
+import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 
 export interface StateToProps {
   hiddenLines: uuid[];
@@ -32,6 +33,8 @@ export interface StateToProps {
   userSelectionId: uuid;
   hasLegendItems: boolean;
   hasContent: boolean;
+
+  isSideMenuOpen: boolean;
 }
 
 export interface DispatchToProps {
@@ -48,8 +51,11 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     report: {savedReports},
     measurement,
     userSelection: {userSelection},
+    ui,
   } = rootState;
   return ({
+    isSideMenuOpen: isSideMenuOpen(ui),
+
     hasLegendItems: hasLegendItems(savedReports),
     hasContent: hasMeasurementValues(measurement.measurementResponse),
     hiddenLines: getHiddenLines(savedReports),
@@ -63,8 +69,8 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addAllToReport,
-  clearError: measurementClearError,
-  exportToExcelSuccess,
+  clearError: measurementClearError(ReportSector.report),
+  exportToExcelSuccess: exportToExcelSuccess(ReportSector.report),
   fetchMeasurements: fetchMeasurementsForReport,
   fetchUserSelections,
 }, dispatch);

@@ -20,7 +20,7 @@ import {TimestampInfoMessage} from '../../../../components/timestamp-info-messag
 import {shortTimestamp} from '../../../../helpers/dateHelpers';
 import {useResizeWindow} from '../../../../hooks/resizeWindowHook';
 import {Children, OnClickEventHandler, uuid} from '../../../../types/Types';
-import {AxesProps, LineProps} from '../../reportModels';
+import {AxesProps, LineProps} from '../../../../state/report/reportModels';
 import {ActiveDotReChartProps} from './ActiveDot';
 import {GraphContentProps} from './LineChart';
 

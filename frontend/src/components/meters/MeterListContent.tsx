@@ -27,7 +27,7 @@ import {
 } from '../../types/Types';
 import {MeterList} from '../../usecases/meter/components/MeterList';
 import {toLegendItem} from '../../usecases/report/helpers/legendHelper';
-import {LegendItem} from '../../usecases/report/reportModels';
+import {LegendItem} from '../../state/report/reportModels';
 import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
@@ -92,7 +92,10 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
     hasContent,
   };
 
-  const onAddAllToReport = () => addAllToReport(result.map(id => entities[id]).map(toLegendItem));
+  const onAddAllToReport = () => {
+    addAllToReport(result.map(id => entities[id]).map(toLegendItem));
+  };
+
   const onClearError = () => clearError({page});
   const onSyncMeters = () => syncMeters(result);
 

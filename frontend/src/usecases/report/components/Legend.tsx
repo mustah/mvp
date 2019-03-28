@@ -13,10 +13,11 @@ import {Column} from '../../../components/layouts/column/Column';
 import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
+import {uuid} from '../../../types/Types';
 import {DispatchToProps, OwnProps, StateToProps} from '../containers/LegendContainer';
 import {QuantityCell, quantityColumnWidth, renderColumns, RowProps, rowRenderer} from '../helpers/legendGridHelper';
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
-import {isMedium, LegendType} from '../reportModels';
+import {isMedium, LegendType} from '../../../state/report/reportModels';
 import './Legend.scss';
 
 const legendGridStyle: React.CSSProperties = {
@@ -80,8 +81,17 @@ export const Legend = ({
   const quantityGridColumns = React.useMemo(() => renderColumns(columnRenderProps), [legendItems]);
   const dataResult: DataResult = React.useMemo(() => process(legendItems, state), [legendItems]);
 
-  const renderIconButtonsCell = ({dataItem: {id, isHidden}}: GridCellProps) => {
+  const renderDeleteButton = (id: uuid) => {
     const onDeleteItem = () => deleteItem(id);
+
+    return deleteItem ? (
+      <RowRight>
+        <ButtonDelete key={`delete-item-${id}`} onClick={onDeleteItem}/>
+      </RowRight>
+    ) : null;
+  };
+
+  const renderIconButtonsCell = ({dataItem: {id, isHidden}}: GridCellProps) => {
     const onToggleItem = () => toggleLine(id);
     return (
       <td className="icons">
@@ -89,9 +99,7 @@ export const Legend = ({
           <RowRight>
             <ButtonVisibility key={`checked-${id}-${isHidden}`} onClick={onToggleItem} checked={isHidden}/>
           </RowRight>
-          <RowRight>
-            <ButtonDelete key={`delete-item-${id}`} onClick={onDeleteItem}/>
-          </RowRight>
+          {renderDeleteButton(id)}
         </RowLeft>
       </td>
     );

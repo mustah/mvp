@@ -15,6 +15,7 @@ const convert = (name: keyof OldSelectionParameters, selectionParameters): IdNam
 const toolbarState: Omit<ToolbarState, 'meterMeasurement'> = {
   measurement: {view: ToolbarView.graph},
   collection: {view: ToolbarView.graph},
+  selectionReport: {view: ToolbarView.graph},
 };
 
 export const oldParameterNames: Array<keyof OldSelectionParameters> = [

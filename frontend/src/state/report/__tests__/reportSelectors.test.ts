@@ -1,6 +1,6 @@
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
-import {allQuantitiesMap, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {makeColumnQuantities} from '../helpers/legendHelper';
+import {allQuantitiesMap, Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
+import {makeColumnQuantities} from '../../../usecases/report/helpers/legendHelper';
 import {LegendItem, SavedReportsState, SelectedQuantities} from '../reportModels';
 import {initialSavedReportState} from '../reportReducer';
 import {

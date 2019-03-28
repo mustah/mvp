@@ -11,7 +11,6 @@ import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
-import {selectResolution} from '../../report/reportActions';
 import {MeterTabs} from '../components/MeterTabs';
 
 const mapStateToProps =
@@ -41,7 +40,6 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   close: closeClusterDialog,
   clearError: clearErrorMeterMapMarkers,
   fetchMapMarkers: fetchMeterMapMarkers,
-  selectResolution,
 }, dispatch);
 
 export const MeterTabsContainer =

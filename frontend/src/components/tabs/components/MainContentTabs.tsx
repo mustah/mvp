@@ -15,6 +15,7 @@ import {
 import {MapClusters} from '../../../usecases/map/components/MapClusters';
 import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
 import {CollectionStatContentContainer} from '../../../usecases/collection/containers/CollectionStatContentContainer';
+import {SelectionReportContentContainer} from '../../../usecases/selectionReport/containers/SelectionReportContentContainer';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
 import {EmptyContentProps} from '../../error-message/EmptyContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../hoc/withEmptyContent';
@@ -84,6 +85,7 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
           <Tab tab={TabName.list} title={translate('list')}/>
           <Tab tab={TabName.map} title={translate('map')}/>
           <Tab tab={TabName.collection} title={translate('collection')}/>
+          <Tab tab={TabName.selectionReport} title={translate('measurements')}/>
         </TabHeaders>
       </TabTopBar>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
@@ -99,6 +101,9 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
       </TabContent>
       <TabContent tab={TabName.collection} selectedTab={selectedTab}>
         {selectedTab === TabName.collection && <CollectionStatContentContainer/>}
+      </TabContent>
+      <TabContent tab={TabName.selectionReport} selectedTab={selectedTab}>
+        {selectedTab === TabName.selectionReport && <SelectionReportContentContainer componentId="SelectionReport"/>}
       </TabContent>
     </Tabs>
   );

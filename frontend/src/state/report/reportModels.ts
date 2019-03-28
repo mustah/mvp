@@ -1,7 +1,7 @@
 import {LegendPayload, LineType} from 'recharts';
 import {TemporalResolution} from '../../components/dates/dateModels';
-import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
-import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
+import {Medium, Quantity} from '../ui/graph/measurement/measurementModels';
+import {SelectionInterval} from '../user-selection/userSelectionModels';
 import {Identifiable, uuid} from '../../types/Types';
 import {LegendType} from './reportModels';
 

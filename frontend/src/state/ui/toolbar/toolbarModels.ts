@@ -11,6 +11,7 @@ export interface ToolbarState {
   measurement: ToolbarViewSettings;
   collection: ToolbarViewSettings;
   meterMeasurement: ToolbarViewSettings;
+  selectionReport: ToolbarViewSettings;
 }
 
 export type OnChangeToolbarView = (view: ToolbarView) => void;

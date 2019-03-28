@@ -2,16 +2,17 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {RootState} from '../../../reducers/rootReducer';
-import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
-import {getMediumText, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {toLegendItem} from '../helpers/legendHelper';
-import {addAllToReport, addLegendItems, addToReport, deleteItem} from '../reportActions';
+import {Meter} from '../../domain-models-paginated/meter/meterModels';
+import {getMediumText, Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
+import {toLegendItem} from '../../../usecases/report/helpers/legendHelper';
+import {addAllToReport, addLegendItems, addToReport, deleteItem, ReportSector} from '../reportActions';
 import {LegendItem, SavedReportsState} from '../reportModels';
 import {initialState as report} from '../reportReducer';
 
 describe('reportActions', () => {
   type PartialRootState = Pick<RootState, 'report'> ;
 
+  const section: ReportSector = ReportSector.report;
   const configureMockStore: (state: PartialRootState) => any = configureStore([thunk]);
 
   let initialState: PartialRootState;
@@ -49,7 +50,7 @@ describe('reportActions', () => {
 
       store.dispatch(addToReport(gasMeter));
 
-      expect(store.getActions()).toEqual([addLegendItems([{...gasMeter, quantities: [Quantity.volume]}])]);
+      expect(store.getActions()).toEqual([addLegendItems(section)([{...gasMeter, quantities: [Quantity.volume]}])]);
     });
 
     it('does not fire an event if meter is already selected', () => {
@@ -77,7 +78,7 @@ describe('reportActions', () => {
       store.dispatch(addToReport(districtHeatingMeter));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([{...districtHeatingMeter, quantities: [Quantity.energy]}])
+        addLegendItems(section)([{...districtHeatingMeter, quantities: [Quantity.energy]}])
       ]);
     });
 
@@ -90,7 +91,7 @@ describe('reportActions', () => {
       store.dispatch(addToReport(districtHeatingMeter));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([...items, {...districtHeatingMeter, quantities: [Quantity.energy]}]),
+        addLegendItems(section)([...items, {...districtHeatingMeter, quantities: [Quantity.energy]}]),
       ]);
     });
 
@@ -100,7 +101,7 @@ describe('reportActions', () => {
       store.dispatch(addToReport(gasMeter));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([{...gasMeter, quantities: [Quantity.volume]}])
+        addLegendItems(section)([{...gasMeter, quantities: [Quantity.volume]}])
       ]);
     });
 
@@ -113,8 +114,8 @@ describe('reportActions', () => {
       store.dispatch(addToReport(newGasMeter));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([{...gasMeter, quantities: [Quantity.volume]}]),
-        addLegendItems([{...newGasMeter, quantities: [Quantity.volume]}])
+        addLegendItems(section)([{...gasMeter, quantities: [Quantity.volume]}]),
+        addLegendItems(section)([{...newGasMeter, quantities: [Quantity.volume]}])
       ]);
     });
 
@@ -130,7 +131,7 @@ describe('reportActions', () => {
       store.dispatch(addToReport(meter2));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([meter1, {...meter2, quantities: [Quantity.power, Quantity.flow], isRowExpanded: true}])
+        addLegendItems(section)([meter1, {...meter2, quantities: [Quantity.power, Quantity.flow], isRowExpanded: true}])
       ]);
     });
 
@@ -143,8 +144,8 @@ describe('reportActions', () => {
       store.dispatch(addToReport(newGasMeter));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([{...gasMeter, quantities: [Quantity.volume]}]),
-        addLegendItems([{...newGasMeter, quantities: [Quantity.volume]}])
+        addLegendItems(section)([{...gasMeter, quantities: [Quantity.volume]}]),
+        addLegendItems(section)([{...newGasMeter, quantities: [Quantity.volume]}])
       ]);
     });
 
@@ -162,7 +163,7 @@ describe('reportActions', () => {
 
       store.dispatch(addToReport(roomMeter));
 
-      expect(store.getActions()).toEqual([addLegendItems([...legendItems, roomMeter])]);
+      expect(store.getActions()).toEqual([addLegendItems(section)([...legendItems, roomMeter])]);
     });
 
     it('copies the view settings for the same type', () => {
@@ -176,7 +177,7 @@ describe('reportActions', () => {
       store.dispatch(addToReport(newGasLegendItem));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([
+        addLegendItems(section)([
           legendItems[0],
           {...newGasLegendItem, isRowExpanded: true, quantities: [Quantity.volume]}
         ])
@@ -192,7 +193,7 @@ describe('reportActions', () => {
       store.dispatch(addAllToReport(items));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([
+        addLegendItems(section)([
           {...gasMeter, quantities: [Quantity.volume]},
           {...waterMeter, quantities: [Quantity.volume]}
         ])
@@ -210,7 +211,7 @@ describe('reportActions', () => {
       store.dispatch(addAllToReport(payloadItems));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([
+        addLegendItems(section)([
           {...gasMeter, quantities: [Quantity.volume]},
           {...waterMeter, quantities: [Quantity.volume]}
         ])
@@ -222,7 +223,7 @@ describe('reportActions', () => {
 
       store.dispatch(addAllToReport([gasMeter, gasMeter]));
 
-      expect(store.getActions()).toEqual([addLegendItems([{...gasMeter, quantities: [Quantity.volume]}])]);
+      expect(store.getActions()).toEqual([addLegendItems(section)([{...gasMeter, quantities: [Quantity.volume]}])]);
     });
 
     it('appends items to report', () => {
@@ -234,7 +235,7 @@ describe('reportActions', () => {
       store.dispatch(addAllToReport([districtHeatingMeter]));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([
+        addLegendItems(section)([
           ...items,
           {...districtHeatingMeter, quantities: [Quantity.energy]}
         ])
@@ -247,7 +248,7 @@ describe('reportActions', () => {
       store.dispatch(addAllToReport([gasMeter]));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([{...gasMeter, quantities: [Quantity.volume]}])
+        addLegendItems(section)([{...gasMeter, quantities: [Quantity.volume]}])
       ]);
     });
 
@@ -265,7 +266,7 @@ describe('reportActions', () => {
 
       store.dispatch(addAllToReport([roomMeter]));
 
-      expect(store.getActions()).toEqual([addLegendItems([...legendItems, roomMeter])]);
+      expect(store.getActions()).toEqual([addLegendItems(section)([...legendItems, roomMeter])]);
     });
 
     it('selects default quantity for the first item in the list', () => {
@@ -279,7 +280,7 @@ describe('reportActions', () => {
       store.dispatch(addAllToReport([roomMeter, ...items]));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([
+        addLegendItems(section)([
           ...items,
           {...roomMeter, quantities: [Quantity.externalTemperature]}
         ])
@@ -297,7 +298,7 @@ describe('reportActions', () => {
       store.dispatch(addAllToReport([meter2]));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([
+        addLegendItems(section)([
           meter1,
           {...meter2, isRowExpanded: false, quantities: [Quantity.volume]}
         ])
@@ -316,7 +317,7 @@ describe('reportActions', () => {
       store.dispatch(addAllToReport([meter2]));
 
       expect(store.getActions()).toEqual([
-        addLegendItems([
+        addLegendItems(section)([
           {...meter1},
           {...meter2, isHidden: true, isRowExpanded: true, quantities: [Quantity.volume]}
         ])
@@ -335,7 +336,7 @@ describe('reportActions', () => {
 
       store.dispatch(deleteItem(1));
 
-      expect(store.getActions()).toEqual([addLegendItems([gasMeter])]);
+      expect(store.getActions()).toEqual([addLegendItems(section)([gasMeter])]);
     });
 
     it('does nothing when id to remove does not exist', () => {

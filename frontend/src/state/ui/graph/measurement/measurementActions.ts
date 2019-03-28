@@ -17,7 +17,8 @@ import {
   meterDetailMeasurementRequest,
   meterDetailMeasurementSuccess
 } from '../../../../usecases/meter/measurements/meterDetailMeasurementActions';
-import {isAggregate, isMedium, LegendType} from '../../../../usecases/report/reportModels';
+import {ReportSector} from '../../../report/reportActions';
+import {isAggregate, isMedium, LegendType} from '../../../report/reportModels';
 import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {getDomainModelById} from '../../../domain-models/domainModelsSelectors';
 import {SelectionInterval, UserSelection} from '../../../user-selection/userSelectionModels';
@@ -33,13 +34,23 @@ import {
   QuantityDisplayMode
 } from './measurementModels';
 
-export const measurementRequest = createAction('MEASUREMENT_REQUEST');
-export const measurementSuccess = createStandardAction('MEASUREMENT_SUCCESS')<MeasurementResponse>();
-export const measurementFailure = createStandardAction('MEASUREMENT_FAILURE')<Maybe<ErrorResponse>>();
-export const measurementClearError = createAction('MEASUREMENT_CLEAR_ERROR');
+export const measurementRequest = (sector: ReportSector) =>
+  createAction(`MEASUREMENT_REQUEST_${sector}`);
 
-export const exportToExcelAction = createAction('EXPORT_TO_EXCEL');
-export const exportToExcelSuccess = createAction('EXPORT_TO_EXCEL_SUCCESS');
+export const measurementSuccess = (sector: ReportSector) =>
+  createStandardAction(`MEASUREMENT_SUCCESS_${sector}`)<MeasurementResponse>();
+
+export const measurementFailure = (sector: ReportSector) =>
+  createStandardAction(`MEASUREMENT_FAILURE_${sector}`)<Maybe<ErrorResponse>>();
+
+export const measurementClearError = (sector: ReportSector) =>
+  createAction(`MEASUREMENT_CLEAR_ERROR_${sector}`);
+
+export const exportToExcelAction = (sector: ReportSector) =>
+  createAction(`EXPORT_TO_EXCEL_${sector}`);
+
+export const exportToExcelSuccess = (sector: ReportSector) =>
+  createAction(`EXPORT_TO_EXCEL_SUCCESS_${sector}`);
 
 const measurementMeterUri = (
   quantity: Quantity,
@@ -191,6 +202,11 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
   values: averageEntity.values.filter(({value}) => value !== undefined),
 });
 
+const shouldFetchMeasurementsSelectionReport: FetchIfNeeded = (getState: GetState): boolean => {
+  const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().selectionMeasurement;
+  return !isSuccessfullyFetched && !isFetching && error.isNothing();
+};
+
 const shouldFetchMeasurementsReport: FetchIfNeeded = (getState: GetState): boolean => {
   const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().measurement;
   return !isSuccessfullyFetched && !isFetching && error.isNothing();
@@ -267,20 +283,38 @@ export const fetchMeasurementsForMeterDetails = (measurementParameters: Measurem
     shouldFetchMeasurementsMeterDetails
   );
 
+export const fetchMeasurementsForSelectionReport = (measurementParameters: MeasurementParameters) =>
+  fetchMeasurements(
+    measurementParameters,
+    {
+      failure: measurementFailure(ReportSector.selectionReport),
+      request: measurementRequest(ReportSector.selectionReport),
+      success: measurementSuccess(ReportSector.selectionReport)
+    },
+    shouldFetchMeasurementsSelectionReport
+  );
+
 export const fetchMeasurementsForReport = (measurementParameters: MeasurementParameters) =>
   fetchMeasurements(
     measurementParameters,
     {
-      failure: measurementFailure,
-      request: measurementRequest,
-      success: measurementSuccess
+      failure: measurementFailure(ReportSector.report),
+      request: measurementRequest(ReportSector.report),
+      success: measurementSuccess(ReportSector.report)
     },
     shouldFetchMeasurementsReport
   );
 
-export const exportToExcel = () =>
+export const exportReportToExcel = () =>
   (dispatch, getState: GetState) => {
     if (!getState().measurement.isExportingToExcel) {
-      dispatch(exportToExcelAction());
+      dispatch(exportToExcelAction(ReportSector.report)());
+    }
+  };
+
+export const exportSelectionReportToExcel = () =>
+  (dispatch, getState: GetState) => {
+    if (!getState().selectionMeasurement.isExportingToExcel) {
+      dispatch(exportToExcelAction(ReportSector.selectionReport)());
     }
   };
