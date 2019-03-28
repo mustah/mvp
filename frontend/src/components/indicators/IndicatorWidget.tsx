@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {thresholdClassName} from '../../helpers/thresholds';
-import {firstUpperTranslated} from '../../services/translationService';
+import {firstUpperTranslated, translate} from '../../services/translationService';
 import {CountableWidgetModel} from '../../state/domain-models/widget/widgetModels';
 import {ClassNamed, WithChildren} from '../../types/Types';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
-import {Bold, Normal, Xlarge} from '../texts/Texts';
+import {Bold, Large, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import classNames = require('classnames');
 
@@ -63,6 +63,7 @@ export const NumMetersIndicatorWidget = ({className, title, widget: {count}}: In
         </Row>
         <Row className="Row-center Row-bottom">
           <Xlarge className="Indicator-value">{count}</Xlarge>
+          <Large style={{paddingBottom: 8}}>{translate('pcs')}</Large>
         </Row>
       </ColumnCenter>
     </Column>
