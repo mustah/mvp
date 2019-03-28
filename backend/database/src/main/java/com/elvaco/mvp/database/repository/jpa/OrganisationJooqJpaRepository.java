@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Repository;
 import static com.elvaco.mvp.database.entity.jooq.tables.Organisation.ORGANISATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.OrganisationUserSelection.ORGANISATION_USER_SELECTION;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
+import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
@@ -36,6 +38,10 @@ import static org.springframework.data.repository.support.PageableExecutionUtils
 class OrganisationJooqJpaRepository
   extends BaseJooqRepository<OrganisationEntity, UUID>
   implements OrganisationJpaRepository {
+
+  private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(
+    "name", ORGANISATION.NAME
+  );
 
   private final DSLContext dsl;
 
@@ -102,7 +108,7 @@ class OrganisationJooqJpaRepository
       .andJoinsOn(countQuery);
 
     SelectForUpdateStep<Record5<UUID, String, String, String, Integer>> select = selectQuery
-      .orderBy(editDistance.asc())
+      .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP, editDistance.asc()))
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue());
 
