@@ -5,8 +5,8 @@ import {momentAtUtcPlusOneFrom} from './dateHelpers';
 const isGreaterThan100 = (collectionPercentage: number): boolean =>
   collectionPercentage !== undefined && collectionPercentage > 100;
 
-export const formatPercentage = (num: number): string =>
-  round(num, num === 100 ? '' : '0.0') + '%';
+export const formatAndFloorPercentage = (num: number): string =>
+   round(Math.floor(num * 10) / 10, num === 100 ? '' : '0.0') + '%';
 
 export const formatCollectionPercentage =
   (collectionPercentage?, readIntervalMinutes?, isSuperAdmin?: boolean): string => {
@@ -18,8 +18,8 @@ export const formatCollectionPercentage =
     const greaterThan100 = isGreaterThan100(collectionPercentage);
     const percentage = greaterThan100 ? 100 : collectionPercentage;
     return isSuperAdmin && greaterThan100
-      ? `${formatPercentage(percentage)} *`
-      : formatPercentage(percentage);
+      ? `${formatAndFloorPercentage(percentage)} *`
+      : formatAndFloorPercentage(percentage);
   };
 
 export const formatDate = (date: Date, format: string = 'DD/MM'): string =>
