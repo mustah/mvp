@@ -14,8 +14,8 @@ import {collectionStatClearError} from '../../../state/domain-models/collection-
 import {RequestsHttp} from '../../../state/domain-models/domainModels';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
 import {
-  CollectionPercentage,
   CollectionStatusWidget,
+  CountableWidgetModel,
   WidgetMandatory
 } from '../../../state/domain-models/widget/widgetModels';
 import {resetSelection, selectSavedSelection} from '../../../state/user-selection/userSelectionActions';
@@ -27,13 +27,15 @@ import '../components/widgets/CollectionStatus.scss';
 import {WidgetWithTitle} from '../components/widgets/Widget';
 
 interface WidgetProps {
-  widget: CollectionPercentage;
+  widget: CountableWidgetModel;
   title: string;
   openConfiguration: OnClick;
   deleteWidget: Callback;
   onClickWidget: OnClick;
   isFetching: boolean;
 }
+
+const LoadingIndicator = withWidgetLoader<IndicatorWidgetProps>(IndicatorWidget);
 
 const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, onClickWidget, isFetching}: WidgetProps) =>
   (
@@ -49,8 +51,6 @@ const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, onCli
       </WidgetWithTitle>
     </Row>
   );
-
-const LoadingIndicator = withWidgetLoader<IndicatorWidgetProps>(IndicatorWidget);
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
@@ -75,7 +75,7 @@ const CollectionStatus = (props: Props) => {
     }
   }, [widget, parameters, isUserSelectionsSuccessfullyFetched]);
 
-  const widgetModel: CollectionPercentage = {collectionPercentage: model && model.data};
+  const widgetModel: CountableWidgetModel = {count: model && model.data};
   const isFetching = model && model.isFetching || isUserSelectionsFetching;
 
   const onClickDeleteWidget = () => onDelete(widget);

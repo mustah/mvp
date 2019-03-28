@@ -2,10 +2,10 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
-import {Normal} from '../../../components/texts/Texts';
+import {IndicatorWidgetProps, NumMetersIndicatorWidget} from '../../../components/indicators/IndicatorWidget';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {CountWidget, WidgetMandatory} from '../../../state/domain-models/widget/widgetModels';
+import {CountableWidgetModel, CountWidget, WidgetMandatory} from '../../../state/domain-models/widget/widgetModels';
 import {allCurrentMeterParameters, getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {fetchCountWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
 import {WidgetState} from '../../../state/widget/widgetReducer';
@@ -20,7 +20,7 @@ interface OwnProps {
 
 interface StateToProps {
   title: string;
-  isUserSelectionsSuccessfullyFetched: boolean;
+  isSuccessFullyFetched: boolean;
   parameters: EncodedUriParameters;
   meterCount: number;
 }
@@ -53,7 +53,7 @@ const mapStateToProps = (
     : translate('all meters');
 
   return {
-    isUserSelectionsSuccessfullyFetched: userSelections.isSuccessfullyFetched,
+    isSuccessFullyFetched: userSelections.isSuccessfullyFetched,
     title,
     parameters,
     meterCount: getMeterCount(widget, id)
@@ -64,16 +64,10 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchCountWidget,
 }, dispatch);
 
-interface CountContentProps {
-  meterCount: number;
-}
-
-const CountContent = ({meterCount}: CountContentProps) => <Normal>{meterCount}</Normal>;
-
-const CountContentWidgetLoader = withWidgetLoader<CountContentProps>(CountContent);
+const CountContentWidgetLoader = withWidgetLoader<IndicatorWidgetProps>(NumMetersIndicatorWidget);
 
 const CountWidget = ({
-  isUserSelectionsSuccessfullyFetched,
+  isSuccessFullyFetched,
   title,
   widget,
   openConfiguration,
@@ -83,12 +77,15 @@ const CountWidget = ({
   meterCount
 }: Props) => {
   React.useEffect(() => {
-    if (isUserSelectionsSuccessfullyFetched) {
+    if (isSuccessFullyFetched) {
       fetchCountWidget({widget, parameters});
     }
-  }, [widget, parameters, isUserSelectionsSuccessfullyFetched]);
+  }, [widget, parameters, isSuccessFullyFetched]);
 
   const deleteWidget = () => onDelete(widget);
+
+  const widgetModel: CountableWidgetModel = {count: meterCount};
+
   return (
     <WidgetWithTitle
       title={title}
@@ -97,8 +94,9 @@ const CountWidget = ({
       deleteWidget={deleteWidget}
     >
       <CountContentWidgetLoader
-        meterCount={meterCount!}
-        isFetching={!isUserSelectionsSuccessfullyFetched || meterCount === undefined}
+        widget={widgetModel}
+        isFetching={!isSuccessFullyFetched}
+        title={translate('meter', {count: meterCount})}
       />
     </WidgetWithTitle>
   );

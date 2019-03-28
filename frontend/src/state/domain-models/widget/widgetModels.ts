@@ -35,8 +35,8 @@ export interface CountWidget extends WidgetMandatory {
   };
 }
 
-export interface CollectionPercentage {
-  collectionPercentage: number;
+export interface CountableWidgetModel {
+  count: number;
 }
 
 export type Widget = MapWidget | CollectionStatusWidget | CountWidget;
