@@ -28,11 +28,11 @@ begin
            read_interval,
            consumption
   from logical_meter l
-         inner join meter_definition on meter_definition.id = l.meter_definition_id
-         inner join display_quantity on display_quantity.quantity_id = rec.quantity and
-                                       meter_definition.id = display_quantity.meter_definition_id
          inner join physical_meter p
                    on l.id = p.logical_meter_id
+         left join meter_definition on meter_definition.id = l.meter_definition_id
+         left join display_quantity on display_quantity.quantity_id = rec.quantity and
+                                       meter_definition.id = display_quantity.meter_definition_id
   where p.id = rec.physical_meter_id;
 
   -- If there are no logical meter we can not get correct TZ an we will bail out
