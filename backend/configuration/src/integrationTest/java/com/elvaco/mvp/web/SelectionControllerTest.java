@@ -332,6 +332,50 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void getOrganisations_SortedAsc() {
+    given(
+      organisation().name("testing-bcda"),
+      organisation().name("testing-abcd"),
+      organisation().name("testing-dabc"),
+      organisation().name("testing-cdab")
+    );
+
+    Page<OrganisationDto> response = asSuperAdmin()
+      .getPage(
+        organisationsUrl()
+          .filter("testing") // Exclude "helpful" default organisation & context organisation
+          .sortBy("name,asc").build(),
+        OrganisationDto.class
+      );
+
+    assertThat(response.getContent())
+      .extracting(organisationDto -> organisationDto.name)
+      .containsExactly("testing-abcd", "testing-bcda", "testing-cdab", "testing-dabc");
+  }
+
+  @Test
+  public void getOrganisations_SortedDesc() {
+    given(
+      organisation().name("testing-bcda"),
+      organisation().name("testing-abcd"),
+      organisation().name("testing-dabc"),
+      organisation().name("testing-cdab")
+    );
+
+    Page<OrganisationDto> response = asSuperAdmin()
+      .getPage(
+        organisationsUrl()
+          .filter("testing") // Exclude "helpful" default organisation & context organisation
+          .sortBy("name,desc").build(),
+        OrganisationDto.class
+      );
+
+    assertThat(response.getContent())
+      .extracting(organisationDto -> organisationDto.name)
+      .containsExactly("testing-dabc", "testing-cdab", "testing-bcda", "testing-abcd");
+  }
+
+  @Test
   public void getGatewaySerials_FilteredOnQueryString() {
     prepareGateways();
 
@@ -470,8 +514,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
     assertThat(asSuperAdmin()
       .getPage(
-        Url.builder()
-          .path("/selections/organisations")
+        organisationsUrl()
           .parameter(WILDCARD, "abc")
           .build(),
         OrganisationDto.class
@@ -485,8 +528,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
     assertThat(asSuperAdmin()
       .getPage(
-        Url.builder()
-          .path("/selections/organisations")
+        organisationsUrl()
           .parameter(WILDCARD, "de")
           .build(),
         OrganisationDto.class
@@ -501,8 +543,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
     assertThat(asSuperAdmin()
       .getPage(
-        Url.builder()
-          .path("/selections/organisations")
+        organisationsUrl()
           .parameter(WILDCARD, "asdfasdf12341234osadkfj2435dsfkjdsfkjtnh42")
           .build(),
         OrganisationDto.class
@@ -699,6 +740,10 @@ public class SelectionControllerTest extends IntegrationTest {
           .build()),
       physicalMeter().address("444")
     );
+  }
+
+  private static Url.UrlBuilder organisationsUrl() {
+    return Url.builder().path("/selections/organisations");
   }
 
   private static Url.UrlBuilder gatewaySerialsUrl() {

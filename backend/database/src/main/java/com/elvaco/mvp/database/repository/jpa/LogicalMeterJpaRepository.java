@@ -12,7 +12,6 @@ import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,8 +37,6 @@ public interface LogicalMeterJpaRepository {
   Set<LogicalMeterEntity> findAll(RequestParameters parameters);
 
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
-
-  Set<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters);
 
   List<LogicalMeterCollectionStats> findMeterCollectionStats(RequestParameters parameters);
 

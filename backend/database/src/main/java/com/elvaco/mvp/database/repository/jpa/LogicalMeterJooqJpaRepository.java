@@ -22,7 +22,6 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
 
@@ -208,25 +207,6 @@ class LogicalMeterJooqJpaRepository
       .fetchInto(LogicalMeterSummaryDto.class);
 
     return getPage(logicalMeters, pageable, () -> dsl.fetchCount(countQuery));
-  }
-
-  @Override
-  public Set<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters) {
-    var query = dsl.select(
-      LOGICAL_METER.ID,
-      LOGICAL_METER.ORGANISATION_ID,
-      LOGICAL_METER.EXTERNAL_ID,
-      LOGICAL_METER.UTC_OFFSET,
-      LOCATION.COUNTRY,
-      LOCATION.CITY,
-      LOCATION.STREET_ADDRESS,
-      LOCATION.ZIP,
-      MEDIUM.NAME
-    ).from(LOGICAL_METER);
-
-    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
-
-    return new HashSet<>(query.fetchInto(LogicalMeterWithLocation.class));
   }
 
   @Override

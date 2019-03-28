@@ -170,13 +170,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeter> findAllForSelectionTree(RequestParameters parameters) {
-    return logicalMeterJpaRepository.findAllForSelectionTree(parameters).stream()
-      .map(logicalMeterEntityMapper::toDomainModelWithLocation)
-      .collect(toList());
-  }
-
-  @Override
   @CacheEvict(
     cacheNames = "logicalMeter.organisationIdExternalId",
     key = "#logicalMeter.organisationId + #logicalMeter.externalId"

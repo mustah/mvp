@@ -90,10 +90,6 @@ public class LogicalMeterUseCases {
     return logicalMeters.summary(parameters.ensureOrganisationFilters(currentUser));
   }
 
-  public List<LogicalMeter> selectionTree(RequestParameters parameters) {
-    return logicalMeters.findAllForSelectionTree(parameters.ensureOrganisationFilters(currentUser));
-  }
-
   public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
     return logicalMeters.findSecondaryAddresses(
       parameters.ensureOrganisationFilters(currentUser),

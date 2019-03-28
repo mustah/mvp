@@ -39,8 +39,6 @@ public interface LogicalMeters {
 
   List<LogicalMeter> findAllByOrganisationId(UUID organisationId);
 
-  List<LogicalMeter> findAllForSelectionTree(RequestParameters parameters);
-
   LogicalMeter save(LogicalMeter logicalMeter);
 
   MeterSummary summary(RequestParameters parameters);
