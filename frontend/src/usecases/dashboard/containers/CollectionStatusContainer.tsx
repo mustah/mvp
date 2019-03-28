@@ -4,8 +4,6 @@ import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
 import {IndicatorWidget, IndicatorWidgetProps} from '../../../components/indicators/IndicatorWidget';
-import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
-import {Row} from '../../../components/layouts/row/Row';
 import {makeApiParametersOf} from '../../../helpers/urlFactory';
 import {history} from '../../../index';
 import {RootState} from '../../../reducers/rootReducer';
@@ -23,7 +21,6 @@ import {getCollectionStatParameters} from '../../../state/user-selection/userSel
 import {fetchCollectionStatsWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
 import {WidgetData} from '../../../state/widget/widgetReducer';
 import {Callback, CallbackWith, CallbackWithId, EncodedUriParameters, OnClick} from '../../../types/Types';
-import '../components/widgets/CollectionStatus.scss';
 import {WidgetWithTitle} from '../components/widgets/Widget';
 
 interface WidgetProps {
@@ -37,20 +34,13 @@ interface WidgetProps {
 
 const LoadingIndicator = withWidgetLoader<IndicatorWidgetProps>(IndicatorWidget);
 
-const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, onClickWidget, isFetching}: WidgetProps) =>
-  (
-    <Row>
-      <WidgetWithTitle
-        title={title}
-        configure={openConfiguration}
-        deleteWidget={deleteWidget}
-      >
-        <div onClick={onClickWidget} className={'widget-link'}>
-          <LoadingIndicator isFetching={isFetching} widget={widget} title={translate('collection')}/>
-        </div>
-      </WidgetWithTitle>
-    </Row>
-  );
+const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, onClickWidget, isFetching}: WidgetProps) => (
+  <WidgetWithTitle title={title} configure={openConfiguration} deleteWidget={deleteWidget}>
+    <div onClick={onClickWidget} className="clickable">
+      <LoadingIndicator isFetching={isFetching} widget={widget} title={translate('collection')}/>
+    </div>
+  </WidgetWithTitle>
+);
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
@@ -90,18 +80,14 @@ const CollectionStatus = (props: Props) => {
   };
 
   return (
-    <Column className="CollectionStatus">
-      <ColumnCenter className="flex-1">
-        <IndicatorContent
-          isFetching={isFetching}
-          widget={widgetModel}
-          title={title}
-          deleteWidget={onClickDeleteWidget}
-          openConfiguration={openConfiguration}
-          onClickWidget={onClickWidget}
-        />
-      </ColumnCenter>
-    </Column>
+    <IndicatorContent
+      isFetching={isFetching}
+      widget={widgetModel}
+      title={title}
+      deleteWidget={onClickDeleteWidget}
+      openConfiguration={openConfiguration}
+      onClickWidget={onClickWidget}
+    />
   );
 };
 

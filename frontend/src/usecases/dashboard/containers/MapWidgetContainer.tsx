@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {Period} from '../../../components/dates/dateModels';
 import {MeterDetailsDialog} from '../../../components/dialog/DetailsDialog';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {Row} from '../../../components/layouts/row/Row';
+import {Column} from '../../../components/layouts/column/Column';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {Maybe} from '../../../helpers/Maybe';
 import {makeApiParametersOf} from '../../../helpers/urlFactory';
@@ -132,19 +132,19 @@ const MapWidget = (props: Props) => {
   const onClickDeleteWidget = () => onDelete(widget);
 
   return (
-    <Row>
-      <WidgetWithTitle
-        title={title}
-        className="MapWidget"
-        configure={openConfiguration}
-        deleteWidget={onClickDeleteWidget}
-      >
+    <WidgetWithTitle
+      title={title}
+      configure={openConfiguration}
+      containerStyle={{paddingBottom: 0}}
+      deleteWidget={onClickDeleteWidget}
+    >
+      <Column style={{width, height}}>
         <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-          <MapContentWrapper {...wrapperProps} />
+          <MapContentWrapper {...wrapperProps}/>
         </RetryLoader>
         {dialog}
-      </WidgetWithTitle>
-    </Row>
+      </Column>
+    </WidgetWithTitle>
   );
 };
 

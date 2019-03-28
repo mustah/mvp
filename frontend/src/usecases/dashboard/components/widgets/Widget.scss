@@ -3,10 +3,7 @@
 .Widget {
   padding-top: $space;
   margin-bottom: $lg-space;
-
-  &.MapWidget {
-    padding-bottom: 0;
-  }
+  min-width: $overview-widget-width;
 
   .Subtitle-text {
     max-width: 120px;

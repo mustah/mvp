@@ -87,12 +87,7 @@ const CountWidget = ({
   const widgetModel: CountableWidgetModel = {count: meterCount};
 
   return (
-    <WidgetWithTitle
-      title={title}
-      className="CountWidget"
-      configure={openConfiguration}
-      deleteWidget={deleteWidget}
-    >
+    <WidgetWithTitle title={title} configure={openConfiguration} deleteWidget={deleteWidget}>
       <CountContentWidgetLoader
         widget={widgetModel}
         isFetching={!isSuccessFullyFetched}
