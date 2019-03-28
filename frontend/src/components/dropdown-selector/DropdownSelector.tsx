@@ -70,6 +70,16 @@ const listItems = (
   return [...selectedItems, ...unselected];
 };
 
+const withNewItems = (
+  prevItems: SelectionListItem[],
+  newItems: SelectionListItem[],
+): SelectionListItem[] => {
+  const selectedIds = prevItems.filter(it => it.selected).map(getId);
+  const unselected = newItems.map(item => ({...item, selected: false}))
+    .filter(item => !selectedIds.includes(item.id));
+  return [...prevItems, ...unselected];
+};
+
 class DropdownComponent extends React.Component<DropdownComponentProps, State> {
 
   constructor(props: DropdownComponentProps) {
@@ -205,16 +215,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
   onSelect = (selectedItem: SelectionListItem, id: uuid) => {
     const newItem = {...selectedItem, selected: !selectedItem.selected};
     this.props.select(newItem);
-    this.setState((prevState) => ({
-      cache: {
-        items: replaceWhereId(
-          prevState.cache.items,
-          newItem,
-          id,
-        ),
-        totalElements: prevState.cache.totalElements,
-      },
-    }));
+    this.setState(({cache, items}) => ({items: replaceWhereId(items, newItem, id)}));
   }
 
   rowRenderer = ({index, style}: ListRowProps) => {
@@ -256,12 +257,11 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
   isRowLoaded = ({index}: Index): boolean => !!this.state.items[index];
 
   loadMoreRows = async (): Promise<SelectionListItem[] | {}> => {
-    const {selectedItems, fetchItems} = this.props;
-    const {items: responseItems, totalElements} = await fetchItems(this.state.page);
+    const {items: responseItems, totalElements} = await this.props.fetchItems(this.state.page);
 
     return new Promise((resolve) => {
       this.setState(({items: prevItems, page}: State) => {
-        const items = listItems(selectedItems, [...prevItems, ...responseItems]);
+        const items = withNewItems(prevItems, responseItems);
         return ({
           items,
           cache: {items, totalElements},
