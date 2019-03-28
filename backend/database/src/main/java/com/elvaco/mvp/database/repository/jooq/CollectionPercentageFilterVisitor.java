@@ -50,21 +50,28 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
     } else {
       condition = measurementStatsConditionFor(period)
         .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
-        .and(MEASUREMENT_STAT_DATA.QUANTITY.equal(dsl.select(MEASUREMENT_STAT_DATA.QUANTITY)
-          .from(MEASUREMENT_STAT_DATA)
-          .where(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-          .limit(1)))
+        .and(MEASUREMENT_STAT_DATA.QUANTITY.equal(
+          dsl.select(MEASUREMENT_STAT_DATA.QUANTITY)
+            .from(MEASUREMENT_STAT_DATA)
+            .where(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+            .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
+            .orderBy(MEASUREMENT_STAT_DATA.STAT_DATE)
+            .limit(1)
+          )
+        )
         .and(JooqUtils.periodOverlaps(PHYSICAL_METER.ACTIVE_PERIOD, period.toPeriodRange()))
         .and(PHYSICAL_METER.LOGICAL_METER_ID.eq(LOGICAL_METER.ID));
 
-      collectionPercentageField = when(min(PHYSICAL_METER.READ_INTERVAL_MINUTES).ne(0L),
+      collectionPercentageField = when(
+        min(PHYSICAL_METER.READ_INTERVAL_MINUTES).ne(0L),
         coalesce(
           sum(coalesce(MEASUREMENT_STAT_DATA.RECEIVED_COUNT, 0))
-        .divide(inline(60, Double.class)
-          .times(ChronoUnit.HOURS.between(period.start, period.stop))
-          .divide(min(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)))
-        ).times(100.0).cast(Double.class),
-          0.0)
+            .divide(inline(60, Double.class)
+              .times(ChronoUnit.HOURS.between(period.start, period.stop))
+              .divide(min(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)))
+            ).times(100.0).cast(Double.class),
+          0.0
+        )
       ).otherwise(inline((Double) null));
     }
 

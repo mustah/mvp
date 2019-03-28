@@ -1,0 +1,12 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Add index for measurement_stat_data(physical_meter_id, stat_date, quantity)" author="Mattias Ryrlén">
+    <sqlFile path="../sql/postgresql/add_measurement_stat_data_physical_meter_id_stat_date_quantity_idx.sql"
+             relativeToChangelogFile="true"
+             splitStatements="false"
+             stripComments="true"/>
+  </changeSet>
+</databaseChangeLog>
