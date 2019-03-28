@@ -106,7 +106,7 @@ const CountWidget = ({
   };
 
   return (
-    <WidgetWithTitle title={title} configure={openConfiguration} deleteWidget={deleteWidget}>
+    <WidgetWithTitle title={title} configure={openConfiguration} deleteWidget={deleteWidget} headerClassName="count">
       <div onClick={selectSelection} className="clickable">
         <CountContentWidgetLoader
           widget={widgetModel}

@@ -97,7 +97,7 @@ const MapWidget = (props: Props) => {
     widget,
     parameters,
     onDelete,
-    width,
+    width: calculatedWidth,
     height,
   } = props;
 
@@ -118,6 +118,8 @@ const MapWidget = (props: Props) => {
     />
   );
 
+  const width = calculatedWidth - 5;
+
   const wrapperProps: MapContentWrapperProps = {
     bounds,
     informationText,
@@ -137,8 +139,9 @@ const MapWidget = (props: Props) => {
       configure={openConfiguration}
       containerStyle={{paddingBottom: 0}}
       deleteWidget={onClickDeleteWidget}
+      headerClassName="map"
     >
-      <Column style={{width, height}}>
+      <Column style={{width, height}} className="MapWrapper">
         <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
           <MapContentWrapper {...wrapperProps}/>
         </RetryLoader>

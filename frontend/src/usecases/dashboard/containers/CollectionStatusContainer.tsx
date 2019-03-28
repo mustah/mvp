@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
 import {IndicatorWidget, IndicatorWidgetProps} from '../../../components/indicators/IndicatorWidget';
+import {thresholdClassName} from '../../../helpers/thresholds';
 import {makeApiParametersOf} from '../../../helpers/urlFactory';
 import {history} from '../../../index';
 import {RootState} from '../../../reducers/rootReducer';
@@ -35,7 +36,12 @@ interface WidgetProps {
 const LoadingIndicator = withWidgetLoader<IndicatorWidgetProps>(IndicatorWidget);
 
 const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, onClickWidget, isFetching}: WidgetProps) => (
-  <WidgetWithTitle title={title} configure={openConfiguration} deleteWidget={deleteWidget}>
+  <WidgetWithTitle
+    title={title}
+    configure={openConfiguration}
+    deleteWidget={deleteWidget}
+    headerClassName={isNaN(widget.count) ? 'info' : thresholdClassName(widget.count)}
+  >
     <div onClick={onClickWidget} className="clickable">
       <LoadingIndicator isFetching={isFetching} widget={widget} title={translate('collection')}/>
     </div>
