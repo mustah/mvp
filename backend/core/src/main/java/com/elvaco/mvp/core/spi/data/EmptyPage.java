@@ -6,9 +6,14 @@ import static java.util.Collections.emptyList;
 
 public class EmptyPage<T> implements Page<T> {
 
-  public static final EmptyPage EMPTY_PAGE = new EmptyPage<>();
+  private static final EmptyPage<?> EMPTY_PAGE = new EmptyPage<>();
 
   private EmptyPage() { }
+
+  @SuppressWarnings("unchecked")
+  public static <T> EmptyPage<T> emptyPage() {
+    return (EmptyPage<T>) EMPTY_PAGE;
+  }
 
   @Override
   public int getTotalPages() {
