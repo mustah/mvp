@@ -39,10 +39,10 @@
       }
     }
   }
-}
 
-.draggableWidgetArea {
-  cursor: move;
+  .grid-draggable {
+    cursor: move;
+  }
 }
 
 .react-grid-item .react-resizable-handle {
