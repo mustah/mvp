@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {cloneDeep} from 'lodash';
 import {ButtonCancel, ButtonConfirm} from '../../../../components/buttons/DialogButtons';
 import {Dialog} from '../../../../components/dialog/Dialog';
 import {SelectFieldInput} from '../../../../components/inputs/InputSelectable';
@@ -8,21 +9,18 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {NormalizedState} from '../../../../state/domain-models/domainModels';
 import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
-import {WidgetType} from '../../../../state/widget/configuration/widgetConfigurationReducer';
+import {Widget} from '../../../../state/domain-models/widget/widgetModels';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../../types/Types';
-import {MapWidgetSettings} from '../../containers/MapWidgetContainer';
 import './EditWidget.scss';
 
 const ALL_METERS = -1;
 
-const EditMapWidget = (props: Props) => {
+const EditWidget = <T extends Widget>(props: Props<T>) => {
   const {
     userSelections,
     isOpen,
     onCancel,
     onSave,
-    id,
-    dashboardId,
     settings: {settings},
   } = props;
 
@@ -45,13 +43,10 @@ const EditMapWidget = (props: Props) => {
   const selectedSelection: uuid | undefined = selectionId || selectionOptions[0].id;
 
   const save = () => {
-    const widget: MapWidgetSettings = {
-      id,
-      settings: {},
-      type: WidgetType.MAP,
-      dashboardId,
-    };
-    if (selectionId !== ALL_METERS) {
+    const widget: T = cloneDeep(props.settings);
+    if (selectionId === ALL_METERS) {
+      delete widget.settings.selectionId;
+    } else {
       widget.settings.selectionId = selectionId;
     }
     onSave(widget);
@@ -83,15 +78,15 @@ const EditMapWidget = (props: Props) => {
   );
 };
 
-type Props = StateToProps & OwnProps;
+type Props<T extends Widget> = StateToProps & OwnProps<T>;
 
-interface OwnProps {
+interface OwnProps<T extends Widget> {
   isOpen: boolean;
   onCancel: OnClick;
-  onSave: CallbackWith<MapWidgetSettings>;
+  onSave: CallbackWith<T>;
   id: uuid;
   dashboardId: uuid;
-  settings: MapWidgetSettings;
+  settings: T;
 }
 
 interface StateToProps {
@@ -104,6 +99,6 @@ const mapStateToProps = ({
   userSelections,
 });
 
-export const EditMapWidgetContainer = connect<StateToProps, {}>(
+export const EditWidgetContainer = connect<StateToProps, {}>(
   mapStateToProps,
-)(EditMapWidget);
+)(EditWidget);

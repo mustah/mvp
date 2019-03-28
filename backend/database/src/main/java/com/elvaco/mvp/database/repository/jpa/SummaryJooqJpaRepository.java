@@ -1,8 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.filter.Filters;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 
 import lombok.RequiredArgsConstructor;
@@ -10,7 +8,6 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_METER;
 
@@ -22,17 +19,7 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
   private final FilterAcceptor logicalMeterFilters;
 
   @Override
-  public MeterSummary summary(RequestParameters parameters) {
-    Filters filters = toFilters(parameters);
-
-    long meters = countMeters(filters);
-    long cities = countCities(filters);
-    long addresses = countAddresses(filters);
-
-    return new MeterSummary(meters, cities, addresses);
-  }
-
-  private long countMeters(Filters filters) {
+  public long meterCount(Filters filters) {
     var query = dsl.select(DSL.countDistinct(LOGICAL_METER.ID)).from(LOGICAL_METER);
 
     logicalMeterFilters.accept(filters).andJoinsOn(query);
@@ -40,7 +27,8 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
     return query.fetchOne(0, Long.class);
   }
 
-  private Long countCities(Filters filters) {
+  @Override
+  public long cityCount(Filters filters) {
     var query = dsl.select(DSL.countDistinct(LOCATION.COUNTRY, LOCATION.CITY)).from(LOGICAL_METER);
 
     logicalMeterFilters.accept(filters).andJoinsOn(query);
@@ -49,7 +37,8 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
       .fetchOne(0, Long.class);
   }
 
-  private Long countAddresses(Filters filters) {
+  @Override
+  public long addressCount(Filters filters) {
     var query = dsl.select(DSL.countDistinct(
       LOCATION.COUNTRY,
       LOCATION.CITY,

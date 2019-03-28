@@ -6,7 +6,7 @@ const isGreaterThan100 = (collectionPercentage: number): boolean =>
   collectionPercentage !== undefined && collectionPercentage > 100;
 
 export const formatAndFloorPercentage = (num: number): string =>
-   round(Math.floor(num * 10) / 10, num === 100 ? '' : '0.0') + '%';
+  round(Math.floor(num * 10) / 10, num === 100 ? '' : '0.0') + '%';
 
 export const formatCollectionPercentage =
   (collectionPercentage?, readIntervalMinutes?, isSuperAdmin?: boolean): string => {

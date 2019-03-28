@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Widget;
 import com.elvaco.mvp.core.domainmodels.WidgetType;
 import com.elvaco.mvp.web.dto.WidgetDto;
+import com.elvaco.mvp.web.exception.InvalidWidgetType;
 
 import lombok.experimental.UtilityClass;
 
@@ -29,7 +30,7 @@ public class WidgetDtoMapper {
       .dashboardId(dto.dashboardId)
       .ownerUserId(ownerUserId)
       .organisationId(organisationId)
-      .type(WidgetType.valueOf(dto.type))
+      .type(WidgetType.from(dto.type).orElseThrow(() -> new InvalidWidgetType(dto.type)))
       .title(dto.title)
       .settings(dto.settings)
       .build();

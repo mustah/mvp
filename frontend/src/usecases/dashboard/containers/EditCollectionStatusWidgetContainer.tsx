@@ -10,13 +10,12 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
+import {CollectionStatusWidget, WidgetType} from '../../../state/domain-models/widget/widgetModels';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
-import {WidgetType} from '../../../state/widget/configuration/widgetConfigurationReducer';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../types/Types';
 import '../components/widgets/EditWidget.scss';
-import {CollectionStatusWidgetSettings} from './CollectionStatusContainer';
 
-const ALL_METERS = -1;
+const allMeters = -1;
 
 const EditCollectionStatusWidget = ({
   userSelections,
@@ -29,7 +28,7 @@ const EditCollectionStatusWidget = ({
 }: EditCollectionStatusWidgetProps) => {
 
   const selectionOptions: IdNamed[] = [
-    {id: ALL_METERS, name: firstUpperTranslated('all meters')},
+    {id: allMeters, name: firstUpperTranslated('all meters')},
     ...userSelections.result.map(
       (id: uuid) => ({
         id,
@@ -54,7 +53,7 @@ const EditCollectionStatusWidget = ({
   const selectedSelection: uuid = selectionId || selectionOptions[0].id;
 
   const save = () => {
-    const widget: CollectionStatusWidgetSettings = {
+    const widget: CollectionStatusWidget = {
       id,
       settings: {
         selectionInterval,
@@ -63,7 +62,7 @@ const EditCollectionStatusWidget = ({
       dashboardId,
     };
 
-    if (selectionId !== ALL_METERS) {
+    if (selectionId !== allMeters) {
       widget.settings.selectionId = selectionId;
     }
 
@@ -108,10 +107,10 @@ type EditCollectionStatusWidgetProps = StateToProps & OwnProps;
 interface OwnProps {
   isOpen: boolean;
   onCancel: OnClick;
-  onSave: CallbackWith<CollectionStatusWidgetSettings>;
+  onSave: CallbackWith<CollectionStatusWidget>;
   id: uuid;
   dashboardId: uuid;
-  settings: CollectionStatusWidgetSettings;
+  settings: CollectionStatusWidget;
 }
 
 interface StateToProps {

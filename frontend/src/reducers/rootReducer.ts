@@ -10,6 +10,7 @@ import {domainModels} from '../state/domain-models/domainModelsReducer';
 import {LanguageState} from '../state/language/languageModels';
 import {language} from '../state/language/languageReducer';
 import {previousSession, PreviousSessionState} from '../state/previous-session/previousSessionReducer';
+import {search, SearchState} from '../state/search/searchReducer';
 import {SelectionTreeState} from '../state/selection-tree/selectionTreeModels';
 import {selectionTree} from '../state/selection-tree/selectionTreeReducer';
 import {SummaryState} from '../state/summary/summaryModels';
@@ -29,7 +30,6 @@ import {MeterDetailState} from '../usecases/meter/measurements/meterDetailModels
 import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
 import {ReportState} from '../usecases/report/reportModels';
 import {report} from '../usecases/report/reportReducer';
-import {search, SearchState} from '../state/search/searchReducer';
 import {currentVersion, migrations} from './stateMigrations';
 
 export interface RootState {

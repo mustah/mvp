@@ -78,7 +78,7 @@ const WrappableCollectionStatBarChart = ({data}: CollectionStatData) =>
           <Bar
             dataKey="collectionPercentage"
             minPointSize={3}
-            fill={colorFor('collectionPercentage')}
+            fill={colorFor('count')}
             barSize={100}
           />
         </BarChart>

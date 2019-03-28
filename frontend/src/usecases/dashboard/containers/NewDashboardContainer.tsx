@@ -11,7 +11,7 @@ import {
 } from '../../../state/domain-models/widget/widgetActions';
 import {EncodedUriParameters} from '../../../types/Types';
 import {NewDashboard} from '../components/NewDashboard';
-import {DasboardStateToProps, DispatchToProps, withNewDashboardDataFetchers} from '../dashboardEnhancers';
+import {DashboardStateToProps, DispatchToProps, withNewDashboardDataFetchers} from '../dashboardEnhancers';
 
 const makeWidgetParametersOf =
   (dashboard: Dashboard): EncodedUriParameters =>
@@ -22,7 +22,7 @@ const mapStateToProps =
     domainModels: {
       meterMapMarkers, dashboards: {result, entities, isFetching, isSuccessfullyFetched}, widgets
     },
-  }: RootState): DasboardStateToProps =>
+  }: RootState): DashboardStateToProps =>
     ({
       widgets,
       dashboard: entities[result[0]],
@@ -42,7 +42,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteWidget,
 }, dispatch);
 
-export const NewDashboardContainer = connect<DasboardStateToProps, DispatchToProps>(
+export const NewDashboardContainer = connect<DashboardStateToProps, DispatchToProps>(
   mapStateToProps,
   mapDispatchToProps,
 )(withNewDashboardDataFetchers(NewDashboard));

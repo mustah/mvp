@@ -1,5 +1,7 @@
 package com.elvaco.mvp.web;
 
+import java.time.ZonedDateTime;
+
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -12,9 +14,8 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +25,7 @@ public class SummaryControllerTest extends IntegrationTest {
   @Test
   public void whenNoMetersGetEmptySummaryInfo() {
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
-      .get("/summary/meters", MeterSummaryDto.class);
+      .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto());
@@ -35,7 +36,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(stockholm().build()));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
-      .get("/summary/meters", MeterSummaryDto.class);
+      .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(1, 1, 1));
@@ -47,7 +48,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(stockholm().build()));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
-      .get("/summary/meters", MeterSummaryDto.class);
+      .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(2, 1, 1));
@@ -62,10 +63,8 @@ public class SummaryControllerTest extends IntegrationTest {
 
     given(alarm(logicalMeter).start(start));
 
-    var url = Url.builder()
-      .path("/summary/meters")
-      .parameter(AFTER, start)
-      .parameter(BEFORE, start.plusDays(2))
+    var url = summaryUrl()
+      .period(start, start.plusDays(2))
       .parameter(ALARM, "yes")
       .build();
 
@@ -81,9 +80,14 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(stockholm().build()));
     given(logicalMeter().location(kungsbacka().address("gatan med G").build()));
 
+    ZonedDateTime start = ZonedDateTime.parse("2018-01-01T00:00:00Z");
+    ZonedDateTime stop = ZonedDateTime.parse("2019-01-01T00:00:00Z");
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get(
-        "/summary/meters?reported=ok&before=2019-01-01T00:00:00Z&after=2018-01-01T00:00:00Z",
+        summaryUrl()
+          .parameter(REPORTED, "ok")
+          .period(start, stop)
+          .build(),
         MeterSummaryDto.class
       );
 
@@ -97,7 +101,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(kungsbacka().build()));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
-      .get("/summary/meters", MeterSummaryDto.class);
+      .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(2, 2, 2));
@@ -110,7 +114,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(kungsbacka().address("drottninggatan 2").build()));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
-      .get("/summary/meters", MeterSummaryDto.class);
+      .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(3, 2, 3));
@@ -123,7 +127,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(kungsbacka().address("drottninggatan 2").build()));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
-      .get("/summary/meters", MeterSummaryDto.class);
+      .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(3, 2, 2));
@@ -137,7 +141,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(kungsbacka().address("drottninggatan 2").build()));
 
     ResponseEntity<MeterSummaryDto> response = as(organisationWithUsers.getUser())
-      .get("/summary/meters", MeterSummaryDto.class);
+      .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(0, 0, 0));
@@ -150,7 +154,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(kungsbacka().address("drottninggatan 2").build()));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
-      .get("/summary/meters?city=sverige,kungsbacka", MeterSummaryDto.class);
+      .get(summaryUrl().city("sverige,kungsbacka").build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(2, 1, 2));
@@ -167,9 +171,58 @@ public class SummaryControllerTest extends IntegrationTest {
     );
 
     ResponseEntity<MeterSummaryDto> response = asUser()
-      .get("/summary/meters", MeterSummaryDto.class);
+      .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(2, 1, 1));
+  }
+
+  @Test
+  public void meterCount_OneMeter() {
+    given(logicalMeter());
+
+    ResponseEntity<Long> response = asUser()
+      .get(summaryMetersUrl().build(), Long.class);
+
+    assertThat(response.getBody()).isEqualTo(1L);
+  }
+
+  @Test
+  public void meterCount_TwoMeters() {
+    given(logicalMeter());
+    given(logicalMeter());
+
+    ResponseEntity<Long> response = asUser()
+      .get(summaryMetersUrl().build(), Long.class);
+
+    assertThat(response.getBody()).isEqualTo(2L);
+  }
+
+  @Test
+  public void meterCount_NoMeters() {
+    ResponseEntity<Long> response = asUser()
+      .get(summaryMetersUrl().build(), Long.class);
+
+    assertThat(response.getBody()).isEqualTo(0L);
+  }
+
+  @Test
+  public void meterCount_OtherOrganisationsMetersAreNotCounted() {
+    var otherOrganisation = given(organisation());
+    given(logicalMeter());
+    given(logicalMeter().organisationId(otherOrganisation.getId()));
+
+    ResponseEntity<Long> response = asUser()
+      .get(summaryMetersUrl().build(), Long.class);
+
+    assertThat(response.getBody()).isEqualTo(1L);
+  }
+
+  private static Url.UrlBuilder summaryUrl() {
+    return Url.builder().path("/summary");
+  }
+
+  private static Url.UrlBuilder summaryMetersUrl() {
+    return Url.builder().path("/summary/meters");
   }
 }

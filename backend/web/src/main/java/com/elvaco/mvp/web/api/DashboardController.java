@@ -3,6 +3,8 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.UUID;
 
+import javax.validation.Valid;
+
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.web.dto.DashboardDto;
@@ -71,7 +73,7 @@ public class DashboardController {
 
   @PostMapping("widgets")
   public ResponseEntity<WidgetDto> addWidget(
-    @RequestBody WidgetDto widgetDto
+    @RequestBody @Valid WidgetDto widgetDto
   ) {
     return ResponseEntity.status(HttpStatus.CREATED)
       .body(toDto(dashboardUseCases.save(toDomainModel(

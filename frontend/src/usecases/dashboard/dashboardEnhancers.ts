@@ -2,11 +2,11 @@ import {lifecycle} from 'recompose';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {Dashboard} from '../../state/domain-models/dashboard/dashboardModels';
 import {DomainModel, NormalizedState} from '../../state/domain-models/domainModels';
-import {Widget} from '../../state/domain-models/widget/WidgetModels';
+import {Widget} from '../../state/domain-models/widget/widgetModels';
 import {CallbackWithData, EncodedUriParameters, Fetch} from '../../types/Types';
 import {MapMarker} from '../map/mapModels';
 
-export interface DasboardStateToProps {
+export interface DashboardStateToProps {
   widgets: NormalizedState<Widget>;
   dashboard?: Dashboard;
   isFetching: boolean;
@@ -25,7 +25,7 @@ export interface DispatchToProps {
   deleteWidget: CallbackWithData;
 }
 
-export type DashboardProps = DasboardStateToProps & DispatchToProps & InjectedAuthRouterProps;
+export type DashboardProps = DashboardStateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 export const withNewDashboardDataFetchers = lifecycle<DashboardProps, {}, {}>({
 

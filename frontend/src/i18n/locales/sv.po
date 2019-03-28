@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "pcs"
+msgstr "st"
+
 msgid "hide menu"
 msgstr "dölj meny"
 
@@ -43,6 +46,9 @@ msgstr "misslyckades lägga till widget"
 
 msgid "failed to update dashboard: {{error}}"
 msgstr "lyckades inte uppdatera dashboarden: {{error}}"
+
+msgid "meter count"
+msgstr "antal mätare"
 
 msgid "showing {{count}} meters"
 msgstr "visar {{count}} mätare"

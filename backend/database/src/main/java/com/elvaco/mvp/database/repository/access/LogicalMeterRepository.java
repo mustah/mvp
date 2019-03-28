@@ -8,18 +8,17 @@ import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
+import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
@@ -35,7 +34,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.Collections.emptyList;
+import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static java.util.stream.Collectors.flatMapping;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -47,7 +46,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final SummaryJpaRepository summaryJpaRepository;
   private final LogicalMeterEntityMapper logicalMeterEntityMapper;
-  private final MeterDefinitions meterDefinitions;
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
@@ -191,16 +189,17 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public MeterSummary summary(RequestParameters parameters) {
-    return summaryJpaRepository.summary(parameters);
+    Filters filters = toFilters(parameters);
+    return new MeterSummary(
+      summaryJpaRepository.meterCount(filters),
+      summaryJpaRepository.cityCount(filters),
+      summaryJpaRepository.addressCount(filters)
+    );
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMeterCollectionStats(
-    RequestParameters parameters
-  ) {
-    return parameters.getPeriod()
-      .map(ignore -> logicalMeterJpaRepository.findMeterCollectionStats(parameters))
-      .orElse(emptyList());
+  public long meterCount(RequestParameters parameters) {
+    return summaryJpaRepository.meterCount(toFilters(parameters));
   }
 
   public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(

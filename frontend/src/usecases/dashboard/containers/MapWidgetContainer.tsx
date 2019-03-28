@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {Period} from '../../../components/dates/dateModels';
 import {MeterDetailsDialog} from '../../../components/dialog/DetailsDialog';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {Row} from '../../../components/layouts/row/Row';
+import {Column} from '../../../components/layouts/column/Column';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {Maybe} from '../../../helpers/Maybe';
 import {makeApiParametersOf} from '../../../helpers/urlFactory';
@@ -14,10 +14,10 @@ import {DomainModel, RequestsHttp} from '../../../state/domain-models/domainMode
 import {getErrorCalle} from '../../../state/domain-models/domainModelsSelectors';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
+import {MapWidget, WidgetMandatory} from '../../../state/domain-models/widget/widgetModels';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {WidgetMandatory, WidgetType} from '../../../state/widget/configuration/widgetConfigurationReducer';
-import {fetchMapWidget, FetchWidgetIfNeeded} from '../../../state/widget/data/widgetDataActions';
-import {WidgetData} from '../../../state/widget/data/widgetDataReducer';
+import {fetchMapWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
+import {WidgetData} from '../../../state/widget/widgetReducer';
 import {CallbackWith, ClearError, ErrorResponse, OnClick, uuid} from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
@@ -28,17 +28,10 @@ import {Bounds, MapMarker} from '../../map/mapModels';
 import {MapState} from '../../map/mapReducer';
 import {WidgetWithTitle} from '../components/widgets/Widget';
 
-export interface MapWidgetSettings extends WidgetMandatory {
-  type: WidgetType.MAP;
-  settings: {
-    selectionId?: uuid;
-  };
-}
-
 interface OwnProps {
   height: number;
   width: number;
-  settings: MapWidgetSettings;
+  widget: MapWidget;
   openConfiguration: OnClick;
   onDelete: CallbackWith<WidgetMandatory>;
 }
@@ -65,7 +58,7 @@ interface StateToProps extends MapContentProps {
 interface DispatchToProps {
   closeClusterDialog: OnClick;
   clearError: ClearError;
-  fetchMapWidget: CallbackWith<FetchWidgetIfNeeded>;
+  fetchMapWidget: CallbackWith<WidgetRequestParameters>;
 }
 
 type MapContentWrapperProps = MapContentProps & WithEmptyContentProps;
@@ -101,7 +94,7 @@ const MapWidget = (props: Props) => {
     isUserSelectionsSuccessfullyFetched,
     fetchMapWidget,
     openConfiguration,
-    settings,
+    widget,
     parameters,
     onDelete,
     width,
@@ -112,7 +105,7 @@ const MapWidget = (props: Props) => {
     if (isUserSelectionsSuccessfullyFetched) {
       fetchMapWidget(props);
     }
-  }, [settings, parameters, isUserSelectionsSuccessfullyFetched]);
+  }, [widget, parameters, isUserSelectionsSuccessfullyFetched]);
 
   const {isClusterDialogOpen, selectedMarker} = map;
   const selectedId = Maybe.maybe<uuid>(selectedMarker);
@@ -136,35 +129,36 @@ const MapWidget = (props: Props) => {
     width,
   };
 
-  const onClickDeleteWidget = () => onDelete(settings);
+  const onClickDeleteWidget = () => onDelete(widget);
 
   return (
-    <Row>
-      <WidgetWithTitle
-        title={title}
-        className="MapWidget"
-        configure={openConfiguration}
-        deleteWidget={onClickDeleteWidget}
-      >
+    <WidgetWithTitle
+      title={title}
+      configure={openConfiguration}
+      containerStyle={{paddingBottom: 0}}
+      deleteWidget={onClickDeleteWidget}
+    >
+      <Column style={{width, height}}>
         <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-            <MapContentWrapper {...wrapperProps} />
+          <MapContentWrapper {...wrapperProps}/>
         </RetryLoader>
         {dialog}
-      </WidgetWithTitle>
-    </Row>
+      </Column>
+    </WidgetWithTitle>
   );
 };
 
 const getInformationText = ({data: {result}}: WidgetData): string =>
   firstUpperTranslated('showing {{count}} meters', {count: result.length});
 
-const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps => {
-  const {
+const mapStateToProps = (
+  {
     map,
     domainModels: {userSelections},
-    widget: {data}
-  }: RootState = rootState;
-  const {settings: {settings: {selectionId}, id}} = ownProps;
+    widget
+  }: RootState,
+  {widget: {settings: {selectionId}, id}}: OwnProps
+): StateToProps => {
   const userSelection = selectionId && userSelections.entities[selectionId];
 
   const parameters = userSelection
@@ -183,20 +177,20 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     : firstUpperTranslated('all meters');
 
   return {
-    model: data[id],
-    bounds: data[id] && data[id].isSuccessfullyFetched
-      ? boundsFromMarkers(data[id].data.entities.meterMapMarkers)
+    model: widget[id],
+    bounds: widget[id] && widget[id].isSuccessfullyFetched
+      ? boundsFromMarkers(widget[id].data.entities.meterMapMarkers)
       : undefined,
-    error: getErrorCalle(data[id]),
-    isFetching: data[id] && data[id].isFetching,
-    informationText: data[id] && data[id].isSuccessfullyFetched
-      ? getInformationText(data[id]) : undefined,
+    error: getErrorCalle(widget[id]),
+    isFetching: widget[id] && widget[id].isFetching,
+    informationText: widget[id] && widget[id].isSuccessfullyFetched
+      ? getInformationText(widget[id]) : undefined,
     map,
     title,
     viewCenter: map.viewCenter,
     parameters,
     isUserSelectionsSuccessfullyFetched: userSelections.isSuccessfullyFetched,
-    markers: data[id] && data[id].isSuccessfullyFetched ? data[id].data : {entities: {}, result: []},
+    markers: widget[id] && widget[id].isSuccessfullyFetched ? widget[id].data : {entities: {}, result: []},
   };
 };
 

@@ -27,19 +27,19 @@ type ActionTypes =
 
 export const summary = (state: SummaryState = initialState, action: ActionTypes): SummaryState => {
   switch (action.type) {
-    case requestAction(EndPoints.summaryMeters):
+    case requestAction(EndPoints.summary):
       return {
         ...state,
         isFetching: true,
       };
-    case successAction(EndPoints.summaryMeters):
+    case successAction(EndPoints.summary):
       return {
         ...state,
         isFetching: false,
         isSuccessfullyFetched: true,
         payload: (action as Action<SelectionSummary>).payload,
       };
-    case failureAction(EndPoints.summaryMeters):
+    case failureAction(EndPoints.summary):
       return {
         ...state,
         isFetching: false,

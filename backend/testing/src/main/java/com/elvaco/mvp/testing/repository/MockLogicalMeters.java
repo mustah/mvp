@@ -7,7 +7,6 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
@@ -121,10 +120,8 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMeterCollectionStats(
-    RequestParameters parameters
-  ) {
-    return emptyList();
+  public long meterCount(RequestParameters parameters) {
+    throw new NotImplementedYet();
   }
 
   @Override

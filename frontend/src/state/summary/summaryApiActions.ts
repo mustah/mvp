@@ -9,6 +9,6 @@ const shouldFetchSummary: FetchIfNeeded = (getState: GetState): boolean => {
 };
 
 export const fetchSummary = fetchIfNeeded<SelectionSummary>(
-  EndPoints.summaryMeters,
+  EndPoints.summary,
   shouldFetchSummary,
 );

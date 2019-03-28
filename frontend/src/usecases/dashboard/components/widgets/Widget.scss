@@ -3,10 +3,7 @@
 .Widget {
   padding-top: $space;
   margin-bottom: $lg-space;
-
-  &.MapWidget {
-    padding-bottom: 0;
-  }
+  min-width: $overview-widget-width;
 
   .Subtitle-text {
     max-width: 120px;
@@ -25,7 +22,7 @@
     margin-right: 0;
 
     .Indicator {
-      border-radius: $border-radius;
+      border-radius: 0 0 $border-radius $border-radius;
       margin-bottom: 0;
       width: $overview-widget-width;
 
@@ -39,10 +36,10 @@
       }
     }
   }
-}
 
-.draggableWidgetArea {
-  cursor: move;
+  .grid-draggable {
+    cursor: move;
+  }
 }
 
 .react-grid-item .react-resizable-handle {

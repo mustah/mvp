@@ -1,16 +1,16 @@
 import * as React from 'react';
 import {thresholdClassName} from '../../helpers/thresholds';
-import {firstUpperTranslated} from '../../services/translationService';
+import {firstUpperTranslated, translate} from '../../services/translationService';
+import {CountableWidgetModel} from '../../state/domain-models/widget/widgetModels';
 import {ClassNamed, WithChildren} from '../../types/Types';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
-import {Bold, Normal, Xlarge} from '../texts/Texts';
+import {Bold, Large, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
-import {WidgetModel} from './indicatorWidgetModels';
 import classNames = require('classnames');
 
 export interface IndicatorWidgetProps extends ClassNamed, WithChildren {
-  widget: WidgetModel;
+  widget: CountableWidgetModel;
   title: string;
 }
 
@@ -31,22 +31,39 @@ const NoExpectedMeasurementsWidget = ({className, title}: EmptyStateProps) => (
   </Column>
 );
 
-export const IndicatorWidget = ({className, title, widget: {collectionPercentage}}: IndicatorWidgetProps) => {
-  if (isNaN(collectionPercentage)) {
+export const IndicatorWidget = ({className, title, widget: {count}}: IndicatorWidgetProps) => {
+  if (isNaN(count)) {
     return <NoExpectedMeasurementsWidget title={title} className={className}/>;
   }
-  const value = collectionPercentage.toFixed(collectionPercentage === 100.0 ? 0 : 1);
-  const statusCss = thresholdClassName(collectionPercentage);
-
+  const value = count.toFixed(count === 100.0 ? 0 : 1);
   return (
     <Column className={classNames('Indicator-wrapper', className)}>
-      <ColumnCenter className={classNames('Indicator', statusCss)}>
+      <ColumnCenter className={classNames('Indicator', thresholdClassName(count))}>
         <Row className="Indicator-name Row-center">
           <Bold>{title}</Bold>
         </Row>
         <Row className="Row-center Row-bottom">
           <Xlarge className="Indicator-value">{value}</Xlarge>
           <Normal className="Indicator-unit">%</Normal>
+        </Row>
+      </ColumnCenter>
+    </Column>
+  );
+};
+
+export const NumMetersIndicatorWidget = ({className, title, widget: {count}}: IndicatorWidgetProps) => {
+  if (isNaN(count)) {
+    return <NoExpectedMeasurementsWidget title={title} className={className}/>;
+  }
+  return (
+    <Column className={classNames('Indicator-wrapper', className)}>
+      <ColumnCenter className={classNames('Indicator', 'count')}>
+        <Row className="Indicator-name Row-center">
+          <Bold>{title}</Bold>
+        </Row>
+        <Row className="Row-center Row-bottom">
+          <Xlarge className="Indicator-value">{count}</Xlarge>
+          <Large style={{paddingBottom: 8}}>{translate('pcs')}</Large>
         </Row>
       </ColumnCenter>
     </Column>

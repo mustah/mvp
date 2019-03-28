@@ -1,6 +1,6 @@
 import {sortBy, toArray, uniqBy} from 'lodash';
 import {LegendPayload} from 'recharts';
-import {colors} from '../../../app/themes';
+import {colors, secondaryBgActive} from '../../../app/themes';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {
   MeasurementResponse,
@@ -26,7 +26,7 @@ export const colorFor = colorize({
   [Quantity.differenceTemperature as string]: '#2979FF',
   [Quantity.externalTemperature as string]: colors.red,
   [Quantity.relativeHumidity as string]: colors.orange,
-  ['collectionPercentage']: '#b6e2cc'
+  ['count']: secondaryBgActive,
 });
 
 const yAxisIdLookup = (axes: AxesProps, unit: string): 'left' | 'right' | undefined => {

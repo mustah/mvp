@@ -4,28 +4,27 @@ import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
 import {IndicatorWidget, IndicatorWidgetProps} from '../../../components/indicators/IndicatorWidget';
-import {WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
-import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
-import {Row} from '../../../components/layouts/row/Row';
 import {makeApiParametersOf} from '../../../helpers/urlFactory';
 import {history} from '../../../index';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {collectionStatClearError, } from '../../../state/domain-models/collection-stat/collectionStatActions';
+import {collectionStatClearError} from '../../../state/domain-models/collection-stat/collectionStatActions';
 import {RequestsHttp} from '../../../state/domain-models/domainModels';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
+import {
+  CollectionStatusWidget,
+  CountableWidgetModel,
+  WidgetMandatory
+} from '../../../state/domain-models/widget/widgetModels';
 import {resetSelection, selectSavedSelection} from '../../../state/user-selection/userSelectionActions';
-import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {getCollectionStatParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {WidgetMandatory, WidgetType} from '../../../state/widget/configuration/widgetConfigurationReducer';
-import {fetchCollectionStatsWidget, FetchWidgetIfNeeded} from '../../../state/widget/data/widgetDataActions';
-import {WidgetData} from '../../../state/widget/data/widgetDataReducer';
-import {Callback, CallbackWith, CallbackWithId, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
-import '../components/widgets/CollectionStatus.scss';
+import {fetchCollectionStatsWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
+import {WidgetData} from '../../../state/widget/widgetReducer';
+import {Callback, CallbackWith, CallbackWithId, EncodedUriParameters, OnClick} from '../../../types/Types';
 import {WidgetWithTitle} from '../components/widgets/Widget';
 
 interface WidgetProps {
-  widget: WidgetModel;
+  widget: CountableWidgetModel;
   title: string;
   openConfiguration: OnClick;
   deleteWidget: Callback;
@@ -33,29 +32,15 @@ interface WidgetProps {
   isFetching: boolean;
 }
 
-const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, onClickWidget, isFetching}: WidgetProps) =>
-  (
-    <Row>
-      <WidgetWithTitle
-        title={title}
-        configure={openConfiguration}
-        deleteWidget={deleteWidget}
-      > <div onClick={onClickWidget} className={'widget-link'}>
-          <LoadingIndicator isFetching={isFetching} widget={widget} title={translate('collection')}/>
-      </div>
-      </WidgetWithTitle>
-    </Row>
-  );
-
 const LoadingIndicator = withWidgetLoader<IndicatorWidgetProps>(IndicatorWidget);
 
-export interface CollectionStatusWidgetSettings extends WidgetMandatory {
-  type: WidgetType.COLLECTION;
-  settings: {
-    selectionId?: uuid;
-    selectionInterval: SelectionInterval;
-  };
-}
+const IndicatorContent = ({widget, title, openConfiguration, deleteWidget, onClickWidget, isFetching}: WidgetProps) => (
+  <WidgetWithTitle title={title} configure={openConfiguration} deleteWidget={deleteWidget}>
+    <div onClick={onClickWidget} className="clickable">
+      <LoadingIndicator isFetching={isFetching} widget={widget} title={translate('collection')}/>
+    </div>
+  </WidgetWithTitle>
+);
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
@@ -63,7 +48,7 @@ const CollectionStatus = (props: Props) => {
   const {
     isUserSelectionsSuccessfullyFetched,
     fetchCollectionStatsWidget,
-    settings,
+    widget,
     parameters,
     model,
     isUserSelectionsFetching,
@@ -78,18 +63,16 @@ const CollectionStatus = (props: Props) => {
     if (isUserSelectionsSuccessfullyFetched) {
       fetchCollectionStatsWidget(props);
     }
-  }, [settings, parameters, isUserSelectionsSuccessfullyFetched]);
+  }, [widget, parameters, isUserSelectionsSuccessfullyFetched]);
 
-  const widget: WidgetModel = {
-    collectionPercentage: model && model.data
-  };
+  const widgetModel: CountableWidgetModel = {count: model && model.data};
   const isFetching = model && model.isFetching || isUserSelectionsFetching;
 
-  const onClickDeleteWidget = () => onDelete(settings);
+  const onClickDeleteWidget = () => onDelete(widget);
 
   const onClickWidget = () => {
-    if (settings.settings.selectionId) {
-      selectSavedSelection(settings.settings.selectionId);
+    if (widget.settings.selectionId) {
+      selectSavedSelection(widget.settings.selectionId);
     } else {
       resetSelection();
     }
@@ -97,23 +80,19 @@ const CollectionStatus = (props: Props) => {
   };
 
   return (
-    <Column className="CollectionStatus">
-        <ColumnCenter className="flex-1">
-          <IndicatorContent
-            isFetching={isFetching}
-            widget={widget}
-            title={title}
-            deleteWidget={onClickDeleteWidget}
-            openConfiguration={openConfiguration}
-            onClickWidget={onClickWidget}
-          />
-        </ColumnCenter>
-    </Column>
+    <IndicatorContent
+      isFetching={isFetching}
+      widget={widgetModel}
+      title={title}
+      deleteWidget={onClickDeleteWidget}
+      openConfiguration={openConfiguration}
+      onClickWidget={onClickWidget}
+    />
   );
 };
 
 interface OwnProps {
-  settings: CollectionStatusWidgetSettings;
+  widget: CollectionStatusWidget;
   openConfiguration: OnClick;
   onDelete: CallbackWith<WidgetMandatory>;
 }
@@ -127,14 +106,14 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchCollectionStatsWidget: CallbackWith<FetchWidgetIfNeeded>;
+  fetchCollectionStatsWidget: CallbackWith<WidgetRequestParameters>;
   selectSavedSelection: CallbackWithId;
   resetSelection: Callback;
 }
 
 const mapStateToProps = (
-  {domainModels: {userSelections}, widget: {data}}: RootState,
-  {settings: {settings: {selectionInterval, selectionId}, id}}: OwnProps
+  {domainModels: {userSelections}, widget}: RootState,
+  {widget: {settings: {selectionInterval, selectionId}, id}}: OwnProps
 ): StateToProps => {
   const userSelection = selectionId && userSelections.entities[selectionId];
 
@@ -142,13 +121,13 @@ const mapStateToProps = (
   const parameters =
     userSelection
       ? makeApiParametersOf(selectionInterval) + '&' + getCollectionStatParameters({
-        userSelection: {
-          ...userSelection,
-          selectionParameters: {
-            ...userSelection.selectionParameters,
-          },
+      userSelection: {
+        ...userSelection,
+        selectionParameters: {
+          ...userSelection.selectionParameters,
         },
-      })
+      },
+    })
       : makeApiParametersOf(selectionInterval);
 
   const title = userSelection
@@ -156,7 +135,7 @@ const mapStateToProps = (
     : translate('all meters');
 
   return {
-    model: data[id],
+    model: widget[id],
     parameters,
     isUserSelectionsSuccessfullyFetched: userSelections.isSuccessfullyFetched,
     isUserSelectionsFetching: userSelections.isFetching,

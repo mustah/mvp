@@ -1,7 +1,7 @@
 import {normalize, schema} from 'normalizr';
 import {Normalized} from '../domainModels';
 import {DataFormatter} from '../domainModelsActions';
-import {Widget} from './WidgetModels';
+import {Widget} from './widgetModels';
 
 const widgetSchema = [new schema.Entity('widgets')];
 

@@ -17,10 +17,17 @@ public class SummaryController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
 
-  @GetMapping("/meters")
+  @GetMapping
   public MeterSummaryDto meterLocationSummary(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
     return toDto(logicalMeterUseCases.summary(RequestParametersAdapter.of(requestParams)));
+  }
+
+  @GetMapping("/meters")
+  public Long meterCount(
+    @RequestParam MultiValueMap<String, String> requestParams
+  ) {
+    return logicalMeterUseCases.meterCount(RequestParametersAdapter.of(requestParams));
   }
 }

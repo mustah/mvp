@@ -30,7 +30,7 @@ describe('summaryApiActions', () => {
   let mockRestClient;
   const configureMockStore = configureStore([thunk]);
 
-  const actions = makeActionsOf<SelectionSummary>(EndPoints.summaryMeters);
+  const actions = makeActionsOf<SelectionSummary>(EndPoints.summary);
 
   beforeEach(() => {
     restClientWith('someToken');
@@ -59,7 +59,7 @@ describe('summaryApiActions', () => {
       const error = new InvalidToken('Token missing or invalid');
 
       const onFetchMeterSummaryWithInvalidToken = async () => {
-        mockRestClient.onGet(EndPoints.summaryMeters).reply(401, error);
+        mockRestClient.onGet(EndPoints.summary).reply(401, error);
         mockRestClient.onGet(EndPoints.logout).reply(204);
         return store.dispatch(fetchSummary());
       };
@@ -81,7 +81,7 @@ describe('summaryApiActions', () => {
 
       const onFetchMeterSummaryFail = async () => {
         const response: ErrorResponse = {message: 'request failed'};
-        mockRestClient.onGet(makeUrl(EndPoints.summaryMeters)).reply(401, response);
+        mockRestClient.onGet(makeUrl(EndPoints.summary)).reply(401, response);
         return store.dispatch(fetchSummary());
       };
 
@@ -157,7 +157,7 @@ describe('summaryApiActions', () => {
 
       const fetchSummaryAndTimeout = async () => {
         const parameters: EncodedUriParameters = 'test';
-        mockRestClient.onGet(makeUrl(EndPoints.summaryMeters, parameters)).timeout();
+        mockRestClient.onGet(makeUrl(EndPoints.summary, parameters)).timeout();
         return store.dispatch(fetchSummary(parameters));
       };
 
@@ -172,7 +172,7 @@ describe('summaryApiActions', () => {
 
   const onFetchMeterSummary = async (parameters?: EncodedUriParameters) => {
     const response: SelectionSummary = {numMeters: 2, numCities: 1, numAddresses: 2};
-    mockRestClient.onGet(makeUrl(EndPoints.summaryMeters, parameters)).reply(200, response);
+    mockRestClient.onGet(makeUrl(EndPoints.summary, parameters)).reply(200, response);
     return store.dispatch(fetchSummary(parameters));
   };
 });

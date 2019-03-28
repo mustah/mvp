@@ -1,4 +1,3 @@
-import {default as classNames} from 'classnames';
 import Card from 'material-ui/Card/Card';
 import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
@@ -12,20 +11,15 @@ import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {WidgetTitle} from '../../../../components/texts/Titles';
 import {translate} from '../../../../services/translationService';
-import {Callback, Children, ClassNamed, OnClick, RenderFunction} from '../../../../types/Types';
+import {Callback, OnClick, RenderFunction, WithChildren} from '../../../../types/Types';
 import './Widget.scss';
 
-interface Props extends ClassNamed {
-  children: Children;
+interface Props extends WithChildren {
   containerStyle?: React.CSSProperties;
 }
 
-export const Widget = ({children, className, containerStyle}: Props) => (
-  <Card
-    className={classNames('Widget', className)}
-    style={cardStyle}
-    containerStyle={containerStyle}
-  >
+const Widget = ({children, containerStyle}: Props) => (
+  <Card className="Widget" containerStyle={containerStyle} style={cardStyle}>
     {children}
   </Card>
 );
@@ -38,7 +32,7 @@ interface WidgetWithTitleProps extends Props {
 
 const EditIcon = <ImageEdit {...svgIconProps} style={actionMenuItemIconStyle}/>;
 
-export const WidgetWithTitle = ({title, children, className, configure, deleteWidget}: WidgetWithTitleProps) => {
+export const WidgetWithTitle = ({title, children, configure, containerStyle, deleteWidget}: WidgetWithTitleProps) => {
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(deleteWidget);
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
@@ -74,7 +68,7 @@ export const WidgetWithTitle = ({title, children, className, configure, deleteWi
   };
 
   return (
-    <Widget className={className}>
+    <Widget containerStyle={containerStyle}>
       <RowMiddle className="space-between grid-draggable">
         <WidgetTitle>{title}</WidgetTitle>
         <ActionsDropdown className={'grid-not-draggable'} renderPopoverContent={renderPopoverContent}/>

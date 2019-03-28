@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
@@ -46,7 +45,7 @@ public interface LogicalMeters {
 
   MeterSummary summary(RequestParameters parameters);
 
-  List<LogicalMeterCollectionStats> findMeterCollectionStats(RequestParameters parameters);
+  long meterCount(RequestParameters parameters);
 
   List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(RequestParameters parameters);
 
