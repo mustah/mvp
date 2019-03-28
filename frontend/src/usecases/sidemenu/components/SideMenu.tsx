@@ -11,7 +11,7 @@ type Props = StateToProps & WithChildren & ClassNamed;
 export const SideMenu = ({className, isSideMenuOpen, children}: Props) => (
   <Drawer
     className={classNames('SideMenu', className)}
-    containerStyle={{...drawerContainerStyle, left: isSideMenuOpen ? 0 : 44}}
+    containerStyle={{...drawerContainerStyle, left: isSideMenuOpen ? 0 : 44, paddingBottom: 122}}
     docked={true}
     open={isSideMenuOpen}
     width={sideMenuWidth}
