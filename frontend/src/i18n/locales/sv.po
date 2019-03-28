@@ -44,6 +44,9 @@ msgstr "misslyckades lägga till widget"
 msgid "failed to update dashboard: {{error}}"
 msgstr "lyckades inte uppdatera dashboarden: {{error}}"
 
+msgid "meter count"
+msgstr "antal mätare"
+
 msgid "showing {{count}} meters"
 msgstr "visar {{count}} mätare"
 

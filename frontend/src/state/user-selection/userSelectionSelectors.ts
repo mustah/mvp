@@ -210,6 +210,8 @@ export const getPaginatedGatewayParameters = getPaginatedParameters(entityApiPar
 
 export const getMeterParameters = getParameters(entityApiParametersMetersFactory);
 
+export const allCurrentMeterParameters = encodedUriParametersFrom(toPeriodApiParameters(defaultPeriod));
+
 export const getGatewayParameters = getParameters(entityApiParametersGatewaysFactory);
 
 export const getCollectionStatParameters = getParameters(entityApiParametersCollectionStatFactory);

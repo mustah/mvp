@@ -84,3 +84,15 @@ export const fetchMapWidget =
       };
     },
   });
+
+export const fetchCountWidget =
+  fetchWidgetIfNeeded({
+    requestFactory: async ({settings: {id}, parameters}: FetchWidgetIfNeeded) => {
+      const response = await restClient.getForced(`${EndPoints.summaryMeters}/?${parameters}`);
+      const data = response.data;
+      return {
+        id,
+        data,
+      };
+    },
+  });

@@ -5,6 +5,7 @@ import java.util.Optional;
 public enum WidgetType {
   MAP,
   COLLECTION,
+  COUNT,
   ;
 
   public static Optional<WidgetType> from(String type) {

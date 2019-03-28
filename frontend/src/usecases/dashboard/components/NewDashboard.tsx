@@ -25,11 +25,12 @@ import {
 } from '../../../state/widget/configuration/widgetConfigurationReducer';
 import {OnClick, RenderFunction, uuid} from '../../../types/Types';
 import {CollectionStatusContainer, CollectionStatusWidgetSettings} from '../containers/CollectionStatusContainer';
+import {CountWidgetContainer} from '../containers/CountWidgetContainer';
 import {EditCollectionStatusWidgetContainer} from '../containers/EditCollectionStatusWidgetContainer';
 import {MapWidgetContainer, MapWidgetSettings} from '../containers/MapWidgetContainer';
 import {DashboardProps} from '../dashboardEnhancers';
 import {AddNewWidgetButton} from './AddNewWidgetButton';
-import {EditMapWidgetContainer} from './widgets/EditMapWidget';
+import {EditWidgetContainer} from './widgets/EditWidget';
 import './widgets/Widget.scss';
 
 type ElementFromWidgetType = (settings: WidgetSettings['type']) => any;
@@ -68,22 +69,23 @@ const newWidgetMenu =
             key="collectionStatus"
           />
         ),
+        (
+          <ActionMenuItem
+            name={translate('meter count')}
+            onClick={selectMenuItem(WidgetType.COUNT)}
+            key="meterCount"
+          />
+        ),
       ];
     };
 
-const hasContent = (isDashboardFetching: boolean, dashboard?: Dashboard, widget?: NormalizedState<Widget>): boolean => {
-  if (dashboard
-      && !isDashboardFetching
-      && dashboard.layout
-      && dashboard.layout.layout
-      && widget
-      && widget.isSuccessfullyFetched
-      && !widget.isFetching) {
-    return true;
-  }
-
-  return false;
-};
+const hasContent = (isDashboardFetching: boolean, dashboard?: Dashboard, widgets?: NormalizedState<Widget>): boolean =>
+  dashboard !== undefined
+  && !isDashboardFetching
+  && dashboard.layout !== undefined
+  && widgets !== undefined
+  && widgets.isSuccessfullyFetched
+  && !widgets.isFetching;
 
 const getDefaultCollectionWidget = (dashboardId: uuid): CollectionStatusWidgetSettings => ({
   id: idGenerator.uuid().toString(),
@@ -145,6 +147,35 @@ const addToNextRow = (widgetSettings: WidgetMandatory, layout: Layout[]): Layout
 
 const removeWidget = (widgetSettings: WidgetMandatory, layout: Layout[]): Layout[] =>
   layout.filter((l) => l.i !== widgetSettings.id);
+
+const defaultWidgetSettings = (dashboardId: uuid, type: WidgetType): WidgetSettings => {
+  if (type === WidgetType.COLLECTION) {
+    return {
+      dashboardId,
+      id: idGenerator.uuid(),
+      type,
+      settings: {
+        selectionInterval: {
+          period: Period.latest,
+        },
+      },
+    };
+  } else if (type === WidgetType.MAP) {
+    return {
+      dashboardId,
+      id: idGenerator.uuid(),
+      type,
+      settings: {},
+    };
+  } else {
+    return {
+      dashboardId,
+      id: idGenerator.uuid(),
+      type: WidgetType.COUNT,
+      settings: {},
+    };
+  }
+};
 
 export const NewDashboard = (props: DashboardProps) => {
   const {
@@ -224,6 +255,16 @@ export const NewDashboard = (props: DashboardProps) => {
         );
       }
 
+      if (settings.type === WidgetType.COUNT) {
+        return (
+          <CountWidgetContainer
+            settings={settings}
+            onDelete={deleteWidgetConfiguration}
+            openConfiguration={openConfiguration(settings)}
+          />
+        );
+      }
+
       return null;
     };
 
@@ -241,11 +282,14 @@ export const NewDashboard = (props: DashboardProps) => {
   };
 
   let layout: Layout[] = [];
-  const onLayoutChange = (layout: Layout[]) => {
+  const onLayoutChange = (layouts: Layout[]) => {
     if (hasContent(isFetching, myDashboard, myWidgets)
-        && !isEqual(myDashboard.layout.layout.map(makeLayoutComparable).sort(), layout.map(makeLayoutComparable).sort())
-        && layout.length > 0) {
-      updateDashboard({...myDashboard, layout: {layout}});
+        && !isEqual(
+        myDashboard.layout.layout.map(makeLayoutComparable).sort(),
+        layouts.map(makeLayoutComparable).sort()
+      )
+        && layouts.length > 0) {
+      updateDashboard({...myDashboard, layout: {layout: layouts}});
     }
   };
 
@@ -266,7 +310,7 @@ export const NewDashboard = (props: DashboardProps) => {
     layout = myDashboard.layout.layout.map((widgetLayout: Layout) => ({
       ...widgetLayout,
       isDraggable: true,
-      isResizable: widgetsWithSettings[widgetLayout.i as string].type === WidgetType.MAP ? true : false,
+      isResizable: widgetsWithSettings[widgetLayout.i as string].type === WidgetType.MAP,
     }));
   }
 
@@ -299,11 +343,11 @@ export const NewDashboard = (props: DashboardProps) => {
     )
     .getOrElseNull();
 
-  const editMapWidgetDialog = widgetBeingEdited
-    .filter(({type}) => type === WidgetType.MAP)
+  const editWidgetDialog = widgetBeingEdited
+    .filter(({type}) => type === WidgetType.MAP || type === WidgetType.COUNT)
     .map(
       settings => (
-        <EditMapWidgetContainer
+        <EditWidgetContainer
           id={settings.id}
           settings={settings as MapWidgetSettings}
           dashboardId={dashboardId}
@@ -316,25 +360,7 @@ export const NewDashboard = (props: DashboardProps) => {
     .getOrElseNull();
 
   const addNewWidget = newWidgetMenu((type: WidgetType) => {
-    const widgetSettings: WidgetSettings =
-      type === WidgetType.COLLECTION
-        ? {
-          dashboardId,
-          id: idGenerator.uuid(),
-          type,
-          settings: {
-            selectionInterval: {
-              period: Period.latest,
-            },
-          },
-        }
-        : {
-          dashboardId,
-          id: idGenerator.uuid(),
-          type,
-          settings: {},
-        };
-
+    const widgetSettings: WidgetSettings = defaultWidgetSettings(dashboardId, type);
     editWidget(Maybe.just(widgetSettings));
   });
 
@@ -360,7 +386,7 @@ export const NewDashboard = (props: DashboardProps) => {
       </ReactGridLayout>
 
       {editCollectionPercentageWidgetDialog}
-      {editMapWidgetDialog}
+      {editWidgetDialog}
     </PageLayout>
   );
 };

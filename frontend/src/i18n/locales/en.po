@@ -44,6 +44,9 @@ msgstr "failed to update widget: {{error}}"
 msgid "failed to update dashboard: {{error}}"
 msgstr "failed to update dashboard: {{error}}"
 
+msgid "meter count"
+msgstr "meter count"
+
 msgid "showing {{count}} meters"
 msgstr "showing {{count}} meter"
 

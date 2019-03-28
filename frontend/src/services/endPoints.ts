@@ -14,6 +14,7 @@ export const enum EndPoints {
   meterMapMarkers = '/map-markers/meters',
   gatewayMapMarkers = '/map-markers/gateways',
   summary = '/summary',
+  summaryMeters = '/summary/meters',
   gateways = '/gateways',
   authenticate = '/authenticate',
   logout = '/logout',

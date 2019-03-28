@@ -1,15 +1,18 @@
 import {uuid} from '../../../types/Types';
 import {CollectionStatusWidgetSettings} from '../../../usecases/dashboard/containers/CollectionStatusContainer';
+import {CountWidgetSettings} from '../../../usecases/dashboard/containers/CountWidgetContainer';
 import {MapWidgetSettings} from '../../../usecases/dashboard/containers/MapWidgetContainer';
 
 export enum WidgetType {
   MAP = 'MAP',
   COLLECTION = 'COLLECTION',
+  COUNT = 'COUNT',
 }
 
 export const widgetSizeMap: {[w in WidgetType]: LayoutProps} = {
   [WidgetType.MAP]: {w: 5, h: 4},
   [WidgetType.COLLECTION]: {w: 1, h: 1},
+  [WidgetType.COUNT]: {w: 1, h: 1},
 };
 
 export interface LayoutProps {
@@ -31,4 +34,4 @@ export interface WidgetMandatory {
   type: WidgetType;
 }
 
-export type WidgetSettings = MapWidgetSettings | CollectionStatusWidgetSettings;
+export type WidgetSettings = MapWidgetSettings | CollectionStatusWidgetSettings | CountWidgetSettings;
