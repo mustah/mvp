@@ -5,21 +5,15 @@ import {withWidgetLoader} from '../../../components/hoc/withLoaders';
 import {Normal} from '../../../components/texts/Texts';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {CountWidget, WidgetMandatory} from '../../../state/domain-models/widget/widgetModels';
 import {allCurrentMeterParameters, getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {WidgetMandatory, WidgetType} from '../../../state/widget/configuration/widgetConfigurationReducer';
-import {fetchCountWidget, FetchWidgetIfNeeded} from '../../../state/widget/data/widgetDataActions';
+import {fetchCountWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
+import {WidgetState} from '../../../state/widget/widgetReducer';
 import {CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
 import {WidgetWithTitle} from '../components/widgets/Widget';
 
-export interface CountWidgetSettings extends WidgetMandatory {
-  type: WidgetType.COUNT;
-  settings: {
-    selectionId?: uuid;
-  };
-}
-
 interface OwnProps {
-  settings: CountWidgetSettings;
+  widget: CountWidget;
   openConfiguration: OnClick;
   onDelete: CallbackWith<WidgetMandatory>;
 }
@@ -28,18 +22,25 @@ interface StateToProps {
   title: string;
   isUserSelectionsSuccessfullyFetched: boolean;
   parameters: EncodedUriParameters;
-  meterCount?: number;
+  meterCount: number;
 }
 
-export interface DispatchToProps {
-  fetchCountWidget: CallbackWith<FetchWidgetIfNeeded>;
+interface DispatchToProps {
+  fetchCountWidget: CallbackWith<WidgetRequestParameters>;
 }
 
 type Props = OwnProps & StateToProps & DispatchToProps;
 
+const getMeterCount = (data: WidgetState, id: uuid): number => {
+  if (data[id] !== undefined && data[id].data !== undefined) {
+    return data[id].data || 0;
+  }
+  return 0;
+};
+
 const mapStateToProps = (
-  {domainModels: {userSelections}, widget: {data}}: RootState,
-  {settings: {settings: {selectionId}, id}}: OwnProps
+  {domainModels: {userSelections}, widget}: RootState,
+  {widget: {settings: {selectionId}, id}}: OwnProps
 ): StateToProps => {
   const userSelection = selectionId && userSelections.entities[selectionId];
 
@@ -51,15 +52,11 @@ const mapStateToProps = (
     ? userSelection.name
     : translate('all meters');
 
-  let meterCount;
-  if (data[id] !== undefined && data[id].data !== undefined) {
-    meterCount = data[id].data;
-  }
   return {
     isUserSelectionsSuccessfullyFetched: userSelections.isSuccessfullyFetched,
     title,
     parameters,
-    meterCount
+    meterCount: getMeterCount(widget, id)
   };
 };
 
@@ -74,10 +71,11 @@ interface CountContentProps {
 const CountContent = ({meterCount}: CountContentProps) => <Normal>{meterCount}</Normal>;
 
 const CountContentWidgetLoader = withWidgetLoader<CountContentProps>(CountContent);
+
 const CountWidget = ({
   isUserSelectionsSuccessfullyFetched,
   title,
-  settings,
+  widget,
   openConfiguration,
   parameters,
   onDelete,
@@ -86,11 +84,11 @@ const CountWidget = ({
 }: Props) => {
   React.useEffect(() => {
     if (isUserSelectionsSuccessfullyFetched) {
-      fetchCountWidget({settings, parameters});
+      fetchCountWidget({widget, parameters});
     }
-  }, [settings, parameters, isUserSelectionsSuccessfullyFetched]);
+  }, [widget, parameters, isUserSelectionsSuccessfullyFetched]);
 
-  const deleteWidget = () => onDelete(settings);
+  const deleteWidget = () => onDelete(widget);
   return (
     <WidgetWithTitle
       title={title}

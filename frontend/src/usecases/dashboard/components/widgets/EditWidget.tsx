@@ -9,13 +9,13 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {NormalizedState} from '../../../../state/domain-models/domainModels';
 import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
-import {WidgetSettings} from '../../../../state/widget/configuration/widgetConfigurationReducer';
+import {Widget} from '../../../../state/domain-models/widget/widgetModels';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../../types/Types';
 import './EditWidget.scss';
 
 const ALL_METERS = -1;
 
-const EditWidget = <T extends WidgetSettings>(props: Props<T>) => {
+const EditWidget = <T extends Widget>(props: Props<T>) => {
   const {
     userSelections,
     isOpen,
@@ -78,9 +78,9 @@ const EditWidget = <T extends WidgetSettings>(props: Props<T>) => {
   );
 };
 
-type Props<T extends WidgetSettings> = StateToProps & OwnProps<T>;
+type Props<T extends Widget> = StateToProps & OwnProps<T>;
 
-interface OwnProps<T extends WidgetSettings> {
+interface OwnProps<T extends Widget> {
   isOpen: boolean;
   onCancel: OnClick;
   onSave: CallbackWith<T>;

@@ -20,7 +20,7 @@ interface Props extends ClassNamed {
   containerStyle?: React.CSSProperties;
 }
 
-export const Widget = ({children, className, containerStyle}: Props) => (
+const Widget = ({children, className, containerStyle}: Props) => (
   <Card
     className={classNames('Widget', className)}
     style={cardStyle}

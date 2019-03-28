@@ -8,7 +8,7 @@ import {Medium, MeterDefinition, Quantity} from './meter-definitions/meterDefini
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
-import {Widget} from './widget/WidgetModels';
+import {Widget} from './widget/widgetModels';
 
 export interface ObjectsById<T extends Identifiable> {
   [id: string]: T;

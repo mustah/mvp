@@ -13,30 +13,27 @@ import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
 import {Dashboard} from '../../../state/domain-models/dashboard/dashboardModels';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
-import {Widget} from '../../../state/domain-models/widget/WidgetModels';
 import {
-  widgetHeighToPx,
+  CollectionStatusWidget,
+  MapWidget,
   WidgetMandatory,
-  widgetMargins,
-  WidgetSettings,
-  widgetSizeMap,
-  WidgetType,
-  widgetWidthToPx
-} from '../../../state/widget/configuration/widgetConfigurationReducer';
+  Widget,
+  WidgetType
+} from '../../../state/domain-models/widget/widgetModels';
+import {widgetHeightToPx, widgetMargins, widgetWidthToPx} from '../../../state/widget/widgetConfiguration';
 import {OnClick, RenderFunction, uuid} from '../../../types/Types';
-import {CollectionStatusContainer, CollectionStatusWidgetSettings} from '../containers/CollectionStatusContainer';
+import {CollectionStatusContainer} from '../containers/CollectionStatusContainer';
 import {CountWidgetContainer} from '../containers/CountWidgetContainer';
 import {EditCollectionStatusWidgetContainer} from '../containers/EditCollectionStatusWidgetContainer';
-import {MapWidgetContainer, MapWidgetSettings} from '../containers/MapWidgetContainer';
+import {MapWidgetContainer} from '../containers/MapWidgetContainer';
 import {DashboardProps} from '../dashboardEnhancers';
 import {AddNewWidgetButton} from './AddNewWidgetButton';
 import {EditWidgetContainer} from './widgets/EditWidget';
 import './widgets/Widget.scss';
 
-type ElementFromWidgetType = (settings: WidgetSettings['type']) => any;
+type ElementFromWidgetType = (widgets: Widget['type']) => any;
 
-const makeLayoutComparable = ({h, w, x, y}: Layout): Layout =>
-  ({h, w, x, y});
+const makeLayoutComparable = ({h, w, x, y}: Layout): Layout => ({h, w, x, y});
 
 const gridStyle: React.CSSProperties = {
   top: -24,
@@ -79,7 +76,11 @@ const newWidgetMenu =
       ];
     };
 
-const hasContent = (isDashboardFetching: boolean, dashboard?: Dashboard, widgets?: NormalizedState<Widget>): boolean =>
+const hasContent = (
+  isDashboardFetching: boolean,
+  dashboard?: Dashboard,
+  widgets?: NormalizedState<Widget>
+): boolean =>
   dashboard !== undefined
   && !isDashboardFetching
   && dashboard.layout !== undefined
@@ -87,7 +88,7 @@ const hasContent = (isDashboardFetching: boolean, dashboard?: Dashboard, widgets
   && widgets.isSuccessfullyFetched
   && !widgets.isFetching;
 
-const getDefaultCollectionWidget = (dashboardId: uuid): CollectionStatusWidgetSettings => ({
+const makeDefaultCollectionWidget = (dashboardId: uuid): CollectionStatusWidget => ({
   id: idGenerator.uuid().toString(),
   dashboardId,
   settings: {
@@ -98,14 +99,14 @@ const getDefaultCollectionWidget = (dashboardId: uuid): CollectionStatusWidgetSe
   type: WidgetType.COLLECTION,
 });
 
-const getDefaultMapWidget = (dashboardId: uuid): MapWidgetSettings => ({
+const makeDefaultMapWidget = (dashboardId: uuid): MapWidget => ({
   id: idGenerator.uuid().toString(),
   dashboardId,
   settings: {},
   type: WidgetType.MAP,
 });
 
-const getDefaultDashboard = (id: uuid, mapWidgetId: uuid, collectionWidgetId: uuid): Dashboard => {
+const makeDefaultDashboard = (id: uuid, mapWidgetId: uuid, collectionWidgetId: uuid): Dashboard => {
   const collectionProps = widgetSizeMap[WidgetType.COLLECTION];
   const mapProps = widgetSizeMap[WidgetType.MAP];
   return ({
@@ -119,9 +120,20 @@ const getDefaultDashboard = (id: uuid, mapWidgetId: uuid, collectionWidgetId: uu
   });
 };
 
+interface LayoutProps {
+  w: number;
+  h: number;
+}
+
+const widgetSizeMap: { [w in WidgetType]: LayoutProps } = {
+  [WidgetType.MAP]: {w: 5, h: 4},
+  [WidgetType.COLLECTION]: {w: 1, h: 1},
+  [WidgetType.COUNT]: {w: 1, h: 1},
+};
+
 const getDefaultWidgets = (
-  map: MapWidgetSettings,
-  collection: CollectionStatusWidgetSettings
+  map: MapWidget,
+  collection: CollectionStatusWidget
 ): NormalizedState<Widget> => ({
   isSuccessfullyFetched: true,
   isFetching: false,
@@ -145,10 +157,9 @@ const addToNextRow = (widgetSettings: WidgetMandatory, layout: Layout[]): Layout
     },
   ];
 
-const removeWidget = (widgetSettings: WidgetMandatory, layout: Layout[]): Layout[] =>
-  layout.filter((l) => l.i !== widgetSettings.id);
+const removeWidget = ({id}: WidgetMandatory, layout: Layout[]): Layout[] => layout.filter(it => it.i !== id);
 
-const defaultWidgetSettings = (dashboardId: uuid, type: WidgetType): WidgetSettings => {
+const defaultWidget = (dashboardId: uuid, type: WidgetType): Widget => {
   if (type === WidgetType.COLLECTION) {
     return {
       dashboardId,
@@ -197,10 +208,10 @@ export const NewDashboard = (props: DashboardProps) => {
 
   if (!dashboard && isSuccessfullyFetched && !isFetching) {
     dashboardId = idGenerator.uuid();
-    const map = getDefaultMapWidget(dashboardId);
-    const collection = getDefaultCollectionWidget(dashboardId);
+    const map = makeDefaultMapWidget(dashboardId);
+    const collection = makeDefaultCollectionWidget(dashboardId);
 
-    myDashboard = getDefaultDashboard(dashboardId, map.id, collection.id);
+    myDashboard = makeDefaultDashboard(dashboardId, map.id, collection.id);
     myWidgets = getDefaultWidgets(map, collection);
 
     myDashboard.widgets = [map, collection];
@@ -211,13 +222,11 @@ export const NewDashboard = (props: DashboardProps) => {
     myWidgets = widgets;
   }
 
-  const [widgetBeingEdited, editWidget] = React.useState<Maybe<WidgetSettings>>(Maybe.nothing());
+  const [widgetBeingEdited, editWidget] = React.useState<Maybe<Widget>>(Maybe.nothing());
 
   const closeConfigurationDialog = () => editWidget(Maybe.nothing());
 
-  const showConfigurationDialog =
-    (settings: WidgetSettings) =>
-      () => editWidget(Maybe.just(settings));
+  const showConfigurationDialog = (settings: Widget) => () => editWidget(Maybe.just(settings));
 
   const deleteWidgetConfiguration = (widgetSettings: WidgetMandatory) => {
     const newLayout: Layout[] = removeWidget(widgetSettings, layout);
@@ -228,39 +237,39 @@ export const NewDashboard = (props: DashboardProps) => {
   const renderWidget =
     (
       dashboardId: uuid,
-      settings: WidgetSettings,
-      openConfiguration: (settings: WidgetSettings) => OnClick,
+      widgets: Widget,
+      openConfiguration: (settings: Widget) => OnClick,
       width: number,
       height: number
     ) => {
-      if (settings.type === WidgetType.MAP) {
+      if (widgets.type === WidgetType.MAP) {
         return (
           <MapWidgetContainer
             width={widgetWidthToPx(width)}
-            height={widgetHeighToPx(height)}
-            settings={settings}
+            height={widgetHeightToPx(height)}
+            widget={widgets}
             onDelete={deleteWidgetConfiguration}
-            openConfiguration={openConfiguration(settings)}
+            openConfiguration={openConfiguration(widgets)}
           />
         );
       }
 
-      if (settings.type === WidgetType.COLLECTION) {
+      if (widgets.type === WidgetType.COLLECTION) {
         return (
           <CollectionStatusContainer
-            settings={settings}
+            widget={widgets}
             onDelete={deleteWidgetConfiguration}
-            openConfiguration={openConfiguration(settings)}
+            openConfiguration={openConfiguration(widgets)}
           />
         );
       }
 
-      if (settings.type === WidgetType.COUNT) {
+      if (widgets.type === WidgetType.COUNT) {
         return (
           <CountWidgetContainer
-            settings={settings}
+            widget={widgets}
             onDelete={deleteWidgetConfiguration}
-            openConfiguration={openConfiguration(settings)}
+            openConfiguration={openConfiguration(widgets)}
           />
         );
       }
@@ -268,16 +277,13 @@ export const NewDashboard = (props: DashboardProps) => {
       return null;
     };
 
-  const saveWidgetConfiguration = (widgetSettings: WidgetMandatory) => {
-    if (myWidgets.result.find(id => id === widgetSettings.id) === undefined) {
-      addWidgetToDashboard(widgetSettings);
-      const newLayout: Layout[] = addToNextRow(widgetSettings, layout);
-
-      updateDashboard({...myDashboard, layout: {layout: newLayout}});
+  const saveWidgetConfiguration = (widget: WidgetMandatory) => {
+    if (myWidgets.result.find(id => id === widget.id) === undefined) {
+      addWidgetToDashboard(widget);
+      updateDashboard({...myDashboard, layout: {layout: addToNextRow(widget, layout)}});
     } else {
-      updateWidget(widgetSettings);
+      updateWidget(widget);
     }
-
     closeConfigurationDialog();
   };
 
@@ -299,7 +305,7 @@ export const NewDashboard = (props: DashboardProps) => {
   }
 
   // TODO trigger fetching this when layout is non-empty (and widgetsettings is empty)
-  let widgetsWithSettings: {[key: string]: WidgetSettings} = {};
+  let widgetsWithSettings: {[key: string]: Widget} = {};
 
   // TODO handle empty
   if (hasContent(isFetching, myDashboard, myWidgets)) {
@@ -315,7 +321,7 @@ export const NewDashboard = (props: DashboardProps) => {
   }
 
   // TODO handle empty
-  // TODO filter widgets that do not exists in both 'layout' and 'myWidgets'
+  // TODO filter widget that do not exists in both 'layout' and 'myWidgets'
   let widgetsA;
   if (hasContent(isFetching, myDashboard, myWidgets)) {
     widgetsA = layout.map(
@@ -333,7 +339,7 @@ export const NewDashboard = (props: DashboardProps) => {
       settings => (
         <EditCollectionStatusWidgetContainer
           id={settings.id}
-          settings={settings as CollectionStatusWidgetSettings}
+          settings={settings as CollectionStatusWidget}
           dashboardId={dashboardId}
           isOpen={true}
           onCancel={closeConfigurationDialog}
@@ -349,7 +355,7 @@ export const NewDashboard = (props: DashboardProps) => {
       settings => (
         <EditWidgetContainer
           id={settings.id}
-          settings={settings as MapWidgetSettings}
+          settings={settings as MapWidget}
           dashboardId={dashboardId}
           isOpen={true}
           onCancel={closeConfigurationDialog}
@@ -359,10 +365,8 @@ export const NewDashboard = (props: DashboardProps) => {
     )
     .getOrElseNull();
 
-  const addNewWidget = newWidgetMenu((type: WidgetType) => {
-    const widgetSettings: WidgetSettings = defaultWidgetSettings(dashboardId, type);
-    editWidget(Maybe.just(widgetSettings));
-  });
+  const addNewWidget = newWidgetMenu((type: WidgetType) =>
+    editWidget(Maybe.just(defaultWidget(dashboardId, type))));
 
   return (
     <PageLayout>

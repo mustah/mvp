@@ -1,16 +1,16 @@
 import * as React from 'react';
 import {thresholdClassName} from '../../helpers/thresholds';
 import {firstUpperTranslated} from '../../services/translationService';
+import {CollectionPercentage} from '../../state/domain-models/widget/widgetModels';
 import {ClassNamed, WithChildren} from '../../types/Types';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Bold, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
-import {WidgetModel} from './indicatorWidgetModels';
 import classNames = require('classnames');
 
 export interface IndicatorWidgetProps extends ClassNamed, WithChildren {
-  widget: WidgetModel;
+  widget: CollectionPercentage;
   title: string;
 }
 

@@ -5,7 +5,7 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {ErrorResponse} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domainModelsActions';
-import {Widget} from './WidgetModels';
+import {Widget} from './widgetModels';
 import {widgetDataFormatter} from './widgetSchema';
 
 export const widgetClearError = clearError(EndPoints.widgets);
