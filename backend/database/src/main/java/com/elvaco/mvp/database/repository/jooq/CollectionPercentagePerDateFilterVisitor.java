@@ -55,10 +55,15 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
 
       condition = measurementStatsConditionFor(period)
         .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
-        .and(MEASUREMENT_STAT_DATA.QUANTITY.equal(dsl.select(MEASUREMENT_STAT_DATA.QUANTITY)
-          .from(MEASUREMENT_STAT_DATA)
-          .where(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-          .limit(1)))
+        .and(MEASUREMENT_STAT_DATA.QUANTITY.equal(
+          dsl.select(MEASUREMENT_STAT_DATA.QUANTITY)
+            .from(MEASUREMENT_STAT_DATA)
+            .where(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+            .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
+            .orderBy(MEASUREMENT_STAT_DATA.STAT_DATE)
+            .limit(1)
+          )
+        )
         .and(JooqUtils.periodOverlaps(PHYSICAL_METER.ACTIVE_PERIOD, period.toPeriodRange()))
         .and(PHYSICAL_METER.LOGICAL_METER_ID.eq(LOGICAL_METER.ID));
 
