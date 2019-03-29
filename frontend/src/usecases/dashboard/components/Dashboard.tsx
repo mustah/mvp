@@ -3,6 +3,7 @@ import * as React from 'react';
 import ReactGridLayout, {Layout} from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {Period} from '../../../components/dates/dateModels';
 import {PageLayout} from '../../../components/layouts/layout/PageLayout';
@@ -24,10 +25,10 @@ import {widgetHeightToPx, widgetMargins, widgetWidthToPx} from '../../../state/w
 import {OnClick, RenderFunction, uuid} from '../../../types/Types';
 import {CollectionStatusContainer} from '../containers/CollectionStatusContainer';
 import {CountWidgetContainer} from '../containers/CountWidgetContainer';
+import {DispatchToProps, StateToProps} from '../containers/DashboardContainer';
 import {EditCollectionStatusWidgetContainer} from '../containers/EditCollectionStatusWidgetContainer';
 import {EditWidgetContainer} from '../containers/EditWidgetContainer';
 import {MapWidgetContainer} from '../containers/MapWidgetContainer';
-import {DashboardProps} from '../dashboardEnhancers';
 import {AddNewWidgetButton} from './AddNewWidgetButton';
 import './Widget.scss';
 
@@ -188,17 +189,29 @@ const defaultWidget = (dashboardId: uuid, type: WidgetType): Widget => {
   }
 };
 
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+
 export const Dashboard = ({
+  addDashboard,
+  addWidgetToDashboard,
   dashboard,
+  deleteWidget,
+  fetchDashboard,
+  fetchWidgets,
   isFetching,
   isSuccessfullyFetched,
-  widgets,
-  addWidgetToDashboard,
+  parameters,
   updateWidget,
   updateDashboard,
-  addDashboard,
-  deleteWidget,
-}: DashboardProps) => {
+  widgets,
+}: Props) => {
+  React.useEffect(() => {
+    fetchDashboard();
+    if (dashboard && dashboard.layout) {
+      fetchWidgets(parameters);
+    }
+  }, [parameters, dashboard]);
+
   const [widgetBeingEdited, editWidget] = React.useState<Maybe<Widget>>(Maybe.nothing());
 
   let myDashboard;
@@ -363,14 +376,14 @@ export const Dashboard = ({
     )
     .getOrElseNull();
 
-  const addNewWidget = newWidgetMenu((type: WidgetType) =>
+  const onAddNewWidget = newWidgetMenu((type: WidgetType) =>
     editWidget(Maybe.just(defaultWidget(dashboardId, type))));
 
   return (
     <PageLayout>
       <Row className="space-between">
         <MainTitle>{translate('dashboard')}</MainTitle>
-        <AddNewWidgetButton renderPopoverContent={addNewWidget}/>
+        <AddNewWidgetButton renderPopoverContent={onAddNewWidget}/>
       </Row>
 
       <ReactGridLayout
