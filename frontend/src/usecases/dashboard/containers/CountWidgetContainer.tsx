@@ -14,7 +14,7 @@ import {allCurrentMeterParameters, getMeterParameters} from '../../../state/user
 import {fetchCountWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
 import {WidgetState} from '../../../state/widget/widgetReducer';
 import {Callback, CallbackWith, CallbackWithId, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
-import {WidgetWithTitle} from '../components/widgets/Widget';
+import {WidgetWithTitle} from '../components/Widget';
 
 interface OwnProps {
   widget: CountWidget;

@@ -22,7 +22,7 @@ import {getCollectionStatParameters} from '../../../state/user-selection/userSel
 import {fetchCollectionStatsWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
 import {WidgetData} from '../../../state/widget/widgetReducer';
 import {Callback, CallbackWith, CallbackWithId, EncodedUriParameters, OnClick} from '../../../types/Types';
-import {WidgetWithTitle} from '../components/widgets/Widget';
+import {WidgetWithTitle} from '../components/Widget';
 
 interface WidgetProps {
   widget: CountableWidgetModel;

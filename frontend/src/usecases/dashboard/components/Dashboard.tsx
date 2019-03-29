@@ -29,7 +29,7 @@ import {EditWidgetContainer} from '../containers/EditWidgetContainer';
 import {MapWidgetContainer} from '../containers/MapWidgetContainer';
 import {DashboardProps} from '../dashboardEnhancers';
 import {AddNewWidgetButton} from './AddNewWidgetButton';
-import './widgets/Widget.scss';
+import './Widget.scss';
 
 type ElementFromWidgetType = (widgets: Widget['type']) => any;
 

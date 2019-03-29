@@ -26,7 +26,7 @@ import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
 import {MapState} from '../../map/mapReducer';
-import {WidgetWithTitle} from '../components/widgets/Widget';
+import {WidgetWithTitle} from '../components/Widget';
 
 interface OwnProps {
   height: number;

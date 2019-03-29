@@ -13,7 +13,7 @@ import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {CollectionStatusWidget, WidgetType} from '../../../state/domain-models/widget/widgetModels';
 import {initialSelectionId, UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../types/Types';
-import '../components/widgets/EditWidget.scss';
+import '../components/EditWidget.scss';
 
 const EditCollectionStatusWidget = ({
   userSelections,

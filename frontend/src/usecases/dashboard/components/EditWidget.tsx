@@ -1,14 +1,14 @@
 import {cloneDeep} from 'lodash';
 import * as React from 'react';
-import {ButtonCancel, ButtonConfirm} from '../../../../components/buttons/DialogButtons';
-import {Dialog} from '../../../../components/dialog/Dialog';
-import {SelectFieldInput} from '../../../../components/inputs/InputSelectable';
-import {MainTitle} from '../../../../components/texts/Titles';
-import {firstUpperTranslated} from '../../../../services/translationService';
-import {Widget} from '../../../../state/domain-models/widget/widgetModels';
-import {initialSelectionId} from '../../../../state/user-selection/userSelectionModels';
-import {CallbackWith, IdNamed, OnClick, uuid} from '../../../../types/Types';
-import {StateToProps} from '../../containers/EditWidgetContainer';
+import {ButtonCancel, ButtonConfirm} from '../../../components/buttons/DialogButtons';
+import {Dialog} from '../../../components/dialog/Dialog';
+import {SelectFieldInput} from '../../../components/inputs/InputSelectable';
+import {MainTitle} from '../../../components/texts/Titles';
+import {firstUpperTranslated} from '../../../services/translationService';
+import {Widget} from '../../../state/domain-models/widget/widgetModels';
+import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
+import {CallbackWith, IdNamed, OnClick, uuid} from '../../../types/Types';
+import {StateToProps} from '../containers/EditWidgetContainer';
 import './EditWidget.scss';
 
 interface OwnProps<T extends Widget> {

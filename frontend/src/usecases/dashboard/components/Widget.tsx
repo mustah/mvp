@@ -1,19 +1,19 @@
 import {default as classNames} from 'classnames';
 import Card from 'material-ui/Card/Card';
-import Divider from 'material-ui/Divider';
+import Divider from 'material-ui/Divider/index';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
 import * as React from 'react';
-import {actionMenuItemIconStyle, cardStyle, dividerStyle, svgIconProps} from '../../../../app/themes';
-import {ActionMenuItem} from '../../../../components/actions-dropdown/ActionMenuItem';
-import {ActionsDropdown} from '../../../../components/actions-dropdown/ActionsDropdown';
-import {useConfirmDialog} from '../../../../components/dialog/confirmDialogHook';
-import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
-import {Column} from '../../../../components/layouts/column/Column';
-import {RowMiddle} from '../../../../components/layouts/row/Row';
-import {WidgetTitle} from '../../../../components/texts/Titles';
-import {translate} from '../../../../services/translationService';
-import {Callback, OnClick, RenderFunction, WithChildren} from '../../../../types/Types';
+import {actionMenuItemIconStyle, cardStyle, dividerStyle, svgIconProps} from '../../../app/themes';
+import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
+import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
+import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
+import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
+import {Column} from '../../../components/layouts/column/Column';
+import {RowMiddle} from '../../../components/layouts/row/Row';
+import {WidgetTitle} from '../../../components/texts/Titles';
+import {translate} from '../../../services/translationService';
+import {Callback, OnClick, RenderFunction, WithChildren} from '../../../types/Types';
 import './Widget.scss';
 
 interface Props extends WithChildren {
