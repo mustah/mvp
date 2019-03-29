@@ -23,7 +23,7 @@ def output_for(response, ms_limit):
 
     return (
         response.request.url,
-        ('OK' if status_ok else 'FAILED', response.status_code, str(actual_ms) + 'ms', str(ms_limit) + 'ms', len(json.loads(response.content))),
+        ('OK' if status_ok else 'FAILED', response.status_code, str(actual_ms) + 'ms', str(ms_limit) + 'ms', len(response.content)),
         status_ok
     )
 
@@ -45,7 +45,7 @@ def perform_requests(user, password, mvp_url):
 
     failures = 0
     output_format = '{0:<6}  {1:>9}  {2:>11}  {3:>11}  {4:>11}'
-    header = ('Status', 'HTTP code', 'Actual time', 'Time limit', 'JSON length')
+    header = ('Status', 'HTTP code', 'Actual time', 'Time limit', 'Content length')
     print("\n" + output_format.format(*header) + "\n")
 
     for path in fail_if_slower_than_ms:
