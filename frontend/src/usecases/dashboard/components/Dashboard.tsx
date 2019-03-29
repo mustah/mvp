@@ -11,7 +11,7 @@ import {MainTitle} from '../../../components/texts/Titles';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
-import {Dashboard} from '../../../state/domain-models/dashboard/dashboardModels';
+import {Dashboard as DashboardModel} from '../../../state/domain-models/dashboard/dashboardModels';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {
   CollectionStatusWidget,
@@ -78,7 +78,7 @@ const newWidgetMenu =
 
 const hasContent = (
   isDashboardFetching: boolean,
-  dashboard?: Dashboard,
+  dashboard?: DashboardModel,
   widgets?: NormalizedState<Widget>
 ): boolean =>
   dashboard !== undefined
@@ -106,7 +106,7 @@ const makeDefaultMapWidget = (dashboardId: uuid): MapWidget => ({
   type: WidgetType.MAP,
 });
 
-const makeDefaultDashboard = (id: uuid, mapWidgetId: uuid, collectionWidgetId: uuid): Dashboard => {
+const makeDefaultDashboard = (id: uuid, mapWidgetId: uuid, collectionWidgetId: uuid): DashboardModel => {
   const collectionProps = widgetSizeMap[WidgetType.COLLECTION];
   const mapProps = widgetSizeMap[WidgetType.MAP];
   return ({
@@ -188,18 +188,18 @@ const defaultWidget = (dashboardId: uuid, type: WidgetType): Widget => {
   }
 };
 
-export const NewDashboard = (props: DashboardProps) => {
-  const {
-    dashboard,
-    isFetching,
-    isSuccessfullyFetched,
-    widgets,
-    addWidgetToDashboard,
-    updateWidget,
-    updateDashboard,
-    addDashboard,
-    deleteWidget,
-  } = props;
+export const Dashboard = ({
+  dashboard,
+  isFetching,
+  isSuccessfullyFetched,
+  widgets,
+  addWidgetToDashboard,
+  updateWidget,
+  updateDashboard,
+  addDashboard,
+  deleteWidget,
+}: DashboardProps) => {
+  const [widgetBeingEdited, editWidget] = React.useState<Maybe<Widget>>(Maybe.nothing());
 
   let myDashboard;
   let myWidgets;
@@ -221,8 +221,6 @@ export const NewDashboard = (props: DashboardProps) => {
     myDashboard = dashboard;
     myWidgets = widgets;
   }
-
-  const [widgetBeingEdited, editWidget] = React.useState<Maybe<Widget>>(Maybe.nothing());
 
   const closeConfigurationDialog = () => editWidget(Maybe.nothing());
 

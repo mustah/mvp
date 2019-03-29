@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {addDashboard, fetchDashboard, updateDashboard} from '../../../state/domain-models/dashboard/dashboardActions';
-import {Dashboard} from '../../../state/domain-models/dashboard/dashboardModels';
+import {Dashboard as DashboardModel} from '../../../state/domain-models/dashboard/dashboardModels';
 import {
   addWidgetToDashboard,
   deleteWidget,
@@ -10,11 +10,11 @@ import {
   updateWidget
 } from '../../../state/domain-models/widget/widgetActions';
 import {EncodedUriParameters} from '../../../types/Types';
-import {NewDashboard} from '../components/NewDashboard';
-import {DashboardStateToProps, DispatchToProps, withNewDashboardDataFetchers} from '../dashboardEnhancers';
+import {Dashboard} from '../components/Dashboard';
+import {DashboardStateToProps, DispatchToProps, withDashboardDataFetchers} from '../dashboardEnhancers';
 
 const makeWidgetParametersOf =
-  (dashboard: Dashboard): EncodedUriParameters =>
+  (dashboard: DashboardModel): EncodedUriParameters =>
     'dashboardId=' + dashboard.id;
 
 const mapStateToProps =
@@ -42,7 +42,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteWidget,
 }, dispatch);
 
-export const NewDashboardContainer = connect<DashboardStateToProps, DispatchToProps>(
+export const DashboardContainer = connect<DashboardStateToProps, DispatchToProps>(
   mapStateToProps,
   mapDispatchToProps,
-)(withNewDashboardDataFetchers(NewDashboard));
+)(withDashboardDataFetchers(Dashboard));

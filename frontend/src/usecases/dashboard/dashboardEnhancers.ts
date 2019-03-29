@@ -27,7 +27,7 @@ export interface DispatchToProps {
 
 export type DashboardProps = DashboardStateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-export const withNewDashboardDataFetchers = lifecycle<DashboardProps, {}, {}>({
+export const withDashboardDataFetchers = lifecycle<DashboardProps, {}, {}>({
 
   componentDidMount() {
     const {fetchDashboard, fetchWidgets, parameters, dashboard} = this.props;
