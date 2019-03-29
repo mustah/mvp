@@ -1,3 +1,7 @@
-.Dialog.widget-edit {
-  max-width: 500px !important;
+@import "../../../../app/variables";
+
+.Dialog {
+  &.widget-edit {
+    max-width: 500px !important;
+  }
 }

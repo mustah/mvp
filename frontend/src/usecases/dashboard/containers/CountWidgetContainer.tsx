@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
-import {IndicatorWidgetProps, NumMetersIndicatorWidget} from '../../../components/indicators/IndicatorWidget';
+import {IndicatorWidgetProps, NumMetersIndicatorWidget} from '../components/IndicatorWidget';
 import {history} from '../../../index';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';

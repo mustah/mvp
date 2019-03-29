@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
-import {IndicatorWidget, IndicatorWidgetProps} from '../../../components/indicators/IndicatorWidget';
+import {IndicatorWidget, IndicatorWidgetProps} from '../components/IndicatorWidget';
 import {thresholdClassName} from '../../../helpers/thresholds';
 import {makeApiParametersOf} from '../../../helpers/urlFactory';
 import {history} from '../../../index';

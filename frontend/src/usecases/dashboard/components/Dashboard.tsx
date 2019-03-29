@@ -11,13 +11,13 @@ import {MainTitle} from '../../../components/texts/Titles';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
-import {Dashboard} from '../../../state/domain-models/dashboard/dashboardModels';
+import {Dashboard as DashboardModel} from '../../../state/domain-models/dashboard/dashboardModels';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {
   CollectionStatusWidget,
   MapWidget,
-  WidgetMandatory,
   Widget,
+  WidgetMandatory,
   WidgetType
 } from '../../../state/domain-models/widget/widgetModels';
 import {widgetHeightToPx, widgetMargins, widgetWidthToPx} from '../../../state/widget/widgetConfiguration';
@@ -25,10 +25,10 @@ import {OnClick, RenderFunction, uuid} from '../../../types/Types';
 import {CollectionStatusContainer} from '../containers/CollectionStatusContainer';
 import {CountWidgetContainer} from '../containers/CountWidgetContainer';
 import {EditCollectionStatusWidgetContainer} from '../containers/EditCollectionStatusWidgetContainer';
+import {EditWidgetContainer} from '../containers/EditWidgetContainer';
 import {MapWidgetContainer} from '../containers/MapWidgetContainer';
 import {DashboardProps} from '../dashboardEnhancers';
 import {AddNewWidgetButton} from './AddNewWidgetButton';
-import {EditWidgetContainer} from './widgets/EditWidget';
 import './widgets/Widget.scss';
 
 type ElementFromWidgetType = (widgets: Widget['type']) => any;
@@ -78,7 +78,7 @@ const newWidgetMenu =
 
 const hasContent = (
   isDashboardFetching: boolean,
-  dashboard?: Dashboard,
+  dashboard?: DashboardModel,
   widgets?: NormalizedState<Widget>
 ): boolean =>
   dashboard !== undefined
@@ -106,7 +106,7 @@ const makeDefaultMapWidget = (dashboardId: uuid): MapWidget => ({
   type: WidgetType.MAP,
 });
 
-const makeDefaultDashboard = (id: uuid, mapWidgetId: uuid, collectionWidgetId: uuid): Dashboard => {
+const makeDefaultDashboard = (id: uuid, mapWidgetId: uuid, collectionWidgetId: uuid): DashboardModel => {
   const collectionProps = widgetSizeMap[WidgetType.COLLECTION];
   const mapProps = widgetSizeMap[WidgetType.MAP];
   return ({
@@ -188,18 +188,18 @@ const defaultWidget = (dashboardId: uuid, type: WidgetType): Widget => {
   }
 };
 
-export const NewDashboard = (props: DashboardProps) => {
-  const {
-    dashboard,
-    isFetching,
-    isSuccessfullyFetched,
-    widgets,
-    addWidgetToDashboard,
-    updateWidget,
-    updateDashboard,
-    addDashboard,
-    deleteWidget,
-  } = props;
+export const Dashboard = ({
+  dashboard,
+  isFetching,
+  isSuccessfullyFetched,
+  widgets,
+  addWidgetToDashboard,
+  updateWidget,
+  updateDashboard,
+  addDashboard,
+  deleteWidget,
+}: DashboardProps) => {
+  const [widgetBeingEdited, editWidget] = React.useState<Maybe<Widget>>(Maybe.nothing());
 
   let myDashboard;
   let myWidgets;
@@ -221,8 +221,6 @@ export const NewDashboard = (props: DashboardProps) => {
     myDashboard = dashboard;
     myWidgets = widgets;
   }
-
-  const [widgetBeingEdited, editWidget] = React.useState<Maybe<Widget>>(Maybe.nothing());
 
   const closeConfigurationDialog = () => editWidget(Maybe.nothing());
 
@@ -355,7 +353,7 @@ export const NewDashboard = (props: DashboardProps) => {
       settings => (
         <EditWidgetContainer
           id={settings.id}
-          settings={settings as MapWidget}
+          widgets={settings as MapWidget}
           dashboardId={dashboardId}
           isOpen={true}
           onCancel={closeConfigurationDialog}
