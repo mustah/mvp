@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.testing.fixture.DefaultTestFixture;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
@@ -20,7 +21,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class LogicalMeterUseCasesTest {
+public class LogicalMeterUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void shouldFindOrganisationsMeterById() {
@@ -70,6 +71,19 @@ public class LogicalMeterUseCasesTest {
     );
 
     assertThat(useCases.findAllWithDetails(new MockRequestParameters())).hasSize(2);
+  }
+
+  @Test
+  public void shouldFindMetersAsSubOrganisationUser() {
+    var subOrganisation = subOrganisation().build();
+    var user = newUser().organisation(subOrganisation).build();
+    var meter = newMeter(randomUUID(), subOrganisation.parent.id);
+    LogicalMeterUseCases useCases = newUseCases(
+      new MockAuthenticatedUser(user, randomUUID().toString()),
+      asList(meter)
+    );
+
+    assertThat(useCases.findById(meter.id)).isPresent();
   }
 
   @Test
