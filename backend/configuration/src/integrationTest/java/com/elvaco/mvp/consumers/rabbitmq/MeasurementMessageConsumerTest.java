@@ -129,7 +129,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
     assertThat(measurementJpaRepository.findAll())
       .extracting(m -> m.getId().physicalMeter.address, m -> m.value)
-      .containsExactly(tuple("meterId-1", 1.0), tuple("meterId-2", 2.0));
+      .containsExactlyInAnyOrder(tuple("meterId-1", 1.0), tuple("meterId-2", 2.0));
   }
 
   @Transactional
