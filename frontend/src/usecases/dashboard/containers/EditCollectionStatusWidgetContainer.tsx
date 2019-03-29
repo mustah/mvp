@@ -11,11 +11,9 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {CollectionStatusWidget, WidgetType} from '../../../state/domain-models/widget/widgetModels';
-import {UserSelection} from '../../../state/user-selection/userSelectionModels';
+import {initialSelectionId, UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../types/Types';
 import '../components/widgets/EditWidget.scss';
-
-const allMeters = -1;
 
 const EditCollectionStatusWidget = ({
   userSelections,
@@ -28,7 +26,7 @@ const EditCollectionStatusWidget = ({
 }: EditCollectionStatusWidgetProps) => {
 
   const selectionOptions: IdNamed[] = [
-    {id: allMeters, name: firstUpperTranslated('all meters')},
+    {id: initialSelectionId, name: firstUpperTranslated('all meters')},
     ...userSelections.result.map(
       (id: uuid) => ({
         id,
@@ -62,7 +60,7 @@ const EditCollectionStatusWidget = ({
       dashboardId,
     };
 
-    if (selectionId !== allMeters) {
+    if (selectionId !== initialSelectionId) {
       widget.settings.selectionId = selectionId;
     }
 

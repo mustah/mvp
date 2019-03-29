@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {thresholdClassName} from '../../helpers/thresholds';
-import {firstUpperTranslated, translate} from '../../services/translationService';
-import {CountableWidgetModel} from '../../state/domain-models/widget/widgetModels';
-import {ClassNamed, WithChildren} from '../../types/Types';
-import {Column, ColumnCenter} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
-import {Bold, Large, Normal, Xlarge} from '../texts/Texts';
+import {thresholdClassName} from '../../../helpers/thresholds';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {CountableWidgetModel} from '../../../state/domain-models/widget/widgetModels';
+import {ClassNamed, WithChildren} from '../../../types/Types';
+import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
+import {Row} from '../../../components/layouts/row/Row';
+import {Bold, Large, Normal, Xlarge} from '../../../components/texts/Texts';
 import './IndicatorWidget.scss';
 import classNames = require('classnames');
 

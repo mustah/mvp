@@ -16,8 +16,8 @@ import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {
   CollectionStatusWidget,
   MapWidget,
-  WidgetMandatory,
   Widget,
+  WidgetMandatory,
   WidgetType
 } from '../../../state/domain-models/widget/widgetModels';
 import {widgetHeightToPx, widgetMargins, widgetWidthToPx} from '../../../state/widget/widgetConfiguration';
@@ -25,10 +25,10 @@ import {OnClick, RenderFunction, uuid} from '../../../types/Types';
 import {CollectionStatusContainer} from '../containers/CollectionStatusContainer';
 import {CountWidgetContainer} from '../containers/CountWidgetContainer';
 import {EditCollectionStatusWidgetContainer} from '../containers/EditCollectionStatusWidgetContainer';
+import {EditWidgetContainer} from '../containers/EditWidgetContainer';
 import {MapWidgetContainer} from '../containers/MapWidgetContainer';
 import {DashboardProps} from '../dashboardEnhancers';
 import {AddNewWidgetButton} from './AddNewWidgetButton';
-import {EditWidgetContainer} from './widgets/EditWidget';
 import './widgets/Widget.scss';
 
 type ElementFromWidgetType = (widgets: Widget['type']) => any;
@@ -355,7 +355,7 @@ export const NewDashboard = (props: DashboardProps) => {
       settings => (
         <EditWidgetContainer
           id={settings.id}
-          settings={settings as MapWidget}
+          widgets={settings as MapWidget}
           dashboardId={dashboardId}
           isOpen={true}
           onCancel={closeConfigurationDialog}
