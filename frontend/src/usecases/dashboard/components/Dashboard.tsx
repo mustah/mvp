@@ -245,57 +245,46 @@ export const Dashboard = ({
     deleteWidget(widgetSettings.id);
   };
 
-  const renderWidget =
-    (
-      dashboardId: uuid,
-      widgets: Widget,
-      openConfiguration: (settings: Widget) => OnClick,
-      width: number,
-      height: number
-    ) => {
-      if (widgets.type === WidgetType.MAP) {
-        return (
-          <MapWidgetContainer
-            width={widgetWidthToPx(width)}
-            height={widgetHeightToPx(height)}
-            widget={widgets}
-            onDelete={deleteWidgetConfiguration}
-            openConfiguration={openConfiguration(widgets)}
-          />
-        );
-      }
-
-      if (widgets.type === WidgetType.COLLECTION) {
-        return (
-          <CollectionStatusContainer
-            widget={widgets}
-            onDelete={deleteWidgetConfiguration}
-            openConfiguration={openConfiguration(widgets)}
-          />
-        );
-      }
-
-      if (widgets.type === WidgetType.COUNT) {
-        return (
-          <CountWidgetContainer
-            widget={widgets}
-            onDelete={deleteWidgetConfiguration}
-            openConfiguration={openConfiguration(widgets)}
-          />
-        );
-      }
-
-      return null;
-    };
-
-  const saveWidgetConfiguration = (widget: WidgetMandatory) => {
-    if (myWidgets.result.find(id => id === widget.id) === undefined) {
-      addWidgetToDashboard(widget);
-      updateDashboard({...myDashboard, layout: {layout: addToNextRow(widget, layout)}});
-    } else {
-      updateWidget(widget);
+  const renderWidget = (
+    dashboardId: uuid,
+    widgets: Widget,
+    openConfiguration: (settings: Widget) => OnClick,
+    width: number,
+    height: number
+  ) => {
+    if (widgets.type === WidgetType.MAP) {
+      return (
+        <MapWidgetContainer
+          width={widgetWidthToPx(width)}
+          height={widgetHeightToPx(height)}
+          widget={widgets}
+          onDelete={deleteWidgetConfiguration}
+          openConfiguration={openConfiguration(widgets)}
+        />
+      );
     }
-    closeConfigurationDialog();
+
+    if (widgets.type === WidgetType.COLLECTION) {
+      return (
+        <CollectionStatusContainer
+          widget={widgets}
+          onDelete={deleteWidgetConfiguration}
+          openConfiguration={openConfiguration(widgets)}
+        />
+      );
+    }
+
+    if (widgets.type === WidgetType.COUNT) {
+      return (
+        <CountWidgetContainer
+          widget={widgets}
+          onDelete={deleteWidgetConfiguration}
+          openConfiguration={openConfiguration(widgets)}
+        />
+      );
+    }
+
+    return null;
   };
 
   let layout: Layout[] = [];
@@ -308,6 +297,16 @@ export const Dashboard = ({
         && layouts.length > 0) {
       updateDashboard({...myDashboard, layout: {layout: layouts}});
     }
+  };
+
+  const saveWidgetConfiguration = (widget: WidgetMandatory) => {
+    if (myWidgets.result.find(id => id === widget.id) === undefined) {
+      addWidgetToDashboard(widget);
+      updateDashboard({...myDashboard, layout: {layout: addToNextRow(widget, layout)}});
+    } else {
+      updateWidget(widget);
+    }
+    closeConfigurationDialog();
   };
 
   // TODO handle empty dashboard
@@ -335,13 +334,11 @@ export const Dashboard = ({
   // TODO filter widget that do not exists in both 'layout' and 'myWidgets'
   let widgetsA;
   if (hasContent(isFetching, myDashboard, myWidgets)) {
-    widgetsA = layout.map(
-      ({i, w, h}) => (
-        <div key={i}>
-          {renderWidget(dashboardId, widgetsWithSettings[i as string], showConfigurationDialog, w, h)}
-        </div>
-      )
-    );
+    widgetsA = layout.map(({i, w, h}) => (
+      <div key={i}>
+        {renderWidget(dashboardId, widgetsWithSettings[i as string], showConfigurationDialog, w, h)}
+      </div>
+    ));
   }
 
   const editCollectionPercentageWidgetDialog = widgetBeingEdited
