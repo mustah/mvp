@@ -39,6 +39,7 @@ export interface RootState {
   language: LanguageState;
   map: MapState;
   measurement: MeasurementState;
+  meterDetail: MeterDetailState;
   paginatedDomainModels: PaginatedDomainModelsState;
   previousSession: PreviousSessionState;
   report: ReportState;
@@ -49,7 +50,6 @@ export interface RootState {
   ui: UiState;
   userSelection: UserSelectionState;
   widget: WidgetState;
-  meterDetail: MeterDetailState;
 }
 
 export type AppState = RootState | undefined;

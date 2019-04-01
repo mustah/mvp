@@ -2,7 +2,7 @@ import {Dispatch} from 'react-redux';
 import {GetState, RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {CallbackWithData, ErrorResponse, uuid} from '../../../types/Types';
+import {ErrorResponse, uuid} from '../../../types/Types';
 import {centerMap} from '../../../usecases/map/mapActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {showFailMessage} from '../../ui/message/messageActions';
@@ -10,18 +10,14 @@ import {fetchIfNeeded, postRequest, putRequest} from '../domainModelsActions';
 import {Dashboard} from './dashboardModels';
 import {dashboardDataFormatter} from './dashboardSchema';
 
-export const updateDashboard: CallbackWithData =
-  putRequest<Dashboard, Dashboard>(
-    EndPoints.dashboard,
-    {
-      afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
-        dispatch(showFailMessage(firstUpperTranslated(
-          'failed to update dashboard: {{error}}',
-          {error: message},
-        )));
-      },
-    }
-  );
+export const updateDashboard = putRequest<Dashboard, Dashboard>(EndPoints.dashboard, {
+  afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    dispatch(showFailMessage(firstUpperTranslated(
+      'failed to update dashboard: {{error}}',
+      {error: message},
+    )));
+  },
+});
 
 export const addDashboard = postRequest<Dashboard>(EndPoints.dashboard, {
   afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {

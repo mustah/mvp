@@ -248,17 +248,17 @@ export const widgets = reducerFor<Widget>(
 );
 
 export const domainModels = combineReducers<DomainModelsState>({
+  collectionStats,
+  dashboards,
   gatewayMapMarkers,
+  mediums,
   meters,
   meterDetailMeasurement,
   meterMapMarkers,
-  organisations,
   meterDefinitions,
+  organisations,
   quantities,
   userSelections,
   users,
-  collectionStats,
-  mediums,
-  dashboards,
   widgets,
 });

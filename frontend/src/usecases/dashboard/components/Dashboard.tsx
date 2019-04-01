@@ -83,8 +83,8 @@ const hasContent = (
   dashboard?: DashboardModel,
   widgets?: NormalizedState<Widget>
 ): boolean =>
-  dashboard !== undefined
-  && !isDashboardFetching
+  !isDashboardFetching
+  && dashboard !== undefined
   && dashboard.layout !== undefined
   && widgets !== undefined
   && widgets.isSuccessfullyFetched
@@ -238,8 +238,8 @@ export const Dashboard = ({
 
   const [widgetBeingEdited, editWidget] = React.useState<Maybe<Widget>>(Maybe.nothing());
 
-  let myDashboard;
-  let myWidgets;
+  let myDashboard: DashboardModel | undefined;
+  let myWidgets: NormalizedState<Widget>;
 
   let dashboardId: uuid = 'TODO hardcoded';
 
@@ -250,8 +250,6 @@ export const Dashboard = ({
 
     myDashboard = makeDefaultDashboard(dashboardId, map.id, collection.id);
     myWidgets = getDefaultWidgets(map, collection);
-
-    myDashboard.widgets = [map, collection];
 
     addDashboard(myDashboard);
   } else {
@@ -269,14 +267,14 @@ export const Dashboard = ({
   };
 
   let layout: Layout[] = [];
-  const onLayoutChange = (layouts: Layout[]) => {
+  const onLayoutChange = (layout: Layout[]) => {
     if (hasContent(isFetching, myDashboard, myWidgets)
         && !isEqual(
-        myDashboard.layout.layout.map(makeLayoutComparable).sort(),
-        layouts.map(makeLayoutComparable).sort()
+        myDashboard!.layout.layout.map(makeLayoutComparable).sort(),
+        layout.map(makeLayoutComparable).sort()
       )
-        && layouts.length > 0) {
-      updateDashboard({...myDashboard, layout: {layout: layouts}});
+        && layout.length > 0) {
+      updateDashboard({...myDashboard, layout: {layout}});
     }
   };
 
@@ -304,7 +302,7 @@ export const Dashboard = ({
   }
 
   if (hasContent(isFetching, myDashboard, myWidgets)) {
-    layout = myDashboard.layout.layout.map((widgetLayout: Layout) => ({
+    layout = myDashboard!.layout.layout.map((widgetLayout: Layout) => ({
       ...widgetLayout,
       isDraggable: true,
       isResizable: widgetsWithSettings[widgetLayout.i as string].type === WidgetType.MAP,
