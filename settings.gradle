@@ -1,7 +1,7 @@
 pluginManagement {
   repositories {
     maven {
-      url 'http://artifactory2.elvaco.local/artifactory/gradle-plugins'
+      url 'http://artifactory.elvaco.se/artifactory/gradle-plugins'
     }
     mavenCentral()
   }
