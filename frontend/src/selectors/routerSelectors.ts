@@ -1,6 +1,7 @@
 import {Location, Pathname} from 'history';
 import {RouterState} from 'react-router-redux';
 import {createSelector} from 'reselect';
+import {routes} from '../app/routes';
 
 const selectLocation = (state: RouterState): Location => state.location!;
 
@@ -16,7 +17,7 @@ export const isSelectionPage = createSelector<RouterState, string, boolean>(
 
 export const isMeterPage = createSelector<RouterState, string, boolean>(
   getPathname,
-  (pathname) => pathname.match(/\/meter$/) !== null,
+  (pathname) => pathname === routes.meters
 );
 
 export const isReportPage = createSelector<RouterState, string, boolean>(
