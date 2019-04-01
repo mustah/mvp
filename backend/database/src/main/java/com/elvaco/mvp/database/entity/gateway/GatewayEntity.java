@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
+import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 
 import lombok.NoArgsConstructor;
@@ -57,13 +58,17 @@ public class GatewayEntity extends IdentifiableType<EntityPk> {
   @NotAudited
   public Set<GatewayStatusLogEntity> statusLogs = new HashSet<>();
 
+  @Column(nullable = false)
+  public JsonField extraInfo;
+
   public GatewayEntity(
     EntityPk pk,
     String serial,
     String productModel,
     String ip,
     String phoneNumber,
-    Set<GatewayStatusLogEntity> statusLogs
+    Set<GatewayStatusLogEntity> statusLogs,
+    JsonField extraInfo
   ) {
     this.pk = pk;
     this.serial = serial;
@@ -72,6 +77,7 @@ public class GatewayEntity extends IdentifiableType<EntityPk> {
     this.phoneNumber = phoneNumber;
     this.meters = emptySet();
     this.statusLogs = unmodifiableSet(statusLogs);
+    this.extraInfo = extraInfo;
   }
 
   @Override

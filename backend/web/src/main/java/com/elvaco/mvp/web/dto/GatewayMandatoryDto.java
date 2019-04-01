@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.dto;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -22,4 +23,5 @@ public class GatewayMandatoryDto {
   public String statusChanged;
   public String ip;
   public String phoneNumber;
+  public JsonNode extraInfo;
 }

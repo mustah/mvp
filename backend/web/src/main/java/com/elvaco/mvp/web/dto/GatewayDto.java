@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.dto;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -24,9 +25,10 @@ public class GatewayDto extends GatewayMandatoryDto {
     String statusChanged,
     LocationDto location,
     List<UUID> meterIds,
-    UUID organisationId
+    UUID organisationId,
+    ObjectNode extraInfo
   ) {
-    super(id, productModel, serial, new IdNamedDto(status), statusChanged, null, null);
+    super(id, productModel, serial, new IdNamedDto(status), statusChanged, null, null, extraInfo);
     this.location = location;
     this.meterIds = meterIds;
     this.organisationId = organisationId;

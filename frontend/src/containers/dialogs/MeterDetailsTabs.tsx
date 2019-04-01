@@ -7,6 +7,7 @@ import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/with
 import {Row} from '../../components/layouts/row/Row';
 import {ColoredEvent, Status} from '../../components/status/Status';
 import '../../components/table/Table.scss';
+import './MeterDetailsTabs.scss';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
@@ -15,6 +16,7 @@ import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Maybe} from '../../helpers/Maybe';
+import {useForceUpdate} from '../../hooks/forceUpdateHook';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {EventLogType} from '../../state/domain-models-paginated/meter/meterModels';
@@ -69,16 +71,56 @@ const MapContent = ({meter, meterMapMarker}: MapProps) => (
   </MapComponent>
 );
 
-const GatewayContent = ({gateways}: MeterGatewayProps) => (
-  <Grid scrollable="none" data={gateways}>
-    <GridColumn field="serial" title={translate('gateway serial')} className="left-most" headerClassName="left-most"/>
-    <GridColumn field="productModel" title={translate('product model')}/>
-    <GridColumn field="ip" title={translate('ip')}/>
-    <GridColumn field="phoneNumber" title={translate('phone number')}/>
-    <GridColumn title={translate('collection')} cell={renderStatus}/>
-    <GridColumn title={translate('status change')} cell={renderStatusChange}/>
-  </Grid>
-);
+const ExtraInfo = (props) => {
+  const extraInfo = props.dataItem.extraInfo;
+  const rows = extraInfo && Object.keys(extraInfo).length && Object.keys(extraInfo)
+    .map(key =>
+      (
+        <tr key={key}>
+          <td key="key">{key}</td>
+          <td key="value">{extraInfo[key]}</td>
+        </tr>
+      )
+    );
+
+  const fallback = <p>{firstUpperTranslated('no additional data exists for this gateway')}</p>;
+
+  const content = rows
+    ? <table className="GatewayDetails">{rows}</table>
+    : fallback;
+
+  return (
+    <section>
+      {content}
+    </section>
+  );
+};
+
+const GatewayContent = ({gateways}: MeterGatewayProps) => {
+  const forceUpdate = useForceUpdate();
+
+  const onExpandChange = (ev) => {
+    ev.dataItem.expanded = !ev.dataItem.expanded;
+    forceUpdate(null);
+  };
+
+  return (
+    <Grid
+      scrollable="none"
+      data={gateways}
+      detail={ExtraInfo}
+      expandField="expanded"
+      onExpandChange={onExpandChange}
+    >
+      <GridColumn field="serial" title={translate('gateway serial')} className="left-most" headerClassName="left-most"/>
+      <GridColumn field="productModel" title={translate('product model')}/>
+      <GridColumn field="ip" title={translate('ip')}/>
+      <GridColumn field="phoneNumber" title={translate('phone number')}/>
+      <GridColumn title={translate('collection')} cell={renderStatus}/>
+      <GridColumn title={translate('status change')} cell={renderStatusChange}/>
+    </Grid>
+  );
+};
 
 export const initialMeterDetailsState: MeterDetailsState = {
   selectedTab: TabName.values,

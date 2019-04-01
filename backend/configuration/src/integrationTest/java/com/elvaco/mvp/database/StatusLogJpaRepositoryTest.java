@@ -8,6 +8,7 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.GatewayPk;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
+import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
@@ -72,7 +73,8 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
       "",
       "",
       "",
-      emptySet()
+      emptySet(),
+      new JsonField()
     ));
 
     ZonedDateTime start = ZonedDateTime.now();

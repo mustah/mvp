@@ -41,7 +41,8 @@ public class GatewayDtoMapper {
         .orElse(
           Location.UNKNOWN_LOCATION)),
       gateway.meterLocations.stream().map(meter -> meter.id).collect(toList()),
-      gateway.organisationId
+      gateway.organisationId,
+      null
     );
   }
 
@@ -64,7 +65,8 @@ public class GatewayDtoMapper {
         toGeoPosition(logicalMeter)
       ),
       connectedMeterIds(gateway),
-      gateway.organisationId
+      gateway.organisationId,
+      gateway.extraInfo.deepCopy()
     );
   }
 
@@ -78,6 +80,7 @@ public class GatewayDtoMapper {
       .statusChanged(formatUtc(gatewayStatusLog.start))
       .ip(gateway.ip)
       .phoneNumber(gateway.phoneNumber)
+      .extraInfo(gateway.extraInfo)
       .build();
   }
 
