@@ -7,7 +7,7 @@ buildscript {
     junitVersion = '4.13-beta-1'
     jooqVersion = '3.11.7'
     postgresqlVersion = '42.2.5'
-    elasticApmVersion = '1.1.0'
+    elasticApmVersion = '1.4.0'
     set('hibernate.version', '5.3.7.Final')
     set('jooq.version', "${jooqVersion}")
   }
