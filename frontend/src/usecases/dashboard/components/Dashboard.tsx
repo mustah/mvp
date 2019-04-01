@@ -9,6 +9,7 @@ import {Period} from '../../../components/dates/dateModels';
 import {PageLayout} from '../../../components/layouts/layout/PageLayout';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
+import {isDefined} from '../../../helpers/commonHelpers';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
@@ -85,8 +86,7 @@ const hasContent = (
   dashboard !== undefined
   && dashboard.layout !== undefined
   && widgets !== undefined
-  && widgets.isSuccessfullyFetched
-  && !widgets.isFetching;
+  && widgets.isSuccessfullyFetched;
 
 const makeDefaultCollectionWidget = (dashboardId: uuid): CollectionStatusWidget => ({
   id: idGenerator.uuid().toString(),
@@ -299,11 +299,13 @@ export const Dashboard = ({
   }
 
   if (hasContent(myDashboard, myWidgets)) {
-    layout = myDashboard!.layout.layout.map((widgetLayout: Layout) => ({
-      ...widgetLayout,
-      isDraggable: true,
-      isResizable: widgetsWithSettings[widgetLayout.i as string].type === WidgetType.MAP,
-    }));
+    layout = myDashboard!.layout.layout
+      .filter(layout => isDefined(widgetsWithSettings[layout.i as string]))
+      .map((layout: Layout) => ({
+        ...layout,
+        isDraggable: true,
+        isResizable: widgetsWithSettings[layout.i as string].type === WidgetType.MAP,
+      }));
   }
 
   // TODO handle empty
