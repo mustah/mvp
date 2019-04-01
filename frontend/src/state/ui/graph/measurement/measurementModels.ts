@@ -31,6 +31,7 @@ export interface MeasurementParameters {
   resolution: TemporalResolution;
   shouldComparePeriod: boolean;
   shouldShowAverage: boolean;
+  displayMode?: QuantityDisplayMode;
 }
 
 export type FetchMeasurements = (requestParameters: MeasurementParameters) => void;
@@ -101,9 +102,9 @@ export enum Quantity {
 
 export const quantities: Quantity[] = Object.keys(Quantity).map(it => Quantity[it]);
 
-enum QuantityDisplayMode {
-  meterValue = 1,
-  consumption
+export enum QuantityDisplayMode {
+  readout = 'readout',
+  consumption = 'consumption'
 }
 
 export const unitPerHour = (quantity: string | undefined, unit: string | undefined): string | undefined => {
@@ -119,15 +120,15 @@ export const quantityAttributes: { [q in Quantity]: QuantityAttributes } = {
   [Quantity.energy]: {unit: 'kWh', displayMode: QuantityDisplayMode.consumption},
   [Quantity.energyReturn]: {unit: 'kWh', displayMode: QuantityDisplayMode.consumption},
   [Quantity.energyReactive]: {unit: 'kWh', displayMode: QuantityDisplayMode.consumption},
-  [Quantity.externalTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.externalTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.readout},
   [Quantity.volume]: {unit: 'm³', displayMode: QuantityDisplayMode.consumption},
-  [Quantity.power]: {unit: 'W', displayMode: QuantityDisplayMode.meterValue},
-  [Quantity.flow]: {unit: 'm³/h', displayMode: QuantityDisplayMode.meterValue},
-  [Quantity.forwardTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.meterValue},
-  [Quantity.returnTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.meterValue},
-  [Quantity.temperature]: {unit: '°C', displayMode: QuantityDisplayMode.meterValue},
-  [Quantity.relativeHumidity]: {unit: '%', displayMode: QuantityDisplayMode.meterValue},
-  [Quantity.differenceTemperature]: {unit: 'K', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.power]: {unit: 'W', displayMode: QuantityDisplayMode.readout},
+  [Quantity.flow]: {unit: 'm³/h', displayMode: QuantityDisplayMode.readout},
+  [Quantity.forwardTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.readout},
+  [Quantity.returnTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.readout},
+  [Quantity.temperature]: {unit: '°C', displayMode: QuantityDisplayMode.readout},
+  [Quantity.relativeHumidity]: {unit: '%', displayMode: QuantityDisplayMode.readout},
+  [Quantity.differenceTemperature]: {unit: 'K', displayMode: QuantityDisplayMode.readout},
 };
 
 export const getDisplayModeText = (quantity: Quantity | string | undefined): string => {

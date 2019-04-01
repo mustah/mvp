@@ -15,7 +15,6 @@ import java.util.Queue;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
-import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
@@ -394,18 +393,15 @@ public class MeasurementRepository implements Measurements {
         .map(q -> q.name)
         .collect(toList()));
 
-    DisplayMode displayMode = DisplayMode.READOUT;
     OffsetDateTime stop = parameter.getTo().toOffsetDateTime();
 
     if (parameter.getQuantities().get(0).isConsumption()) {
       stop = stop.plus(1, parameter.getResolution().getTemporalUnit());
-      displayMode = DisplayMode.CONSUMPTION;
     }
 
     return query
       .innerJoin(DISPLAY_QUANTITY)
-      .on(METER_DEFINITION.ID.eq(DISPLAY_QUANTITY.METER_DEFINITION_ID)
-        .and(DISPLAY_QUANTITY.DISPLAY_MODE.eq(displayMode.ordinal())))
+      .on(METER_DEFINITION.ID.eq(DISPLAY_QUANTITY.METER_DEFINITION_ID))
       .innerJoin(QUANTITY)
       .on(DISPLAY_QUANTITY.QUANTITY_ID.eq(QUANTITY.ID).and(quantityCondition))
       .innerJoin(MEASUREMENT)

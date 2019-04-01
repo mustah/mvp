@@ -20,6 +20,7 @@ import com.elvaco.mvp.web.dto.MeasurementValueDto;
 
 import org.assertj.core.data.Offset;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -316,6 +317,65 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void fetchConsumtionMeasurementsAsReadouts() {
+    ZonedDateTime date = context().now();
+
+    LogicalMeter heatMeter = createMeterWithBothReadoutAndConsumtion(date);
+
+    List<MeasurementSeriesDto> contents =
+      getListAsSuperAdmin(
+        "/measurements?quantity=Energy:J:readout"
+          + "&logicalMeterId=" + heatMeter.id
+          + "&resolution=hour"
+          + "&after=" + date
+          + "&before=" + date.plusHours(1));
+
+    assertThat(contents).containsExactlyInAnyOrder(
+      new MeasurementSeriesDto(
+        heatMeter.id.toString(),
+        "Energy",
+        "J",
+        getExpecedLabel(heatMeter),
+        MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
+        asList(
+          new MeasurementValueDto(date.toInstant(), ENERGY_VALUE),
+          new MeasurementValueDto(date.plusHours(1).toInstant(), ENERGY_VALUE)
+        )
+      )
+    );
+  }
+
+  @Ignore
+  @Test
+  public void fetchConsumtionMeasurementsAsConsumption() {
+    ZonedDateTime date = context().now();
+
+    LogicalMeter heatMeter = createMeterWithBothReadoutAndConsumtion(date);
+
+    List<MeasurementSeriesDto> contents =
+      getListAsSuperAdmin(
+        "/measurements?quantity=Energy:J:consumption"
+          + "&logicalMeterId=" + heatMeter.id
+          + "&resolution=hour"
+          + "&after=" + date
+          + "&before=" + date.plusHours(1));
+
+    assertThat(contents).containsExactlyInAnyOrder(
+      new MeasurementSeriesDto(
+        heatMeter.id.toString(),
+        "Energy",
+        "J",
+        getExpecedLabel(heatMeter),
+        MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
+        asList(
+          new MeasurementValueDto(date.toInstant(), 0.0),
+          new MeasurementValueDto(date.plusHours(1).toInstant(), null)
+        )
+      )
+    );
+  }
+
+  @Test
   public void fetchMeasurementsUsesPreferredQuantityUnitsForAllMeters() {
     ZonedDateTime date = context().now();
 
@@ -574,6 +634,46 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "&logicalMeterId=" + logicalMeter.id, MeasurementSeriesDto.class).getBody();
 
     assertThat(response).hasSize(0);
+  }
+
+  public LogicalMeter createMeterWithBothReadoutAndConsumtion(ZonedDateTime date) {
+    MeterDefinition customMeterDefinition = new MeterDefinition(
+      666L,
+      context().superAdmin.organisation,
+      "sksksksk",
+      Medium.builder()
+        .id(666L)
+        .name(Medium.DISTRICT_HEATING).build(),
+      true,
+      Set.of(
+        new DisplayQuantity(
+          Quantity.ENERGY,
+          CONSUMPTION,
+          KILOWATT_HOURS
+        ), new DisplayQuantity(
+          Quantity.ENERGY,
+          READOUT,
+          KILOWATT_HOURS
+        ), new DisplayQuantity(
+          Quantity.DIFFERENCE_TEMPERATURE,
+          READOUT,
+          DEGREES_CELSIUS
+        )
+      )
+    );
+
+    customMeterDefinition = meterDefinitions.save(customMeterDefinition);
+
+    LogicalMeter heatMeter = given(logicalMeter()
+      .meterDefinition(customMeterDefinition));
+    given(
+      energyMeasurement(heatMeter, date),
+      energyMeasurement(heatMeter, date.plusHours(1)),
+      diffTempMeasurement(heatMeter, date),
+      diffTempMeasurement(heatMeter, date.plusHours(1))
+    );
+
+    return heatMeter;
   }
 
   private String getExpecedLabel(LogicalMeter meter) {

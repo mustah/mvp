@@ -28,7 +28,9 @@ import {
   MeasurementResponsePart,
   MeasurementsApiResponse,
   MeasurementState,
-  Quantity
+  Quantity,
+  quantityAttributes,
+  QuantityDisplayMode
 } from './measurementModels';
 
 export const measurementRequest = createAction('MEASUREMENT_REQUEST');
@@ -45,14 +47,18 @@ const measurementMeterUri = (
   dateRange: SelectionInterval,
   meterIds: uuid[],
   label: string,
-): EncodedUriParameters =>
-  encodeRequestParameters({
+  displayMode: QuantityDisplayMode,
+): EncodedUriParameters => {
+  const quantityWithParams = quantity + ':' + quantityAttributes[quantity].unit + ':' + displayMode;
+
+  return encodeRequestParameters({
     ...requestParametersFrom({dateRange}),
     label,
-    quantity,
+    quantity: quantityWithParams,
     resolution,
     logicalMeterId: meterIds.map(id => id.toString()),
   });
+};
 
 interface LabelItem {
   quantity: Quantity;
@@ -96,6 +102,7 @@ export const makeMeasurementMetersUriParameters = (
     dateRange,
     legendItems,
     resolution,
+    displayMode,
   }: MeasurementParameters,
   endpoint: EndPoints,
   labelFactory: (labelItem: LabelItem) => string,
@@ -115,7 +122,8 @@ export const makeMeasurementMetersUriParameters = (
         resolution,
         dateRange,
         quantityToIds[quantity],
-        labelFactory({type, quantity})
+        labelFactory({type, quantity}),
+        displayMode || quantityAttributes[quantity].displayMode,
       );
     })
     .map(parameters => makeUrl(endpoint, parameters));

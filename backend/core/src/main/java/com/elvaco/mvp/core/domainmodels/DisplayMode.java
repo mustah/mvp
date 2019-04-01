@@ -11,6 +11,17 @@ public enum DisplayMode {
     this.name = name;
   }
 
+  public static DisplayMode from(String name) {
+    switch (name) {
+      case "readout":
+        return READOUT;
+      case "consumption":
+        return CONSUMPTION;
+      default:
+        return UNKNOWN;
+    }
+  }
+
   public static DisplayMode from(Integer ordinal) {
     switch (ordinal) {
       case 1:

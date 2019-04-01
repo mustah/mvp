@@ -18,9 +18,27 @@ public class QuantityParameterTest {
   }
 
   @Test
+  public void quantityUnitAndDispplayModeAreParsedCorrectly() {
+    assertThat(QuantityParameter.of("Energy:kWh:readout")).isEqualTo(new QuantityParameter(
+      "Energy",
+      "kWh",
+      DisplayMode.READOUT
+    ));
+  }
+
+  @Test
+  public void parsingInvalidDisplayModeDefaultsToUnknown() {
+    assertThat(QuantityParameter.of("Energy:kWh:asdf")).isEqualTo(new QuantityParameter(
+      "Energy",
+      "kWh",
+      DisplayMode.UNKNOWN
+    ));
+  }
+
+  @Test
   public void parsingTooManyElementsThrowsException() {
-    assertThatThrownBy(() -> QuantityParameter.of("A:B:C"))
-      .hasMessageContaining("Invalid quantity/unit pair");
+    assertThatThrownBy(() -> QuantityParameter.of("A:B:C:D"))
+      .hasMessageContaining("Invalid quantity/unit pair/display mode");
   }
 
   @Test

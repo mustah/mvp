@@ -21,7 +21,7 @@ export const enum ParameterName {
   productModels = 'productModels',
   threshold = 'threshold',
   sort = 'sort',
-  query = 'w'
+  query = 'w',
 }
 
 export type SelectionItem = IdNamed | City | Address;

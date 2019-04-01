@@ -6,6 +6,7 @@ import {
   fetchMeasurementsForMeterDetails,
   measurementClearError
 } from '../../../../state/ui/graph/measurement/measurementActions';
+import {QuantityDisplayMode} from '../../../../state/ui/graph/measurement/measurementModels';
 import {fetchUserSelections} from '../../../../state/user-selection/userSelectionActions';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {getUserSelectionId} from '../../../../state/user-selection/userSelectionSelectors';
@@ -37,7 +38,10 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     hiddenLines,
     measurement: meterDetailMeasurement,
     parameters: '',
-    requestParameters: getMeasurementParameters({meter, timePeriod: period}),
+    requestParameters: {
+    ...getMeasurementParameters({meter, timePeriod: period}),
+    displayMode: QuantityDisplayMode.readout,
+    },
     userSelectionId: getUserSelectionId(rootState.userSelection),
     userSelections,
   };
