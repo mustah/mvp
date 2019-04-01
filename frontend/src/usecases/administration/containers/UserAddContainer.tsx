@@ -4,10 +4,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
+import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -23,7 +23,7 @@ import {Role} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
-import {ErrorResponse, Fetch, OnClick} from '../../../types/Types';
+import {ErrorResponse, Fetch, OnClick, OnClickEventHandler} from '../../../types/Types';
 import {getUser} from '../../auth/authSelectors';
 
 interface StateToProps {
@@ -35,7 +35,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  addUser: OnClick;
+  addUser: OnClickEventHandler;
   fetchOrganisations: Fetch;
   clearError: OnClick;
 }

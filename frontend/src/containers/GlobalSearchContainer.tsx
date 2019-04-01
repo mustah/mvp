@@ -2,13 +2,13 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {GlobalSearch} from '../components/search-box/GlobalSearch';
 import {RootState} from '../reducers/rootReducer';
-import {OnClick} from '../types/Types';
 import {clearValidationSearch, validationSearch} from '../state/search/searchActions';
 import {OnSearch, Query} from '../state/search/searchModels';
+import {OnClickWith} from '../types/Types';
 
 interface DispatchToProps {
   onSearch: OnSearch;
-  onClear: OnClick;
+  onClear: OnClickWith<string>;
 }
 
 export type GlobalSearchProps = Query & DispatchToProps;

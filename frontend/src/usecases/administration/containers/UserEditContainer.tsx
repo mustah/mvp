@@ -4,13 +4,13 @@ import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
-import {PasswordEditForm} from '../../../components/forms/PasswordEditForm';
+import {OnChangePassword, PasswordEditForm} from '../../../components/forms/PasswordEditForm';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
+import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -24,7 +24,7 @@ import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
-import {CallbackWithId, ClearError, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
+import {CallbackWithId, ClearError, ErrorResponse, Fetch, OnClickEventHandler, uuid} from '../../../types/Types';
 import {getUser} from '../../auth/authSelectors';
 
 interface StateToProps {
@@ -39,8 +39,8 @@ interface StateToProps {
 interface DispatchToProps {
   fetchUser: CallbackWithId;
   fetchOrganisations: Fetch;
-  modifyUser: OnClick;
-  changePassword: OnClick;
+  modifyUser: OnClickEventHandler;
+  changePassword: OnChangePassword;
   clearError: ClearError;
 }
 

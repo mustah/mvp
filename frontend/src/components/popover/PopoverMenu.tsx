@@ -3,7 +3,7 @@ import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
 import {popoverStyle} from '../../app/themes';
-import {Clickable, OnClick, RenderFunction} from '../../types/Types';
+import {ClickableEventHandler, OnClick, RenderFunction} from '../../types/Types';
 import {Row} from '../layouts/row/Row';
 import './PopoverMenu.scss';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
@@ -16,7 +16,7 @@ export interface IconProps extends React.CSSProperties {
 
 interface Props {
   renderPopoverContent: RenderFunction<OnClick>;
-  IconComponent: React.StatelessComponent<Clickable>;
+  IconComponent: React.StatelessComponent<ClickableEventHandler>;
   iconProps?: IconProps & (FlatButtonProps | SvgIconProps);
   onRequestClose?: OnClick;
   className?: string;

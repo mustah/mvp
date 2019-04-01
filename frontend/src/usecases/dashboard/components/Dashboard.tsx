@@ -23,12 +23,13 @@ import {
 } from '../../../state/domain-models/widget/widgetModels';
 import {widgetHeightToPx, widgetMargins, widgetWidthToPx} from '../../../state/widget/widgetConfiguration';
 import {OnClick, RenderFunction, uuid} from '../../../types/Types';
-import {CollectionStatusContainer} from '../containers/CollectionStatusContainer';
+import {CollectionStatusWidgetContainer} from '../containers/CollectionStatusWidgetContainer';
 import {CountWidgetContainer} from '../containers/CountWidgetContainer';
 import {DispatchToProps, StateToProps} from '../containers/DashboardContainer';
 import {EditCollectionStatusWidgetContainer} from '../containers/EditCollectionStatusWidgetContainer';
 import {EditWidgetContainer} from '../containers/EditWidgetContainer';
 import {MapWidgetContainer} from '../containers/MapWidgetContainer';
+import {WidgetDispatchers} from '../dashboardModels';
 import {AddNewWidgetButton} from './AddNewWidgetButton';
 import './Widget.scss';
 
@@ -189,6 +190,29 @@ const defaultWidget = (dashboardId: uuid, type: WidgetType): Widget => {
   }
 };
 
+const renderWidget = (
+  widget: Widget,
+  width: number,
+  height: number,
+  widgetDispatchers: WidgetDispatchers,
+) => {
+  if (widget.type === WidgetType.MAP) {
+    return (
+      <MapWidgetContainer
+        width={widgetWidthToPx(width)}
+        height={widgetHeightToPx(height)}
+        widget={widget}
+        {...widgetDispatchers}
+      />);
+  } else if (widget.type === WidgetType.COLLECTION) {
+    return <CollectionStatusWidgetContainer widget={widget} {...widgetDispatchers}/>;
+  } else if (widget.type === WidgetType.COUNT) {
+    return <CountWidgetContainer widget={widget} {...widgetDispatchers}/>;
+  } else {
+    return null;
+  }
+};
+
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 export const Dashboard = ({
@@ -237,54 +261,11 @@ export const Dashboard = ({
 
   const closeConfigurationDialog = () => editWidget(Maybe.nothing());
 
-  const showConfigurationDialog = (settings: Widget) => () => editWidget(Maybe.just(settings));
+  const onEdit = (widget: Widget) => editWidget(Maybe.just(widget));
 
-  const deleteWidgetConfiguration = (widgetSettings: WidgetMandatory) => {
-    const newLayout: Layout[] = removeWidget(widgetSettings, layout);
-    updateDashboard({...myDashboard, layout: {layout: newLayout}});
-    deleteWidget(widgetSettings.id);
-  };
-
-  const renderWidget = (
-    dashboardId: uuid,
-    widgets: Widget,
-    openConfiguration: (settings: Widget) => OnClick,
-    width: number,
-    height: number
-  ) => {
-    if (widgets.type === WidgetType.MAP) {
-      return (
-        <MapWidgetContainer
-          width={widgetWidthToPx(width)}
-          height={widgetHeightToPx(height)}
-          widget={widgets}
-          onDelete={deleteWidgetConfiguration}
-          openConfiguration={openConfiguration(widgets)}
-        />
-      );
-    }
-
-    if (widgets.type === WidgetType.COLLECTION) {
-      return (
-        <CollectionStatusContainer
-          widget={widgets}
-          onDelete={deleteWidgetConfiguration}
-          openConfiguration={openConfiguration(widgets)}
-        />
-      );
-    }
-
-    if (widgets.type === WidgetType.COUNT) {
-      return (
-        <CountWidgetContainer
-          widget={widgets}
-          onDelete={deleteWidgetConfiguration}
-          openConfiguration={openConfiguration(widgets)}
-        />
-      );
-    }
-
-    return null;
+  const onDelete = (widget: WidgetMandatory) => {
+    updateDashboard({...myDashboard, layout: {layout: removeWidget(widget, layout)}});
+    deleteWidget(widget.id);
   };
 
   let layout: Layout[] = [];
@@ -334,47 +315,41 @@ export const Dashboard = ({
   // TODO filter widget that do not exists in both 'layout' and 'myWidgets'
   let widgetsA;
   if (hasContent(isFetching, myDashboard, myWidgets)) {
+    const widgetDispatchers: WidgetDispatchers = {onDelete, onEdit};
     widgetsA = layout.map(({i, w, h}) => (
       <div key={i}>
-        {renderWidget(dashboardId, widgetsWithSettings[i as string], showConfigurationDialog, w, h)}
+        {renderWidget(widgetsWithSettings[i as string], w, h, widgetDispatchers)}
       </div>
     ));
   }
 
   const editCollectionPercentageWidgetDialog = widgetBeingEdited
     .filter(({type}) => type === WidgetType.COLLECTION)
-    .map(
-      settings => (
-        <EditCollectionStatusWidgetContainer
-          id={settings.id}
-          settings={settings as CollectionStatusWidget}
-          dashboardId={dashboardId}
-          isOpen={true}
-          onCancel={closeConfigurationDialog}
-          onSave={saveWidgetConfiguration}
-        />
-      )
-    )
+    .map(settings => (
+      <EditCollectionStatusWidgetContainer
+        id={settings.id}
+        settings={settings as CollectionStatusWidget}
+        dashboardId={dashboardId}
+        isOpen={true}
+        onCancel={closeConfigurationDialog}
+        onSave={saveWidgetConfiguration}
+      />))
     .getOrElseNull();
 
   const editWidgetDialog = widgetBeingEdited
     .filter(({type}) => type === WidgetType.MAP || type === WidgetType.COUNT)
-    .map(
-      settings => (
-        <EditWidgetContainer
-          id={settings.id}
-          widgets={settings as MapWidget}
-          dashboardId={dashboardId}
-          isOpen={true}
-          onCancel={closeConfigurationDialog}
-          onSave={saveWidgetConfiguration}
-        />
-      )
-    )
+    .map(settings => (
+      <EditWidgetContainer
+        id={settings.id}
+        widgets={settings as MapWidget}
+        dashboardId={dashboardId}
+        isOpen={true}
+        onCancel={closeConfigurationDialog}
+        onSave={saveWidgetConfiguration}
+      />))
     .getOrElseNull();
 
-  const onAddNewWidget = newWidgetMenu((type: WidgetType) =>
-    editWidget(Maybe.just(defaultWidget(dashboardId, type))));
+  const onAddNewWidget = newWidgetMenu((type: WidgetType) => editWidget(Maybe.just(defaultWidget(dashboardId, type))));
 
   return (
     <PageLayout>

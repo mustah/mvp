@@ -14,7 +14,7 @@ import {DomainModel, RequestsHttp} from '../../../state/domain-models/domainMode
 import {getErrorCalle} from '../../../state/domain-models/domainModelsSelectors';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
-import {MapWidget, WidgetMandatory} from '../../../state/domain-models/widget/widgetModels';
+import {MapWidget} from '../../../state/domain-models/widget/widgetModels';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {fetchMapWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
 import {WidgetData} from '../../../state/widget/widgetReducer';
@@ -27,13 +27,12 @@ import {clearErrorMeterMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
 import {MapState} from '../../map/mapReducer';
 import {WidgetWithTitle} from '../components/Widget';
+import {WidgetDispatchers} from '../dashboardModels';
 
-interface OwnProps {
+interface OwnProps extends WidgetDispatchers {
   height: number;
   width: number;
   widget: MapWidget;
-  openConfiguration: OnClick;
-  onDelete: CallbackWith<WidgetMandatory>;
 }
 
 interface MapContentProps {
@@ -93,7 +92,7 @@ const MapWidget = (props: Props) => {
     viewCenter,
     isUserSelectionsSuccessfullyFetched,
     fetchMapWidget,
-    openConfiguration,
+    onEdit,
     widget,
     parameters,
     onDelete,
@@ -131,15 +130,16 @@ const MapWidget = (props: Props) => {
     width,
   };
 
-  const onClickDeleteWidget = () => onDelete(widget);
+  const onDeleteWidget = () => onDelete(widget);
+  const onEditWidget = () => onEdit(widget);
 
   return (
     <WidgetWithTitle
-      title={title}
-      configure={openConfiguration}
       containerStyle={{paddingBottom: 0}}
-      deleteWidget={onClickDeleteWidget}
+      deleteWidget={onDeleteWidget}
+      editWidget={onEditWidget}
       headerClassName="map"
+      title={title}
     >
       <Column style={{width, height}} className="MapWrapper">
         <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>

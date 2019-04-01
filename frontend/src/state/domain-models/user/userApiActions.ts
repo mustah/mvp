@@ -75,8 +75,7 @@ export const modifyProfile = putRequest<User, User>(EndPoints.users, {
   },
 });
 
-export const changePassword = putRequestToUrl<Authorized, Password, uuid>
-(EndPoints.changePassword, {
+export const changePassword = putRequestToUrl<Authorized, Password, uuid>(EndPoints.changePassword, {
     afterSuccess: (authorized: Authorized, dispatch: Dispatch<RootState>) => {
       const {user, token} = authorized;
 

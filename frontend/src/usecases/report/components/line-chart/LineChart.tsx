@@ -19,7 +19,7 @@ import {ColumnCenter} from '../../../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../../../components/timestamp-info-message/TimestampInfoMessage';
 import {shortTimestamp} from '../../../../helpers/dateHelpers';
 import {useResizeWindow} from '../../../../hooks/resizeWindowHook';
-import {Children, OnClick, uuid} from '../../../../types/Types';
+import {Children, OnClickEventHandler, uuid} from '../../../../types/Types';
 import {AxesProps, LineProps} from '../../reportModels';
 import {ActiveDotReChartProps} from './ActiveDot';
 import {GraphContentProps} from './LineChart';
@@ -42,8 +42,8 @@ export interface GraphContentProps {
   data?: object[];
   key: string;
   legend: LegendPayload[];
-  legendClick: OnClick;
-  setTooltipPayload: OnClick;
+  legendClick: OnClickEventHandler;
+  setTooltipPayload: OnClickEventHandler;
 }
 
 const renderLines = ({lines, hiddenKeys, outerHiddenKeys, renderDot, renderActiveDot}: LinesProps): Children[] =>
@@ -84,7 +84,7 @@ export const LineChart =
 
     return (
       <ColumnCenter className="align-items" style={{height: height - 260}} key={`${key}-${resized}`}>
-        <ResponsiveContainer width="95%" height="99%" >
+        <ResponsiveContainer width="95%" height="99%">
           <ReChartLineChart
             width={10}
             height={50}

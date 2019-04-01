@@ -26,7 +26,7 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-const MvpApp = ({isSideMenuOpen, isReportPage, toggleShowHideSideMenu}: Props) => (
+const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
   <Row>
     <SideMenuContainer className={classNames({isSideMenuOpen})}>
       <MvpMainMenuItemsContainer/>

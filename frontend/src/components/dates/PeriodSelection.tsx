@@ -38,31 +38,31 @@ export class PeriodSelection extends React.Component<Props, State> {
         value: Period.latest,
         label: firstUpperTranslated('last 24h'),
         primaryText: translate('last 24h'),
-        onClick: (event) => this.onSelectPeriod(event, Period.latest),
+        onClick: () => this.onSelectPeriod(Period.latest),
       },
       {
         value: Period.currentWeek,
         label: prettyRange({period: Period.currentWeek, customDateRange}),
         primaryText: translate('current week'),
-        onClick: (event) => this.onSelectPeriod(event, Period.currentWeek),
+        onClick: () => this.onSelectPeriod(Period.currentWeek),
       },
       {
         value: Period.previous7Days,
         label: prettyRange({period: Period.previous7Days, customDateRange}),
         primaryText: translate('last 7 days'),
-        onClick: (event) => this.onSelectPeriod(event, Period.previous7Days),
+        onClick: () => this.onSelectPeriod(Period.previous7Days),
       },
       {
         value: Period.currentMonth,
         label: prettyRange({period: Period.currentMonth, customDateRange}),
         primaryText: translate('current month'),
-        onClick: (event) => this.onSelectPeriod(event, Period.currentMonth),
+        onClick: () => this.onSelectPeriod(Period.currentMonth),
       },
       {
         value: Period.previousMonth,
         label: prettyRange({period: Period.previousMonth, customDateRange}),
         primaryText: translate('previous month'),
-        onClick: (event) => this.onSelectPeriod(event, Period.previousMonth),
+        onClick: () => this.onSelectPeriod(Period.previousMonth),
       },
       {
         hasDivider: true,
@@ -106,5 +106,5 @@ export class PeriodSelection extends React.Component<Props, State> {
     this.props.setCustomDateRange(dateRange);
   }
 
-  onSelectPeriod = (event, period: Period) => this.props.selectPeriod(period);
+  onSelectPeriod = (period: Period) => this.props.selectPeriod(period);
 }
