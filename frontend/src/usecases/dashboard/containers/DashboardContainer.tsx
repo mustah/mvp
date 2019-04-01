@@ -14,6 +14,7 @@ import {Widget} from '../../../state/domain-models/widget/widgetModels';
 import {CallbackWithData, EncodedUriParameters, Fetch} from '../../../types/Types';
 import {MapMarker} from '../../map/mapModels';
 import {Dashboard} from '../components/Dashboard';
+import {makeWidgetParametersOf} from '../dashboardSelectors';
 
 export interface StateToProps {
   widgets: NormalizedState<Widget>;
@@ -34,23 +35,24 @@ export interface DispatchToProps {
   deleteWidget: CallbackWithData;
 }
 
-const makeWidgetParametersOf =
-  (dashboard: DashboardModel): EncodedUriParameters => `dashboardId=${dashboard.id}`;
-
 const mapStateToProps =
   ({
     domainModels: {
-      meterMapMarkers, dashboards: {result, entities, isFetching, isSuccessfullyFetched}, widgets
+      meterMapMarkers,
+      dashboards: {result, entities, isFetching, isSuccessfullyFetched},
+      widgets
     },
-  }: RootState): StateToProps =>
-    ({
+  }: RootState): StateToProps => {
+    const dashboard = entities[result[0]];
+    return ({
       widgets,
-      dashboard: entities[result[0]],
+      dashboard,
       meterMapMarkers,
       isFetching,
       isSuccessfullyFetched,
-      parameters: entities[result[0]] && makeWidgetParametersOf(entities[result[0]]),
+      parameters: makeWidgetParametersOf(dashboard),
     });
+  };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,

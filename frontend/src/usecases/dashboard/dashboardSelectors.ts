@@ -1,9 +1,13 @@
+import {Dashboard as DashboardModel} from '../../state/domain-models/dashboard/dashboardModels';
 import {WidgetState} from '../../state/widget/widgetReducer';
-import {uuid} from '../../types/Types';
+import {EncodedUriParameters, uuid} from '../../types/Types';
 
-export const getMeterCount = (data: WidgetState, id: uuid): number => {
-  if (data[id] !== undefined && data[id].data !== undefined) {
-    return data[id].data || 0;
+export const getMeterCount = (state: WidgetState, id: uuid): number => {
+  if (state[id] !== undefined && state[id].data !== undefined) {
+    return state[id].data || 0;
   }
   return 0;
 };
+
+export const makeWidgetParametersOf = (dashboard: DashboardModel): EncodedUriParameters =>
+  dashboard ? `dashboardId=${dashboard.id}` : '';
