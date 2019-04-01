@@ -86,6 +86,17 @@ docker:test-upgrade:
     - docker build -t $DOCKER_REGISTRY_URL/test-upgrade:latest -f docker/Dockerfile-test-upgrade .
     - docker push $DOCKER_REGISTRY_URL/test-upgrade:latest
 
+docker:acceptance-test:
+  <<: *no_cache
+  stage: docker
+  dependencies: []
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/acceptance-test:latest -f docker/Dockerfile-acceptance-test .
+    - docker push $DOCKER_REGISTRY_URL/acceptance-test:latest
+
 docker:ci-utils:
   <<: *no_cache
   stage: docker
@@ -157,6 +168,7 @@ build:
       - backend/*/build/classes
       - backend/*/build/generated
       - acceptance_tests/build/libs/*.jar
+      - acceptance_tests/build/classes/*
 
 
 pre-test:docker-mvp-app:
@@ -200,6 +212,38 @@ pre-test:docker-geoservice-app:
     - docker build --build-arg APM_VERSION=$APM_VERSION --build-arg APM_SERVER=$APM_SERVER --build-arg GEOSERVICE_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile-geoservice .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
     - docker push ${DOCKER_IMAGE_NAME}
+
+test:acceptance:
+  image: $DOCKER_REGISTRY_URL/acceptance-test:latest
+  stage: test
+  dependencies:
+    - build
+  after_script:
+    - docker-compose down -v
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+  script:
+    - docker-compose up -d application postgresql google-chrome
+    - source ./scripts/docker-check-startup && check_application_startup application
+    - docker ps -a
+    - docker inspect mvp_google-chrome_1
+    - ./gradlew -Pno-docker cucumber
+  services:
+    - name: docker:dind
+      alias: docker-host
+  artifacts:
+    name: "${CI_COMMIT_REF_NAME}-cucumber"
+    when: always
+    paths:
+      - acceptance_tests/target/cucumber
+    expire_in: 2 days
+  variables:
+    DOCKER_DRIVER: overlay2
+    MVP_TAG: ${CI_COMMIT_REF_NAME}
+    MVP_SERVER: "http://docker-host"
+    MVP_WEB_SERVER: "http://application"
+    CHROME_URL: "http://docker-host:5555/wd/hub"
+    MVP_WEB_PORT: 8080
 
 test:system:
   <<: *cache_gradle_read_only

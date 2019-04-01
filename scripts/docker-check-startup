@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# Values in seconds
+MAX_WAIT_FOR_MVP_APPLICATION=120
+MAX_WAIT_FOR_AMQP_MESSAGES=120
+
+function check_application_startup () {
+	APPLICATION=$1
+	slept=0
+	containerId=$(docker ps|grep "mvp_${APPLICATION}_1"| awk '{ print $1 }')
+
+	while [ -z ${containerId} ]; do
+		slept=$((slept+1))
+		if [ $slept -gt $MAX_WAIT_FOR_MVP_APPLICATION ]; then
+			docker ps -a
+			echo ":: Bailing out after $MAX_WAIT_FOR_MVP_APPLICATION seconds.."
+			exit 1
+		fi
+		echo "Try: ${slept}, No container name mvp_${APPLICATION}_1 yet, sleeping for 1 second"
+		sleep 1
+		containerId=$(docker ps|grep mvp_${APPLICATION}_1| awk '{ print $1 }')
+	done
+
+	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' ${containerId})
+	status=$(docker inspect --format='{{.State.Status}}' ${containerId})
+	while [[ "$healthStatus" = 'starting' || "$healthStatus" = 'unhealthy' ]] && [[ "$status" != 'exited' ]]; do
+		slept=$((slept+1))
+		echo -n "."
+		if [ $slept -gt $MAX_WAIT_FOR_MVP_APPLICATION ]; then
+			echo ""
+			docker logs ${containerId}
+			docker inspect ${containerId}
+			echo ":: Bailing out after $MAX_WAIT_FOR_MVP_APPLICATION seconds.."
+			exit 1
+		fi
+		sleep 1
+		healthStatus=$(docker inspect --format='{{.State.Health.Status}}' ${containerId})
+		status=$(docker inspect --format='{{.State.Status}}' ${containerId})
+	done
+	docker logs ${containerId}
+	docker inspect ${containerId}
+	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' ${containerId})
+	test "${healthStatus}" = 'healthy' || (echo ${healthStatus} && exit 1)
+}
+
