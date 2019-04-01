@@ -97,7 +97,7 @@ const CountWidget = ({
   const widgetModel: CountableWidgetModel = {count: meterCount};
 
   const selectSelection: Callback = () => {
-    history.push(routes.meter);
+    history.push(routes.meters);
     if (widget.settings.selectionId === initialSelectionId) {
       resetSelection();
     } else {

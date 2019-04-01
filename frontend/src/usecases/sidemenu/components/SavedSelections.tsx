@@ -58,7 +58,7 @@ const ListItems = ({
 
     const onSelect: Callback = () => {
       if (!isMeterPage) {
-        history.push(routes.meter);
+        history.push(routes.meters);
       }
       if (id === initialSelectionId) {
         resetSelection();
