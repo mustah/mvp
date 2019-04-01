@@ -22,6 +22,7 @@ ENV JAVA_OPTS="$JAVA_OPTS -Delastic.apm.service_name=EvoMvp"
 ENV JAVA_OPTS="$JAVA_OPTS -Delastic.apm.service_version=$MVP_APPVER"
 ENV JAVA_OPTS="$JAVA_OPTS -Delastic.apm.application_packages=com.elvaco"
 ENV JAVA_OPTS="$JAVA_OPTS -Delastic.apm.server_urls=http://$APM_SERVER"
+USER mvp:mvp
 WORKDIR /app
 HEALTHCHECK CMD curl -v --fail http://localhost:8080/ || exit 1
 CMD ["/app/bin/mvp"]
