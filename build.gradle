@@ -30,7 +30,7 @@ allprojects {
 
   repositories {
     maven {
-      url 'http://artifactory2.elvaco.local/artifactory/jcenter'
+      url 'http://artifactory.elvaco.se/artifactory/jcenter'
     }
     mavenCentral()
   }
