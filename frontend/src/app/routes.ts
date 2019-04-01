@@ -11,6 +11,7 @@ export const routes = {
   home: '/',
   login: '/login',
   meter: '/meter',
+  meters: '/meters',
   mp: '/mp',
   report: '/report',
   validation: '/validation',
@@ -31,6 +32,9 @@ export const routes = {
 
 const searchResultRegExp = new RegExp(`${routes.searchResult}.*`);
 export const isOnSearchPage = ({pathname}: Location): boolean => pathname.match(searchResultRegExp) !== null;
+
+const meterDetailsRegExp = new RegExp(`${routes.meter}/`);
+export const isOnMeterDetailsPage = (pathName: string): boolean => pathName.match(meterDetailsRegExp) !== null;
 
 const organisationLogo = {
   'wayne-industries': wayneIndustries,

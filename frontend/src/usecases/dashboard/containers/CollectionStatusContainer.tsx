@@ -82,7 +82,7 @@ const CollectionStatus = (props: Props) => {
     } else {
       resetSelection();
     }
-    history.push(routes.meter);
+    history.push(routes.meters);
   };
 
   return (

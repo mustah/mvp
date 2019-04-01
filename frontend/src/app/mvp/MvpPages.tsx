@@ -13,7 +13,7 @@ export const MvpPages = () => (
   <Switch>
     <Route exact={true} path={routes.home} component={DashboardContainer}/>
     <Route exact={true} path={routes.dashboard} component={DashboardContainer}/>
-    <Route exact={true} path={routes.meter} component={MetersPage}/>
+    <Route exact={true} path={routes.meters} component={MetersPage}/>
     <Route exact={true} path={`${routes.meter}/:id?`} component={MeterDetailsPage}/>
     <Route exact={true} path={`${routes.meter}/:id?/:collectionPeriod?`} component={MeterDetailsPage}/>
     <Route exact={true} path={`${routes.report}/:id?`} component={ReportPage}/>

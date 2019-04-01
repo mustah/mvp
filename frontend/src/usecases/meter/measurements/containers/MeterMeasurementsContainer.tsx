@@ -14,7 +14,7 @@ import {Measurements} from '../../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../../report/containers/MeasurementsContainer';
 import {addAllToReport} from '../../../report/reportActions';
 import {meterDetailExportToExcelSuccess} from '../meterDetailMeasurementActions';
-import {getMeasurementParameters, hasMeasurementValues} from '../meterMeasurementsSelectors';
+import {getMeasurementParameters, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
 
 export interface OwnProps {
   meter: MeterDetails;
