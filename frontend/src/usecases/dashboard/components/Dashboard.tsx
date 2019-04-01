@@ -79,12 +79,10 @@ const newWidgetMenu =
     };
 
 const hasContent = (
-  isDashboardFetching: boolean,
   dashboard?: DashboardModel,
   widgets?: NormalizedState<Widget>
 ): boolean =>
-  !isDashboardFetching
-  && dashboard !== undefined
+  dashboard !== undefined
   && dashboard.layout !== undefined
   && widgets !== undefined
   && widgets.isSuccessfullyFetched
@@ -222,7 +220,6 @@ export const Dashboard = ({
   deleteWidget,
   fetchDashboard,
   fetchWidgets,
-  isFetching,
   isSuccessfullyFetched,
   parameters,
   updateWidget,
@@ -231,10 +228,10 @@ export const Dashboard = ({
 }: Props) => {
   React.useEffect(() => {
     fetchDashboard();
-    if (dashboard && dashboard.layout) {
+    if (isSuccessfullyFetched) {
       fetchWidgets(parameters);
     }
-  }, [parameters, dashboard]);
+  }, [parameters]);
 
   const [widgetBeingEdited, editWidget] = React.useState<Maybe<Widget>>(Maybe.nothing());
 
@@ -243,7 +240,7 @@ export const Dashboard = ({
 
   let dashboardId: uuid = 'TODO hardcoded';
 
-  if (!dashboard && isSuccessfullyFetched && !isFetching) {
+  if (!dashboard && isSuccessfullyFetched) {
     dashboardId = idGenerator.uuid();
     const map = makeDefaultMapWidget(dashboardId);
     const collection = makeDefaultCollectionWidget(dashboardId);
@@ -268,7 +265,7 @@ export const Dashboard = ({
 
   let layout: Layout[] = [];
   const onLayoutChange = (layout: Layout[]) => {
-    if (hasContent(isFetching, myDashboard, myWidgets)
+    if (hasContent(myDashboard, myWidgets)
         && !isEqual(
         myDashboard!.layout.layout.map(makeLayoutComparable).sort(),
         layout.map(makeLayoutComparable).sort()
@@ -297,11 +294,11 @@ export const Dashboard = ({
   let widgetsWithSettings: {[key: string]: Widget} = {};
 
   // TODO handle empty
-  if (hasContent(isFetching, myDashboard, myWidgets)) {
+  if (hasContent(myDashboard, myWidgets)) {
     widgetsWithSettings = myWidgets.entities;
   }
 
-  if (hasContent(isFetching, myDashboard, myWidgets)) {
+  if (hasContent(myDashboard, myWidgets)) {
     layout = myDashboard!.layout.layout.map((widgetLayout: Layout) => ({
       ...widgetLayout,
       isDraggable: true,
@@ -312,7 +309,7 @@ export const Dashboard = ({
   // TODO handle empty
   // TODO filter widget that do not exists in both 'layout' and 'myWidgets'
   let widgetsA;
-  if (hasContent(isFetching, myDashboard, myWidgets)) {
+  if (hasContent(myDashboard, myWidgets)) {
     const widgetDispatchers: WidgetDispatchers = {onDelete, onEdit};
     widgetsA = layout.map(({i, w, h}) => (
       <div key={i}>

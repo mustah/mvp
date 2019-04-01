@@ -19,7 +19,6 @@ import {makeWidgetParametersOf} from '../dashboardSelectors';
 export interface StateToProps {
   widgets: NormalizedState<Widget>;
   dashboard?: DashboardModel;
-  isFetching: boolean;
   isSuccessfullyFetched: boolean;
   meterMapMarkers: DomainModel<MapMarker>;
   parameters: EncodedUriParameters;
@@ -39,18 +38,17 @@ const mapStateToProps =
   ({
     domainModels: {
       meterMapMarkers,
-      dashboards: {result, entities, isFetching, isSuccessfullyFetched},
+      dashboards: {result, entities, isSuccessfullyFetched},
       widgets
     },
   }: RootState): StateToProps => {
     const dashboard = entities[result[0]];
     return ({
-      widgets,
       dashboard,
-      meterMapMarkers,
-      isFetching,
       isSuccessfullyFetched,
+      meterMapMarkers,
       parameters: makeWidgetParametersOf(dashboard),
+      widgets,
     });
   };
 
