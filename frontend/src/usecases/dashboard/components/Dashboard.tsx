@@ -157,8 +157,6 @@ const addToNextRow = (widgetSettings: WidgetMandatory, layout: Layout[]): Layout
     },
   ];
 
-const removeWidget = ({id}: WidgetMandatory, layout: Layout[]): Layout[] => layout.filter(it => it.i !== id);
-
 const defaultWidget = (dashboardId: uuid, type: WidgetType): Widget => {
   if (type === WidgetType.COLLECTION) {
     return {
@@ -258,10 +256,7 @@ export const Dashboard = ({
 
   const onEdit = (widget: Widget) => editWidget(Maybe.just(widget));
 
-  const onDelete = (widget: WidgetMandatory) => {
-    updateDashboard({...myDashboard, layout: {layout: removeWidget(widget, layout)}});
-    deleteWidget(widget.id);
-  };
+  const onDelete = (widget: WidgetMandatory) => deleteWidget(widget.id);
 
   let layout: Layout[] = [];
   const onLayoutChange = (layout: Layout[]) => {
