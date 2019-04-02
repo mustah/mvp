@@ -11,8 +11,6 @@ import {LanguageState} from '../state/language/languageModels';
 import {language} from '../state/language/languageReducer';
 import {previousSession, PreviousSessionState} from '../state/previous-session/previousSessionReducer';
 import {search, SearchState} from '../state/search/searchReducer';
-import {SelectionTreeState} from '../state/selection-tree/selectionTreeModels';
-import {selectionTree} from '../state/selection-tree/selectionTreeReducer';
 import {SummaryState} from '../state/summary/summaryModels';
 import {summary} from '../state/summary/summaryReducer';
 import {MeasurementState} from '../state/ui/graph/measurement/measurementModels';
@@ -45,7 +43,6 @@ export interface RootState {
   report: ReportState;
   routing: RouterState;
   search: SearchState;
-  selectionTree: SelectionTreeState;
   summary: SummaryState;
   ui: UiState;
   userSelection: UserSelectionState;
@@ -79,7 +76,6 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     language,
     userSelection,
     summary,
-    selectionTree,
     ui,
     map,
     search,

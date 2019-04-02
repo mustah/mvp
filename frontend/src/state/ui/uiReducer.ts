@@ -4,8 +4,6 @@ import {MessageState} from './message/messageModels';
 import {message} from './message/messageReducer';
 import {PaginationState} from './pagination/paginationModels';
 import {pagination} from './pagination/paginationReducer';
-import {SelectionTreeUiState} from './selection-tree/selectionTreeModels';
-import {selectionTree} from './selection-tree/selectionTreeReducer';
 import {TabsState} from './tabs/tabsModels';
 import {tabs} from './tabs/tabsReducer';
 import {ToolbarState} from './toolbar/toolbarModels';
@@ -14,7 +12,6 @@ import {toolbar} from './toolbar/toolbarReducer';
 export interface UiState {
   message: MessageState;
   pagination: PaginationState;
-  selectionTree: SelectionTreeUiState;
   sideMenu: SideMenuState;
   tabs: TabsState;
   toolbar: ToolbarState;
@@ -23,7 +20,6 @@ export interface UiState {
 export const ui = combineReducers<UiState>({
   message,
   pagination,
-  selectionTree,
   sideMenu,
   tabs,
   toolbar,
