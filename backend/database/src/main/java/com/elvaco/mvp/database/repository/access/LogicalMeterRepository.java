@@ -1,8 +1,6 @@
 package com.elvaco.mvp.database.repository.access;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,9 +17,6 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
@@ -35,10 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
-import static java.util.stream.Collectors.flatMapping;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 @RequiredArgsConstructor
 public class LogicalMeterRepository implements LogicalMeters {
@@ -70,12 +62,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   ) {
     return logicalMeterJpaRepository.findBy(organisationId, externalId)
       .map(logicalMeterEntityMapper::toDomainModelWithoutStatuses);
-  }
-
-  @Override
-  public Optional<LogicalMeter> findBy(RequestParameters parameters) {
-    return logicalMeterJpaRepository.findBy(parameters)
-      .map(logicalMeterEntityMapper::toDomainModel);
   }
 
   @Override
@@ -133,26 +119,6 @@ public class LogicalMeterRepository implements LogicalMeters {
         )
       )
     );
-  }
-
-  @Override
-  public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
-    Collection<LogicalMeterEntity> meters = logicalMeterJpaRepository.findAll(parameters);
-
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses = meters.stream()
-      .flatMap(lm -> lm.physicalMeters.stream())
-      .collect(groupingBy(
-        PhysicalMeterEntity::getId,
-        flatMapping(pm -> pm.statusLogs.stream(), toList())
-      ));
-
-    return parameters.getPeriod()
-      .map(ignore -> withStatusesAndCollectionStats(
-        meters,
-        parameters,
-        mappedStatuses
-      ))
-      .orElse(withStatusesOnly(meters, mappedStatuses));
   }
 
   @Override
@@ -238,42 +204,5 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Override
   public List<QuantityParameter> getPreferredQuantityParameters(RequestParameters parameters) {
     return logicalMeterJpaRepository.getPreferredQuantityParameters(parameters);
-  }
-
-  private List<LogicalMeter> withStatusesOnly(
-    Collection<LogicalMeterEntity> meters,
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
-  ) {
-    return meters.stream()
-      .map(entity -> logicalMeterEntityMapper.toDomainModel(entity, mappedStatuses, null))
-      .collect(toList());
-  }
-
-  private List<LogicalMeter> withStatusesAndCollectionStats(
-    Collection<LogicalMeterEntity> logicalMeters,
-    RequestParameters parameters,
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
-  ) {
-    Map<UUID, Double> collectionPercentages =
-      getCollectionPercentagesForMeters(parameters);
-
-    return logicalMeters.stream()
-      .map(logicalMeterEntity -> logicalMeterEntityMapper.toDomainModel(
-        logicalMeterEntity,
-        mappedStatuses,
-        collectionPercentages.getOrDefault(logicalMeterEntity.getLogicalMeterId(), 0.0)
-      ))
-      .collect(toList());
-  }
-
-  private Map<UUID, Double> getCollectionPercentagesForMeters(
-    RequestParameters parameters
-  ) {
-    return logicalMeterJpaRepository.findMeterCollectionStats(parameters).stream()
-      .collect(toMap(
-        entry -> entry.id,
-        entry -> entry.collectionPercentage,
-        (oldPct, newPct) -> oldPct + newPct
-      ));
   }
 }

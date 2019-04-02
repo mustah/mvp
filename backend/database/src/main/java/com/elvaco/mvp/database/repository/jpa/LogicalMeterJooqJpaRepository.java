@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
-import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
@@ -209,21 +208,6 @@ class LogicalMeterJooqJpaRepository
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMeterCollectionStats(
-    RequestParameters parameters
-  ) {
-    var query = dsl.select(
-      LOGICAL_METER.ID,
-      DSL.coalesce(COLLECTION_PERCENTAGE, 0)
-    ).distinctOn(LOGICAL_METER.ID)
-      .from(LOGICAL_METER);
-    FilterVisitors.logicalMeterWithCollectionPercentage(dsl, measurementThresholdParser)
-      .accept(toFilters(parameters)).andJoinsOn(query);
-
-    return query.fetchInto(LogicalMeterCollectionStats.class);
-  }
-
-  @Override
   public Page<CollectionStatsDto> findAllCollectionStats(
     RequestParameters parameters,
     Pageable pageable
@@ -286,7 +270,7 @@ class LogicalMeterJooqJpaRepository
       .stream()
       .map(record -> new CollectionStatsPerDateDto(
         record.value2().atStartOfDay(ZoneId.of("UTC+1")),
-        (Double) record.value1().doubleValue()
+        record.value1().doubleValue()
       )).collect(toList());
     return logicalMeters;
   }

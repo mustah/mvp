@@ -239,7 +239,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
     List<PhysicalMeter> allPhysicalMeters = physicalMeters.findAll();
     assertThat(allPhysicalMeters).hasSize(1);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
     assertThat(organisations.findAll()).hasSize(1);
     PhysicalMeter physicalMeter = allPhysicalMeters.get(0);
     assertThat(physicalMeter.organisationId).isEqualTo(organisation.id);
@@ -285,7 +285,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   public void setsNoMeterDefinitionForUnmappableMedium() {
     messageHandler.accept(messageBuilder().medium("Unmappable medium").build());
 
-    List<LogicalMeter> meters = logicalMeters.findAllWithDetails(new MockRequestParameters());
+    List<LogicalMeter> meters = logicalMeters.findAllBy(new MockRequestParameters());
     assertThat(meters).hasSize(1);
     assertThat(meters.get(0).getMedium().name).isEqualTo("Unknown medium");
   }
@@ -294,12 +294,12 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   public void updatesMeterDefinitionForExistingLogicalMeter() {
     messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 
-    LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    LogicalMeter meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
     assertThat(meter.getMedium().name).isEqualTo("Unknown medium");
 
     messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
 
-    meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.medium.name)
       .isEqualTo(Medium.DISTRICT_HEATING);
   }
@@ -341,7 +341,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
     ).get(0).toBuilder().activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(now()))).build();
     physicalMeters.save(activeMeter);
 
-    LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    LogicalMeter meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
 
     var newMeterAddress = "newMeterSecondaryAddress";
     var newMeterManufacturer = "newMeterManufacturer";
@@ -352,7 +352,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
         .build());
 
     assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))
@@ -370,16 +370,16 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   @Test
   public void mapsMeterMediumToEvoDefinitionType() {
     messageHandler.accept(messageBuilder().medium("Cold water").build());
-    var meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    var meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.medium).isEqualTo(DEFAULT_WATER.medium);
 
     messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
-    meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.medium)
       .isEqualTo(MeterDefinition.DEFAULT_DISTRICT_HEATING.medium);
 
     messageHandler.accept(messageBuilder().medium("Roomsensor").build());
-    meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.medium).isEqualTo(MeterDefinition.DEFAULT_ROOM_SENSOR.medium);
   }
 
@@ -387,12 +387,12 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   public void doesNotUpdateMeterDefinitionWithUnmappableMedium() {
     messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 
-    LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    LogicalMeter meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
     assertThat(meter.getMedium().name).isEqualTo("Unknown medium");
 
     messageHandler.accept(messageBuilder().medium("I don't even know what this is?").build());
 
-    meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.medium).isEqualTo(MeterDefinition.UNKNOWN.medium);
   }
 
@@ -400,7 +400,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   public void updatesManufacturerForExistingMeter() {
     messageHandler.accept(messageBuilder().manufacturer("ELV").build());
 
-    LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    LogicalMeter meter = logicalMeters.findAllBy(new MockRequestParameters()).get(0);
 
     List<PhysicalMeter> all = physicalMeters.findAll();
     assertThat(all).hasSize(1);
@@ -412,7 +412,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
     messageHandler.accept(messageBuilder().manufacturer("KAM").build());
 
     assertThat(physicalMeters.findAll().get(0).manufacturer).isEqualTo("KAM");
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
   }
 
   @Test
@@ -509,7 +509,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).isEmpty();
   }
 
   @Test
@@ -520,7 +520,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
   }
 
@@ -532,7 +532,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
   }
 
@@ -556,7 +556,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters()))
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters()))
       .hasSize(1)
       .extracting(l -> l.externalId).containsExactly(externalId);
     assertThat(physicalMeters.findAll()).hasSize(0);
@@ -575,7 +575,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).isEmpty();
   }
 
   @Test
@@ -591,7 +591,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
     assertThat(physicalMeters.findAll()).isEmpty();
   }
 
@@ -685,7 +685,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).isEmpty();
   }
 
   @Test

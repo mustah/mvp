@@ -59,11 +59,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Optional<LogicalMeter> findBy(RequestParameters parameters) {
-    return Optional.empty();
-  }
-
-  @Override
   public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
     throw new NotImplementedYet();
   }
@@ -88,14 +83,9 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
+  public List<LogicalMeter> findAllBy(RequestParameters parameters) {
     return filter(isWithinOrganisation(parameters))
       .collect(toList());
-  }
-
-  @Override
-  public List<LogicalMeter> findAllBy(RequestParameters parameters) {
-    return emptyList();
   }
 
   @Override
