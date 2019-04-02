@@ -11,8 +11,10 @@ import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import './PasswordEditForm.scss';
 
+export type OnChangePassword = (password: Password, userId: uuid) => void;
+
 interface PasswordFormProps {
-  onSubmit: (password: Password, userId: uuid) => void;
+  onSubmit: OnChangePassword;
   user: User;
 }
 

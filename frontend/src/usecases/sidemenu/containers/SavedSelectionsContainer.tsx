@@ -11,7 +11,7 @@ import {
 } from '../../../state/user-selection/userSelectionActions';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {getUserSelection} from '../../../state/user-selection/userSelectionSelectors';
-import {Callback, CallbackWithId, OnClick, OnClickWith} from '../../../types/Types';
+import {Callback, CallbackWithId, OnClick, OnClickWith, uuid} from '../../../types/Types';
 import {addToReport} from '../../report/reportActions';
 import {LegendItem} from '../../report/reportModels';
 import {SavedSelections} from '../components/SavedSelections';
@@ -26,7 +26,7 @@ export interface DispatchToProps {
   deleteUserSelection: CallbackWithId;
   fetchUserSelections: Callback;
   resetSelection: OnClick;
-  selectSavedSelection: OnClick;
+  selectSavedSelection: OnClickWith<uuid>;
   addToReport: OnClickWith<LegendItem>;
 }
 

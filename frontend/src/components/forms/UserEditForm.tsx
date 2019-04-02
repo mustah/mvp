@@ -5,7 +5,7 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {Role, User} from '../../state/domain-models/user/userModels';
 import {Language} from '../../state/language/languageModels';
-import {IdNamed, uuid} from '../../types/Types';
+import {IdNamed, OnClickEventHandler, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
 import {ValidatedInputSelectable} from '../inputs/ValidatedInputSelectable';
@@ -13,7 +13,7 @@ import {Column} from '../layouts/column/Column';
 import './UserEditForm.scss';
 
 interface UserFormProps {
-  onSubmit: (event: any) => void;
+  onSubmit: OnClickEventHandler;
   organisations: Organisation[];
   possibleRoles: Role[];
   languages: Language[];
@@ -21,7 +21,7 @@ interface UserFormProps {
   user?: User;
 }
 
-type State = Overwrite<User, {id?: uuid; password: string}>;
+export type State = Overwrite<User, {id?: uuid; password: string}>;
 
 const requiredValidator: string[] = ['required'];
 const requiredEmailValidator: string[] = ['required', 'isEmail'];

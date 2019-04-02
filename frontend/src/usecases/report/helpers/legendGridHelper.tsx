@@ -9,7 +9,7 @@ import {RowLeft, RowMiddle, RowRight} from '../../../components/layouts/row/Row'
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {allQuantitiesMap, getGroupHeaderTitle, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {OnClick, OnClickWith} from '../../../types/Types';
+import {OnClick, OnClickEventHandler, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
 import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantities} from '../reportModels';
 import {colorFor} from './graphContentsMapper';
@@ -29,7 +29,7 @@ export interface QuantityCell extends ColumnQuantities {
 }
 
 export interface RowProps extends ColumnQuantities, RowDispatch {
-  onExpandRow: OnClick;
+  onExpandRow: OnClickEventHandler;
   mediumViewOptions: LegendViewOptions;
 }
 

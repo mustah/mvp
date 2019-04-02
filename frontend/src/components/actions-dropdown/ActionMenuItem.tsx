@@ -1,12 +1,12 @@
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
 import {menuItemInnerDivStyle} from '../../app/themes';
-import {OnClick} from '../../types/Types';
+import {OnClickEventHandler} from '../../types/Types';
 import MenuItemProps = __MaterialUI.Menus.MenuItemProps;
 
 export interface ActionMenuItemProps extends MenuItemProps {
   name: string;
-  onClick?: OnClick;
+  onClick: OnClickEventHandler;
 }
 
 export const ActionMenuItem = ({leftIcon, name, onClick}: ActionMenuItemProps) => {

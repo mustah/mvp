@@ -172,26 +172,8 @@ const resetStateReducer = <T extends Identifiable>(
 const resetStateOnLogoutReducer = <S extends Identifiable>(
   state: NormalizedState<S> = initialDomain<S>(),
   {type}: ActionTypes<S>,
-): NormalizedState<S> => {
-  switch (type) {
-    case getType(logoutUser):
-      return initialDomain<S>();
-    default:
-      return state;
-  }
-};
-
-const resetWidgetReducer = <S extends Identifiable>(
-  state: NormalizedState<S> = initialDomain<S>(),
-  {type}: ActionTypes<S>,
-): NormalizedState<S> => {
-  switch (type) {
-    case getType(logoutUser):
-      return initialDomain<S>();
-    default:
-      return state;
-  }
-};
+): NormalizedState<S> =>
+  type === getType(logoutUser) ? initialDomain<S>() : state;
 
 export const meters = reducerFor<MeterDetails>(
   'meters',
@@ -262,21 +244,21 @@ export const dashboards = reducerFor<Dashboard>(
 export const widgets = reducerFor<Widget>(
   'widgets',
   EndPoints.widgets,
-  resetWidgetReducer
+  resetStateOnLogoutReducer
 );
 
 export const domainModels = combineReducers<DomainModelsState>({
+  collectionStats,
+  dashboards,
   gatewayMapMarkers,
+  mediums,
   meters,
   meterDetailMeasurement,
   meterMapMarkers,
-  organisations,
   meterDefinitions,
+  organisations,
   quantities,
   userSelections,
   users,
-  collectionStats,
-  mediums,
-  dashboards,
   widgets,
 });

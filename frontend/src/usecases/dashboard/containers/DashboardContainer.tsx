@@ -3,34 +3,54 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {addDashboard, fetchDashboard, updateDashboard} from '../../../state/domain-models/dashboard/dashboardActions';
 import {Dashboard as DashboardModel} from '../../../state/domain-models/dashboard/dashboardModels';
+import {DomainModel, NormalizedState} from '../../../state/domain-models/domainModels';
 import {
   addWidgetToDashboard,
   deleteWidget,
   fetchWidgets,
   updateWidget
 } from '../../../state/domain-models/widget/widgetActions';
-import {EncodedUriParameters} from '../../../types/Types';
+import {Widget} from '../../../state/domain-models/widget/widgetModels';
+import {CallbackWithData, EncodedUriParameters, Fetch} from '../../../types/Types';
+import {MapMarker} from '../../map/mapModels';
 import {Dashboard} from '../components/Dashboard';
-import {DashboardStateToProps, DispatchToProps, withDashboardDataFetchers} from '../dashboardEnhancers';
+import {makeWidgetParametersOf} from '../dashboardSelectors';
 
-const makeWidgetParametersOf =
-  (dashboard: DashboardModel): EncodedUriParameters =>
-    'dashboardId=' + dashboard.id;
+export interface StateToProps {
+  widgets: NormalizedState<Widget>;
+  dashboard?: DashboardModel;
+  isSuccessfullyFetched: boolean;
+  meterMapMarkers: DomainModel<MapMarker>;
+  parameters: EncodedUriParameters;
+}
+
+export interface DispatchToProps {
+  fetchDashboard: Fetch;
+  fetchWidgets: Fetch;
+  addWidgetToDashboard: CallbackWithData;
+  updateWidget: CallbackWithData;
+  updateDashboard: CallbackWithData;
+  addDashboard: CallbackWithData;
+  deleteWidget: CallbackWithData;
+}
 
 const mapStateToProps =
   ({
     domainModels: {
-      meterMapMarkers, dashboards: {result, entities, isFetching, isSuccessfullyFetched}, widgets
-    },
-  }: RootState): DashboardStateToProps =>
-    ({
-      widgets,
-      dashboard: entities[result[0]],
       meterMapMarkers,
-      isFetching,
+      dashboards: {result, entities, isSuccessfullyFetched},
+      widgets
+    },
+  }: RootState): StateToProps => {
+    const dashboard = entities[result[0]];
+    return ({
+      dashboard,
       isSuccessfullyFetched,
-      parameters: entities[result[0]] && makeWidgetParametersOf(entities[result[0]]),
+      meterMapMarkers,
+      parameters: makeWidgetParametersOf(dashboard),
+      widgets,
     });
+  };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
@@ -42,7 +62,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteWidget,
 }, dispatch);
 
-export const DashboardContainer = connect<DashboardStateToProps, DispatchToProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withDashboardDataFetchers(Dashboard));
+export const DashboardContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Dashboard);

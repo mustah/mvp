@@ -13,7 +13,7 @@ import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {CollectionStatusWidget, WidgetType} from '../../../state/domain-models/widget/widgetModels';
 import {initialSelectionId, UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {CallbackWith, IdNamed, OnClick, uuid} from '../../../types/Types';
-import '../components/widgets/EditWidget.scss';
+import '../components/EditWidget.scss';
 
 const EditCollectionStatusWidget = ({
   userSelections,
@@ -24,6 +24,8 @@ const EditCollectionStatusWidget = ({
   dashboardId,
   settings: {settings},
 }: EditCollectionStatusWidgetProps) => {
+  const [selectionId, selectSelection] = React.useState(settings.selectionId);
+  const [selectionInterval, selectSelectionInterval] = React.useState(settings.selectionInterval);
 
   const selectionOptions: IdNamed[] = [
     {id: initialSelectionId, name: firstUpperTranslated('all meters')},
@@ -35,8 +37,6 @@ const EditCollectionStatusWidget = ({
     )
   ];
   const selectionLabel = firstUpperTranslated('selection');
-  const [selectionId, selectSelection] = React.useState(settings.selectionId);
-  const [selectionInterval, selectSelectionInterval] = React.useState(settings.selectionInterval);
 
   const selectPeriod = (period: Period) => selectSelectionInterval({period});
   const setCustomDateRange = (customDateRange: DateRange) => selectSelectionInterval({
@@ -44,9 +44,7 @@ const EditCollectionStatusWidget = ({
     customDateRange
   });
 
-  const onChange = (event, index, value) => {
-    selectSelection(value);
-  };
+  const onChange = (event, index, value) => selectSelection(value);
 
   const selectedSelection: uuid = selectionId || selectionOptions[0].id;
 
@@ -121,6 +119,4 @@ const mapStateToProps = ({
   userSelections,
 });
 
-export const EditCollectionStatusWidgetContainer = connect<StateToProps, {}>(
-  mapStateToProps
-)(EditCollectionStatusWidget);
+export const EditCollectionStatusWidgetContainer = connect<StateToProps>(mapStateToProps)(EditCollectionStatusWidget);

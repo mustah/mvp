@@ -11,10 +11,11 @@ export type UnixTimestamp = number;
 
 export type EncodedUriParameters = string;
 
-export type OnClick = (...args) => void;
+export type OnClick = () => void;
+export type OnClickEventHandler = (event: any) => void;
 export type OnClickWith<T> = (arg: T) => void;
-export type OnChange = OnClick;
-export type OnKeyPress = OnClick;
+export type OnChange = (...args) => void;
+export type OnKeyPress = (...args) => void;
 export type Callback = () => void;
 export type CallbackWith<T> = (arg: T) => void;
 export type OnClickWithId = CallbackWith<uuid>;
@@ -98,6 +99,10 @@ export interface Fetching {
 
 export interface Clickable {
   onClick: OnClick;
+}
+
+export interface ClickableEventHandler {
+  onClick: OnClickEventHandler;
 }
 
 export interface Identifiable {
