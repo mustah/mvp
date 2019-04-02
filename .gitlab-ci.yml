@@ -221,6 +221,7 @@ test:acceptance:
   after_script:
     - docker-compose down -v
   before_script:
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_TAG="${CI_COMMIT_SHA}"
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
   script:
     - docker-compose up -d application postgresql google-chrome
