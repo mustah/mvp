@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk10:alpine
+FROM adoptopenjdk/openjdk11:alpine
 RUN mkdir -p /app
 RUN apk add --update \
 	curl \

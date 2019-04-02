@@ -50,10 +50,12 @@ dependencies {
   compile "co.elastic.apm:apm-agent-api:${elasticApmVersion}"
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
   compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 
   testCompile 'com.google.guava:guava:24.0-jre'
   testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+  testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
   testCompile 'org.springframework.boot:spring-boot-starter-test'
   testCompile "org.assertj:assertj-core:${assertjVersion}"
   testCompile project(':backend:testing')
@@ -118,7 +120,7 @@ if (!project.hasProperty('isCI')) {
     tasks.create(name: "startAndWaitOnHealthy${containerDef.name}Container",
                  type: DockerWaitHealthyContainer) {
       dependsOn startTaskName
-      timeout = 60
+      timeout = Duration.ofSeconds(60)
       targetContainerId createTask.getContainerId()
     }
 
@@ -165,6 +167,7 @@ if (!project.hasProperty('isCI')) {
 configurations {
   integrationTestCompile.extendsFrom(testCompile, testCompileOnly)
   integrationTestRuntime.extendsFrom testRuntime
+  integrationTestAnnotationProcessor.extendsFrom(testAnnotationProcessor)
 }
 
 distributions {

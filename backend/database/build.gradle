@@ -45,6 +45,7 @@ dependencies {
   liquibaseRuntime 'org.liquibase:liquibase-core:3.6.1'
   liquibaseRuntime "org.postgresql:postgresql:${postgresqlVersion}"
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
   testCompile "junit:junit:${junitVersion}"
   testCompile "org.assertj:assertj-core:${assertjVersion}"
