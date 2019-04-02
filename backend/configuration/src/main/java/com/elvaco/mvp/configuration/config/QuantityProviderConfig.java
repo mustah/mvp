@@ -5,6 +5,7 @@ import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.spi.repository.AlarmDescriptions;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import com.elvaco.mvp.database.repository.access.QuantityProviderRepository;
@@ -83,12 +84,14 @@ class QuantityProviderConfig {
   LogicalMeterEntityMapper logicalMeterEntityMapper(
     MeterDefinitionEntityMapper meterDefinitionEntityMapper,
     MediumProvider mediumProvider,
-    SystemMeterDefinitionProvider meterDefinitionProvider
+    SystemMeterDefinitionProvider meterDefinitionProvider,
+    AlarmDescriptions alarmDescriptions
   ) {
     return new LogicalMeterEntityMapper(
       meterDefinitionEntityMapper,
       meterDefinitionProvider,
-      mediumProvider
+      mediumProvider,
+      alarmDescriptions
     );
   }
 

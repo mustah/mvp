@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.spi.repository.AlarmDescriptions;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 
@@ -22,6 +23,7 @@ public final class LogicalMeterEntityMapper {
   private final MeterDefinitionEntityMapper meterDefinitionEntityMapper;
   private final SystemMeterDefinitionProvider meterDefinitionProvider;
   private final MediumProvider mediumProvider;
+  private final AlarmDescriptions alarmDescriptions;
 
   public LogicalMeter toDomainModelWithoutStatuses(LogicalMeterEntity entity) {
     return newLogicalMeter(
@@ -95,7 +97,7 @@ public final class LogicalMeterEntityMapper {
         .map(GatewayEntityMapper::toDomainModel)
         .collect(toList()))
       .location(LocationEntityMapper.toDomainModel(entity.location))
-      .alarms(MeterAlarmLogEntityMapper.toLatestActiveAlarms(physicalMeters))
+      .alarms(MeterAlarmLogEntityMapper.toLatestActiveAlarms(alarmDescriptions, physicalMeters))
       .utcOffset(entity.utcOffset)
       .build();
   }

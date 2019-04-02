@@ -25,6 +25,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
@@ -436,6 +437,52 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(content)
       .extracting(m -> m.gateway.status)
       .isEqualTo(new IdNamedDto("ok"));
+  }
+
+  @Test
+  public void alarm_hasDescription() {
+    var meter = given(
+      logicalMeter(),
+      physicalMeter().manufacturer("ELV").mbusDeviceType(4).revision(2)
+    );
+    given(alarm(meter).mask(2).start(context().now().minusDays(1)));
+
+    var url = meterDetailsUrl(meter.id);
+
+    var meterDto = asUser()
+      .get(url, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(meterDto.alarms)
+      .extracting((alarm) -> tuple(alarm.mask, alarm.description))
+      .containsExactly(
+        tuple(2, "Interruption of flow temperature sensor - Error F1")
+      );
+  }
+
+  @Test
+  public void multipleAlarms_haveDescriptions() {
+    var meter = given(
+      logicalMeter(),
+      physicalMeter().manufacturer("ELV").mbusDeviceType(4).revision(2)
+    );
+    given(
+      alarm(meter).mask(2).start(context().now().minusDays(1)),
+      alarm(meter).mask(4).start(context().now().minusDays(1))
+    );
+
+    var url = meterDetailsUrl(meter.id);
+
+    var meterDto = asUser()
+      .get(url, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(meterDto.alarms)
+      .extracting((alarm) -> tuple(alarm.mask, alarm.description))
+      .containsExactly(
+        tuple(2, "Interruption of flow temperature sensor - Error F1"),
+        tuple(4, "Interruption of return temperature sensor - Error F2")
+      );
   }
 
   private static String meterDetailsUrl(UUID logicalMeterId) {
