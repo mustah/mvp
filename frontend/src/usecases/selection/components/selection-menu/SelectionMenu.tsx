@@ -5,7 +5,6 @@ import {SelectionMenuProps} from '../../containers/SelectionMenuContainer';
 import {InlineEditInput} from './InlineEditInput';
 
 export const SelectionMenu = ({
-  closeSelectionPage,
   selection,
   saveSelection,
   updateSelection,

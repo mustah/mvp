@@ -77,7 +77,7 @@ const makeLegendPayloads = ({average, measurements}: MeasurementResponse): Legen
   const aggregateLegends: Dictionary<LegendPayload> =
     average.reduce(legendPayloadReducer(
       ({id, label, quantity}) => makeAggregateKey({id, label, quantity}),
-      ({id, label, quantity}) => `${firstUpperTranslated('average')} ${quantity}`,
+      ({quantity}) => `${firstUpperTranslated('average')} ${quantity}`,
     ), {});
 
   const meterLegends: Dictionary<LegendPayload> = measurements.reduce(legendPayloadReducer(
@@ -131,7 +131,7 @@ export const toGraphContents =
 
     const sortedMeasurementValues: Dictionary<MeasurementValue[]> = {};
 
-    measurements.forEach(({id, quantity, label, city, address, values, unit}: MeasurementResponsePart) => {
+    measurements.forEach(({id, quantity, label, values, unit}: MeasurementResponsePart) => {
       makeAxes(graphContents, unit);
 
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
@@ -157,7 +157,7 @@ export const toGraphContents =
       }
     });
 
-    compare.forEach(({id, label, city, address, quantity, unit, values}: MeasurementResponsePart) => {
+    compare.forEach(({id, label, quantity, unit, values}: MeasurementResponsePart) => {
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
 
       if (yAxisId) {

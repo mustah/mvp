@@ -44,9 +44,6 @@ const isNotActionDropdownClick = (event: TreeViewItemClickEvent): boolean =>
 const TreeViewComponent = ({
   fetchSelectionTree,
   isFetching,
-  selectionTree,
-  toggleExpanded,
-  openListItems,
   selectionTreeViewItems,
   parameters,
 }: Props) => {

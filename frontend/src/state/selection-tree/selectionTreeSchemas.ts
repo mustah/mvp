@@ -20,7 +20,7 @@ const processStrategyAddress: schema.StrategyFunction = (entity, parent, key) =>
   city: parent.id,
 });
 
-const processStrategyMeter: schema.StrategyFunction = (entity, parent, key) => ({
+const processStrategyMeter: schema.StrategyFunction = (entity, parent) => ({
   ...entity,
   id: entity.id,
   name: entity.name,
@@ -32,10 +32,12 @@ const processStrategyMeter: schema.StrategyFunction = (entity, parent, key) => (
 const meter = new schema.Entity('meters', {}, {
   processStrategy: processStrategyMeter,
 });
+
 const address = new schema.Entity('addresses', {meters: [meter]}, {
   idAttribute: idOfAddress,
   processStrategy: processStrategyAddress,
 });
+
 const city = new schema.Entity('cities', {addresses: [address]}, {
   processStrategy: processStrategyCity,
 });

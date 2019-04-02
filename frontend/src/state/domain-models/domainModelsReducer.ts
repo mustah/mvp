@@ -161,7 +161,7 @@ const reducerFor = <T extends Identifiable>(
     }
   };
 
-const identity = (state, action, endPoint) => state;
+const identity = (state, _, __) => state;
 
 const resetStateReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),

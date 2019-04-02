@@ -78,7 +78,7 @@ export class LineChartComponent extends React.Component<Props, GraphComponentSta
   renderActiveDot = (props: ActiveDotReChartProps) =>
     <ActiveDot {...props} activeDataKey={this.activeDataKey}/>
 
-  renderTooltipContent = (props: TooltipProps) =>
+  renderTooltipContent = (_: TooltipProps) =>
     this.tooltipPayload ? <CustomizedTooltip {...this.tooltipPayload}/> : null
 
   renderAndStoreDot = ({dataKey, ...rest}: KeyedDotProps) => {

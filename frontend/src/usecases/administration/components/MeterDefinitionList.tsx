@@ -9,7 +9,7 @@ import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
 import {DispatchToProps, StateToProps} from '../containers/MeterDefinitionsContainer';
 import {MeterDefinitionActions} from './MeterDefinitionActions';
@@ -40,8 +40,10 @@ export const MeterDefinitionList = ({
     );
   };
 
+  const meterDefinitions = toArray(entities);
+
   return (
-    <Loader isFetching={isFetching}>
+    <RetryLoader isFetching={isFetching} clearError={clearError} error={error}>
       <Column>
         <Row>
           <Link to={routes.adminMeterDefinitionsAdd} className="link" key={'add meter definition'}>
@@ -50,7 +52,7 @@ export const MeterDefinitionList = ({
         </Row>
         <Grid
           style={{borderTopWidth: 1}}
-          data={toArray(entities)}
+          data={meterDefinitions}
           scrollable="none"
         >
           <GridColumn headerClassName="left-most" className="left-most" field="name" title={translate('name')}/>
@@ -66,6 +68,6 @@ export const MeterDefinitionList = ({
         </Grid>
         <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={confirm}/>
       </Column>
-    </Loader>
+    </RetryLoader>
   );
 };

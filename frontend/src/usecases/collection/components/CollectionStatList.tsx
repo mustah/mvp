@@ -49,7 +49,6 @@ export const CollectionStatList = ({
   result,
   entities,
   entityType,
-  isFetching,
   pagination: {page, size, totalElements: total},
   sort,
   sortTable,

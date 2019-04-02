@@ -45,7 +45,7 @@ const save = (exporter: React.Ref<{}>) => {
     const sheet = sheets[0];
     if (sheet.rows !== undefined) {
       sheet.rows
-        .filter((row, index) => index > 0) // skip header row
+        .filter((_, index) => index > 0) // skip header row
         .forEach(row => row.cells !== undefined && row.cells.forEach(formatCell));
     }
   }

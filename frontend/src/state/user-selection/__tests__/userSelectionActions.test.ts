@@ -1,4 +1,3 @@
-import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {DateRange, Period} from '../../../components/dates/dateModels';
@@ -11,7 +10,6 @@ import {mapSelectedIdToCity} from '../../domain-models/selections/selectionsApiA
 import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {
   ADD_PARAMETER_TO_SELECTION,
-  closeSelectionPage,
   DESELECT_SELECTION,
   SELECT_SAVED_SELECTION,
   selectPeriod,
@@ -89,17 +87,6 @@ describe('userSelectionActions', () => {
       },
     },
   };
-
-  describe('closeSelectionPage', () => {
-
-    it('closes selection page and navigates back to previous page', () => {
-      store.dispatch(closeSelectionPage());
-
-      expect(store.getActions()).toEqual([
-        routerActions.goBack(),
-      ]);
-    });
-  });
 
   describe('setCustomDateRange', () => {
     it('sends out a request to set a new customDateRange', () => {
@@ -404,7 +391,7 @@ describe('userSelectionActions', () => {
 
     test.each(testCases)(
       'test #%i: old state of %p and action of (%p) triggers? %p',
-      (testId, currentThresholdQuery, newThreshold, shouldTriggerAction) => {
+      (_, currentThresholdQuery, newThreshold, shouldTriggerAction) => {
         const currentState: UserSelectionState = userSelectionStateFromThreshold(currentThresholdQuery);
         store = configureMockStore({...rootStateNoSaved, userSelection: currentState});
 

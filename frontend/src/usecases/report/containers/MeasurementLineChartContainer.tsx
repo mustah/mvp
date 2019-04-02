@@ -24,7 +24,7 @@ export interface StateToProps {
 }
 
 const mapStateToProps = ({
-  report: {savedReports, temporal: {shouldComparePeriod}},
+  report: {savedReports},
   measurement,
   userSelection: {userSelection},
   ui,

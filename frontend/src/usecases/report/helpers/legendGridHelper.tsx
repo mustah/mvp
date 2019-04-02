@@ -120,8 +120,8 @@ export const rowRenderer = (props: RowProps) =>
   };
 
 const renderQuantityCell =
-  ({quantity, selectedQuantitiesMap, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
-    ({dataItem: {id, label, type, quantities}}: GridCellProps) => {
+  ({quantity, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
+    ({dataItem: {id, type, quantities}}: GridCellProps) => {
       if (allQuantitiesMap[type].indexOf(quantity) !== -1) {
         const checked = quantities.indexOf(quantity) !== -1;
         const onClick = () => toggleQuantityById({id, quantity});

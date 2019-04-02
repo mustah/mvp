@@ -4,7 +4,6 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
-import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {InvalidToken} from '../../../exceptions/InvalidToken';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
@@ -14,6 +13,7 @@ import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
 import {makeActionsOf, noInternetConnection, requestTimeout} from '../../api/apiActions';
 import {User} from '../../domain-models/user/userModels';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {fetchSelectionTree} from '../selectionTreeApiActions';
 import {NormalizedSelectionTree} from '../selectionTreeModels';
 import {initialState as initialSelectionTreeState} from '../selectionTreeReducer';
@@ -324,12 +324,12 @@ describe('selectionTreeApiActions', () => {
   describe('request timeout', () => {
 
     it('display error message when the request times out', async () => {
-      const fetchSelectionTreeAndTimeout = async (page: number) => {
+      const fetchSelectionTreeAndTimeout = async () => {
         mockRestClient.onGet(EndPoints.selectionTree).timeout();
         return store.dispatch(fetchSelectionTree());
       };
 
-      await fetchSelectionTreeAndTimeout(1);
+      await fetchSelectionTreeAndTimeout();
 
       expect(store.getActions()).toEqual([
         actions.request(),

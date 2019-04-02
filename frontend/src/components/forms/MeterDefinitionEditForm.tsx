@@ -57,11 +57,11 @@ export const MeterDefinitionEditForm = (
   const setName = (event) => setMeterDefinition({...meterDefinition, name: event.target.value});
   const setAutoApply = (event) => setMeterDefinition({...meterDefinition, autoApply: event.target.checked});
   const setQuantities = (q) => setMeterDefinition({...meterDefinition, quantities: q});
-  const setOrganisation = (event, index, value) => setMeterDefinition({
+  const setOrganisation = (_, __, value) => setMeterDefinition({
     ...meterDefinition,
     organisation: organisationById(value, organisations)
   });
-  const setMedium = (event, index, value) => setMeterDefinition({
+  const setMedium = (_, __, value) => setMeterDefinition({
     ...meterDefinition,
     medium: mediumById(value, mediums)
   });

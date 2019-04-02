@@ -34,7 +34,7 @@ const setUserInfo = (state: AuthState, {payload}: Action<User>): AuthState => ({
   user: payload,
 });
 
-const logout = (state: AuthState, {payload}: Action<Unauthorized>): AuthState => ({
+const logout = (_: AuthState, {payload}: Action<Unauthorized>): AuthState => ({
   ...initialAuthState,
   error: payload,
 });

@@ -20,7 +20,7 @@ const meter: Schema = new schema.Entity('meters', {}, {processStrategy: meterPro
 const meterSchema: Schema = {content: [meter]};
 
 const eventLog = new schema.Entity('eventLog', {}, {
-  idAttribute: (value, parent, key) => `${value.start}_${value.type}`
+  idAttribute: value => `${value.start}_${value.type}`
 });
 const eventLogSchema: Schema = {eventLog: [eventLog]};
 

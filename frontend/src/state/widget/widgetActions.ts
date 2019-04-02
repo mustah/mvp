@@ -54,7 +54,7 @@ const fetchWidgetIfNeeded = ({requestFactory}: WidgetRequest) =>
 
 export const fetchCollectionStatsWidget =
   fetchWidgetIfNeeded({
-    requestFactory: async ({widget: {settings, id}, parameters}: WidgetRequestParameters) => {
+    requestFactory: async ({widget: {id}, parameters}: WidgetRequestParameters) => {
       // TODO if every URL is unique, `getForced()` is bad and we really want the old, "matching url" behavior
       // TODO contd. maybe we could try putting the URL in the `isFetching` field instead...
       const response = await restClient.getForced(`${EndPoints.collectionStatDate}/?${parameters}`);
@@ -70,7 +70,7 @@ export const fetchCollectionStatsWidget =
 
 export const fetchMapWidget =
   fetchWidgetIfNeeded({
-    requestFactory: async ({widget: {settings, id}, parameters}: WidgetRequestParameters) => {
+    requestFactory: async ({widget: {id}, parameters}: WidgetRequestParameters) => {
       // TODO if every URL is unique, `getForced()` is bad and we really want the old, "matching url" behavior
       // TODO contd. maybe we could try putting the URL in the `isFetching` field instead...
       const response = await restClient.getForced(`${EndPoints.meterMapMarkers}/?${parameters}`);

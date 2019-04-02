@@ -101,7 +101,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
   entityType: keyof PaginatedDomainModelsState,
   requestCallbacks?: RequestCallbacks<NormalizedPaginated<T>>,
 ): FetchPaginated =>
-  (page: number, requestData?: string, sortingOptions?: ApiRequestSortingOptions[]) =>
+  (page: number, requestData?: string) =>
     (dispatch: Dispatch<RootState>, getState: GetState) => {
       const {paginatedDomainModels} = getState();
       if (needAnotherPage(page, paginatedDomainModels[entityType])) {

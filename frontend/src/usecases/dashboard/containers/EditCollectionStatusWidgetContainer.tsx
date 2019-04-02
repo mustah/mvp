@@ -44,7 +44,7 @@ const EditCollectionStatusWidget = ({
     customDateRange
   });
 
-  const onChange = (event, index, value) => selectSelection(value);
+  const onChange = (_, __, value) => selectSelection(value);
 
   const selectedSelection: uuid = selectionId || selectionOptions[0].id;
 

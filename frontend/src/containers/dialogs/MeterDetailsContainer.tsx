@@ -74,10 +74,7 @@ const MeterDetailsComponent = (props: Props) => {
 };
 
 const mapStateToProps = (
-  {
-    domainModels: {meterMapMarkers, meters},
-    userSelection: {userSelection: {selectionParameters: {dateRange: periodDateRange}}},
-  }: RootState,
+  {domainModels: {meterMapMarkers, meters}}: RootState,
   {selectedId}: OwnProps,
 ): StateToProps =>
   ({

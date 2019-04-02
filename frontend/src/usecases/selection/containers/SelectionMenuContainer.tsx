@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {
-  closeSelectionPage,
   resetSelection,
   saveSelection,
   selectSavedSelection,
@@ -18,7 +17,6 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  closeSelectionPage: OnClick;
   saveSelection: CallbackWith<UserSelection>;
   updateSelection: CallbackWith<UserSelection>;
   resetSelection: OnClick;
@@ -32,7 +30,6 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  closeSelectionPage,
   saveSelection,
   updateSelection,
   resetSelection,

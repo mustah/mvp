@@ -11,7 +11,7 @@ describe('routes', () => {
 
     test.each(testCases)(
       'test #%i: regex %p matches? %p',
-      (testId, route, isOnMeterDetails) => expect(isOnMeterDetailsPage(route)).toEqual(isOnMeterDetails)
+      (_, route, isOnMeterDetails) => expect(isOnMeterDetailsPage(route)).toEqual(isOnMeterDetails)
     );
 
   });
