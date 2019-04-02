@@ -1,5 +1,4 @@
-import {History, Location} from 'history';
-import createHashHistory from 'history/createHashHistory';
+import {createHashHistory, History, Location} from 'history';
 import evoLogoBlue from '../assets/images/elvaco.evo_logo_blue_cmyk.svg';
 import evoLogo from '../assets/images/elvaco.evo_logo_wt.svg';
 import wayneIndustries from '../assets/images/wayne-industries.png';
