@@ -269,8 +269,7 @@ export const Dashboard = ({
         && !isEqual(
         myDashboard!.layout.layout.map(makeLayoutComparable).sort(),
         layout.map(makeLayoutComparable).sort()
-      )
-        && layout.length > 0) {
+      )) {
       updateDashboard({...myDashboard, layout: {layout}});
     }
   };
