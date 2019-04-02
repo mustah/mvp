@@ -1,17 +1,19 @@
-import {LOCATION_CHANGE} from 'react-router-redux';
+import {Location} from 'history';
+import {getType} from 'typesafe-actions';
 import {routes} from '../../../app/routes';
 import {EndPoints} from '../../../services/endPoints';
 import {logoutUser} from '../../../usecases/auth/authActions';
-import {search} from '../../search/searchActions';
-import {makeMeterQuery} from '../../search/searchModels';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {makePaginatedDeleteRequestActions} from '../../domain-models-paginated/paginatedDomainModelsEntityActions';
+import {locationChange} from '../../location/locationActions';
+import {search} from '../../search/searchActions';
+import {makeMeterQuery} from '../../search/searchModels';
 import {
-  ADD_PARAMETER_TO_SELECTION,
-  DESELECT_SELECTION,
+  addParameterToSelection,
+  deselectSelection,
   RESET_SELECTION,
-  SELECT_SAVED_SELECTION,
+  selectSavedSelectionAction,
 } from '../../user-selection/userSelectionActions';
 import {SelectionSummary, SummaryState} from '../summaryModels';
 import {initialState, summary} from '../summaryReducer';
@@ -103,9 +105,9 @@ describe('summaryReducer', () => {
       };
 
       [
-        SELECT_SAVED_SELECTION,
-        ADD_PARAMETER_TO_SELECTION,
-        DESELECT_SELECTION,
+        getType(selectSavedSelectionAction),
+        getType(addParameterToSelection),
+        getType(deselectSelection),
         RESET_SELECTION,
       ].forEach((actionThatResets: string) => {
         expect(summary(state, {type: actionThatResets})).toEqual(initialState);
@@ -228,7 +230,8 @@ describe('summaryReducer', () => {
         payload: {...initialState.payload, numMeters: 2}
       };
 
-      state = summary(state, {type: LOCATION_CHANGE, payload: {pathname: routes.dashboard}});
+      const payload: Partial<Location> = {pathname: routes.dashboard};
+      state = summary(state, locationChange(payload as Location));
 
       expect(state).toEqual(initialState);
     });
@@ -239,7 +242,8 @@ describe('summaryReducer', () => {
         payload: {...initialState.payload, numMeters: 2}
       };
 
-      const nextState = summary(state, {type: LOCATION_CHANGE, payload: {pathname: routes.searchResult}});
+      const payload: Partial<Location> = {pathname: routes.searchResult};
+      const nextState = summary(state, locationChange(payload as Location));
 
       expect(nextState).toBe(state);
     });

@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {resetSelection, selectSavedSelection} from '../../../state/user-selection/userSelectionActions';
+import {resetSelection, selectSelection} from '../../../state/user-selection/userSelectionActions';
 import {allCurrentMeterParameters, getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {fetchCountWidget} from '../../../state/widget/widgetActions';
 import {CountWidget, DispatchToProps, OwnProps, StateToProps} from '../components/CountWidget';
@@ -34,7 +34,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchCountWidget,
   resetSelection,
-  selectSavedSelection,
+  selectSelection,
 }, dispatch);
 
 export const CountWidgetContainer =

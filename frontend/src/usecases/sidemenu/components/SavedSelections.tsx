@@ -1,13 +1,12 @@
 import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
-import {routes} from '../../../app/routes';
+import {history, routes} from '../../../app/routes';
 import {listItemInnerDivStyle, listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {withContent} from '../../../components/hoc/withContent';
 import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {Medium} from '../../../components/texts/Texts';
-import {history} from '../../../index';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {Callback, IdNamed, OnClickWithId, uuid} from '../../../types/Types';
@@ -34,6 +33,7 @@ const ListItems = ({
   fetchUserSelections,
   resetSelection,
   savedSelections,
+  selectSelection,
   selectSavedSelection,
   selection
 }: Props & ConfirmDelete) => {
@@ -55,17 +55,7 @@ const ListItems = ({
     };
 
     const onEditSelection: Callback = () => selectSavedSelection(id);
-
-    const onSelect: Callback = () => {
-      if (!isMeterPage) {
-        history.push(routes.meters);
-      }
-      if (id === initialSelectionId) {
-        resetSelection();
-      } else {
-        selectSavedSelection(id);
-      }
-    };
+    const onSelect: Callback = () => selectSelection(id);
 
     return (
       <ListItem

@@ -1,18 +1,21 @@
 import {shallowEqual} from 'recompose';
 import {Dispatch} from 'redux';
-import {createStandardAction} from 'typesafe-actions';
+import {createAction, createStandardAction} from 'typesafe-actions';
+import {history, routes} from '../../app/routes';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {getId} from '../../helpers/collections';
 import {Maybe} from '../../helpers/Maybe';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {migrateUserSelection, oldParameterNames} from '../../reducers/stateMigrations';
+import {isMeterPage} from '../../selectors/routerSelectors';
 import {EndPoints} from '../../services/endPoints';
 import {firstUpperTranslated} from '../../services/translationService';
-import {emptyActionOf, ErrorResponse, payloadActionOf, uuid} from '../../types/Types';
+import {ErrorResponse, uuid} from '../../types/Types';
 import {NormalizedState} from '../domain-models/domainModels';
 import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
 import {
+  initialSelectionId,
   isValidThreshold,
   OldSelectionParameters,
   ParameterName,
@@ -26,16 +29,14 @@ import {getThreshold, getUserSelection} from './userSelectionSelectors';
 
 export const selectPeriod = createStandardAction('SELECT_PERIOD')<Period>();
 
-export const ADD_PARAMETER_TO_SELECTION = 'ADD_PARAMETER_TO_SELECTION';
-export const DESELECT_SELECTION = 'DESELECT_SELECTION';
 export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
-export const addParameterToSelection = payloadActionOf<SelectionParameter>(ADD_PARAMETER_TO_SELECTION);
-const deselectParameterInSelection = payloadActionOf<SelectionParameter>(DESELECT_SELECTION);
+export const addParameterToSelection = createStandardAction('ADD_PARAMETER_TO_SELECTION')<SelectionParameter>();
+export const deselectSelection = createStandardAction('DESELECT_SELECTION')<SelectionParameter>();
 
-export const resetSelection = emptyActionOf(RESET_SELECTION);
-const selectSavedSelectionAction = payloadActionOf<UserSelection>(SELECT_SAVED_SELECTION);
+export const resetSelection = createAction(RESET_SELECTION);
+export const selectSavedSelectionAction = createStandardAction('SELECT_SAVED_SELECTION')<UserSelection>();
 
 export const setThresholdAction = createStandardAction('SET_THRESHOLD')<ThresholdQuery>();
 
@@ -105,6 +106,19 @@ export const selectSavedSelection = (selectedId: uuid) =>
       .map((userSelection: UserSelection) => dispatch(selectSavedSelectionAction(userSelection)));
   };
 
+export const selectSelection = (selectionId?: uuid) =>
+  (dispatch, getState: GetState) => {
+    if (!isMeterPage(getState().routing)) {
+      history.push(routes.meters);
+    }
+
+    if (selectionId === undefined || selectionId === initialSelectionId) {
+      dispatch(resetSelection());
+    } else {
+      dispatch(selectSavedSelection(selectionId));
+    }
+  };
+
 const getSelectionItems = (getState: GetState, parameter: ParameterName): SelectionItem[] =>
   getUserSelection(getState().userSelection).selectionParameters[parameter];
 
@@ -114,7 +128,7 @@ export const toggleParameter = (selectionParameter: SelectionParameter) =>
     const selectionItems = getSelectionItems(getState, parameter);
     Maybe.maybe<SelectionItem[]>(selectionItems)
       .filter((selected: SelectionItem[]) => selected.map(getId).includes(item.id))
-      .map(() => dispatch(deselectParameterInSelection(selectionParameter)))
+      .map(() => dispatch(deselectSelection(selectionParameter)))
       .orElseGet(() => dispatch(addParameterToSelection(selectionParameter)));
   };
 

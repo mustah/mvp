@@ -5,7 +5,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {collectionStatClearError} from '../../../state/domain-models/collection-stat/collectionStatActions';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
-import {resetSelection, selectSavedSelection} from '../../../state/user-selection/userSelectionActions';
+import {resetSelection, selectSelection} from '../../../state/user-selection/userSelectionActions';
 import {getCollectionStatParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {fetchCollectionStatsWidget} from '../../../state/widget/widgetActions';
 import {CollectionStatusWidget, DispatchToProps, OwnProps, StateToProps} from '../components/CollectionStatusWidget';
@@ -45,7 +45,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: collectionStatClearError, // TODO add id here
   fetchCollectionStatsWidget,
-  selectSavedSelection,
+  selectSelection,
   resetSelection,
   deleteWidget,
 }, dispatch);

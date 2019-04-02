@@ -8,13 +8,13 @@ import {
   domainModelsPutSuccess,
 } from '../../domain-models/domainModelsActions';
 import {
-  ADD_PARAMETER_TO_SELECTION,
-  DESELECT_SELECTION,
+  addParameterToSelection,
+  deselectSelection,
   RESET_SELECTION,
-  SELECT_SAVED_SELECTION,
+  selectSavedSelectionAction,
   setCustomDateRange,
 } from '../userSelectionActions';
-import {ParameterName, SelectionParameter, UserSelection, UserSelectionState, } from '../userSelectionModels';
+import {ParameterName, SelectionParameter, UserSelection, UserSelectionState} from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
 
 describe('userSelectionReducer', () => {
@@ -38,7 +38,7 @@ describe('userSelectionReducer', () => {
     it('replaces current selection', () => {
       const state: UserSelectionState = userSelection(
         initialState,
-        {type: SELECT_SAVED_SELECTION, payload: mockPayload},
+        selectSavedSelectionAction(mockPayload),
       );
 
       const expectedState: UserSelectionState = {userSelection: {...mockPayload, isChanged: false}};
@@ -67,10 +67,7 @@ describe('userSelectionReducer', () => {
         },
       };
 
-      const actual: UserSelectionState = userSelection(
-        state,
-        {type: ADD_PARAMETER_TO_SELECTION, payload: selectionParameters},
-      );
+      const actual: UserSelectionState = userSelection(state, addParameterToSelection(selectionParameters));
 
       expect(actual).toEqual(expected);
     });
@@ -102,7 +99,7 @@ describe('userSelectionReducer', () => {
     it('resets current selection', () => {
       let state: UserSelectionState = userSelection(
         initialState,
-        {type: SELECT_SAVED_SELECTION, payload: mockPayload},
+        selectSavedSelectionAction(mockPayload)
       );
 
       expect(state).not.toEqual(initialState);
@@ -125,10 +122,7 @@ describe('userSelectionReducer', () => {
         item: {...gothenburg},
       };
 
-      const state: UserSelectionState = userSelection(
-        userSelectionState,
-        {type: DESELECT_SELECTION, payload},
-      );
+      const state: UserSelectionState = userSelection(userSelectionState, deselectSelection(payload));
 
       const expected: UserSelectionState = {
         userSelection: {
