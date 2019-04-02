@@ -1,0 +1,1188 @@
+manufacturer	device_type	firmware_version	mask	description
+ELV	4	2	1	Error during flow metering (Air in meassuring pipe) - Error F0
+ELV	4	2	2	Interruption of flow temperature sensor - Error F1
+ELV	4	2	4	Interruption of return temperature sensor - Error F2
+ELV	4	2	8	Electronic for temperature evaluation defective - Error F3
+ELV	4	2	16	Battery empty - Error F4
+ELV	4	2	32	Short-circuit flow temperature sensor - Error F5
+ELV	4	2	64	Short-circuit return temperature sensor - Error F6
+ELV	4	2	128	Fault in internal memory (CRC) - Error F7
+ELV	4	2	256	Error F1,F2,F5 and F6 pending for longer than 8h - Error F8
+ELV	4	2	512	Error in electronics - Error F9
+ELV	4	2	1024	Prewarning for solling the measurement tube - Error F0V
+ELV	4	2	2048	Correctable error in the internal memory EEPROM - Error F7V
+ELR	7	1	1	Meter battery low
+ELR	7	1	2	No flow start
+ELR	7	1	4	Reserved(0)
+ELR	7	1	8	Leak start
+ELR	7	1	16	Meter not present
+ELR	7	1	32	Overflow
+ELR	7	1	64	Empty pipe
+ELR	7	1	128	Backflow
+LGZ	4	4	1	Error F1,F2,F5 and F6 pending for longer than 8h - Error F8
+LGZ	4	4	2	Error in electronics - Error F9
+LGZ	4	4	4	Prewarning for solling the measurement tube - Error F0V
+LGZ	4	4	8	Correctable error in the internal memory EEPROM - Error F7V
+LGZ	4	4	256	Error during flow metering (Air in meassuring pipe) - Error F0
+LGZ	4	4	512	Interruption of flow temperature sensor - Error F1
+LGZ	4	4	1024	Interruption of return temperature sensor - Error F2
+LGZ	4	4	2048	Electronic for temperature evaluation defective - Error F3
+LGZ	4	4	4096	Battery empty - Error F4
+LGZ	4	4	8192	Short-circuit flow temperature sensor - Error F5
+LGZ	4	4	16384	Short-circuit return temperature sensor - Error F6
+LGZ	4	4	32768	Fault in internal memory (CRC) - Error F7
+LUG	4	4	1	Error F1,F2,F5 and F6 pending for longer than 8h - Error F8
+LUG	4	4	2	Error in electronics - Error F9
+LUG	4	4	4	Prewarning for solling the measurement tube - Error F0V
+LUG	4	4	8	Correctable error in the internal memory EEPROM - Error F7V
+LUG	4	4	256	Error during flow metering (Air in meassuring pipe) - Error F0
+LUG	4	4	512	Interruption of flow temperature sensor - Error F1
+LUG	4	4	1024	Interruption of return temperature sensor - Error F2
+LUG	4	4	2048	Electronic for temperature evaluation defective - Error F3
+LUG	4	4	4096	Battery empty - Error F4
+LUG	4	4	8192	Short-circuit flow temperature sensor - Error F5
+LUG	4	4	16384	Short-circuit return temperature sensor - Error F6
+LUG	4	4	32768	Fault in internal memory (CRC) - Error F7
+KAM	4	0	1	Supply voltage has been cut off
+KAM	4	0	2	Flow sensor error
+KAM	4	0	4	Temperature sensor T2 outside measuring range
+KAM	4	0	8	Temperature sensor T1 outside measuring range
+KAM	4	0	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	0	32	Temperature sensor T3 outside measuring range
+KAM	4	0	64	Leak in the cold-water system
+KAM	4	0	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	0	256	Leak in the heating system
+KAM	4	0	512	Burst in the heating system
+KAM	4	0	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	0	2048	Flow sensor V1, Wrong meter factor
+KAM	4	0	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	0	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	0	16384	Flow sensor V1, Wrong flow direction
+KAM	4	0	32768	Flow sensor V2, Wrong flow direction
+KAM	4	1	1	Supply voltage has been cut off
+KAM	4	1	2	Flow sensor error
+KAM	4	1	4	Temperature sensor T2 outside measuring range
+KAM	4	1	8	Temperature sensor T1 outside measuring range
+KAM	4	1	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	1	32	Temperature sensor T3 outside measuring range
+KAM	4	1	64	Leak in the cold-water system
+KAM	4	1	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	1	256	Leak in the heating system
+KAM	4	1	512	Burst in the heating system
+KAM	4	1	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	1	2048	Flow sensor V1, Wrong meter factor
+KAM	4	1	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	1	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	1	16384	Flow sensor V1, Wrong flow direction
+KAM	4	1	32768	Flow sensor V2, Wrong flow direction
+KAM	4	5	1	Supply voltage has been cut off
+KAM	4	5	2	Flow sensor error
+KAM	4	5	4	Temperature sensor T2 outside measuring range
+KAM	4	5	8	Temperature sensor T1 outside measuring range
+KAM	4	5	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	5	32	Temperature sensor T3 outside measuring range
+KAM	4	5	64	Leak in the cold-water system
+KAM	4	5	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	5	256	Leak in the heating system
+KAM	4	5	512	Burst in the heating system
+KAM	4	5	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	5	2048	Flow sensor V1, Wrong meter factor
+KAM	4	5	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	5	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	5	16384	Flow sensor V1, Wrong flow direction
+KAM	4	5	32768	Flow sensor V2, Wrong flow direction
+KAM	4	6	1	Supply voltage has been cut off
+KAM	4	6	2	Flow sensor error
+KAM	4	6	4	Temperature sensor T2 outside measuring range
+KAM	4	6	8	Temperature sensor T1 outside measuring range
+KAM	4	6	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	6	32	Temperature sensor T3 outside measuring range
+KAM	4	6	64	Leak in the cold-water system
+KAM	4	6	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	6	256	Leak in the heating system
+KAM	4	6	512	Burst in the heating system
+KAM	4	6	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	6	2048	Flow sensor V1, Wrong meter factor
+KAM	4	6	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	6	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	6	16384	Flow sensor V1, Wrong flow direction
+KAM	4	6	32768	Flow sensor V2, Wrong flow direction
+KAM	4	7	1	Supply voltage has been cut off
+KAM	4	7	2	Flow sensor error
+KAM	4	7	4	Temperature sensor T2 outside measuring range
+KAM	4	7	8	Temperature sensor T1 outside measuring range
+KAM	4	7	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	7	32	Temperature sensor T3 outside measuring range
+KAM	4	7	64	Leak in the cold-water system
+KAM	4	7	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	7	256	Leak in the heating system
+KAM	4	7	512	Burst in the heating system
+KAM	4	7	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	7	2048	Flow sensor V1, Wrong meter factor
+KAM	4	7	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	7	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	7	16384	Flow sensor V1, Wrong flow direction
+KAM	4	7	32768	Flow sensor V2, Wrong flow direction
+KAM	4	8	1	Supply voltage has been cut off
+KAM	4	8	2	Flow sensor error
+KAM	4	8	4	Temperature sensor T2 outside measuring range
+KAM	4	8	8	Temperature sensor T1 outside measuring range
+KAM	4	8	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	8	32	Temperature sensor T3 outside measuring range
+KAM	4	8	64	Leak in the cold-water system
+KAM	4	8	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	8	256	Leak in the heating system
+KAM	4	8	512	Burst in the heating system
+KAM	4	8	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	8	2048	Flow sensor V1, Wrong meter factor
+KAM	4	8	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	8	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	8	16384	Flow sensor V1, Wrong flow direction
+KAM	4	8	32768	Flow sensor V2, Wrong flow direction
+KAM	4	11	1	Supply voltage has been cut off
+KAM	4	11	2	Flow sensor error
+KAM	4	11	4	Temperature sensor T2 outside measuring range
+KAM	4	11	8	Temperature sensor T1 outside measuring range
+KAM	4	11	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	11	32	Temperature sensor T3 outside measuring range
+KAM	4	11	64	Leak in the cold-water system
+KAM	4	11	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	11	256	Leak in the heating system
+KAM	4	11	512	Burst in the heating system
+KAM	4	11	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	11	2048	Flow sensor V1, Wrong meter factor
+KAM	4	11	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	11	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	11	16384	Flow sensor V1, Wrong flow direction
+KAM	4	11	32768	Flow sensor V2, Wrong flow direction
+KAM	4	15	1	Supply voltage has been cut off
+KAM	4	15	2	Flow sensor error
+KAM	4	15	4	Temperature sensor T2 outside measuring range
+KAM	4	15	8	Temperature sensor T1 outside measuring range
+KAM	4	15	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	15	32	Temperature sensor T3 outside measuring range
+KAM	4	15	64	Leak in the cold-water system
+KAM	4	15	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	15	256	Leak in the heating system
+KAM	4	15	512	Burst in the heating system
+KAM	4	15	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	15	2048	Flow sensor V1, Wrong meter factor
+KAM	4	15	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	15	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	15	16384	Flow sensor V1, Wrong flow direction
+KAM	4	15	32768	Flow sensor V2, Wrong flow direction
+KAM	4	17	1	Supply voltage has been cut off
+KAM	4	17	2	Flow sensor error
+KAM	4	17	4	Temperature sensor T2 outside measuring range
+KAM	4	17	8	Temperature sensor T1 outside measuring range
+KAM	4	17	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	4	17	32	Temperature sensor T3 outside measuring range
+KAM	4	17	64	Leak in the cold-water system
+KAM	4	17	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	4	17	256	Leak in the heating system
+KAM	4	17	512	Burst in the heating system
+KAM	4	17	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	4	17	2048	Flow sensor V1, Wrong meter factor
+KAM	4	17	4096	Flow sensor V1, Signal too low (Air)
+KAM	4	17	8192	Flow sensor V2, Signal too low (Air)
+KAM	4	17	16384	Flow sensor V1, Wrong flow direction
+KAM	4	17	32768	Flow sensor V2, Wrong flow direction
+KAM	6	0	1	Supply voltage has been cut off
+KAM	6	0	2	Flow sensor error
+KAM	6	0	4	Temperature sensor T2 outside measuring range
+KAM	6	0	8	Temperature sensor T1 outside measuring range
+KAM	6	0	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	0	32	Temperature sensor T3 outside measuring range
+KAM	6	0	64	Leak in the cold-water system
+KAM	6	0	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	0	256	Leak in the heating system
+KAM	6	0	512	Burst in the heating system
+KAM	6	0	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	0	2048	Flow sensor V1, Wrong meter factor
+KAM	6	0	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	0	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	0	16384	Flow sensor V1, Wrong flow direction
+KAM	6	0	32768	Flow sensor V2, Wrong flow direction
+KAM	6	1	1	Supply voltage has been cut off
+KAM	6	1	2	Flow sensor error
+KAM	6	1	4	Temperature sensor T2 outside measuring range
+KAM	6	1	8	Temperature sensor T1 outside measuring range
+KAM	6	1	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	1	32	Temperature sensor T3 outside measuring range
+KAM	6	1	64	Leak in the cold-water system
+KAM	6	1	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	1	256	Leak in the heating system
+KAM	6	1	512	Burst in the heating system
+KAM	6	1	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	1	2048	Flow sensor V1, Wrong meter factor
+KAM	6	1	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	1	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	1	16384	Flow sensor V1, Wrong flow direction
+KAM	6	1	32768	Flow sensor V2, Wrong flow direction
+KAM	6	5	1	Supply voltage has been cut off
+KAM	6	5	2	Flow sensor error
+KAM	6	5	4	Temperature sensor T2 outside measuring range
+KAM	6	5	8	Temperature sensor T1 outside measuring range
+KAM	6	5	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	5	32	Temperature sensor T3 outside measuring range
+KAM	6	5	64	Leak in the cold-water system
+KAM	6	5	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	5	256	Leak in the heating system
+KAM	6	5	512	Burst in the heating system
+KAM	6	5	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	5	2048	Flow sensor V1, Wrong meter factor
+KAM	6	5	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	5	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	5	16384	Flow sensor V1, Wrong flow direction
+KAM	6	5	32768	Flow sensor V2, Wrong flow direction
+KAM	6	6	1	Supply voltage has been cut off
+KAM	6	6	2	Flow sensor error
+KAM	6	6	4	Temperature sensor T2 outside measuring range
+KAM	6	6	8	Temperature sensor T1 outside measuring range
+KAM	6	6	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	6	32	Temperature sensor T3 outside measuring range
+KAM	6	6	64	Leak in the cold-water system
+KAM	6	6	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	6	256	Leak in the heating system
+KAM	6	6	512	Burst in the heating system
+KAM	6	6	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	6	2048	Flow sensor V1, Wrong meter factor
+KAM	6	6	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	6	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	6	16384	Flow sensor V1, Wrong flow direction
+KAM	6	6	32768	Flow sensor V2, Wrong flow direction
+KAM	6	7	1	Supply voltage has been cut off
+KAM	6	7	2	Flow sensor error
+KAM	6	7	4	Temperature sensor T2 outside measuring range
+KAM	6	7	8	Temperature sensor T1 outside measuring range
+KAM	6	7	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	7	32	Temperature sensor T3 outside measuring range
+KAM	6	7	64	Leak in the cold-water system
+KAM	6	7	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	7	256	Leak in the heating system
+KAM	6	7	512	Burst in the heating system
+KAM	6	7	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	7	2048	Flow sensor V1, Wrong meter factor
+KAM	6	7	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	7	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	7	16384	Flow sensor V1, Wrong flow direction
+KAM	6	7	32768	Flow sensor V2, Wrong flow direction
+KAM	6	8	1	Supply voltage has been cut off
+KAM	6	8	2	Flow sensor error
+KAM	6	8	4	Temperature sensor T2 outside measuring range
+KAM	6	8	8	Temperature sensor T1 outside measuring range
+KAM	6	8	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	8	32	Temperature sensor T3 outside measuring range
+KAM	6	8	64	Leak in the cold-water system
+KAM	6	8	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	8	256	Leak in the heating system
+KAM	6	8	512	Burst in the heating system
+KAM	6	8	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	8	2048	Flow sensor V1, Wrong meter factor
+KAM	6	8	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	8	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	8	16384	Flow sensor V1, Wrong flow direction
+KAM	6	8	32768	Flow sensor V2, Wrong flow direction
+KAM	6	11	1	Supply voltage has been cut off
+KAM	6	11	2	Flow sensor error
+KAM	6	11	4	Temperature sensor T2 outside measuring range
+KAM	6	11	8	Temperature sensor T1 outside measuring range
+KAM	6	11	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	11	32	Temperature sensor T3 outside measuring range
+KAM	6	11	64	Leak in the cold-water system
+KAM	6	11	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	11	256	Leak in the heating system
+KAM	6	11	512	Burst in the heating system
+KAM	6	11	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	11	2048	Flow sensor V1, Wrong meter factor
+KAM	6	11	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	11	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	11	16384	Flow sensor V1, Wrong flow direction
+KAM	6	11	32768	Flow sensor V2, Wrong flow direction
+KAM	6	15	1	Supply voltage has been cut off
+KAM	6	15	2	Flow sensor error
+KAM	6	15	4	Temperature sensor T2 outside measuring range
+KAM	6	15	8	Temperature sensor T1 outside measuring range
+KAM	6	15	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	15	32	Temperature sensor T3 outside measuring range
+KAM	6	15	64	Leak in the cold-water system
+KAM	6	15	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	15	256	Leak in the heating system
+KAM	6	15	512	Burst in the heating system
+KAM	6	15	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	15	2048	Flow sensor V1, Wrong meter factor
+KAM	6	15	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	15	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	15	16384	Flow sensor V1, Wrong flow direction
+KAM	6	15	32768	Flow sensor V2, Wrong flow direction
+KAM	6	17	1	Supply voltage has been cut off
+KAM	6	17	2	Flow sensor error
+KAM	6	17	4	Temperature sensor T2 outside measuring range
+KAM	6	17	8	Temperature sensor T1 outside measuring range
+KAM	6	17	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	6	17	32	Temperature sensor T3 outside measuring range
+KAM	6	17	64	Leak in the cold-water system
+KAM	6	17	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	6	17	256	Leak in the heating system
+KAM	6	17	512	Burst in the heating system
+KAM	6	17	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	6	17	2048	Flow sensor V1, Wrong meter factor
+KAM	6	17	4096	Flow sensor V1, Signal too low (Air)
+KAM	6	17	8192	Flow sensor V2, Signal too low (Air)
+KAM	6	17	16384	Flow sensor V1, Wrong flow direction
+KAM	6	17	32768	Flow sensor V2, Wrong flow direction
+KAM	10	0	1	Supply voltage has been cut off
+KAM	10	0	2	Flow sensor error
+KAM	10	0	4	Temperature sensor T2 outside measuring range
+KAM	10	0	8	Temperature sensor T1 outside measuring range
+KAM	10	0	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	0	32	Temperature sensor T3 outside measuring range
+KAM	10	0	64	Leak in the cold-water system
+KAM	10	0	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	0	256	Leak in the heating system
+KAM	10	0	512	Burst in the heating system
+KAM	10	0	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	0	2048	Flow sensor V1, Wrong meter factor
+KAM	10	0	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	0	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	0	16384	Flow sensor V1, Wrong flow direction
+KAM	10	0	32768	Flow sensor V2, Wrong flow direction
+KAM	10	1	1	Supply voltage has been cut off
+KAM	10	1	2	Flow sensor error
+KAM	10	1	4	Temperature sensor T2 outside measuring range
+KAM	10	1	8	Temperature sensor T1 outside measuring range
+KAM	10	1	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	1	32	Temperature sensor T3 outside measuring range
+KAM	10	1	64	Leak in the cold-water system
+KAM	10	1	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	1	256	Leak in the heating system
+KAM	10	1	512	Burst in the heating system
+KAM	10	1	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	1	2048	Flow sensor V1, Wrong meter factor
+KAM	10	1	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	1	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	1	16384	Flow sensor V1, Wrong flow direction
+KAM	10	1	32768	Flow sensor V2, Wrong flow direction
+KAM	10	5	1	Supply voltage has been cut off
+KAM	10	5	2	Flow sensor error
+KAM	10	5	4	Temperature sensor T2 outside measuring range
+KAM	10	5	8	Temperature sensor T1 outside measuring range
+KAM	10	5	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	5	32	Temperature sensor T3 outside measuring range
+KAM	10	5	64	Leak in the cold-water system
+KAM	10	5	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	5	256	Leak in the heating system
+KAM	10	5	512	Burst in the heating system
+KAM	10	5	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	5	2048	Flow sensor V1, Wrong meter factor
+KAM	10	5	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	5	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	5	16384	Flow sensor V1, Wrong flow direction
+KAM	10	5	32768	Flow sensor V2, Wrong flow direction
+KAM	10	6	1	Supply voltage has been cut off
+KAM	10	6	2	Flow sensor error
+KAM	10	6	4	Temperature sensor T2 outside measuring range
+KAM	10	6	8	Temperature sensor T1 outside measuring range
+KAM	10	6	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	6	32	Temperature sensor T3 outside measuring range
+KAM	10	6	64	Leak in the cold-water system
+KAM	10	6	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	6	256	Leak in the heating system
+KAM	10	6	512	Burst in the heating system
+KAM	10	6	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	6	2048	Flow sensor V1, Wrong meter factor
+KAM	10	6	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	6	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	6	16384	Flow sensor V1, Wrong flow direction
+KAM	10	6	32768	Flow sensor V2, Wrong flow direction
+KAM	10	7	1	Supply voltage has been cut off
+KAM	10	7	2	Flow sensor error
+KAM	10	7	4	Temperature sensor T2 outside measuring range
+KAM	10	7	8	Temperature sensor T1 outside measuring range
+KAM	10	7	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	7	32	Temperature sensor T3 outside measuring range
+KAM	10	7	64	Leak in the cold-water system
+KAM	10	7	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	7	256	Leak in the heating system
+KAM	10	7	512	Burst in the heating system
+KAM	10	7	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	7	2048	Flow sensor V1, Wrong meter factor
+KAM	10	7	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	7	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	7	16384	Flow sensor V1, Wrong flow direction
+KAM	10	7	32768	Flow sensor V2, Wrong flow direction
+KAM	10	8	1	Supply voltage has been cut off
+KAM	10	8	2	Flow sensor error
+KAM	10	8	4	Temperature sensor T2 outside measuring range
+KAM	10	8	8	Temperature sensor T1 outside measuring range
+KAM	10	8	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	8	32	Temperature sensor T3 outside measuring range
+KAM	10	8	64	Leak in the cold-water system
+KAM	10	8	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	8	256	Leak in the heating system
+KAM	10	8	512	Burst in the heating system
+KAM	10	8	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	8	2048	Flow sensor V1, Wrong meter factor
+KAM	10	8	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	8	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	8	16384	Flow sensor V1, Wrong flow direction
+KAM	10	8	32768	Flow sensor V2, Wrong flow direction
+KAM	10	11	1	Supply voltage has been cut off
+KAM	10	11	2	Flow sensor error
+KAM	10	11	4	Temperature sensor T2 outside measuring range
+KAM	10	11	8	Temperature sensor T1 outside measuring range
+KAM	10	11	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	11	32	Temperature sensor T3 outside measuring range
+KAM	10	11	64	Leak in the cold-water system
+KAM	10	11	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	11	256	Leak in the heating system
+KAM	10	11	512	Burst in the heating system
+KAM	10	11	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	11	2048	Flow sensor V1, Wrong meter factor
+KAM	10	11	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	11	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	11	16384	Flow sensor V1, Wrong flow direction
+KAM	10	11	32768	Flow sensor V2, Wrong flow direction
+KAM	10	15	1	Supply voltage has been cut off
+KAM	10	15	2	Flow sensor error
+KAM	10	15	4	Temperature sensor T2 outside measuring range
+KAM	10	15	8	Temperature sensor T1 outside measuring range
+KAM	10	15	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	15	32	Temperature sensor T3 outside measuring range
+KAM	10	15	64	Leak in the cold-water system
+KAM	10	15	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	15	256	Leak in the heating system
+KAM	10	15	512	Burst in the heating system
+KAM	10	15	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	15	2048	Flow sensor V1, Wrong meter factor
+KAM	10	15	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	15	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	15	16384	Flow sensor V1, Wrong flow direction
+KAM	10	15	32768	Flow sensor V2, Wrong flow direction
+KAM	10	17	1	Supply voltage has been cut off
+KAM	10	17	2	Flow sensor error
+KAM	10	17	4	Temperature sensor T2 outside measuring range
+KAM	10	17	8	Temperature sensor T1 outside measuring range
+KAM	10	17	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	10	17	32	Temperature sensor T3 outside measuring range
+KAM	10	17	64	Leak in the cold-water system
+KAM	10	17	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	10	17	256	Leak in the heating system
+KAM	10	17	512	Burst in the heating system
+KAM	10	17	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	10	17	2048	Flow sensor V1, Wrong meter factor
+KAM	10	17	4096	Flow sensor V1, Signal too low (Air)
+KAM	10	17	8192	Flow sensor V2, Signal too low (Air)
+KAM	10	17	16384	Flow sensor V1, Wrong flow direction
+KAM	10	17	32768	Flow sensor V2, Wrong flow direction
+KAM	11	0	1	Supply voltage has been cut off
+KAM	11	0	2	Flow sensor error
+KAM	11	0	4	Temperature sensor T2 outside measuring range
+KAM	11	0	8	Temperature sensor T1 outside measuring range
+KAM	11	0	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	0	32	Temperature sensor T3 outside measuring range
+KAM	11	0	64	Leak in the cold-water system
+KAM	11	0	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	0	256	Leak in the heating system
+KAM	11	0	512	Burst in the heating system
+KAM	11	0	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	0	2048	Flow sensor V1, Wrong meter factor
+KAM	11	0	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	0	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	0	16384	Flow sensor V1, Wrong flow direction
+KAM	11	0	32768	Flow sensor V2, Wrong flow direction
+KAM	11	1	1	Supply voltage has been cut off
+KAM	11	1	2	Flow sensor error
+KAM	11	1	4	Temperature sensor T2 outside measuring range
+KAM	11	1	8	Temperature sensor T1 outside measuring range
+KAM	11	1	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	1	32	Temperature sensor T3 outside measuring range
+KAM	11	1	64	Leak in the cold-water system
+KAM	11	1	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	1	256	Leak in the heating system
+KAM	11	1	512	Burst in the heating system
+KAM	11	1	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	1	2048	Flow sensor V1, Wrong meter factor
+KAM	11	1	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	1	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	1	16384	Flow sensor V1, Wrong flow direction
+KAM	11	1	32768	Flow sensor V2, Wrong flow direction
+KAM	11	5	1	Supply voltage has been cut off
+KAM	11	5	2	Flow sensor error
+KAM	11	5	4	Temperature sensor T2 outside measuring range
+KAM	11	5	8	Temperature sensor T1 outside measuring range
+KAM	11	5	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	5	32	Temperature sensor T3 outside measuring range
+KAM	11	5	64	Leak in the cold-water system
+KAM	11	5	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	5	256	Leak in the heating system
+KAM	11	5	512	Burst in the heating system
+KAM	11	5	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	5	2048	Flow sensor V1, Wrong meter factor
+KAM	11	5	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	5	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	5	16384	Flow sensor V1, Wrong flow direction
+KAM	11	5	32768	Flow sensor V2, Wrong flow direction
+KAM	11	6	1	Supply voltage has been cut off
+KAM	11	6	2	Flow sensor error
+KAM	11	6	4	Temperature sensor T2 outside measuring range
+KAM	11	6	8	Temperature sensor T1 outside measuring range
+KAM	11	6	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	6	32	Temperature sensor T3 outside measuring range
+KAM	11	6	64	Leak in the cold-water system
+KAM	11	6	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	6	256	Leak in the heating system
+KAM	11	6	512	Burst in the heating system
+KAM	11	6	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	6	2048	Flow sensor V1, Wrong meter factor
+KAM	11	6	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	6	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	6	16384	Flow sensor V1, Wrong flow direction
+KAM	11	6	32768	Flow sensor V2, Wrong flow direction
+KAM	11	7	1	Supply voltage has been cut off
+KAM	11	7	2	Flow sensor error
+KAM	11	7	4	Temperature sensor T2 outside measuring range
+KAM	11	7	8	Temperature sensor T1 outside measuring range
+KAM	11	7	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	7	32	Temperature sensor T3 outside measuring range
+KAM	11	7	64	Leak in the cold-water system
+KAM	11	7	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	7	256	Leak in the heating system
+KAM	11	7	512	Burst in the heating system
+KAM	11	7	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	7	2048	Flow sensor V1, Wrong meter factor
+KAM	11	7	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	7	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	7	16384	Flow sensor V1, Wrong flow direction
+KAM	11	7	32768	Flow sensor V2, Wrong flow direction
+KAM	11	8	1	Supply voltage has been cut off
+KAM	11	8	2	Flow sensor error
+KAM	11	8	4	Temperature sensor T2 outside measuring range
+KAM	11	8	8	Temperature sensor T1 outside measuring range
+KAM	11	8	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	8	32	Temperature sensor T3 outside measuring range
+KAM	11	8	64	Leak in the cold-water system
+KAM	11	8	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	8	256	Leak in the heating system
+KAM	11	8	512	Burst in the heating system
+KAM	11	8	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	8	2048	Flow sensor V1, Wrong meter factor
+KAM	11	8	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	8	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	8	16384	Flow sensor V1, Wrong flow direction
+KAM	11	8	32768	Flow sensor V2, Wrong flow direction
+KAM	11	11	1	Supply voltage has been cut off
+KAM	11	11	2	Flow sensor error
+KAM	11	11	4	Temperature sensor T2 outside measuring range
+KAM	11	11	8	Temperature sensor T1 outside measuring range
+KAM	11	11	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	11	32	Temperature sensor T3 outside measuring range
+KAM	11	11	64	Leak in the cold-water system
+KAM	11	11	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	11	256	Leak in the heating system
+KAM	11	11	512	Burst in the heating system
+KAM	11	11	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	11	2048	Flow sensor V1, Wrong meter factor
+KAM	11	11	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	11	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	11	16384	Flow sensor V1, Wrong flow direction
+KAM	11	11	32768	Flow sensor V2, Wrong flow direction
+KAM	11	15	1	Supply voltage has been cut off
+KAM	11	15	2	Flow sensor error
+KAM	11	15	4	Temperature sensor T2 outside measuring range
+KAM	11	15	8	Temperature sensor T1 outside measuring range
+KAM	11	15	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	15	32	Temperature sensor T3 outside measuring range
+KAM	11	15	64	Leak in the cold-water system
+KAM	11	15	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	15	256	Leak in the heating system
+KAM	11	15	512	Burst in the heating system
+KAM	11	15	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	15	2048	Flow sensor V1, Wrong meter factor
+KAM	11	15	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	15	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	15	16384	Flow sensor V1, Wrong flow direction
+KAM	11	15	32768	Flow sensor V2, Wrong flow direction
+KAM	11	17	1	Supply voltage has been cut off
+KAM	11	17	2	Flow sensor error
+KAM	11	17	4	Temperature sensor T2 outside measuring range
+KAM	11	17	8	Temperature sensor T1 outside measuring range
+KAM	11	17	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	11	17	32	Temperature sensor T3 outside measuring range
+KAM	11	17	64	Leak in the cold-water system
+KAM	11	17	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	11	17	256	Leak in the heating system
+KAM	11	17	512	Burst in the heating system
+KAM	11	17	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	11	17	2048	Flow sensor V1, Wrong meter factor
+KAM	11	17	4096	Flow sensor V1, Signal too low (Air)
+KAM	11	17	8192	Flow sensor V2, Signal too low (Air)
+KAM	11	17	16384	Flow sensor V1, Wrong flow direction
+KAM	11	17	32768	Flow sensor V2, Wrong flow direction
+KAM	12	0	1	Supply voltage has been cut off
+KAM	12	0	2	Flow sensor error
+KAM	12	0	4	Temperature sensor T2 outside measuring range
+KAM	12	0	8	Temperature sensor T1 outside measuring range
+KAM	12	0	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	0	32	Temperature sensor T3 outside measuring range
+KAM	12	0	64	Leak in the cold-water system
+KAM	12	0	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	0	256	Leak in the heating system
+KAM	12	0	512	Burst in the heating system
+KAM	12	0	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	0	2048	Flow sensor V1, Wrong meter factor
+KAM	12	0	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	0	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	0	16384	Flow sensor V1, Wrong flow direction
+KAM	12	0	32768	Flow sensor V2, Wrong flow direction
+KAM	12	1	1	Supply voltage has been cut off
+KAM	12	1	2	Flow sensor error
+KAM	12	1	4	Temperature sensor T2 outside measuring range
+KAM	12	1	8	Temperature sensor T1 outside measuring range
+KAM	12	1	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	1	32	Temperature sensor T3 outside measuring range
+KAM	12	1	64	Leak in the cold-water system
+KAM	12	1	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	1	256	Leak in the heating system
+KAM	12	1	512	Burst in the heating system
+KAM	12	1	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	1	2048	Flow sensor V1, Wrong meter factor
+KAM	12	1	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	1	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	1	16384	Flow sensor V1, Wrong flow direction
+KAM	12	1	32768	Flow sensor V2, Wrong flow direction
+KAM	12	5	1	Supply voltage has been cut off
+KAM	12	5	2	Flow sensor error
+KAM	12	5	4	Temperature sensor T2 outside measuring range
+KAM	12	5	8	Temperature sensor T1 outside measuring range
+KAM	12	5	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	5	32	Temperature sensor T3 outside measuring range
+KAM	12	5	64	Leak in the cold-water system
+KAM	12	5	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	5	256	Leak in the heating system
+KAM	12	5	512	Burst in the heating system
+KAM	12	5	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	5	2048	Flow sensor V1, Wrong meter factor
+KAM	12	5	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	5	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	5	16384	Flow sensor V1, Wrong flow direction
+KAM	12	5	32768	Flow sensor V2, Wrong flow direction
+KAM	12	6	1	Supply voltage has been cut off
+KAM	12	6	2	Flow sensor error
+KAM	12	6	4	Temperature sensor T2 outside measuring range
+KAM	12	6	8	Temperature sensor T1 outside measuring range
+KAM	12	6	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	6	32	Temperature sensor T3 outside measuring range
+KAM	12	6	64	Leak in the cold-water system
+KAM	12	6	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	6	256	Leak in the heating system
+KAM	12	6	512	Burst in the heating system
+KAM	12	6	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	6	2048	Flow sensor V1, Wrong meter factor
+KAM	12	6	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	6	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	6	16384	Flow sensor V1, Wrong flow direction
+KAM	12	6	32768	Flow sensor V2, Wrong flow direction
+KAM	12	7	1	Supply voltage has been cut off
+KAM	12	7	2	Flow sensor error
+KAM	12	7	4	Temperature sensor T2 outside measuring range
+KAM	12	7	8	Temperature sensor T1 outside measuring range
+KAM	12	7	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	7	32	Temperature sensor T3 outside measuring range
+KAM	12	7	64	Leak in the cold-water system
+KAM	12	7	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	7	256	Leak in the heating system
+KAM	12	7	512	Burst in the heating system
+KAM	12	7	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	7	2048	Flow sensor V1, Wrong meter factor
+KAM	12	7	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	7	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	7	16384	Flow sensor V1, Wrong flow direction
+KAM	12	7	32768	Flow sensor V2, Wrong flow direction
+KAM	12	8	1	Supply voltage has been cut off
+KAM	12	8	2	Flow sensor error
+KAM	12	8	4	Temperature sensor T2 outside measuring range
+KAM	12	8	8	Temperature sensor T1 outside measuring range
+KAM	12	8	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	8	32	Temperature sensor T3 outside measuring range
+KAM	12	8	64	Leak in the cold-water system
+KAM	12	8	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	8	256	Leak in the heating system
+KAM	12	8	512	Burst in the heating system
+KAM	12	8	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	8	2048	Flow sensor V1, Wrong meter factor
+KAM	12	8	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	8	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	8	16384	Flow sensor V1, Wrong flow direction
+KAM	12	8	32768	Flow sensor V2, Wrong flow direction
+KAM	12	11	1	Supply voltage has been cut off
+KAM	12	11	2	Flow sensor error
+KAM	12	11	4	Temperature sensor T2 outside measuring range
+KAM	12	11	8	Temperature sensor T1 outside measuring range
+KAM	12	11	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	11	32	Temperature sensor T3 outside measuring range
+KAM	12	11	64	Leak in the cold-water system
+KAM	12	11	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	11	256	Leak in the heating system
+KAM	12	11	512	Burst in the heating system
+KAM	12	11	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	11	2048	Flow sensor V1, Wrong meter factor
+KAM	12	11	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	11	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	11	16384	Flow sensor V1, Wrong flow direction
+KAM	12	11	32768	Flow sensor V2, Wrong flow direction
+KAM	12	15	1	Supply voltage has been cut off
+KAM	12	15	2	Flow sensor error
+KAM	12	15	4	Temperature sensor T2 outside measuring range
+KAM	12	15	8	Temperature sensor T1 outside measuring range
+KAM	12	15	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	15	32	Temperature sensor T3 outside measuring range
+KAM	12	15	64	Leak in the cold-water system
+KAM	12	15	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	15	256	Leak in the heating system
+KAM	12	15	512	Burst in the heating system
+KAM	12	15	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	15	2048	Flow sensor V1, Wrong meter factor
+KAM	12	15	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	15	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	15	16384	Flow sensor V1, Wrong flow direction
+KAM	12	15	32768	Flow sensor V2, Wrong flow direction
+KAM	12	17	1	Supply voltage has been cut off
+KAM	12	17	2	Flow sensor error
+KAM	12	17	4	Temperature sensor T2 outside measuring range
+KAM	12	17	8	Temperature sensor T1 outside measuring range
+KAM	12	17	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	12	17	32	Temperature sensor T3 outside measuring range
+KAM	12	17	64	Leak in the cold-water system
+KAM	12	17	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	12	17	256	Leak in the heating system
+KAM	12	17	512	Burst in the heating system
+KAM	12	17	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	12	17	2048	Flow sensor V1, Wrong meter factor
+KAM	12	17	4096	Flow sensor V1, Signal too low (Air)
+KAM	12	17	8192	Flow sensor V2, Signal too low (Air)
+KAM	12	17	16384	Flow sensor V1, Wrong flow direction
+KAM	12	17	32768	Flow sensor V2, Wrong flow direction
+KAM	13	0	1	Supply voltage has been cut off
+KAM	13	0	2	Flow sensor error
+KAM	13	0	4	Temperature sensor T2 outside measuring range
+KAM	13	0	8	Temperature sensor T1 outside measuring range
+KAM	13	0	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	0	32	Temperature sensor T3 outside measuring range
+KAM	13	0	64	Leak in the cold-water system
+KAM	13	0	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	0	256	Leak in the heating system
+KAM	13	0	512	Burst in the heating system
+KAM	13	0	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	0	2048	Flow sensor V1, Wrong meter factor
+KAM	13	0	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	0	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	0	16384	Flow sensor V1, Wrong flow direction
+KAM	13	0	32768	Flow sensor V2, Wrong flow direction
+KAM	13	1	1	Supply voltage has been cut off
+KAM	13	1	2	Flow sensor error
+KAM	13	1	4	Temperature sensor T2 outside measuring range
+KAM	13	1	8	Temperature sensor T1 outside measuring range
+KAM	13	1	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	1	32	Temperature sensor T3 outside measuring range
+KAM	13	1	64	Leak in the cold-water system
+KAM	13	1	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	1	256	Leak in the heating system
+KAM	13	1	512	Burst in the heating system
+KAM	13	1	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	1	2048	Flow sensor V1, Wrong meter factor
+KAM	13	1	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	1	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	1	16384	Flow sensor V1, Wrong flow direction
+KAM	13	1	32768	Flow sensor V2, Wrong flow direction
+KAM	13	5	1	Supply voltage has been cut off
+KAM	13	5	2	Flow sensor error
+KAM	13	5	4	Temperature sensor T2 outside measuring range
+KAM	13	5	8	Temperature sensor T1 outside measuring range
+KAM	13	5	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	5	32	Temperature sensor T3 outside measuring range
+KAM	13	5	64	Leak in the cold-water system
+KAM	13	5	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	5	256	Leak in the heating system
+KAM	13	5	512	Burst in the heating system
+KAM	13	5	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	5	2048	Flow sensor V1, Wrong meter factor
+KAM	13	5	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	5	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	5	16384	Flow sensor V1, Wrong flow direction
+KAM	13	5	32768	Flow sensor V2, Wrong flow direction
+KAM	13	6	1	Supply voltage has been cut off
+KAM	13	6	2	Flow sensor error
+KAM	13	6	4	Temperature sensor T2 outside measuring range
+KAM	13	6	8	Temperature sensor T1 outside measuring range
+KAM	13	6	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	6	32	Temperature sensor T3 outside measuring range
+KAM	13	6	64	Leak in the cold-water system
+KAM	13	6	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	6	256	Leak in the heating system
+KAM	13	6	512	Burst in the heating system
+KAM	13	6	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	6	2048	Flow sensor V1, Wrong meter factor
+KAM	13	6	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	6	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	6	16384	Flow sensor V1, Wrong flow direction
+KAM	13	6	32768	Flow sensor V2, Wrong flow direction
+KAM	13	7	1	Supply voltage has been cut off
+KAM	13	7	2	Flow sensor error
+KAM	13	7	4	Temperature sensor T2 outside measuring range
+KAM	13	7	8	Temperature sensor T1 outside measuring range
+KAM	13	7	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	7	32	Temperature sensor T3 outside measuring range
+KAM	13	7	64	Leak in the cold-water system
+KAM	13	7	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	7	256	Leak in the heating system
+KAM	13	7	512	Burst in the heating system
+KAM	13	7	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	7	2048	Flow sensor V1, Wrong meter factor
+KAM	13	7	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	7	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	7	16384	Flow sensor V1, Wrong flow direction
+KAM	13	7	32768	Flow sensor V2, Wrong flow direction
+KAM	13	8	1	Supply voltage has been cut off
+KAM	13	8	2	Flow sensor error
+KAM	13	8	4	Temperature sensor T2 outside measuring range
+KAM	13	8	8	Temperature sensor T1 outside measuring range
+KAM	13	8	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	8	32	Temperature sensor T3 outside measuring range
+KAM	13	8	64	Leak in the cold-water system
+KAM	13	8	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	8	256	Leak in the heating system
+KAM	13	8	512	Burst in the heating system
+KAM	13	8	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	8	2048	Flow sensor V1, Wrong meter factor
+KAM	13	8	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	8	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	8	16384	Flow sensor V1, Wrong flow direction
+KAM	13	8	32768	Flow sensor V2, Wrong flow direction
+KAM	13	11	1	Supply voltage has been cut off
+KAM	13	11	2	Flow sensor error
+KAM	13	11	4	Temperature sensor T2 outside measuring range
+KAM	13	11	8	Temperature sensor T1 outside measuring range
+KAM	13	11	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	11	32	Temperature sensor T3 outside measuring range
+KAM	13	11	64	Leak in the cold-water system
+KAM	13	11	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	11	256	Leak in the heating system
+KAM	13	11	512	Burst in the heating system
+KAM	13	11	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	11	2048	Flow sensor V1, Wrong meter factor
+KAM	13	11	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	11	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	11	16384	Flow sensor V1, Wrong flow direction
+KAM	13	11	32768	Flow sensor V2, Wrong flow direction
+KAM	13	15	1	Supply voltage has been cut off
+KAM	13	15	2	Flow sensor error
+KAM	13	15	4	Temperature sensor T2 outside measuring range
+KAM	13	15	8	Temperature sensor T1 outside measuring range
+KAM	13	15	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	15	32	Temperature sensor T3 outside measuring range
+KAM	13	15	64	Leak in the cold-water system
+KAM	13	15	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	15	256	Leak in the heating system
+KAM	13	15	512	Burst in the heating system
+KAM	13	15	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	15	2048	Flow sensor V1, Wrong meter factor
+KAM	13	15	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	15	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	15	16384	Flow sensor V1, Wrong flow direction
+KAM	13	15	32768	Flow sensor V2, Wrong flow direction
+KAM	13	17	1	Supply voltage has been cut off
+KAM	13	17	2	Flow sensor error
+KAM	13	17	4	Temperature sensor T2 outside measuring range
+KAM	13	17	8	Temperature sensor T1 outside measuring range
+KAM	13	17	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	13	17	32	Temperature sensor T3 outside measuring range
+KAM	13	17	64	Leak in the cold-water system
+KAM	13	17	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	13	17	256	Leak in the heating system
+KAM	13	17	512	Burst in the heating system
+KAM	13	17	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	13	17	2048	Flow sensor V1, Wrong meter factor
+KAM	13	17	4096	Flow sensor V1, Signal too low (Air)
+KAM	13	17	8192	Flow sensor V2, Signal too low (Air)
+KAM	13	17	16384	Flow sensor V1, Wrong flow direction
+KAM	13	17	32768	Flow sensor V2, Wrong flow direction
+KAM	22	0	1	Supply voltage has been cut off
+KAM	22	0	2	Flow sensor error
+KAM	22	0	4	Temperature sensor T2 outside measuring range
+KAM	22	0	8	Temperature sensor T1 outside measuring range
+KAM	22	0	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	0	32	Temperature sensor T3 outside measuring range
+KAM	22	0	64	Leak in the cold-water system
+KAM	22	0	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	0	256	Leak in the heating system
+KAM	22	0	512	Burst in the heating system
+KAM	22	0	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	0	2048	Flow sensor V1, Wrong meter factor
+KAM	22	0	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	0	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	0	16384	Flow sensor V1, Wrong flow direction
+KAM	22	0	32768	Flow sensor V2, Wrong flow direction
+KAM	22	1	1	Supply voltage has been cut off
+KAM	22	1	2	Flow sensor error
+KAM	22	1	4	Temperature sensor T2 outside measuring range
+KAM	22	1	8	Temperature sensor T1 outside measuring range
+KAM	22	1	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	1	32	Temperature sensor T3 outside measuring range
+KAM	22	1	64	Leak in the cold-water system
+KAM	22	1	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	1	256	Leak in the heating system
+KAM	22	1	512	Burst in the heating system
+KAM	22	1	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	1	2048	Flow sensor V1, Wrong meter factor
+KAM	22	1	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	1	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	1	16384	Flow sensor V1, Wrong flow direction
+KAM	22	1	32768	Flow sensor V2, Wrong flow direction
+KAM	22	5	1	Supply voltage has been cut off
+KAM	22	5	2	Flow sensor error
+KAM	22	5	4	Temperature sensor T2 outside measuring range
+KAM	22	5	8	Temperature sensor T1 outside measuring range
+KAM	22	5	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	5	32	Temperature sensor T3 outside measuring range
+KAM	22	5	64	Leak in the cold-water system
+KAM	22	5	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	5	256	Leak in the heating system
+KAM	22	5	512	Burst in the heating system
+KAM	22	5	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	5	2048	Flow sensor V1, Wrong meter factor
+KAM	22	5	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	5	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	5	16384	Flow sensor V1, Wrong flow direction
+KAM	22	5	32768	Flow sensor V2, Wrong flow direction
+KAM	22	6	1	Supply voltage has been cut off
+KAM	22	6	2	Flow sensor error
+KAM	22	6	4	Temperature sensor T2 outside measuring range
+KAM	22	6	8	Temperature sensor T1 outside measuring range
+KAM	22	6	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	6	32	Temperature sensor T3 outside measuring range
+KAM	22	6	64	Leak in the cold-water system
+KAM	22	6	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	6	256	Leak in the heating system
+KAM	22	6	512	Burst in the heating system
+KAM	22	6	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	6	2048	Flow sensor V1, Wrong meter factor
+KAM	22	6	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	6	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	6	16384	Flow sensor V1, Wrong flow direction
+KAM	22	6	32768	Flow sensor V2, Wrong flow direction
+KAM	22	7	1	Supply voltage has been cut off
+KAM	22	7	2	Flow sensor error
+KAM	22	7	4	Temperature sensor T2 outside measuring range
+KAM	22	7	8	Temperature sensor T1 outside measuring range
+KAM	22	7	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	7	32	Temperature sensor T3 outside measuring range
+KAM	22	7	64	Leak in the cold-water system
+KAM	22	7	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	7	256	Leak in the heating system
+KAM	22	7	512	Burst in the heating system
+KAM	22	7	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	7	2048	Flow sensor V1, Wrong meter factor
+KAM	22	7	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	7	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	7	16384	Flow sensor V1, Wrong flow direction
+KAM	22	7	32768	Flow sensor V2, Wrong flow direction
+KAM	22	8	1	Supply voltage has been cut off
+KAM	22	8	2	Flow sensor error
+KAM	22	8	4	Temperature sensor T2 outside measuring range
+KAM	22	8	8	Temperature sensor T1 outside measuring range
+KAM	22	8	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	8	32	Temperature sensor T3 outside measuring range
+KAM	22	8	64	Leak in the cold-water system
+KAM	22	8	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	8	256	Leak in the heating system
+KAM	22	8	512	Burst in the heating system
+KAM	22	8	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	8	2048	Flow sensor V1, Wrong meter factor
+KAM	22	8	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	8	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	8	16384	Flow sensor V1, Wrong flow direction
+KAM	22	8	32768	Flow sensor V2, Wrong flow direction
+KAM	22	11	1	Supply voltage has been cut off
+KAM	22	11	2	Flow sensor error
+KAM	22	11	4	Temperature sensor T2 outside measuring range
+KAM	22	11	8	Temperature sensor T1 outside measuring range
+KAM	22	11	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	11	32	Temperature sensor T3 outside measuring range
+KAM	22	11	64	Leak in the cold-water system
+KAM	22	11	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	11	256	Leak in the heating system
+KAM	22	11	512	Burst in the heating system
+KAM	22	11	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	11	2048	Flow sensor V1, Wrong meter factor
+KAM	22	11	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	11	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	11	16384	Flow sensor V1, Wrong flow direction
+KAM	22	11	32768	Flow sensor V2, Wrong flow direction
+KAM	22	15	1	Supply voltage has been cut off
+KAM	22	15	2	Flow sensor error
+KAM	22	15	4	Temperature sensor T2 outside measuring range
+KAM	22	15	8	Temperature sensor T1 outside measuring range
+KAM	22	15	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	15	32	Temperature sensor T3 outside measuring range
+KAM	22	15	64	Leak in the cold-water system
+KAM	22	15	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	15	256	Leak in the heating system
+KAM	22	15	512	Burst in the heating system
+KAM	22	15	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	15	2048	Flow sensor V1, Wrong meter factor
+KAM	22	15	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	15	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	15	16384	Flow sensor V1, Wrong flow direction
+KAM	22	15	32768	Flow sensor V2, Wrong flow direction
+KAM	22	17	1	Supply voltage has been cut off
+KAM	22	17	2	Flow sensor error
+KAM	22	17	4	Temperature sensor T2 outside measuring range
+KAM	22	17	8	Temperature sensor T1 outside measuring range
+KAM	22	17	16	Flow sensor V1, Datacomm error, signal too low or wrong flow direction
+KAM	22	17	32	Temperature sensor T3 outside measuring range
+KAM	22	17	64	Leak in the cold-water system
+KAM	22	17	128	Time for battery change (or Flow sensor V2, Wrong meter factor)
+KAM	22	17	256	Leak in the heating system
+KAM	22	17	512	Burst in the heating system
+KAM	22	17	1024	Flow sensor V2, Datacomm error, signal too low or wrong flow direction
+KAM	22	17	2048	Flow sensor V1, Wrong meter factor
+KAM	22	17	4096	Flow sensor V1, Signal too low (Air)
+KAM	22	17	8192	Flow sensor V2, Signal too low (Air)
+KAM	22	17	16384	Flow sensor V1, Wrong flow direction
+KAM	22	17	32768	Flow sensor V2, Wrong flow direction
+ACW	4	9	1	Tin error
+ACW	4	9	2	Tout error
+ACW	4	9	4	Sensors inverted error
+ACW	4	9	8	A/D converter error
+ACW	4	9	16	Back-flow error
+ACW	4	9	32	Air in pipe error
+ACW	4	9	64	Overflow error
+ACW	4	9	128	US flow error
+ACW	4	9	256	Dirty transducers
+ACW	4	9	512	Very dirty transducers
+ACW	4	9	1024	MicroCom communication error
+ACW	4	9	2048	Flow meter tamper
+ACW	4	9	4096	No flow during 24 hours with Dt>15Â°C
+ACW	4	9	8192	No flow during 2 hours error
+ACW	4	9	16384	Options
+ACW	4	10	1	Tin error
+ACW	4	10	2	Tout error
+ACW	4	10	4	Sensors inverted error
+ACW	4	10	8	A/D converter error
+ACW	4	10	16	Back-flow error
+ACW	4	10	32	Air in pipe error
+ACW	4	10	64	Overflow error
+ACW	4	10	128	US flow error
+ACW	4	10	256	Dirty transducers
+ACW	4	10	512	Very dirty transducers
+ACW	4	10	1024	MicroCom communication error
+ACW	4	10	2048	Flow meter tamper
+ACW	4	10	4096	No flow during 24 hours with Dt>15Â°C
+ACW	4	10	8192	No flow during 2 hours error
+ACW	4	10	16384	Options
+ACW	4	11	1	Tin error
+ACW	4	11	2	Tout error
+ACW	4	11	4	Sensors inverted error
+ACW	4	11	8	A/D converter error
+ACW	4	11	16	Back-flow error
+ACW	4	11	32	Air in pipe error
+ACW	4	11	64	Overflow error
+ACW	4	11	128	US flow error
+ACW	4	11	256	Dirty transducers
+ACW	4	11	512	Very dirty transducers
+ACW	4	11	1024	MicroCom communication error
+ACW	4	11	2048	Flow meter tamper
+ACW	4	11	4096	No flow during 24 hours with Dt>15Â°C
+ACW	4	11	8192	No flow during 2 hours error
+ACW	4	11	16384	Options
+ACW	12	9	1	Tin error
+ACW	12	9	2	Tout error
+ACW	12	9	4	Sensors inverted error
+ACW	12	9	8	A/D converter error
+ACW	12	9	16	Back-flow error
+ACW	12	9	32	Air in pipe error
+ACW	12	9	64	Overflow error
+ACW	12	9	128	US flow error
+ACW	12	9	256	Dirty transducers
+ACW	12	9	512	Very dirty transducers
+ACW	12	9	1024	MicroCom communication error
+ACW	12	9	2048	Flow meter tamper
+ACW	12	9	4096	No flow during 24 hours with Dt>15Â°C
+ACW	12	9	8192	No flow during 2 hours error
+ACW	12	9	16384	Options
+ACW	12	10	1	Tin error
+ACW	12	10	2	Tout error
+ACW	12	10	4	Sensors inverted error
+ACW	12	10	8	A/D converter error
+ACW	12	10	16	Back-flow error
+ACW	12	10	32	Air in pipe error
+ACW	12	10	64	Overflow error
+ACW	12	10	128	US flow error
+ACW	12	10	256	Dirty transducers
+ACW	12	10	512	Very dirty transducers
+ACW	12	10	1024	MicroCom communication error
+ACW	12	10	2048	Flow meter tamper
+ACW	12	10	4096	No flow during 24 hours with Dt>15Â°C
+ACW	12	10	8192	No flow during 2 hours error
+ACW	12	10	16384	Options
+ACW	12	11	1	Tin error
+ACW	12	11	2	Tout error
+ACW	12	11	4	Sensors inverted error
+ACW	12	11	8	A/D converter error
+ACW	12	11	16	Back-flow error
+ACW	12	11	32	Air in pipe error
+ACW	12	11	64	Overflow error
+ACW	12	11	128	US flow error
+ACW	12	11	256	Dirty transducers
+ACW	12	11	512	Very dirty transducers
+ACW	12	11	1024	MicroCom communication error
+ACW	12	11	2048	Flow meter tamper
+ACW	12	11	4096	No flow during 24 hours with Dt>15Â°C
+ACW	12	11	8192	No flow during 2 hours error
+ACW	12	11	16384	Options
+ACW	13	9	1	Tin error
+ACW	13	9	2	Tout error
+ACW	13	9	4	Sensors inverted error
+ACW	13	9	8	A/D converter error
+ACW	13	9	16	Back-flow error
+ACW	13	9	32	Air in pipe error
+ACW	13	9	64	Overflow error
+ACW	13	9	128	US flow error
+ACW	13	9	256	Dirty transducers
+ACW	13	9	512	Very dirty transducers
+ACW	13	9	1024	MicroCom communication error
+ACW	13	9	2048	Flow meter tamper
+ACW	13	9	4096	No flow during 24 hours with Dt>15Â°C
+ACW	13	9	8192	No flow during 2 hours error
+ACW	13	9	16384	Options
+ACW	13	10	1	Tin error
+ACW	13	10	2	Tout error
+ACW	13	10	4	Sensors inverted error
+ACW	13	10	8	A/D converter error
+ACW	13	10	16	Back-flow error
+ACW	13	10	32	Air in pipe error
+ACW	13	10	64	Overflow error
+ACW	13	10	128	US flow error
+ACW	13	10	256	Dirty transducers
+ACW	13	10	512	Very dirty transducers
+ACW	13	10	1024	MicroCom communication error
+ACW	13	10	2048	Flow meter tamper
+ACW	13	10	4096	No flow during 24 hours with Dt>15Â°C
+ACW	13	10	8192	No flow during 2 hours error
+ACW	13	10	16384	Options
+ACW	13	11	1	Tin error
+ACW	13	11	2	Tout error
+ACW	13	11	4	Sensors inverted error
+ACW	13	11	8	A/D converter error
+ACW	13	11	16	Back-flow error
+ACW	13	11	32	Air in pipe error
+ACW	13	11	64	Overflow error
+ACW	13	11	128	US flow error
+ACW	13	11	256	Dirty transducers
+ACW	13	11	512	Very dirty transducers
+ACW	13	11	1024	MicroCom communication error
+ACW	13	11	2048	Flow meter tamper
+ACW	13	11	4096	No flow during 24 hours with Dt>15Â°C
+ACW	13	11	8192	No flow during 2 hours error
+ACW	13	11	16384	Options

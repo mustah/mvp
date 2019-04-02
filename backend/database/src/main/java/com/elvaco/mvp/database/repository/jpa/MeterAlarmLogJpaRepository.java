@@ -22,22 +22,20 @@ public interface MeterAlarmLogJpaRepository extends JpaRepository<MeterAlarmLogE
   @Modifying
   @Query(nativeQuery = true, value =
     "INSERT INTO meter_alarm_log "
-      + " (organisation_id, physical_meter_id, mask, start, last_seen, description)"
+      + " (organisation_id, physical_meter_id, mask, start, last_seen)"
       + " VALUES "
-      + "(:organisation_id, :physical_meter_id, :mask, :timestamp, :timestamp, :description)"
+      + "(:organisation_id, :physical_meter_id, :mask, :timestamp, :timestamp)"
       + " ON CONFLICT (organisation_id, physical_meter_id, mask)"
       + "  DO UPDATE SET"
       + "    START = " + UPDATE_START + ", "
-      + "    last_seen = " + UPDATE_LAST_SEEN + ", "
-      + "    description = :description"
+      + "    last_seen = " + UPDATE_LAST_SEEN
       + "  WHERE meter_alarm_log.stop IS NULL"
   )
   void createOrUpdate(
     @Param("physical_meter_id") UUID physicalMeterId,
     @Param("organisation_id") UUID organisationId,
     @Param("mask") int mask,
-    @Param("timestamp") ZonedDateTime timestamp,
-    @Param("description") String description
+    @Param("timestamp") ZonedDateTime timestamp
   );
 
   @Query("SELECT a FROM MeterAlarmLogEntity a WHERE a.stop IS NULL AND a.start <= :timestamp ")

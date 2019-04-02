@@ -188,8 +188,7 @@ class LogicalMeterJooqJpaRepository
       METER_ALARM_LOG.START,
       METER_ALARM_LOG.LAST_SEEN,
       METER_ALARM_LOG.STOP,
-      METER_ALARM_LOG.MASK,
-      METER_ALARM_LOG.DESCRIPTION
+      METER_ALARM_LOG.MASK
     ).from(LOGICAL_METER);
 
     var countQuery = dsl.selectDistinct(LOGICAL_METER.ID, PHYSICAL_METER.ID).from(LOGICAL_METER);

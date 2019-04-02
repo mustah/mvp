@@ -25,7 +25,6 @@ public class MeterAlarmLogEntityMapper {
       .start(entity.start)
       .stop(entity.stop)
       .lastSeen(entity.lastSeen)
-      .description(entity.description)
       .build();
   }
 
@@ -38,7 +37,6 @@ public class MeterAlarmLogEntityMapper {
       .start(domainModel.start)
       .lastSeen(Optional.ofNullable(domainModel.lastSeen).orElse(domainModel.start))
       .stop(domainModel.stop)
-      .description(domainModel.description)
       .build();
   }
 

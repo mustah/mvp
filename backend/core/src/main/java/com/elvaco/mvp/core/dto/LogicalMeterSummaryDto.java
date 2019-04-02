@@ -66,8 +66,7 @@ public class LogicalMeterSummaryDto {
     @Nullable OffsetDateTime start,
     @Nullable OffsetDateTime lastSeen,
     @Nullable OffsetDateTime stop,
-    @Nullable Integer mask,
-    @Nullable String description
+    @Nullable Integer mask
   ) {
     this.id = id;
     this.organisationId = organisationId;
@@ -97,7 +96,6 @@ public class LogicalMeterSummaryDto {
       .lastSeen(lastSeen.toZonedDateTime())
       .stop(stop != null ? stop.toZonedDateTime() : null)
       .mask(mask)
-      .description(description)
       .build()
       : null;
   }

@@ -332,9 +332,9 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       ))
     );
 
-    var alarm = given(alarm(logicalMeter).mask(12)
-      .start(context().now())
-      .description("something is wrong")).iterator().next();
+    var alarm = given(
+      alarm(logicalMeter).mask(16).start(context().now())
+    ).iterator().next();
 
     LogicalMeterDto logicalMeterDto = asUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
@@ -342,8 +342,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     assertThat(logicalMeterDto.alarms).isEqualTo(List.of(new AlarmDto(
       alarm.id,
-      alarm.mask,
-      alarm.description
+      alarm.mask
     )));
   }
 
@@ -356,14 +355,11 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       )));
 
     List<AlarmLogEntry> alarms = new ArrayList<>(given(
-      alarm(logicalMeter).mask(12)
-        .start(context().now().plusHours(2))
-        .description("something is wrong"),
-      alarm(logicalMeter).mask(33).start(context().now()).description("testing"),
+      alarm(logicalMeter).mask(4).start(context().now().plusHours(2)),
+      alarm(logicalMeter).mask(2).start(context().now()),
       alarm(logicalMeter).mask(1)
         .start(context().now().minusHours(10))
         .stop(context().now().minusHours(5))
-        .description("testing")
     ));
 
     LogicalMeterDto logicalMeterDto = asUser()
@@ -373,12 +369,10 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(logicalMeterDto.alarms).containsExactlyInAnyOrder(
       new AlarmDto(
         alarms.get(0).id,
-        alarms.get(0).mask,
-        alarms.get(0).description
+        alarms.get(0).mask
       ), new AlarmDto(
         alarms.get(1).id,
-        alarms.get(1).mask,
-        alarms.get(1).description
+        alarms.get(1).mask
       )
     );
   }

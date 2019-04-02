@@ -80,7 +80,6 @@ public class MeteringAlarmMessageConsumerTest {
       .mask(42)
       .start(toZonedDateTime())
       .lastSeen(toZonedDateTime())
-      .description("Low battery")
       .build());
   }
 
@@ -120,6 +119,6 @@ public class MeteringAlarmMessageConsumerTest {
   }
 
   private AlarmDto newAlarmWithLowBattery() {
-    return new AlarmDto(START_TIME, 42, "Low battery");
+    return new AlarmDto(START_TIME, 42);
   }
 }

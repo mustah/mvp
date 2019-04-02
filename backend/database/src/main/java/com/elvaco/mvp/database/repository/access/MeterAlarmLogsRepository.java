@@ -39,15 +39,13 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
   public void createOrUpdate(
     PrimaryKey primaryKey,
     int mask,
-    ZonedDateTime timestamp,
-    String description
+    ZonedDateTime timestamp
   ) {
     meterAlarmLogJpaRepository.createOrUpdate(
       primaryKey.getId(),
       primaryKey.getOrganisationId(),
       mask,
-      timestamp,
-      description
+      timestamp
     );
   }
 
