@@ -1,9 +1,9 @@
 import {momentAtUtcPlusOneFrom} from '../dateHelpers';
 import {
   cityWithoutCountry,
+  formatAndFloorPercentage,
   formatCollectionPercentage,
   formatDate,
-  formatAndFloorPercentage,
   round,
   roundMeasurement
 } from '../formatters';
@@ -117,9 +117,21 @@ describe('formatters', () => {
   });
 
   describe('formatPercentage', () => {
-    it('it floors the second decimal', () => {
-      expect(formatAndFloorPercentage(99.97)).toBe('99.9%');
-    });
+    const testCases: Array<[number, number, string]> = [
+      [1, 99.97, '99.9%'],
+      [2, 99.95777027027027, '99.9%'],
+      [3, 100.0, '100%'],
+      [4, 0.0, '0%'],
+      [5, 0.00001, '0%'],
+      [6, 0.09, '0%'],
+    ];
+
+    test.each(testCases)(
+      'test #%i: input %d becomes %s',
+      (_, input: number, wanted: string) => {
+        expect(formatAndFloorPercentage(input)).toEqual(wanted);
+      }
+    );
   });
 
   describe('cityWithoutCountry', () => {

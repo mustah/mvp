@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {Bold, Large, Normal, Xlarge} from '../../../components/texts/Texts';
+import {formatAndFloorPercentage} from '../../../helpers/formatters';
 import {thresholdClassName} from '../../../helpers/thresholds';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {ClassNamed, Clickable, WithChildren} from '../../../types/Types';
@@ -34,7 +35,7 @@ export const IndicatorWidget = ({className, onClick, title, value}: IndicatorWid
   if (isNaN(value)) {
     return <NoExpectedMeasurementsWidget title={title} className={className}/>;
   }
-  const formattedValue = value.toFixed(value === 100.0 ? 0 : 1);
+  const formattedValue = formatAndFloorPercentage(value);
   return (
     <Column className={classNames('Indicator-wrapper clickable', className)} onClick={onClick}>
       <ColumnCenter className={classNames('Indicator', thresholdClassName(value))}>

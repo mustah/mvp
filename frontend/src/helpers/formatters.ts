@@ -5,8 +5,13 @@ import {momentAtUtcPlusOneFrom} from './dateHelpers';
 const isGreaterThan100 = (collectionPercentage: number): boolean =>
   collectionPercentage !== undefined && collectionPercentage > 100;
 
-export const formatAndFloorPercentage = (num: number): string =>
-  round(Math.floor(num * 10) / 10, num === 100 ? '' : '0.0') + '%';
+export const formatAndFloorPercentage = (num: number): string => {
+  const rounded = Math.floor(num * 10) / 10;
+  return round(
+    rounded,
+    rounded === 100 || rounded === 0 ? '' : '0.0'
+  ) + '%';
+};
 
 export const formatCollectionPercentage =
   (collectionPercentage?, readIntervalMinutes?, isSuperAdmin?: boolean): string => {
