@@ -80,18 +80,36 @@ public class MeteringMessageMapperTest {
       districtHeatingMedium
     ));
 
-    assertThat(mapToEvoMedium(mediumProvider, "District heating"))
-      .isEqualTo(districtHeatingMedium);
-    assertThat(mapToEvoMedium(mediumProvider, "Heat, Return temp"))
-      .isEqualTo(districtHeatingMedium);
-    assertThat(mapToEvoMedium(mediumProvider, "Heat, Flow temp"))
-      .isEqualTo(districtHeatingMedium);
-    assertThat(mapToEvoMedium(mediumProvider, "HeatCoolingLoadMeter"))
-      .isEqualTo(districtHeatingMedium);
-    assertThat(mapToEvoMedium(mediumProvider, "HeatFlow Temp"))
-      .isEqualTo(districtHeatingMedium);
-    assertThat(mapToEvoMedium(mediumProvider, "HeatReturn Temp"))
-      .isEqualTo(districtHeatingMedium);
+    asList(
+      "District heating",
+      "Heat, Return temp",
+      "Heat, Flow temp",
+      "HeatCoolingLoadMeter",
+      "HeatFlow Temp",
+      "HeatReturn Temp"
+    )
+      .forEach(medium ->
+        assertThat(mapToEvoMedium(mediumProvider, medium))
+          .isEqualTo(districtHeatingMedium)
+      );
+  }
+
+  @Test
+  public void mapKnownDistrictCoolingMediumAliases() {
+    Medium districtCoolingMedium = new Medium(0L, Medium.DISTRICT_COOLING);
+    MediumProvider mediumProvider = providerOf(Map.of(
+      Medium.DISTRICT_COOLING,
+      districtCoolingMedium
+    ));
+
+    asList(
+      "Cooling load meter, flow temp",
+      "Cooling load meter, Return temp"
+    )
+      .forEach(medium ->
+        assertThat(mapToEvoMedium(mediumProvider, medium))
+          .isEqualTo(districtCoolingMedium)
+      );
   }
 
   @Test

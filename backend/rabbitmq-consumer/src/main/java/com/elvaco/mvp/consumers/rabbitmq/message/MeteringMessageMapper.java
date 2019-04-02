@@ -79,22 +79,20 @@ public class MeteringMessageMapper {
     if (medium == null) {
       return mediumProvider.getByNameOrThrow(Medium.UNKNOWN_MEDIUM);
     }
-    Map<String, String> meteringMediumToEvoMedium = Map.of(
+    Map<String, String> meteringToEvo = Map.of(
       "Cold water", Medium.WATER,
       "Roomsensor", Medium.ROOM_SENSOR,
       "Heat, Return temp", Medium.DISTRICT_HEATING,
       "Heat, Flow temp", Medium.DISTRICT_HEATING,
       "HeatCoolingLoadMeter", Medium.DISTRICT_HEATING,
       "HeatFlow Temp", Medium.DISTRICT_HEATING,
-      "HeatReturn Temp", Medium.DISTRICT_HEATING
+      "HeatReturn Temp", Medium.DISTRICT_HEATING,
+      "Cooling load meter, flow temp", Medium.DISTRICT_COOLING,
+      "Cooling load meter, Return temp", Medium.DISTRICT_COOLING
     );
 
-    String evoMedium = meteringMediumToEvoMedium.getOrDefault(
-      medium,
-      medium
-    );
-    return mediumProvider.getByName(evoMedium).orElseGet(
-      () -> mediumProvider.getByNameOrThrow(Medium.UNKNOWN_MEDIUM)
-    );
+    return mediumProvider
+      .getByName(meteringToEvo.getOrDefault(medium, medium))
+      .orElseGet(() -> mediumProvider.getByNameOrThrow(Medium.UNKNOWN_MEDIUM));
   }
 }
