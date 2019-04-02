@@ -35,8 +35,8 @@ describe('restClient', () => {
 
     it('throws a InvalidToken exception if token invalid from backend', async () => {
       const getInvalidTokenError = async () => {
-        mockRestClient.onGet(EndPoints.selectionTree).reply(401, {message: 'Token missing or invalid'});
-        return restClient.get(EndPoints.selectionTree);
+        mockRestClient.onGet(EndPoints.meters).reply(401, {message: 'Token missing or invalid'});
+        return restClient.get(EndPoints.meters);
       };
 
       const error = new InvalidToken('Token missing or invalid');
@@ -45,8 +45,8 @@ describe('restClient', () => {
 
     it('doesnt throws a InvalidToken exception for errors not related to token invalid', async () => {
       const getErrorElseThanInvalidToken = async () => {
-        mockRestClient.onGet(EndPoints.selectionTree).reply(401, {message: 'An other error'});
-        return restClient.get(EndPoints.selectionTree);
+        mockRestClient.onGet(EndPoints.meters).reply(401, {message: 'An other error'});
+        return restClient.get(EndPoints.meters);
       };
 
       const error = new InvalidToken('Token missing or invalid');
