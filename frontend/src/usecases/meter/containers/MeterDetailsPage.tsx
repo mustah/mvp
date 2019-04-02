@@ -3,7 +3,7 @@ import Paper from 'material-ui/Paper';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 import * as React from 'react';
 import {RouteComponentProps} from 'react-router';
-import {history} from '../../..';
+import {history} from '../../../app/routes';
 import {iconStyle, mainContentPaperStyle, svgIconProps} from '../../../app/themes';
 import {PageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RowSpaceBetween} from '../../../components/layouts/row/Row';

@@ -1,8 +1,7 @@
 import {Location} from 'history';
 import {isEqual, pick} from 'lodash';
-import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers, Reducer} from 'redux';
-import {getType} from 'typesafe-actions';
+import {ActionType, getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {isOnSearchPage} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
@@ -11,6 +10,7 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
+import {locationChange} from '../location/locationActions';
 import {search} from '../search/searchActions';
 import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
 import {Gateway} from './gateway/gatewayModels';
@@ -210,7 +210,7 @@ const reducerFor = <T extends Identifiable>(
 ) =>
   (
     state: NormalizedPaginatedState<T> = makeInitialState<T>(),
-    action: ActionTypes<T>,
+    action: ActionTypes<T> | ActionType<typeof locationChange>,
   ): NormalizedPaginatedState<T> => {
     switch (action.type) {
       case domainModelsPaginatedRequest(endPoint):
@@ -231,7 +231,7 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityFailure(endPoint):
       case domainModelsPaginatedDeleteFailure(endPoint):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
-      case LOCATION_CHANGE:
+      case getType(locationChange):
         return isOnSearchPage((action as Action<Location>).payload)
           ? state
           : {

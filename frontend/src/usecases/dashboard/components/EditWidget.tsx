@@ -34,7 +34,7 @@ export const EditWidget = <T extends Widget>({
     ...userSelections.result.map((id: uuid) => ({id, name: userSelections.entities[id].name}))
   ];
   const selectionLabel = firstUpperTranslated('selection');
-  const [selectionId, selectSelection] = React.useState(widgets.settings.selectionId);
+  const [selectionId, selectSelection] = React.useState<uuid | undefined>(widgets.settings.selectionId);
 
   const onChange = (_, __, value) => selectSelection(value);
 

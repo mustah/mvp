@@ -1,11 +1,10 @@
 import ListItem from 'material-ui/List/ListItem';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import * as React from 'react';
-import {routes} from '../../../app/routes';
+import {history, routes} from '../../../app/routes';
 import {colors, listItemInnerDivStyle, listItemStyle, secondaryBgHover} from '../../../app/themes';
 import {RowMiddle} from '../../../components/layouts/row/Row';
 import {Medium} from '../../../components/texts/Texts';
-import {history} from '../../../index';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {OnClick} from '../../../types/Types';
 import './SavedSelections.scss';

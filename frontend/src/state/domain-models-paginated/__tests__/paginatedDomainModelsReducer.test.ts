@@ -1,4 +1,4 @@
-import {LOCATION_CHANGE, LocationChangeAction} from 'react-router-redux';
+import {Location} from 'history';
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {makeMeter} from '../../../__tests__/testDataFactory';
 import {RequestParameter} from '../../../helpers/urlFactory';
@@ -6,6 +6,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
+import {locationChange} from '../../location/locationActions';
 import {ApiRequestSortingOptions} from '../../ui/pagination/paginationModels';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters, sortTableMeters} from '../meter/meterApiActions';
@@ -394,14 +395,11 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('keeps the sorting but throws out data when user navigates away', () => {
-      const locationChange: LocationChangeAction = {
-        type: LOCATION_CHANGE,
-        payload: {
-          pathname: 'a',
-          search: '',
-          state: {},
-          hash: '',
-        }
+      const payload: Location = {
+        pathname: 'a',
+        search: '',
+        state: {},
+        hash: '',
       };
 
       const stateWithResultAndSort: MetersState = {
@@ -416,7 +414,7 @@ describe('paginatedDomainModelsReducer', () => {
         sort: [{field: RequestParameter.city}],
       };
 
-      const stateAfterLocationChange: MetersState = meters(stateWithResultAndSort, locationChange);
+      const stateAfterLocationChange: MetersState = meters(stateWithResultAndSort, locationChange(payload));
 
       expect(stateAfterLocationChange).toHaveProperty('sort', [{field: RequestParameter.city}]);
       expect(stateAfterLocationChange).toHaveProperty('result', {});

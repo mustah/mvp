@@ -1,12 +1,9 @@
 import * as React from 'react';
-import {routes} from '../../../app/routes';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
-import {history} from '../../../index';
 import {translate} from '../../../services/translationService';
 import {CountWidget as CountWidgetModel} from '../../../state/domain-models/widget/widgetModels';
-import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {WidgetRequestParameters} from '../../../state/widget/widgetActions';
-import {Callback, CallbackWith, CallbackWithId, EncodedUriParameters} from '../../../types/Types';
+import {CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
 import {WidgetDispatchers} from '../dashboardModels';
 import {IndicatorWidgetProps, NumMetersIndicatorWidget} from './IndicatorWidget';
 import {WidgetWithTitle} from './Widget';
@@ -25,8 +22,7 @@ export interface StateToProps {
 
 export interface DispatchToProps {
   fetchCountWidget: CallbackWith<WidgetRequestParameters>;
-  resetSelection: Callback;
-  selectSavedSelection: CallbackWithId;
+  selectSelection: CallbackWith<uuid | undefined>;
 }
 
 type Props = OwnProps & StateToProps & DispatchToProps;
@@ -40,8 +36,7 @@ export const CountWidget = ({
   onEdit,
   onDelete,
   parameters,
-  resetSelection,
-  selectSavedSelection,
+  selectSelection,
   title,
   widget,
 }: Props) => {
@@ -51,17 +46,9 @@ export const CountWidget = ({
     }
   }, [widget, parameters, isSuccessFullyFetched]);
 
-  const deleteWidget = () => onDelete(widget);
-  const editWidget = () => onEdit(widget);
-
-  const selectSelection: Callback = () => {
-    history.push(routes.meters);
-    if (widget.settings.selectionId === initialSelectionId) {
-      resetSelection();
-    } else {
-      selectSavedSelection(widget.settings.selectionId!);
-    }
-  };
+  const deleteWidget: OnClick = () => onDelete(widget);
+  const editWidget: OnClick = () => onEdit(widget);
+  const onSelectSelection: OnClick = () => selectSelection(widget.settings.selectionId);
 
   return (
     <WidgetWithTitle
@@ -72,7 +59,7 @@ export const CountWidget = ({
     >
       <CountContentWidgetLoader
         isFetching={!isSuccessFullyFetched}
-        onClick={selectSelection}
+        onClick={onSelectSelection}
         title={translate('meter', {count: meterCount})}
         value={meterCount}
       />

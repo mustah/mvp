@@ -1,6 +1,7 @@
-import {LOCATION_CHANGE} from 'react-router-redux';
+import {Location} from 'history';
 import {routes} from '../../../app/routes';
 import {logoutUser} from '../../../usecases/auth/authActions';
+import {locationChange} from '../../location/locationActions';
 import {search as searchAction} from '../searchActions';
 import {makeMeterQuery, QueryParameter} from '../searchModels';
 import {initialState, search, SearchState} from '../searchReducer';
@@ -44,7 +45,8 @@ describe('searchReducer', () => {
         ...makeMeterQuery('kam')
       };
 
-      state = search(state, {type: LOCATION_CHANGE, payload: {pathname: routes.selection}});
+      const payload: Partial<Location> = {pathname: routes.selection};
+      state = search(state, locationChange(payload as Location));
 
       expect(state).toEqual(initialState);
     });
@@ -55,7 +57,8 @@ describe('searchReducer', () => {
         ...makeMeterQuery('kam')
       };
 
-      state = search(state, {type: LOCATION_CHANGE, payload: {pathname: routes.dashboard}});
+      const payload: Partial<Location> = {pathname: routes.dashboard};
+      state = search(state, locationChange(payload as Location));
 
       expect(state).toEqual(initialState);
     });
@@ -66,7 +69,8 @@ describe('searchReducer', () => {
         ...makeMeterQuery('kam')
       };
 
-      const newState = search(state, {type: LOCATION_CHANGE, payload: {pathname: routes.collection}});
+      const payload: Partial<Location> = {pathname: routes.collection};
+      const newState = search(state, locationChange(payload as Location));
 
       expect(newState).toEqual(initialState);
     });

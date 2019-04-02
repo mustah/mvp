@@ -1,10 +1,10 @@
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {
-  ADD_PARAMETER_TO_SELECTION,
-  DESELECT_SELECTION,
+  addParameterToSelection,
+  deselectSelection,
   RESET_SELECTION,
-  SELECT_SAVED_SELECTION,
+  selectSavedSelectionAction,
   setThresholdAction
 } from '../state/user-selection/userSelectionActions';
 import {logoutUser} from '../usecases/auth/authActions';
@@ -18,9 +18,9 @@ export const resetReducer = <S>(
   switch (type) {
     case getType(setThresholdAction):
     case getType(setCollectionTimePeriod):
-    case SELECT_SAVED_SELECTION:
-    case ADD_PARAMETER_TO_SELECTION:
-    case DESELECT_SELECTION:
+    case getType(addParameterToSelection):
+    case getType(deselectSelection):
+    case getType(selectSavedSelectionAction):
     case RESET_SELECTION:
     case getType(logoutUser):
       return initialState;

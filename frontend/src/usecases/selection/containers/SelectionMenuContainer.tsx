@@ -17,10 +17,10 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  saveSelection: CallbackWith<UserSelection>;
-  updateSelection: CallbackWith<UserSelection>;
   resetSelection: OnClick;
+  saveSelection: CallbackWith<UserSelection>;
   selectSavedSelection: OnClickWithId;
+  updateSelection: CallbackWith<UserSelection>;
 }
 
 export type SelectionMenuProps = StateToProps & DispatchToProps;
@@ -30,10 +30,10 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  saveSelection,
-  updateSelection,
   resetSelection,
+  saveSelection,
   selectSavedSelection,
+  updateSelection,
 }, dispatch);
 
 export const SelectionMenuContainer =

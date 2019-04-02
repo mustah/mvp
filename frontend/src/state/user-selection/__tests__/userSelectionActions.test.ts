@@ -1,5 +1,6 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {routes} from '../../../app/routes';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
@@ -9,11 +10,13 @@ import {putRequestOf} from '../../domain-models/domainModelsActions';
 import {mapSelectedIdToCity} from '../../domain-models/selections/selectionsApiActions';
 import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {
-  ADD_PARAMETER_TO_SELECTION,
-  DESELECT_SELECTION,
-  SELECT_SAVED_SELECTION,
+  addParameterToSelection,
+  deselectSelection,
+  resetSelection,
   selectPeriod,
   selectSavedSelection,
+  selectSavedSelectionAction,
+  selectSelection,
   setCustomDateRange,
   setThreshold,
   setThresholdAction,
@@ -21,6 +24,7 @@ import {
   toggleParameter,
 } from '../userSelectionActions';
 import {
+  initialSelectionId,
   OldSelectionParameters,
   ParameterName,
   RelationalOperator,
@@ -108,9 +112,7 @@ describe('userSelectionActions', () => {
 
       const payload: UserSelection = {...initialState.userSelection, id: 21, name: 'test 21'};
 
-      expect(store.getActions()).toEqual([
-        {type: SELECT_SAVED_SELECTION, payload},
-      ]);
+      expect(store.getActions()).toEqual([selectSavedSelectionAction(payload)]);
     });
 
     it('set new selection and migrates its state when old state is stored', () => {
@@ -124,16 +126,13 @@ describe('userSelectionActions', () => {
         {
           ...putRequestOf<UserSelection>(EndPoints.userSelections).request(),
         },
-        {
-          type: SELECT_SAVED_SELECTION,
-          payload: {
-            ...payload,
-            selectionParameters: {
-              ...payload.selectionParameters,
-              media: [{...toIdNamed('Gas')}],
-            },
+        selectSavedSelectionAction({
+          ...payload,
+          selectionParameters: {
+            ...payload.selectionParameters,
+            media: [{...toIdNamed('Gas')}],
           },
-        },
+        }),
       ]);
     });
 
@@ -157,6 +156,43 @@ describe('userSelectionActions', () => {
 
       store.dispatch(selectSavedSelection(42));
       expect(store.getActions()).toEqual([]);
+    });
+
+    describe('selectSelection', () => {
+
+      beforeEach(() => {
+        const rootStateWithSelectedSelection = {
+          ...rootState,
+          routing: {location: {pathname: routes.collection}},
+        };
+        store = configureMockStore(rootStateWithSelectedSelection);
+      });
+
+      describe('resets selection', () => {
+
+        it('when no selectionId exists', () => {
+          store.dispatch(selectSelection());
+
+          expect(store.getActions()).toEqual([resetSelection()]);
+        });
+
+        it('when selectionId is initialSelectionId', () => {
+          store.dispatch(selectSelection(initialSelectionId));
+
+          expect(store.getActions()).toEqual([resetSelection()]);
+        });
+      });
+
+      describe('selects selection', () => {
+
+        it('select saved selection with id', () => {
+          store.dispatch(selectSelection(21));
+
+          const payload: UserSelection = {...initialState.userSelection, id: 21, name: 'test 21'};
+          expect(store.getActions()).toEqual([selectSavedSelectionAction(payload)]);
+        });
+      });
+
     });
 
     describe('shouldMigrateSelectionParameters', () => {
@@ -247,9 +283,7 @@ describe('userSelectionActions', () => {
         const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
         store.dispatch(toggleParameter(payload));
 
-        expect(store.getActions()).toEqual([
-          {type: DESELECT_SELECTION, payload},
-        ]);
+        expect(store.getActions()).toEqual([deselectSelection(payload)]);
       });
 
       it('set selection', async () => {
@@ -259,9 +293,7 @@ describe('userSelectionActions', () => {
 
         store.dispatch(toggleParameter(parameter));
 
-        expect(store.getActions()).toEqual([
-          {type: ADD_PARAMETER_TO_SELECTION, payload: parameter},
-        ]);
+        expect(store.getActions()).toEqual([addParameterToSelection(parameter)]);
       });
 
       it('set several selections', () => {
@@ -273,8 +305,8 @@ describe('userSelectionActions', () => {
         store.dispatch(toggleParameter(p2));
 
         expect(store.getActions()).toEqual([
-          {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
-          {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
+          addParameterToSelection(p1),
+          addParameterToSelection(p2),
         ]);
       });
 
@@ -297,8 +329,8 @@ describe('userSelectionActions', () => {
         store.dispatch(toggleParameter(p2));
 
         expect(store.getActions()).toEqual([
-          {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
-          {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
+          addParameterToSelection(p1),
+          addParameterToSelection(p2),
         ]);
       });
 
@@ -314,9 +346,7 @@ describe('userSelectionActions', () => {
 
         store.dispatch(toggleParameter(p1));
 
-        expect(store.getActions()).toEqual([
-          {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
-        ]);
+        expect(store.getActions()).toEqual([addParameterToSelection(p1)]);
       });
 
     });

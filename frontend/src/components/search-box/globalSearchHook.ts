@@ -1,7 +1,6 @@
 import * as React from 'react';
-import {routes} from '../../app/routes';
+import {history, routes} from '../../app/routes';
 import {GlobalSearchProps} from '../../containers/GlobalSearchContainer';
-import {history} from '../../index';
 import {OnChange, OnClick, OnKeyPress} from '../../types/Types';
 
 interface GlobalSearch {

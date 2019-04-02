@@ -1,14 +1,12 @@
 import * as React from 'react';
-import {routes} from '../../../app/routes';
 import {withWidgetLoader} from '../../../components/hoc/withLoaders';
 import {thresholdClassName} from '../../../helpers/thresholds';
-import {history} from '../../../index';
 import {translate} from '../../../services/translationService';
 import {RequestsHttp} from '../../../state/domain-models/domainModels';
 import {CollectionStatusWidget as CollectionStatusWidgetModel} from '../../../state/domain-models/widget/widgetModels';
 import {WidgetRequestParameters} from '../../../state/widget/widgetActions';
 import {WidgetData} from '../../../state/widget/widgetReducer';
-import {Callback, CallbackWith, CallbackWithId, EncodedUriParameters} from '../../../types/Types';
+import {CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
 import {WidgetDispatchers} from '../dashboardModels';
 import {IndicatorWidget, IndicatorWidgetProps} from './IndicatorWidget';
 import {WidgetWithTitle} from './Widget';
@@ -27,8 +25,7 @@ export interface StateToProps {
 
 export interface DispatchToProps {
   fetchCollectionStatsWidget: CallbackWith<WidgetRequestParameters>;
-  resetSelection: Callback;
-  selectSavedSelection: CallbackWithId;
+  selectSelection: CallbackWith<uuid | undefined>;
 }
 
 type Props = StateToProps & DispatchToProps & OwnProps;
@@ -46,8 +43,7 @@ export const CollectionStatusWidget = (props: Props) => {
     title,
     onEdit,
     onDelete,
-    selectSavedSelection,
-    resetSelection,
+    selectSelection,
   } = props;
 
   React.useEffect(() => {
@@ -59,16 +55,9 @@ export const CollectionStatusWidget = (props: Props) => {
   const count: number = model && model.data;
   const isFetching = model && model.isFetching || isUserSelectionsFetching;
 
-  const onDeleteWidget = () => onDelete(widget);
-  const onEditWidget = () => onEdit(widget);
-  const onClickWidget = () => {
-    if (widget.settings.selectionId) {
-      selectSavedSelection(widget.settings.selectionId);
-    } else {
-      resetSelection();
-    }
-    history.push(routes.meters);
-  };
+  const onDeleteWidget: OnClick = () => onDelete(widget);
+  const onEditWidget: OnClick = () => onEdit(widget);
+  const onClickWidget: OnClick = () => selectSelection(widget.settings.selectionId);
 
   return (
     <WidgetWithTitle

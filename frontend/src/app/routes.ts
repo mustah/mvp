@@ -1,4 +1,5 @@
-import {Location} from 'history';
+import {History, Location} from 'history';
+import createHashHistory from 'history/createHashHistory';
 import evoLogoBlue from '../assets/images/elvaco.evo_logo_blue_cmyk.svg';
 import evoLogo from '../assets/images/elvaco.evo_logo_wt.svg';
 import wayneIndustries from '../assets/images/wayne-industries.png';
@@ -29,6 +30,8 @@ export const routes = {
   adminMeterDefinitionsAdd: '/admin/meter-definitions/add',
   adminMeterDefinitionsModify: '/admin/meter-definitions/modify',
 };
+
+export const history: History = createHashHistory();
 
 const searchResultRegExp = new RegExp(`${routes.searchResult}.*`);
 export const isOnSearchPage = ({pathname}: Location): boolean => pathname.match(searchResultRegExp) !== null;

@@ -9,11 +9,11 @@ import {
   domainModelsPutSuccess,
 } from '../domain-models/domainModelsActions';
 import {
-  ADD_PARAMETER_TO_SELECTION,
-  DESELECT_SELECTION,
+  addParameterToSelection,
+  deselectSelection,
   RESET_SELECTION,
-  SELECT_SAVED_SELECTION,
   selectPeriod,
+  selectSavedSelectionAction,
   setCustomDateRange,
   setThresholdAction,
 } from './userSelectionActions';
@@ -165,9 +165,9 @@ export const userSelection = (
   switch (action.type) {
     case RESET_SELECTION:
       return initialState;
-    case ADD_PARAMETER_TO_SELECTION:
+    case getType(addParameterToSelection):
       return addSelected(state, action as Action<SelectionParameter>);
-    case DESELECT_SELECTION:
+    case getType(deselectSelection):
       return removeSelected(state, action as Action<SelectionParameter>);
     case getType(selectPeriod):
       return updatePeriod(state, action as Action<Period>);
@@ -175,7 +175,7 @@ export const userSelection = (
       return updateCustomDateRange(state, action as Action<DateRange>);
     case getType(setThresholdAction):
       return applyThreshold(state, (action as Action<ThresholdQuery>).payload);
-    case SELECT_SAVED_SELECTION:
+    case getType(selectSavedSelectionAction):
     case domainModelsPostSuccess(EndPoints.userSelections):
     case domainModelsPutSuccess(EndPoints.userSelections):
       return selectSaved(state, action as Action<UserSelection>);

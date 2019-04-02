@@ -1,18 +1,17 @@
-import {Location} from 'history';
-import {LOCATION_CHANGE} from 'react-router-redux';
-import {ActionType, createStandardAction, getType} from 'typesafe-actions';
+import {ActionType, getType} from 'typesafe-actions';
 import {isOnMeterDetailsPage} from '../../../app/routes';
 import {resetReducer} from '../../../reducers/resetReducer';
+import {locationChange} from '../../../state/location/locationActions';
 import {MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
 import {initialState} from '../../../state/ui/graph/measurement/measurementReducer';
 import {openDialog} from '../../map/mapActions';
 import {setMeterDetailsTimePeriod} from './meterDetailActions';
 import * as actions from './meterDetailMeasurementActions';
 
-// LOCATION_CHANGE is not typed but it needs to be, so we wrap it
-const location = createStandardAction(LOCATION_CHANGE)<Location>();
-
-type ActionTypes = ActionType<typeof actions | typeof setMeterDetailsTimePeriod | typeof openDialog | typeof location>;
+type ActionTypes = ActionType<typeof actions
+  | typeof setMeterDetailsTimePeriod
+  | typeof openDialog
+  | typeof locationChange>;
 
 export const meterDetailMeasurement = (
   state: MeasurementState = initialState,
@@ -45,7 +44,7 @@ export const meterDetailMeasurement = (
     case getType(openDialog):
     case getType(setMeterDetailsTimePeriod):
       return initialState;
-    case getType(location):
+    case getType(locationChange):
       return isOnMeterDetailsPage(action.payload.pathname)
         ? state
         : initialState;
