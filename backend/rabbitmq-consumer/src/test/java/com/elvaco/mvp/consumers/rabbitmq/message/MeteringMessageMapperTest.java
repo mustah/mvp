@@ -95,6 +95,24 @@ public class MeteringMessageMapperTest {
   }
 
   @Test
+  public void mapKnownDistrictCoolingMediumAliases() {
+    Medium districtCoolingMedium = new Medium(0L, Medium.DISTRICT_COOLING);
+    MediumProvider mediumProvider = providerOf(Map.of(
+      Medium.DISTRICT_COOLING,
+      districtCoolingMedium
+    ));
+
+    asList(
+      "Cooling load meter, flow temp",
+      "Cooling load meter, Return temp"
+    )
+      .forEach(medium ->
+        assertThat(mapToEvoMedium(mediumProvider, medium))
+          .isEqualTo(districtCoolingMedium)
+      );
+  }
+
+  @Test
   public void districtHeatingMeterIsMappedFromValueQuantities() {
     List<ValueDto> values = asList(
       newValueDto("Return temp."),
