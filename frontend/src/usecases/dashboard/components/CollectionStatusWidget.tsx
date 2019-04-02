@@ -75,7 +75,7 @@ export const CollectionStatusWidget = (props: Props) => {
       title={title}
       deleteWidget={onDeleteWidget}
       editWidget={onEditWidget}
-      headerClassName={isNaN(count) ? 'info' : thresholdClassName(count)}
+      headerClassName={thresholdClassName(count)}
     >
       <LoadingIndicator
         isFetching={isFetching}

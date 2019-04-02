@@ -3,32 +3,27 @@ import {thresholdClassName} from '../thresholds';
 describe('thresholds', () => {
 
   describe('thresholdClassName', () => {
-    test('given -1 return "error" css', () => {
-      expect(thresholdClassName(-1)).toEqual('error');
-    });
 
-    test('given 69 return "error" css', () => {
-      expect(thresholdClassName(69)).toEqual('error');
-    });
+    const errorTestCases: Array<[number, any, string]> = [
+      [1, -1, 'error'],
+      [2, 69, 'error'],
+      [3, 70, 'error'],
 
-    test('given 70 return "error" css', () => {
-      expect(thresholdClassName(70)).toEqual('error');
-    });
+      [4, 71, 'warning'],
+      [5, 99, 'warning'],
 
-    test('given 71 return "warning" css', () => {
-      expect(thresholdClassName(71)).toEqual('warning');
-    });
+      [6, 100, 'ok'],
+      [7, 101, 'ok'],
 
-    test('given 99 return "warning" css', () => {
-      expect(thresholdClassName(99)).toEqual('warning');
-    });
+      [8, undefined, 'info'],
+      [9, 'foobar', 'info'],
+    ];
 
-    test('given 100 return "ok" css', () => {
-      expect(thresholdClassName(100)).toEqual('ok');
-    });
+    test.each(errorTestCases)(
+      'test #%i: regex %p matches? %p',
+      (id: number, percent: number | undefined, cssClassName: string) =>
+        expect(thresholdClassName(percent!)).toEqual(cssClassName)
+    );
 
-    test('given 101 return "ok" css', () => {
-      expect(thresholdClassName(101)).toEqual('ok');
-    });
   });
 });

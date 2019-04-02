@@ -3,6 +3,8 @@ export const thresholdClassName = (percent: number): string => {
     return 'ok';
   } else if (percent > 70) {
     return 'warning';
+  } else if (isNaN(percent)) {
+    return 'info';
   } else {
     return 'error';
   }
