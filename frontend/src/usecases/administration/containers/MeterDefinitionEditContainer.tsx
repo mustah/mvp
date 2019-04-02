@@ -7,10 +7,10 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
 import {MeterDefinitionEditForm} from '../../../components/forms/MeterDefinitionEditForm';
+import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
@@ -104,7 +104,7 @@ const MeterDefinitionEdit = (props: Props) => {
 };
 
 const mapStateToProps = (
-  {auth, domainModels: {organisations, mediums, meterDefinitions, quantities}}: RootState
+  {domainModels: {organisations, mediums, meterDefinitions, quantities}}: RootState
 ): StateToProps => {
   const errors = [organisations.error, mediums.error, quantities.error, meterDefinitions.error];
   return ({

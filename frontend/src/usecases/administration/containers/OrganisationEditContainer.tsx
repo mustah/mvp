@@ -127,7 +127,7 @@ class OrganisationEdit extends React.Component<Props, {}> {
   }
 }
 
-const mapStateToProps = ({auth, domainModels: {organisations, userSelections}}: RootState): StateToProps => ({
+const mapStateToProps = ({domainModels: {organisations, userSelections}}: RootState): StateToProps => ({
   isFetchingOrganisations: organisations.isFetching,
   isFetchingUserSelections: userSelections.isFetching,
   organisationsError: getError(organisations),

@@ -42,7 +42,6 @@ const MeterDetailsInfo = ({
   meter: {
     address,
     readIntervalMinutes,
-    collectionPercentage,
     location,
     id,
     manufacturer,
@@ -141,7 +140,7 @@ const MeterDetailsInfo = ({
 };
 
 const mapStateToProps = (
-  {domainModels: {organisations}, auth, paginatedDomainModels: {meters}}: RootState,
+  {domainModels: {organisations}, auth}: RootState,
   {meter}: OwnProps,
 ): StateToProps => ({
   organisation: getDomainModelById<Organisation>(meter.organisationId)(organisations),

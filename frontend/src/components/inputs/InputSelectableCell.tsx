@@ -14,14 +14,7 @@ type Props = Overwrite<SelectFieldInputProps, {floatingLabelText?: any, hintText
   & CellProps;
 
 export const InputSelectableCell = ({onChange, dataItem, value, inEdit, ...props}: Props) => {
-  const handleChange = (e, index, value) => {
-    onChange({
-      dataItem,
-      field: dataItem.field,
-      syntheticEvent: e,
-      value
-    });
-  };
+  const handleChange = (e, _, value) => onChange({dataItem, field: dataItem.field, syntheticEvent: e, value});
 
   if (!inEdit) {
     return (

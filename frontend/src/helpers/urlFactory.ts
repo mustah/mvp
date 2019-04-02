@@ -191,7 +191,7 @@ const toMeterIdParameters = (id: uuid) => makeParameter(meterParameters, 'meterI
 export const toMeterIdsApiParameters = (ids: uuid[]): string =>
   encodedUriParametersFrom(ids.map(toMeterIdParameters));
 
-export const toGatewayIdsApiParameters = (ids: uuid[], gatewayId: uuid): string =>
+export const toGatewayIdsApiParameters = (_: uuid[], gatewayId: uuid): string =>
   encodedUriParametersFrom([makeParameter(meterParameters, 'gatewayIds', gatewayId.toString())]);
 
 export const makeApiParametersOf =

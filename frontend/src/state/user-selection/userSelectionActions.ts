@@ -1,4 +1,3 @@
-import {routerActions} from 'react-router-redux';
 import {shallowEqual} from 'recompose';
 import {Dispatch} from 'redux';
 import {createStandardAction} from 'typesafe-actions';
@@ -58,8 +57,6 @@ export const setThreshold =
     };
 
 export const clearUserSelectionErrors = clearError(EndPoints.userSelections);
-
-export const closeSelectionPage = () => (dispatch) => dispatch(routerActions.goBack());
 
 export const fetchUserSelections = fetchIfNeeded<UserSelection>(
   EndPoints.userSelections,

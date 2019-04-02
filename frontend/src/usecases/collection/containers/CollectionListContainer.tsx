@@ -61,7 +61,6 @@ export interface DispatchToProps {
 
 const mapStateToProps = (
   {
-    auth: {user},
     userSelection: {userSelection},
     paginatedDomainModels: {collectionStatFacilities},
     ui: {pagination: paginationModel},

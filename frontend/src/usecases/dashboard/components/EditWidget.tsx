@@ -36,7 +36,7 @@ export const EditWidget = <T extends Widget>({
   const selectionLabel = firstUpperTranslated('selection');
   const [selectionId, selectSelection] = React.useState(widgets.settings.selectionId);
 
-  const onChange = (event, index, value) => selectSelection(value);
+  const onChange = (_, __, value) => selectSelection(value);
 
   const selectedSelection: uuid | undefined = selectionId || selectionOptions[0].id;
 

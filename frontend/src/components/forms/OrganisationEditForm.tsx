@@ -127,9 +127,9 @@ export class OrganisationEditForm extends React.Component<Props, State> {
     );
   }
 
-  changeParent = (event, index, value) => this.setState({parent: organisationById(value, this.props.organisations)});
+  changeParent = (_, __, value) => this.setState({parent: organisationById(value, this.props.organisations)});
 
-  changeSelection = (event, index, value) => this.setState({selectionId: value});
+  changeSelection = (_, __, value) => this.setState({selectionId: value});
 
   onChangeName = (event) => this.setState({name: event.target.value});
 

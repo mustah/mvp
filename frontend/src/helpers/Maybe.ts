@@ -8,7 +8,7 @@ const enum Type {
 interface MaybeApi<T> {
   isNothing: () => boolean;
   isJust: () => boolean;
-  do: <U>(f: (value: T) => void) => void;
+  do: (f: (value: T) => void) => void;
   map: <U>(f: (value: T) => U) => Maybe<U>;
   flatMap: <U>(f: (value: T) => Maybe<U>) => Maybe<U>;
   get: () => T;

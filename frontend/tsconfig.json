@@ -29,6 +29,7 @@
     "noImplicitUseStrict": false,
     "noLib": false,
     "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "outDir": "dist/",
     "preserveConstEnums": true,
     "pretty": true,

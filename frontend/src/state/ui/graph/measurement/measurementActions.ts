@@ -80,8 +80,7 @@ const makeQuantityToIdsMap = (): QuantityToIds =>
 
 export const meterLabelFactory = ({quantity}): string => quantity;
 
-export const meterAverageLabelFactory = ({quantity, type}): string =>
-  `${getGroupHeaderTitle(type)}`;
+export const meterAverageLabelFactory = ({type}): string => `${getGroupHeaderTitle(type)}`;
 
 export const metersByQuantityRequests = (parameters: MeasurementParameters): GraphDataRequests =>
   makeMeasurementMetersUriParameters(parameters, EndPoints.measurements, meterLabelFactory)

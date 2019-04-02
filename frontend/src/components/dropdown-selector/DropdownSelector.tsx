@@ -214,7 +214,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
   onSelect = (selectedItem: SelectionListItem, id: uuid) => {
     const newItem = {...selectedItem, selected: !selectedItem.selected};
     this.props.select(newItem);
-    this.setState(({cache, items}) => ({items: replaceWhereId(items, newItem, id)}));
+    this.setState(({items}) => ({items: replaceWhereId(items, newItem, id)}));
   }
 
   rowRenderer = ({index, style}: ListRowProps) => {

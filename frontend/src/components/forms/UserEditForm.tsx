@@ -165,14 +165,14 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     );
   }
 
-  changeOrganisation = (event, index, value) =>
+  changeOrganisation = (_, __, value) =>
     this.setState({
       organisation: this.props.organisations.find(({id}) => id === value)!
     })
 
-  changeRoles = (event, index, value) => this.setState({roles: value});
+  changeRoles = (_, __, value) => this.setState({roles: value});
 
-  changeLanguage = (event, index, value) => this.setState({language: value});
+  changeLanguage = (_, __, value) => this.setState({language: value});
 
   onChangePassword = (event) => this.setState({password: event.target.value});
 

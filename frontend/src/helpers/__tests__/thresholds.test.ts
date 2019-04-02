@@ -21,7 +21,7 @@ describe('thresholds', () => {
 
     test.each(errorTestCases)(
       'test #%i: regex %p matches? %p',
-      (id: number, percent: number | undefined, cssClassName: string) =>
+      (_: number, percent: any, cssClassName: string) =>
         expect(thresholdClassName(percent!)).toEqual(cssClassName)
     );
 

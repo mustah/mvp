@@ -39,7 +39,7 @@ export const superAdminIsAuthenticated = connectedRouterRedirect({
 
 export const userIsNotAuthenticated = connectedRouterRedirect({
   redirectPath: (
-    state,
+    _,
     ownProps,
   ) => locationHelperBuilder({}).getRedirectQueryParam(ownProps) || routes.home,
   authenticatedSelector: isNotAuthenticatedSelector,

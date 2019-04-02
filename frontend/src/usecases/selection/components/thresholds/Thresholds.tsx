@@ -99,19 +99,19 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
   const {quantity, relationalOperator, value, unit, duration, dateRange} = currentQuery;
   const decoratedUnit = unitPerHour(quantity, unit);
   const durationOrNull = !duration ? null : duration;
-  const onChangeQuantity = (event, index, newValue: string) => setQuery({
+  const onChangeQuantity = (_, __, newValue: string) => setQuery({
     ...currentQuery,
     quantity: newValue as Quantity,
     unit: quantityAttributes[newValue as Quantity].unit
   });
 
-  const onChangeRelationalOperator = (event, index, newValue: string) => setQuery({
+  const onChangeRelationalOperator = (_, __, newValue: string) => setQuery({
     ...currentQuery,
     relationalOperator: newValue as RelationalOperator,
   });
 
-  const onChangeValue = (event, value: string) => setQuery({...currentQuery, value});
-  const onChangeDuration = (event, index, duration: string) => setQuery({...currentQuery, duration});
+  const onChangeValue = (_, value: string) => setQuery({...currentQuery, value});
+  const onChangeDuration = (_, __, duration: string) => setQuery({...currentQuery, duration});
   const selectPeriod = (period: Period) => setQuery({...currentQuery, dateRange: {period}});
   const selectCustomDateRange = (customDateRange: DateRange) => setQuery({
     ...currentQuery,

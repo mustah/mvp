@@ -48,8 +48,6 @@ export const MeterList = ({
   entityType,
   addToReport,
   syncWithMetering,
-  isFetching,
-  isSuperAdmin,
   pagination: {page, size, totalElements: total},
   sort,
   sortTable,
