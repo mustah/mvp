@@ -10,7 +10,7 @@ import {Loader} from '../../../components/loading/Loader';
 import {Bold, Normal} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {diplayDateNoHours, shortDate} from '../../../helpers/dateHelpers';
-import {formatAndFloorPercentage} from '../../../helpers/formatters';
+import {formatPercentage} from '../../../helpers/formatters';
 import {encodeRequestParameters, requestParametersFrom} from '../../../helpers/urlFactory';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
@@ -42,7 +42,7 @@ const CustomizedTooltip = (props) => {
         <Column>
           <Row>
             <Normal style={{marginRight: 4}}>{diplayDateNoHours(id * 1000)}:</Normal>
-            <Bold>{formatAndFloorPercentage(collectionPercentage)}</Bold>
+            <Bold>{formatPercentage(collectionPercentage)}</Bold>
           </Row>
         </Column>
       </Paper>

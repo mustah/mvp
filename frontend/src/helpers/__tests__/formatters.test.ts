@@ -1,7 +1,7 @@
 import {momentAtUtcPlusOneFrom} from '../dateHelpers';
 import {
   cityWithoutCountry,
-  formatAndFloorPercentage,
+  formatPercentage,
   formatCollectionPercentage,
   formatDate,
   round,
@@ -129,7 +129,7 @@ describe('formatters', () => {
     test.each(testCases)(
       'test #%i: input %d becomes %s',
       (_, input: number, wanted: string) => {
-        expect(formatAndFloorPercentage(input)).toEqual(wanted);
+        expect(formatPercentage(input)).toEqual(wanted);
       }
     );
   });
