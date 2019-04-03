@@ -38,7 +38,7 @@ public class MeteringAlarmParserTest {
     assertReferenceInfoIsOk(parsedMessage);
 
     assertThat(parsedMessage.alarm)
-      .containsExactly(new AlarmDto(LocalDateTime.parse("2017-09-22T08:45:49"), 42, "Low battery"));
+      .containsExactly(new AlarmDto(LocalDateTime.parse("2017-09-22T08:45:49"), 42));
   }
 
   @Test
@@ -58,8 +58,8 @@ public class MeteringAlarmParserTest {
 
     assertThat(parsedMessage.alarm)
       .containsExactlyInAnyOrder(
-        new AlarmDto(LocalDateTime.parse("2017-09-22T08:45:49"), 42, "Low battery"),
-        new AlarmDto(LocalDateTime.parse("2018-08-26T08:45:49"), 89, "Bad api")
+        new AlarmDto(LocalDateTime.parse("2017-09-22T08:45:49"), 42),
+        new AlarmDto(LocalDateTime.parse("2018-08-26T08:45:49"), 89)
       );
   }
 

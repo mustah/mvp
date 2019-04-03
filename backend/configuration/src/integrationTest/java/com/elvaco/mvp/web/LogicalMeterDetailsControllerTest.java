@@ -25,6 +25,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
@@ -332,9 +333,9 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       ))
     );
 
-    var alarm = given(alarm(logicalMeter).mask(12)
-      .start(context().now())
-      .description("something is wrong")).iterator().next();
+    var alarm = given(
+      alarm(logicalMeter).mask(16).start(context().now())
+    ).iterator().next();
 
     LogicalMeterDto logicalMeterDto = asUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
@@ -342,8 +343,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     assertThat(logicalMeterDto.alarms).isEqualTo(List.of(new AlarmDto(
       alarm.id,
-      alarm.mask,
-      alarm.description
+      alarm.mask
     )));
   }
 
@@ -356,14 +356,11 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       )));
 
     List<AlarmLogEntry> alarms = new ArrayList<>(given(
-      alarm(logicalMeter).mask(12)
-        .start(context().now().plusHours(2))
-        .description("something is wrong"),
-      alarm(logicalMeter).mask(33).start(context().now()).description("testing"),
+      alarm(logicalMeter).mask(4).start(context().now().plusHours(2)),
+      alarm(logicalMeter).mask(2).start(context().now()),
       alarm(logicalMeter).mask(1)
         .start(context().now().minusHours(10))
         .stop(context().now().minusHours(5))
-        .description("testing")
     ));
 
     LogicalMeterDto logicalMeterDto = asUser()
@@ -373,12 +370,10 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(logicalMeterDto.alarms).containsExactlyInAnyOrder(
       new AlarmDto(
         alarms.get(0).id,
-        alarms.get(0).mask,
-        alarms.get(0).description
+        alarms.get(0).mask
       ), new AlarmDto(
         alarms.get(1).id,
-        alarms.get(1).mask,
-        alarms.get(1).description
+        alarms.get(1).mask
       )
     );
   }
@@ -442,6 +437,52 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(content)
       .extracting(m -> m.gateway.status)
       .isEqualTo(new IdNamedDto("ok"));
+  }
+
+  @Test
+  public void alarm_hasDescription() {
+    var meter = given(
+      logicalMeter(),
+      physicalMeter().manufacturer("ELV").mbusDeviceType(4).revision(2)
+    );
+    given(alarm(meter).mask(2).start(context().now().minusDays(1)));
+
+    var url = meterDetailsUrl(meter.id);
+
+    var meterDto = asUser()
+      .get(url, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(meterDto.alarms)
+      .extracting((alarm) -> tuple(alarm.mask, alarm.description))
+      .containsExactly(
+        tuple(2, "Interruption of flow temperature sensor - Error F1")
+      );
+  }
+
+  @Test
+  public void multipleAlarms_haveDescriptions() {
+    var meter = given(
+      logicalMeter(),
+      physicalMeter().manufacturer("ELV").mbusDeviceType(4).revision(2)
+    );
+    given(
+      alarm(meter).mask(2).start(context().now().minusDays(1)),
+      alarm(meter).mask(4).start(context().now().minusDays(1))
+    );
+
+    var url = meterDetailsUrl(meter.id);
+
+    var meterDto = asUser()
+      .get(url, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(meterDto.alarms)
+      .extracting((alarm) -> tuple(alarm.mask, alarm.description))
+      .containsExactly(
+        tuple(2, "Interruption of flow temperature sensor - Error F1"),
+        tuple(4, "Interruption of return temperature sensor - Error F2")
+      );
   }
 
   private static String meterDetailsUrl(UUID logicalMeterId) {

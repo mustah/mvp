@@ -82,7 +82,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     message(measurement());
 
     assertThat(physicalMeters.findAll()).hasSize(1);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))
@@ -102,7 +102,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     message(measurement());
 
     assertThat(physicalMeters.findAll()).hasSize(1);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))
@@ -123,7 +123,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     message(measurement().meterId(SECOND_METER_ADDRESS));
 
     assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> !p.isActive(now()))
@@ -158,7 +158,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
       .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(1)));
 
     assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))
@@ -196,7 +196,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     message(measurement().valuesAtTimestamps(MEASUREMENT_TIMESTAMP.minusDays(1)));
 
     assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))
@@ -234,7 +234,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     message(measurement().valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(1)));
 
     assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))
@@ -277,7 +277,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     );
 
     assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))
@@ -319,7 +319,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     );
 
     assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))

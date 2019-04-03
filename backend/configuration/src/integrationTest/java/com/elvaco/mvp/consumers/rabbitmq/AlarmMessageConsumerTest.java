@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 public class AlarmMessageConsumerTest extends IntegrationTest {
 
@@ -73,7 +74,7 @@ public class AlarmMessageConsumerTest extends IntegrationTest {
   @Test
   public void addAlarm() {
     PhysicalMeter physicalMeter = savePhysicalMeter();
-    AlarmDto alarm = new AlarmDto(START, 1, "Test");
+    AlarmDto alarm = new AlarmDto(START, 1);
 
     meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm));
 
@@ -87,7 +88,6 @@ public class AlarmMessageConsumerTest extends IntegrationTest {
       .mask(1)
       .start(zonedDateTimeOf(START, actualZoneId))
       .lastSeen(zonedDateTimeOf(START, actualZoneId))
-      .description("Test")
       .build());
   }
 
@@ -95,8 +95,8 @@ public class AlarmMessageConsumerTest extends IntegrationTest {
   @Test
   public void lastReceivedDuplicateAlarmIsUsed() {
     PhysicalMeter physicalMeter = savePhysicalMeter();
-    AlarmDto alarm1 = new AlarmDto(START, 42, "Low battery");
-    AlarmDto alarm2 = new AlarmDto(START.plusHours(1), 42, "Low battery");
+    AlarmDto alarm1 = new AlarmDto(START, 42);
+    AlarmDto alarm2 = new AlarmDto(START.plusHours(1), 42);
 
     meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm1));
     meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm2));
@@ -113,9 +113,9 @@ public class AlarmMessageConsumerTest extends IntegrationTest {
   @Test
   public void useTheLastSeenTimestamp_InsteadOfUpdatingItWithTheLatest() {
     PhysicalMeter physicalMeter = savePhysicalMeter();
-    AlarmDto alarm1 = new AlarmDto(START, 42, "Low battery");
-    AlarmDto alarm2 = new AlarmDto(START.plusHours(1), 42, "Low battery");
-    AlarmDto alarm3 = new AlarmDto(START.minusHours(1), 42, "Low battery");
+    AlarmDto alarm1 = new AlarmDto(START, 42);
+    AlarmDto alarm2 = new AlarmDto(START.plusHours(1), 42);
+    AlarmDto alarm3 = new AlarmDto(START.minusHours(1), 42);
 
     meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm1));
     meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm2));
@@ -138,8 +138,8 @@ public class AlarmMessageConsumerTest extends IntegrationTest {
   @Test
   public void addAlarmsToSamePhysicalMeter() {
     PhysicalMeter physicalMeter = savePhysicalMeter();
-    AlarmDto alarm1 = new AlarmDto(START, 42, "Low battery");
-    AlarmDto alarm2 = new AlarmDto(START.plusMinutes(5), 12, "Bad api");
+    AlarmDto alarm1 = new AlarmDto(START, 42);
+    AlarmDto alarm2 = new AlarmDto(START.plusMinutes(5), 12);
 
     meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm1));
     meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm2));
@@ -147,22 +147,24 @@ public class AlarmMessageConsumerTest extends IntegrationTest {
     List<MeterAlarmLogEntity> alarms = meterAlarmLogJpaRepository.findAll();
     ZoneId actualZoneId = alarms.get(0).start.getZone();
 
-    assertThat(alarms).extracting("pk.physicalMeterId")
-      .containsExactlyInAnyOrder(physicalMeter.id, physicalMeter.id);
-
-    assertThat(alarms).extracting("description")
-      .containsExactlyInAnyOrder("Low battery", "Bad api");
-
-    assertThat(alarms).extracting("mask")
-      .containsExactlyInAnyOrder(42, 12);
-
-    assertThat(alarms).extracting("start").containsExactlyInAnyOrder(
-      zonedDateTimeOf(alarm1.timestamp, actualZoneId),
-      zonedDateTimeOf(alarm2.timestamp, actualZoneId)
-    );
-    assertThat(alarms).extracting("lastSeen").containsExactlyInAnyOrder(
-      zonedDateTimeOf(alarm1.timestamp, actualZoneId),
-      zonedDateTimeOf(alarm2.timestamp, actualZoneId)
+    assertThat(alarms).extracting(alarm -> tuple(
+      alarm.pk.physicalMeterId,
+      alarm.mask,
+      alarm.start,
+      alarm.lastSeen
+    )).containsExactlyInAnyOrder(
+      tuple(
+        physicalMeter.id,
+        42,
+        zonedDateTimeOf(alarm1.timestamp, actualZoneId),
+        zonedDateTimeOf(alarm1.timestamp, actualZoneId)
+      ),
+      tuple(
+        physicalMeter.id,
+        12,
+        zonedDateTimeOf(alarm2.timestamp, actualZoneId),
+        zonedDateTimeOf(alarm2.timestamp, actualZoneId)
+      )
     );
   }
 

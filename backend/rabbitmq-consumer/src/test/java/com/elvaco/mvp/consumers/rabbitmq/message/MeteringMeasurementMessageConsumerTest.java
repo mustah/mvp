@@ -96,7 +96,7 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
     assertThat(gateways.findAll()).isEmpty();
     assertThat(organisations.findAll()).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
   }
 
   @Test
@@ -115,7 +115,7 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
     assertThat(gateways.findAll()).isEmpty();
     assertThat(organisations.findAll()).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
   }
 
   @Test

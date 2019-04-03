@@ -1,0 +1,63 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create alarm_description table" author="Anton Löfgren">
+    <createTable tableName="alarm_description">
+      <column name="manufacturer" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="device_type" type="integer">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="firmware_version" type="integer">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="mask" type="integer">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="description" type="text">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="alarm_description" columnNames="manufacturer,device_type,firmware_version,mask"/>
+  </changeSet>
+
+  <changeSet id="Load alarm description mappings" author="Anton Löfgren">
+    <loadData tableName="alarm_description" separator="\t" file="../data/alarmlist.csv" relativeToChangelogFile="true" encoding="UTF-8">
+      <column name="manufacturer" type="STRING"/>
+      <column name="device_type" type="NUMERIC"/>
+      <column name="firmware_version" type="NUMERIC"/>
+      <column name="mask" type="NUMERIC"/>
+      <column name="description" type="STRING"/>
+    </loadData>
+  </changeSet>
+
+  <changeSet id="Load alarm description mappings" author="Anton Löfgren">
+    <loadData tableName="alarm_description" separator="\t" file="../data/alarmlist.csv" relativeToChangelogFile="true" encoding="UTF-8">
+      <column name="manufacturer" type="STRING"/>
+      <column name="device_type" type="NUMERIC"/>
+      <column name="firmware_version" type="NUMERIC"/>
+      <column name="mask" type="NUMERIC"/>
+      <column name="description" type="STRING"/>
+    </loadData>
+  </changeSet>
+
+  <changeSet id="Only allow alarm masks with exactly one bit set" author="Anton Löfgren">
+    <sql>
+      alter table alarm_description
+      add constraint masks_only_have_one_bit_set
+      check (char_length(replace(mask::bit(16)::text,'0','')) = 1);
+    </sql>
+  </changeSet>
+
+  <changeSet id="Drop description column from meter_alarm_log" author="Anton Löfgren">
+    <!--This is never not null-->
+    <dropColumn tableName="meter_alarm_log" columnName="description"/>
+  </changeSet>
+</databaseChangeLog>

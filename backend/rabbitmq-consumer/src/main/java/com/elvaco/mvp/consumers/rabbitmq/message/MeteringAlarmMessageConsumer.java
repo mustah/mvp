@@ -34,8 +34,7 @@ public class MeteringAlarmMessageConsumer implements AlarmMessageConsumer {
       meterAlarmLogs.createOrUpdate(
         physicalMeter.primaryKey(),
         alarmDto.mask,
-        alarmDto.timestamp.atZone(METERING_TIMEZONE),
-        alarmDto.description
+        alarmDto.timestamp.atZone(METERING_TIMEZONE)
       )));
 
     return Optional.empty();

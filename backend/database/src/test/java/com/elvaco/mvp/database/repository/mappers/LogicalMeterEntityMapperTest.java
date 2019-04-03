@@ -56,7 +56,8 @@ public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
         new DisplayQuantityEntityMapper(new QuantityEntityMapper(QUANTITY_PROVIDER))
       ),
       METER_DEFINITION_PROVIDER,
-      MEDIUM_PROVIDER
+      MEDIUM_PROVIDER,
+      (manufacturer, deviceType, firmwareRevision, mask) -> Optional.empty()
     );
 
   @Test

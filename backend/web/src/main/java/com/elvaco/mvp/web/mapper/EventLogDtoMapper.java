@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.mapper;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
+import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.EventLogDto;
 import com.elvaco.mvp.web.dto.EventType;
 
@@ -24,7 +25,7 @@ public class EventLogDtoMapper {
     return EventLogDto.builder()
       .type(EventType.newMeter)
       .name(physicalMeter.address)
-      .start(formatUtc(physicalMeter.activePeriod.start.dateTime))
+      .start(physicalMeter.activePeriod.getStartDateTime().map(Dates::formatUtc).orElse("-∞"))
       .build();
   }
 }

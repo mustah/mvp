@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
-import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
@@ -188,8 +187,7 @@ class LogicalMeterJooqJpaRepository
       METER_ALARM_LOG.START,
       METER_ALARM_LOG.LAST_SEEN,
       METER_ALARM_LOG.STOP,
-      METER_ALARM_LOG.MASK,
-      METER_ALARM_LOG.DESCRIPTION
+      METER_ALARM_LOG.MASK
     ).from(LOGICAL_METER);
 
     var countQuery = dsl.selectDistinct(LOGICAL_METER.ID, PHYSICAL_METER.ID).from(LOGICAL_METER);
@@ -207,21 +205,6 @@ class LogicalMeterJooqJpaRepository
       .fetchInto(LogicalMeterSummaryDto.class);
 
     return getPage(logicalMeters, pageable, () -> dsl.fetchCount(countQuery));
-  }
-
-  @Override
-  public List<LogicalMeterCollectionStats> findMeterCollectionStats(
-    RequestParameters parameters
-  ) {
-    var query = dsl.select(
-      LOGICAL_METER.ID,
-      DSL.coalesce(COLLECTION_PERCENTAGE, 0)
-    ).distinctOn(LOGICAL_METER.ID)
-      .from(LOGICAL_METER);
-    FilterVisitors.logicalMeterWithCollectionPercentage(dsl, measurementThresholdParser)
-      .accept(toFilters(parameters)).andJoinsOn(query);
-
-    return query.fetchInto(LogicalMeterCollectionStats.class);
   }
 
   @Override
@@ -287,7 +270,7 @@ class LogicalMeterJooqJpaRepository
       .stream()
       .map(record -> new CollectionStatsPerDateDto(
         record.value2().atStartOfDay(ZoneId.of("UTC+1")),
-        (Double) record.value1().doubleValue()
+        record.value1().doubleValue()
       )).collect(toList());
     return logicalMeters;
   }

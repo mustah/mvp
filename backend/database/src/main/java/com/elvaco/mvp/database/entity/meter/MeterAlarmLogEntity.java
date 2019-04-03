@@ -52,9 +52,6 @@ public class MeterAlarmLogEntity extends IdentifiableType<Long> implements Prima
   @Nullable
   public ZonedDateTime stop;
 
-  @Nullable
-  public String description;
-
   @Override
   public Long getId() {
     return id;

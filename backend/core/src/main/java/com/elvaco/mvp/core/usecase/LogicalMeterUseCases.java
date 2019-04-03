@@ -28,10 +28,6 @@ public class LogicalMeterUseCases {
     return logicalMeters.findAllBy(parameters.ensureOrganisationFilters(currentUser));
   }
 
-  public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
-    return logicalMeters.findAllWithDetails(parameters.ensureOrganisationFilters(currentUser));
-  }
-
   public Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
     return logicalMeters.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
   }

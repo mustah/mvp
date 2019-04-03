@@ -83,7 +83,8 @@
   <include file="xml/add_better_index_for_measurements.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_dashboards_and_widgets.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_measurement_stat_data_physical_meter_id_stat_date_quantity_idx.xml" relativeToChangelogFile="true"/>
-  
+  <include file="xml/create_alarm_description_table.xml" relativeToChangelogFile="true"/>
+
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

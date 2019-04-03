@@ -23,8 +23,6 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findByOrganisationIdAndExternalId(UUID organisationId, String externalId);
 
-  Optional<LogicalMeter> findBy(RequestParameters parameters);
-
   Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable);
 
   Page<String> findFacilities(RequestParameters parameters, Pageable pageable);
@@ -32,8 +30,6 @@ public interface LogicalMeters {
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
   Page<CollectionStatsDto> findAllCollectionStats(RequestParameters parameters, Pageable pageable);
-
-  List<LogicalMeter> findAllWithDetails(RequestParameters parameters);
 
   List<LogicalMeter> findAllBy(RequestParameters parameters);
 

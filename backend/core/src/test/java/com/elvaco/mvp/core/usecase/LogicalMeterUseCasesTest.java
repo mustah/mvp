@@ -56,7 +56,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
       )
     );
 
-    assertThat(useCases.findAllWithDetails(new MockRequestParameters())).hasSize(3);
+    assertThat(useCases.findAllBy(new MockRequestParameters())).hasSize(3);
   }
 
   @Test
@@ -70,7 +70,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
       )
     );
 
-    assertThat(useCases.findAllWithDetails(new MockRequestParameters())).hasSize(2);
+    assertThat(useCases.findAllBy(new MockRequestParameters())).hasSize(2);
   }
 
   @Test

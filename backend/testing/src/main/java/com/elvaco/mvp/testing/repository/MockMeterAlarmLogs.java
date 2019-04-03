@@ -30,15 +30,13 @@ public class MockMeterAlarmLogs
   public void createOrUpdate(
     PrimaryKey primaryKey,
     int mask,
-    ZonedDateTime start,
-    String description
+    ZonedDateTime start
   ) {
     saveMock(AlarmLogEntry.builder()
       .primaryKey(primaryKey)
       .mask(mask)
       .start(start)
       .lastSeen(start)
-      .description(description)
       .build()
     );
   }

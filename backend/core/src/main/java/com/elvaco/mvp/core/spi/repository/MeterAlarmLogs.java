@@ -16,8 +16,7 @@ public interface MeterAlarmLogs {
   void createOrUpdate(
     PrimaryKey primaryKey,
     int mask,
-    ZonedDateTime start,
-    String description
+    ZonedDateTime start
   );
 
   Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when);
