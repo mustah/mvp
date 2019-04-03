@@ -95,12 +95,10 @@ begin
                                      measurement_serie.value as value
                               from (select value, date_serie.date as when
                                     from (select generate_series(
-                                                     stat_date::timestamp at time zone
-                                                     current_tz - cast('2 day' as interval),
-                                                     stop_date::timestamp at time zone
-                                                     current_tz + cast('2 day' as interval),
+                                                     stat_date::timestamp - cast('2 day' as interval),
+                                                     stop_date::timestamp + cast('2 day' as interval),
                                                      read_interval_interval(read_interval)
-                                                   ) as date) as date_serie
+                                                   ) at time zone current_tz as date) as date_serie
                                            left join measurement on date_serie.date = created
                                       and measurement.quantity = quantity_id
                                       and measurement.physical_meter_id = p_meter_id
