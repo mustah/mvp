@@ -3,7 +3,6 @@ package com.elvaco.mvp.web;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.DoubleStream;
@@ -310,8 +309,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .contains(100.0);
 
     var listedPercentage = asUser().getList(
-      statsDateUrl(context().now(),
-        context().now().plusDays(2)),
+      statsDateUrl(
+        context().now(),
+        context().now().plusDays(2)
+      ),
       CollectionStatsPerDateDto.class
     );
     assertThat(listedPercentage.getBody()).hasSize(2);
@@ -399,24 +400,27 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       logicalMeter().externalId("0001"),
       logicalMeter().externalId("0003"),
       logicalMeter().externalId("0004"),
-      logicalMeter().externalId("0005").physicalMeters((List<PhysicalMeter>)Arrays.asList(phys))
+      logicalMeter().externalId("0005").physicalMeters(List.of(phys))
     ));
     given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0,1,1,1,1,1));
+      1.0, 1, 1, 1, 1, 1
+    ));
     given(series(meters.get(2), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0,1,1,1,1));
+      1.0, 1, 1, 1, 1
+    ));
     given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday().plusHours(6),
-      1.0,1,1,1));
+      1.0, 1, 1, 1
+    ));
     testSorting(
       "collectionPercentage,asc",
       meter -> meter.facility,
-      List.of("0004", "0001", "0003", "0002","0005")
+      List.of("0004", "0001", "0003", "0002", "0005")
     );
 
     testSorting(
       "collectionPercentage,desc",
       meter -> meter.facility,
-      List.of("0005","0002", "0003", "0001", "0004")
+      List.of("0005", "0002", "0003", "0001", "0004")
     );
   }
 
@@ -429,22 +433,25 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       logicalMeter().externalId("0004")
     ));
     given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0,1,1,1,1,1));
+      1.0, 1, 1, 1, 1, 1
+    ));
     given(series(meters.get(2), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0,1,1,1,1));
+      1.0, 1, 1, 1, 1
+    ));
     given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday().plusHours(6),
-      1.0,1,1,1));
+      1.0, 1, 1, 1
+    ));
 
     testSorting(
       "lastData,asc",
       meter -> meter.facility,
-      List.of("0003", "0002", "0001","0004")
+      List.of("0003", "0002", "0001", "0004")
     );
 
     testSorting(
       "lastData,desc",
       meter -> meter.facility,
-      List.of("0004","0001", "0002", "0003")
+      List.of("0004", "0001", "0002", "0003")
     );
   }
 
@@ -471,6 +478,32 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     );
   }
 
+  @Test
+  public void collectionPercentageDifferentReadIntervall() {
+    PhysicalMeter phys0 = physicalMeter().readIntervalMinutes(0).build();
+    PhysicalMeter phys24 = physicalMeter().readIntervalMinutes(1440).build();
+    List<LogicalMeter> meters = new ArrayList<>(given(
+      logicalMeter(),
+      logicalMeter().physicalMeters(List.of(phys0)),
+      logicalMeter().physicalMeters(List.of(phys24))
+    ));
+    given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
+      DoubleStream.iterate(0, d -> d + 1.0).limit(24).toArray()
+    ));
+    given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday(),
+      1.0, 1, 1, 1, 1
+    ));
+
+    var listedPercentage = asUser()
+      .getList(
+        statsDateUrl(context().yesterday(), context().yesterday().plusDays(2)),
+        CollectionStatsPerDateDto.class
+      );
+    assertThat(listedPercentage.getBody()).hasSize(2);
+    assertThat(listedPercentage.getBody().get(0).collectionPercentage).isEqualTo(50.0);
+    assertThat(listedPercentage.getBody().get(1).collectionPercentage).isEqualTo(0.0);
+  }
+
   private void testSorting(
     String sort,
     Function<CollectionStatsDto, String> actual,
@@ -494,32 +527,6 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       );
   }
 
-  @Test
-  public void collectionPercentageDifferentReadIntervall() {
-    PhysicalMeter phys0 = physicalMeter().readIntervalMinutes(0).build();
-    PhysicalMeter phys24 = physicalMeter().readIntervalMinutes(1440).build();
-    List<LogicalMeter> meters = new ArrayList<>(given(
-      logicalMeter(),
-      logicalMeter().physicalMeters((List<PhysicalMeter>) Arrays.asList(phys0)),
-      logicalMeter().physicalMeters((List<PhysicalMeter>) Arrays.asList(phys24))
-    ));
-    given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      DoubleStream.iterate(0, d -> d + 1.0).limit(24).toArray()
-    ));
-    given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0, 1, 1, 1, 1
-    ));
-
-    var listedPercentage = asUser()
-      .getList(
-        statsDateUrl(context().yesterday(), context().yesterday().plusDays(2)),
-        CollectionStatsPerDateDto.class
-      );
-    assertThat(listedPercentage.getBody()).hasSize(2);
-    assertThat(listedPercentage.getBody().get(0).collectionPercentage).isEqualTo(50.0);
-    assertThat(listedPercentage.getBody().get(1).collectionPercentage).isEqualTo(0.0);
-  }
-
   private static UrlTemplate statsFacilityUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
       .path("/meters/stats/facility")
@@ -535,5 +542,4 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .parameter(BEFORE, before)
       .build();
   }
-
 }
