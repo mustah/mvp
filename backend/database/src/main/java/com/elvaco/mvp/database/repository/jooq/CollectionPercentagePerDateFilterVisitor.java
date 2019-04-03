@@ -16,7 +16,6 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.measurementStatsConditionFor;
-import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.inline;
@@ -78,32 +77,33 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
             .divide(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)).as("expected"),
           field("gendate")
 
-        ).from(select(cast(field("gendate at time zone 'UTC'"), LocalDate.class).as("gendate"))
-          .from(series)
-          .asTable("series")
-          .leftJoin(
-            dsl.select(
-              when(
-                min(PHYSICAL_METER.READ_INTERVAL_MINUTES).ne(0L),
-                coalesce(
-                  sum(
-                    coalesce(MEASUREMENT_STAT_DATA.RECEIVED_COUNT, 0)
-                  ),
-                  0L
+        ).from(
+          select(field("gendate", LocalDate.class))
+            .from(series)
+            .asTable("series")
+            .leftJoin(
+              dsl.select(
+                when(
+                  min(PHYSICAL_METER.READ_INTERVAL_MINUTES).ne(0L),
+                  coalesce(
+                    sum(
+                      coalesce(MEASUREMENT_STAT_DATA.RECEIVED_COUNT, 0)
+                    ),
+                    0L
+                  )
                 )
-              )
-                .otherwise(inline((Long) null)).as("actual"),
-              MEASUREMENT_STAT_DATA.STAT_DATE
-            )
-              .from(PHYSICAL_METER)
-              .leftJoin(MEASUREMENT_STAT_DATA)
-              .on(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-              .where(condition)
-              .groupBy(
-                MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID,
+                  .otherwise(inline((Long) null)).as("actual"),
                 MEASUREMENT_STAT_DATA.STAT_DATE
-              ).asTable("meter_stats"))
-          .on("series.gendate=stat_date")).groupBy(field("gendate"))
+              )
+                .from(PHYSICAL_METER)
+                .leftJoin(MEASUREMENT_STAT_DATA)
+                .on(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+                .where(condition)
+                .groupBy(
+                  MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID,
+                  MEASUREMENT_STAT_DATA.STAT_DATE
+                ).asTable("meter_stats"))
+            .on("series.gendate=stat_date")).groupBy(field("gendate"))
           .asTable("foo"))).on(trueCondition());
     }
   }

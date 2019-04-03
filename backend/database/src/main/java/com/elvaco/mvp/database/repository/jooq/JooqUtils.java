@@ -3,7 +3,6 @@ package com.elvaco.mvp.database.repository.jooq;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.temporal.Temporal;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
@@ -83,13 +82,13 @@ public class JooqUtils {
   }
 
   public static Table<Record> dateSerieFor(
-    Temporal from,
-    Temporal to,
+    LocalDate from,
+    LocalDate to,
     String resolution,
     String valueFieldName
   ) {
-    String expr = "generate_series({0} at time zone 'UTC',"
-      + "{1} at time zone 'UTC',"
+    String expr = "generate_series({0},"
+      + "{1},"
       + "{2}::interval) as " + valueFieldName;
     return table(
       expr,
