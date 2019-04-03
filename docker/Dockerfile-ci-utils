@@ -1,3 +1,3 @@
-FROM ubuntu:16.04
-RUN apt-get -y update && apt-get install -y python-pip curl
+FROM alpine:latest
+RUN apk add --no-cache py-pip curl
 RUN pip install salt-pepper
