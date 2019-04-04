@@ -38,6 +38,9 @@ msgstr "collection status"
 msgid "add widget"
 msgstr "add widget"
 
+msgid "no measurements"
+msgstr "no measurements"
+
 msgid "widget settings"
 msgstr "widget settings"
 

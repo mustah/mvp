@@ -285,6 +285,9 @@ msgstr "ogiltig mätare"
 msgid "find meters"
 msgstr "hitta mätare"
 
+msgid "no measurements"
+msgstr "inga mätvärden"
+
 msgid "yes"
 msgstr "ja"
 
