@@ -1,7 +1,7 @@
 import {Maybe} from '../../../helpers/Maybe';
 import {Identifiable} from '../../../types/Types';
 import {NormalizedState} from '../domainModels';
-import {getDomainModelById} from '../domainModelsSelectors';
+import {getDomainModelById, getFirstDomainModel} from '../domainModelsSelectors';
 import {Organisation} from '../organisation/organisationModels';
 
 describe('domainModelsSelectors', () => {
@@ -21,6 +21,17 @@ describe('domainModelsSelectors', () => {
       const state = organisationState as NormalizedState<Organisation>;
 
       expect(getDomainModelById<Organisation>(2)(state)).toEqual(Maybe.nothing());
+    });
+  });
+
+  describe('getFirstDomainModel', () => {
+
+    it('has no domain model', () => {
+      expect(getFirstDomainModel({entities: {}, result: []})).toEqual(Maybe.nothing());
+    });
+
+    it('has one domain model', () => {
+      expect(getFirstDomainModel({entities: {1: {id: 1, name: 'a'}}, result: [1]}).isJust()).toBe(true);
     });
   });
 

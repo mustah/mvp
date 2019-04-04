@@ -113,9 +113,7 @@ interface StateToProps {
   userSelections: NormalizedState<UserSelection>;
 }
 
-const mapStateToProps = ({
-  domainModels: {userSelections}
-}: RootState): StateToProps => ({
+const mapStateToProps = ({domainModels: {userSelections}}: RootState): StateToProps => ({
   userSelections,
 });
 

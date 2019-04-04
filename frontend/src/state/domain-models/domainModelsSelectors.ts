@@ -26,3 +26,6 @@ export const getDomainModelById = <T extends Identifiable>(id: uuid) =>
     getEntitiesDomainModels,
     (entities: ObjectsById<T>) => Maybe.maybe<T>(entities[id]),
   );
+
+export const getFirstDomainModel = <T extends Identifiable>({entities, result}: DomainModel<T>): Maybe<T> =>
+  Maybe.maybe<T>(entities[result[0]]);

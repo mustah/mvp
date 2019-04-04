@@ -1,6 +1,11 @@
 @import "../../../app/variables";
 
-.AddNewWidgetButton {
+.AddWidgetButton {
+  position: absolute;
+  top: $main-menu-height + $space;;
+  right: $lg-space;
+  z-index: $main-menu-z-index + 1;
+
   &:hover {
     button {
       border: 1px solid $primary-bg-active !important;

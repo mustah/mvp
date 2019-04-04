@@ -135,7 +135,6 @@ const reducerFor = <T extends Identifiable>(
     state: NormalizedState<T> = initialDomain<T>(),
     action: ActionTypes<T>,
   ): NormalizedState<T> => {
-
     switch (action.type) {
       case domainModelsRequest(endPoint):
         return {...state, isFetching: true};
