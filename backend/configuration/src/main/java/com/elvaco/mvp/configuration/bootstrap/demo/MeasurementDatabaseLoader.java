@@ -99,7 +99,8 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
 
       List<MeasurementEntity> measurements;
       if (meter.medium.equals("Heat, Return temp")
-        || meter.medium.equals(Medium.DISTRICT_HEATING)) {
+        || meter.medium.equals(Medium.DISTRICT_HEATING)
+        || meter.medium.equals(Medium.DISTRICT_COOLING)) {
         measurements = demoDataHelper.heatMeasurement(created, meter);
       } else if (meter.medium.equals(Medium.GAS)) {
         measurements = demoDataHelper.gasMeasurement(
