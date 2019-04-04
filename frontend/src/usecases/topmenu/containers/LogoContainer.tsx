@@ -4,12 +4,11 @@ import {Link} from 'react-router-dom';
 import {getLogoPath, routes} from '../../../app/routes';
 import {Logo} from '../../../components/logo/Logo';
 import {RootState} from '../../../reducers/rootReducer';
-import {uuid} from '../../../types/Types';
 import {getOrganisationSlug} from '../../auth/authSelectors';
 import './LogoContainer.scss';
 
 interface StateToProps {
-  organisationSlug: uuid;
+  organisationSlug: string;
 }
 
 const LogoComponent = ({organisationSlug}: StateToProps) => (
@@ -22,4 +21,4 @@ const mapStateToProps = ({auth}: RootState): StateToProps => ({
   organisationSlug: getOrganisationSlug(auth),
 });
 
-export const LogoContainer = connect<StateToProps, {}>(mapStateToProps)(LogoComponent);
+export const LogoContainer = connect<StateToProps>(mapStateToProps)(LogoComponent);

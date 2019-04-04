@@ -2,7 +2,6 @@ import {createHashHistory, History, Location} from 'history';
 import evoLogoBlue from '../assets/images/elvaco.evo_logo_blue_cmyk.svg';
 import evoLogo from '../assets/images/elvaco.evo_logo_wt.svg';
 import wayneIndustries from '../assets/images/wayne-industries.png';
-import {uuid} from '../types/Types';
 
 export const routes = {
   collection: '/collection',
@@ -42,8 +41,8 @@ const organisationLogo = {
   'wayne-industries': wayneIndustries,
 };
 
-export const getLogoPath = (organisationId: uuid): string =>
+export const getLogoPath = (organisationId: string): string =>
   organisationLogo[organisationId] || evoLogo;
 
-export const getLoginLogoPath = (organisationId: uuid): string =>
+export const getLoginLogoPath = (organisationId: string): string =>
   organisationLogo[organisationId] || evoLogoBlue;
