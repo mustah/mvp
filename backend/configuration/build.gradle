@@ -83,7 +83,6 @@ ext {
     ]
   ]
 }
-
 sourceSets {
   integrationTest {
     java {
@@ -93,6 +92,14 @@ sourceSets {
     }
     resources.srcDir file('src/integrationTest/resources')
   }
+}
+
+compileIntegrationTestJava {
+  // overriding this from default (set since gradle introduced https://github.com/gradle/gradle/issues/4956)
+  // to avoid having to specify output directory for the integrationTest module in IDEA.
+  //
+  // Our annotation processors don't generate any sources, anyhow.
+  options.setAnnotationProcessorGeneratedSourcesDirectory(file('src/integrationTest/generated'));
 }
 
 if (!project.hasProperty('isCI')) {
