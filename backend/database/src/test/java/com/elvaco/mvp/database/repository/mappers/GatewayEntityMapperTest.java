@@ -8,6 +8,7 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.GatewayPk;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
+import com.elvaco.mvp.database.entity.meter.JsonField;
 
 import org.junit.Test;
 
@@ -30,6 +31,7 @@ public class GatewayEntityMapperTest {
     statusLogEntity.stop = ZonedDateTime.parse("2001-01-02T10:14:00.00Z");
 
     gatewayEntity.statusLogs = Set.of(statusLogEntity);
+    gatewayEntity.extraInfo = new JsonField();
 
     var gateway = GatewayEntityMapper.toDomainModel(gatewayEntity);
 
@@ -44,6 +46,7 @@ public class GatewayEntityMapperTest {
   public void toDomainModel_StatusLogs_None() {
     var gatewayEntity = new GatewayEntity();
     gatewayEntity.pk = new EntityPk(randomUUID(), randomUUID());
+    gatewayEntity.extraInfo = new JsonField();
 
     var gateway = GatewayEntityMapper.toDomainModel(gatewayEntity);
 

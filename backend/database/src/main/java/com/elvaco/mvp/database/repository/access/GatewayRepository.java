@@ -85,6 +85,13 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
+  public List<Gateway> findBy(String serial) {
+    return gatewayJpaRepository.findBySerial(serial).stream()
+      .map(GatewayEntityMapper::toDomainModel)
+      .collect(toList());
+  }
+
+  @Override
   public Optional<Gateway> findById(UUID id) {
     return gatewayJpaRepository.findById(id).map(gatewayWithMetersMapper::toDomainModel);
   }

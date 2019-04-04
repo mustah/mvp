@@ -1,4 +1,4 @@
-import {Grid, GridColumn} from '@progress/kendo-react-grid';
+import {Grid, GridColumn, GridDetailRowProps} from '@progress/kendo-react-grid';
 import {toArray} from 'lodash';
 import * as React from 'react';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
@@ -7,7 +7,6 @@ import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/with
 import {Row} from '../../components/layouts/row/Row';
 import {ColoredEvent, Status} from '../../components/status/Status';
 import '../../components/table/Table.scss';
-import './MeterDetailsTabs.scss';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
@@ -30,6 +29,7 @@ import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
+import './MeterDetailsTabs.scss';
 
 export interface MeterDetailsState {
   selectedTab: TabName;
@@ -71,23 +71,20 @@ const MapContent = ({meter, meterMapMarker}: MapProps) => (
   </MapComponent>
 );
 
-const ExtraInfo = (props) => {
-  const extraInfo = props.dataItem.extraInfo;
+const ExtraInfo = ({dataItem: {extraInfo}}: GridDetailRowProps) => {
   const rows = extraInfo && Object.keys(extraInfo).length && Object.keys(extraInfo)
     .map(key =>
       (
         <tr key={key}>
-          <td key="key">{key}</td>
-          <td key="value">{extraInfo[key]}</td>
+          <td>{key}</td>
+          <td>{extraInfo[key]}</td>
         </tr>
       )
     );
 
-  const fallback = <p>{firstUpperTranslated('no additional data exists for this gateway')}</p>;
-
   const content = rows
     ? <table className="GatewayDetails">{rows}</table>
-    : fallback;
+    : <p>{firstUpperTranslated('no additional data exists for this gateway')}</p>;
 
   return (
     <section>

@@ -5,7 +5,6 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toList;
@@ -42,7 +41,7 @@ public class GatewayEntityMapper {
       domainModel.ip,
       domainModel.phoneNumber,
       domainModel.statusLogs.stream().map(GatewayStatusLogEntityMapper::toEntity).collect(toSet()),
-      new JsonField((ObjectNode) domainModel.extraInfo)
+      new JsonField(domainModel.extraInfo.deepCopy())
     );
   }
 }

@@ -1,6 +1,8 @@
 package com.elvaco.mvp.configuration.config;
 
 import com.elvaco.mvp.consumers.rabbitmq.message.AlarmMessageConsumer;
+import com.elvaco.mvp.consumers.rabbitmq.message.InfrastructureMessageConsumer;
+import com.elvaco.mvp.consumers.rabbitmq.message.InfrastructureStatusMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringAlarmMessageConsumer;
@@ -85,10 +87,16 @@ public class MeteringMessageListenerConfig {
   }
 
   @Bean
+  InfrastructureMessageConsumer infrastructureStatusMessageConsumer() {
+    return new InfrastructureStatusMessageConsumer(gatewayUseCases);
+  }
+
+  @Bean
   MessageListener messageListener(
     MeasurementMessageConsumer measurementMessageConsumer,
     ReferenceInfoMessageConsumer referenceInfoMessageConsumer,
     AlarmMessageConsumer alarmMessageConsumer,
+    InfrastructureMessageConsumer infrastructureStatusMessageConsumer,
     MessageThrottler<String, GetReferenceInfoDto> meteringMessageThrottler
   ) {
     return new MeteringMessageListener(
@@ -96,6 +104,7 @@ public class MeteringMessageListenerConfig {
       measurementMessageConsumer,
       referenceInfoMessageConsumer,
       alarmMessageConsumer,
+      infrastructureStatusMessageConsumer,
       meteringMessageThrottler
     );
   }

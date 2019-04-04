@@ -16,6 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
+import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static java.util.UUID.randomUUID;
 
 @Builder(toBuilder = true)
@@ -29,7 +30,8 @@ public class Gateway implements Identifiable<UUID>, PrimaryKeyed {
   public final String productModel;
   public final String ip;
   public final String phoneNumber;
-  public final JsonNode extraInfo;
+  @Default
+  public final JsonNode extraInfo = toJsonNode("{}");
   @Default
   public UUID id = randomUUID();
   @Singular

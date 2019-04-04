@@ -1,0 +1,22 @@
+{
+  "message_type": "Elvaco MVP MQ Measurement Message 1.0",
+  "gateway": {
+    "id": "GW-CME3100-XXYYZZ"
+  },
+  "meter": {
+    "id": "123456789"
+  },
+  "facility": {
+    "id": "42402519"
+  },
+  "organisation_id": "Elvaco AB",
+  "source_system_id": "Elvaco Metering",
+  "values": [
+    {
+      "timestamp": "2018-03-16T13:07:01",
+      "value": 0.659,
+      "unit": "wH",
+      "quantity": "power"
+    }
+  ]
+}
