@@ -13,3 +13,4 @@ facility_id;address;city;medium;meter_id;meter_manufacturer;gateway_id;gateway_p
 3032;Väpnaregatan 8;Höganäs;Water;1003032;ELV;10003032;CMi2110;0267382172804;NULL;NULL;OK;OK;+1
 3033;Väpnaregatan 8;Höganäs;Electricity;9003032;ELV;10003033;CMi2110;0267382172804;NULL;NULL;OK;OK;+1
 3034;Väpnaregatan 8;Höganäs;Room sensor;8003032;ELV;10003034;CMi2110;0267382172804;NULL;NULL;OK;OK;+1
+3035;Väpnaregatan 8;Höganäs;District cooling;8663066;ELV;16603334;CMi2110;5589172804;NULL;NULL;OK;OK;+1

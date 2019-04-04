@@ -146,6 +146,7 @@ export enum Medium {
   roomSensor = 'roomSensor',
   water = 'water',
   unknown = 'unknown',
+  districtCooling = 'districtCooling',
 }
 
 const mediumTexts: { [medium in Medium]: string } = {
@@ -156,6 +157,7 @@ const mediumTexts: { [medium in Medium]: string } = {
   [Medium.electricity]: 'Electricity',
   [Medium.roomSensor]: 'Room sensor',
   [Medium.unknown]: 'Unknown',
+  [Medium.districtCooling]: 'District cooling',
 };
 
 const mediumTypes: {[name: string]: Medium} = Object.keys(mediumTexts)
@@ -172,6 +174,15 @@ export const getGroupHeaderTitle = (type: LegendType): string => {
 
 export const allQuantitiesMap: { [p in LegendType]: Quantity[] } = {
   [Medium.districtHeating]: [
+    Quantity.energy,
+    Quantity.volume,
+    Quantity.power,
+    Quantity.flow,
+    Quantity.forwardTemperature,
+    Quantity.returnTemperature,
+    Quantity.differenceTemperature,
+  ],
+  [Medium.districtCooling]: [
     Quantity.energy,
     Quantity.volume,
     Quantity.power,
