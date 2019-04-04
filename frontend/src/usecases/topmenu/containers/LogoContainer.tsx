@@ -4,7 +4,7 @@ import {getOrganisationSlug} from '../../auth/authSelectors';
 import {Logo, StateToProps} from '../component/Logo';
 
 const mapStateToProps = ({auth}: RootState): StateToProps => ({
-  organisationSlug: getOrganisationSlug(auth),
+  slug: getOrganisationSlug(auth),
 });
 
 export const LogoContainer = connect<StateToProps>(mapStateToProps)(Logo);

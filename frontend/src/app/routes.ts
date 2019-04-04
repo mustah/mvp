@@ -41,8 +41,6 @@ const organisationLogo = {
   'wayne-industries': wayneIndustries,
 };
 
-export const getLogoPath = (organisationId: string): string =>
-  organisationLogo[organisationId] || evoLogo;
+export const getLogoPath = (slug: string): string => organisationLogo[slug] || evoLogo;
 
-export const getLoginLogoPath = (organisationId: string): string =>
-  organisationLogo[organisationId] || evoLogoBlue;
+export const getLoginLogoPath = (slug: string): string => organisationLogo[slug] || evoLogoBlue;

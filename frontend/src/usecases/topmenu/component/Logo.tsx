@@ -5,11 +5,11 @@ import {Logo as LogoImg} from '../../../components/logo/Logo';
 import './Logo.scss';
 
 export interface StateToProps {
-  organisationSlug: string;
+  slug: string;
 }
 
-export const Logo = ({organisationSlug}: StateToProps) => (
+export const Logo = ({slug}: StateToProps) => (
   <Link className="Logo" to={routes.home}>
-    <LogoImg src={getLogoPath(organisationSlug)} className="small"/>
+    <LogoImg src={getLogoPath(slug)} className="small"/>
   </Link>
 );
