@@ -10,7 +10,7 @@ import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {OnClick, OnClickWith, OnClickWithId, RenderFunction} from '../../types/Types';
 import {toLegendItem} from '../../usecases/report/helpers/legendHelper';
-import {LegendItem} from '../../usecases/report/reportModels';
+import {LegendItem} from '../../state/report/reportModels';
 import {connectedSuperAdminOnly} from '../hoc/withRoles';
 import {IconReport} from '../icons/IconReport';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';

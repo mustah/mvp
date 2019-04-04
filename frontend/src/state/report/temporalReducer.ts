@@ -1,10 +1,10 @@
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Period, TemporalResolution} from '../../components/dates/dateModels';
-import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
+import {SelectionInterval} from '../user-selection/userSelectionModels';
 import {Action} from '../../types/Types';
-import {logoutUser} from '../auth/authActions';
-import {selectResolution, setReportTimePeriod, toggleComparePeriod} from './reportActions';
+import {logoutUser} from '../../usecases/auth/authActions';
+import {ReportSector, selectResolution, setReportTimePeriod, toggleComparePeriod} from './reportActions';
 import {TemporalReportState} from './reportModels';
 
 type ActionTypes = Action<TemporalResolution | SelectionInterval> | EmptyAction<string>;
@@ -15,14 +15,15 @@ export const initialState: TemporalReportState = {
   timePeriod: {period: Period.latest},
 };
 
-export const temporal =
+export const temporalReducerFor =
+  (sector: ReportSector) =>
   (state: TemporalReportState = initialState, action: ActionTypes): TemporalReportState => {
     switch (action.type) {
-      case getType(setReportTimePeriod):
+      case getType(setReportTimePeriod(sector)):
         return {...state, timePeriod: {...(action as Action<SelectionInterval>).payload}};
-      case getType(selectResolution):
+      case getType(selectResolution(sector)):
         return {...state, resolution: (action as Action<TemporalResolution>).payload};
-      case getType(toggleComparePeriod):
+      case getType(toggleComparePeriod(sector)):
         return {...state, shouldComparePeriod: !state.shouldComparePeriod};
       case getType(logoutUser):
         return initialState;

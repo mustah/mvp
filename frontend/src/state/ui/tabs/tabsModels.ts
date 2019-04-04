@@ -9,6 +9,7 @@ export const enum TabName {
   collection = 'collection',
   log = 'log',
   connectedGateways = 'connectedGateways',
+  selectionReport = 'selectionReport',
 }
 
 type TabUseCases = UseCases.collection | UseCases.validation | UseCases.report;

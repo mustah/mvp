@@ -1,8 +1,8 @@
 import {EventLog, Meter} from '../state/domain-models-paginated/meter/meterModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
 import {Identifiable, uuid} from '../types/Types';
-import {LegendItem, SavedReportsState} from '../usecases/report/reportModels';
-import {makeInitialLegendViewOptions} from '../usecases/report/reportReducer';
+import {LegendItem, SavedReportsState} from '../state/report/reportModels';
+import {makeInitialLegendViewOptions} from '../state/report/reportReducer';
 
 const meters = [
   {id: 'm1', name: 'UNICOcoder'},

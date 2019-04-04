@@ -2,12 +2,14 @@ import {combineReducers} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {toggle} from '../../helpers/collections';
-import {Medium} from '../../state/ui/graph/measurement/measurementModels';
+import {resetReducer} from '../../reducers/resetReducer';
+import {Medium} from '../ui/graph/measurement/measurementModels';
 import {Action, uuid} from '../../types/Types';
-import {logoutUser} from '../auth/authActions';
+import {logoutUser} from '../../usecases/auth/authActions';
 import {
   addLegendItems,
   removeAllByType,
+  ReportSector,
   showHideAllByType,
   showHideLegendRows,
   toggleLine,
@@ -26,7 +28,7 @@ import {
   ViewOptions
 } from './reportModels';
 import {getLegendItems, getLegendViewOptions, getViewOptions} from './reportSelectors';
-import {initialState as initialTemporalState, temporal} from './temporalReducer';
+import {initialState as initialTemporalState, temporalReducerFor} from './temporalReducer';
 
 export const makeInitialLegendViewOptions = (): LegendViewOptions =>
   Object.keys(Medium).map(k => Medium[k])
@@ -142,33 +144,55 @@ const showHideAll = (state: SavedReportsState, legendType: LegendType): SavedRep
   return toggleHiddenLines(setLegendItems(state, meters), legendType);
 };
 
-export const savedReports =
-  (state: SavedReportsState = initialSavedReportState, action: ActionTypes): SavedReportsState => {
-    switch (action.type) {
-      case getType(addLegendItems):
-        return setLegendItems(state, (action as Action<LegendItem[]>).payload);
-      case getType(toggleLine):
-        return toggleLegendItemVisibility(state, (action as Action<uuid>).payload);
-      case getType(showHideAllByType):
-        return showHideAll(state, getLegendType(action));
-      case getType(removeAllByType):
-        return removeAllByLegendType(state, getLegendType(action));
-      case getType(showHideLegendRows):
-        return setLegendItems(state, toggleLegendItemsRows(state, getLegendType(action)));
-      case getType(toggleQuantityByType):
-        return toggleQuantityLegendType(state, (action as Action<QuantityLegendType>).payload);
-      case getType(toggleQuantityById):
-        return toggleQuantityId(state, (action as Action<QuantityId>).payload);
-      case getType(toggleShowAverageAction):
-        return toggleShowAverage(state);
-      case getType(logoutUser):
-        return initialSavedReportState;
-      default:
-        return state;
-    }
-  };
+const identity = (state, _, __) => state;
+
+export const logoutReducer = <S>(
+  state: S,
+  {type}: EmptyAction<string>,
+  initialState: S,
+): S => {
+  switch (type) {
+    case getType(logoutUser):
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export const reportReducerFor =
+  (
+    sector: ReportSector,
+    resetState = identity
+  ) =>
+    (state: SavedReportsState = initialSavedReportState, action: ActionTypes): SavedReportsState => {
+      switch (action.type) {
+        case getType(addLegendItems(sector)):
+          return setLegendItems(state, (action as Action<LegendItem[]>).payload);
+        case getType(toggleLine(sector)):
+          return toggleLegendItemVisibility(state, (action as Action<uuid>).payload);
+        case getType(showHideAllByType(sector)):
+          return showHideAll(state, getLegendType(action));
+        case getType(removeAllByType(sector)):
+          return removeAllByLegendType(state, getLegendType(action));
+        case getType(showHideLegendRows(sector)):
+          return setLegendItems(state, toggleLegendItemsRows(state, getLegendType(action)));
+        case getType(toggleQuantityByType(sector)):
+          return toggleQuantityLegendType(state, (action as Action<QuantityLegendType>).payload);
+        case getType(toggleQuantityById(sector)):
+          return toggleQuantityId(state, (action as Action<QuantityId>).payload);
+        case getType(toggleShowAverageAction(sector)):
+          return toggleShowAverage(state);
+        default:
+          return resetState(state, action, initialSavedReportState);
+      }
+    };
 
 export const report = combineReducers<ReportState>({
-  savedReports,
-  temporal
+  savedReports: reportReducerFor(ReportSector.report, logoutReducer),
+  temporal: temporalReducerFor(ReportSector.report)
+});
+
+export const selectionReport = combineReducers<ReportState>({
+  savedReports: reportReducerFor(ReportSector.selectionReport, resetReducer),
+  temporal: temporalReducerFor(ReportSector.selectionReport)
 });

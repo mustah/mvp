@@ -10,7 +10,7 @@ import {
   TooltipMeta
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
-import {AxesProps, GraphContents} from '../reportModels';
+import {AxesProps, GraphContents} from '../../../state/report/reportModels';
 
 const colorize =
   (colorSchema: {[key: string]: string}) =>

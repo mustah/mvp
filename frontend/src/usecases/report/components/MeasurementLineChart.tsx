@@ -4,7 +4,7 @@ import {useFetchMeasurements} from '../../../state/ui/graph/measurement/measurem
 import {useGraphContents} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {MeasurementLineChartContainer} from '../containers/MeasurementLineChartContainer';
 import {DispatchToProps, StateToProps} from '../containers/MeasurementsContainer';
-import {GraphContents} from '../reportModels';
+import {GraphContents} from '../../../state/report/reportModels';
 
 export type Props = StateToProps & DispatchToProps;
 
@@ -13,6 +13,9 @@ export const MeasurementLineChart = (props: Props) => {
     clearError,
     hiddenLines,
     measurement: {error, isFetching, measurementResponse},
+    hasContent,
+    hasLegendItems,
+    isSideMenuOpen,
   } = props;
   useFetchMeasurements(props);
 
@@ -20,7 +23,13 @@ export const MeasurementLineChart = (props: Props) => {
 
   return (
     <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-      <MeasurementLineChartContainer graphContents={graphContents} outerHiddenKeys={hiddenLines}/>
+      <MeasurementLineChartContainer
+        graphContents={graphContents}
+        outerHiddenKeys={hiddenLines}
+        hasContent={hasContent}
+        hasMeters={hasLegendItems}
+        isSideMenuOpen={isSideMenuOpen}
+      />
     </RetryLoader>
   );
 };

@@ -1,12 +1,14 @@
 import {ActionType, getType} from 'typesafe-actions';
 import {Maybe} from '../../../../helpers/Maybe';
 import {resetReducer} from '../../../../reducers/resetReducer';
-import * as reportActions from '../../../../usecases/report/reportActions';
+import {Action, ErrorResponse} from '../../../../types/Types';
+import * as reportActions from '../../../report/reportActions';
 import {search} from '../../../search/searchActions';
 import * as actions from './measurementActions';
-import {MeasurementState} from './measurementModels';
+import {MeasurementResponse, MeasurementState} from './measurementModels';
 
-type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>;
+type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>
+  | Action<Maybe<ErrorResponse> | MeasurementResponse>;
 
 export const initialState: MeasurementState = {
   isFetching: false,
@@ -20,43 +22,49 @@ export const initialState: MeasurementState = {
   isExportingToExcel: false,
 };
 
-export const measurement = (state: MeasurementState = initialState, action: ActionTypes): MeasurementState => {
-  switch (action.type) {
-    case getType(actions.measurementRequest):
-      return {
-        ...state,
-        isFetching: true,
-      };
-    case getType(actions.measurementSuccess):
-      return {
-        ...state,
-        measurementResponse: action.payload,
-        isFetching: false,
-        isSuccessfullyFetched: true,
-      };
-    case getType(actions.measurementFailure):
-      return {
-        ...state,
-        error: action.payload,
-        isFetching: false,
-        isSuccessfullyFetched: false,
-      };
-    case getType(actions.exportToExcelAction):
-      return {...state, isExportingToExcel: true};
-    case getType(actions.exportToExcelSuccess):
-      return {...state, isExportingToExcel: false};
-    case getType(actions.measurementClearError):
-    case getType(reportActions.selectResolution):
-    case getType(reportActions.toggleComparePeriod):
-    case getType(reportActions.toggleShowAverage):
-    case getType(reportActions.setReportTimePeriod):
-    case getType(reportActions.addLegendItems):
-    case getType(reportActions.removeAllByType):
-    case getType(reportActions.toggleQuantityByType):
-    case getType(reportActions.toggleQuantityById):
-    case getType(search):
-      return initialState;
-    default:
-      return resetReducer(state, action, initialState);
-  }
-};
+const measurementReducerFor =
+  (sector: reportActions.ReportSector) =>
+    (state: MeasurementState = initialState, action: ActionTypes): MeasurementState => {
+      switch (action.type) {
+        case getType(actions.measurementRequest(sector)):
+          return {
+            ...state,
+            isFetching: true,
+          };
+        case getType(actions.measurementSuccess(sector)):
+          return {
+            ...state,
+            measurementResponse: (action as Action<MeasurementResponse>).payload,
+            isFetching: false,
+            isSuccessfullyFetched: true,
+          };
+        case getType(actions.measurementFailure(sector)):
+          return {
+            ...state,
+            error: (action as Action<Maybe<ErrorResponse>>).payload,
+            isFetching: false,
+            isSuccessfullyFetched: false,
+          };
+        case getType(actions.exportToExcelAction(sector)):
+          return {...state, isExportingToExcel: true};
+        case getType(actions.exportToExcelSuccess(sector)):
+          return {...state, isExportingToExcel: false};
+        case getType(actions.measurementClearError(sector)):
+        case getType(reportActions.selectResolution(sector)):
+        case getType(reportActions.toggleComparePeriod(sector)):
+        case getType(reportActions.toggleShowAverage(sector)):
+        case getType(reportActions.setReportTimePeriod(sector)):
+        case getType(reportActions.addLegendItems(sector)):
+        case getType(reportActions.removeAllByType(sector)):
+        case getType(reportActions.toggleQuantityByType(sector)):
+        case getType(reportActions.toggleQuantityById(sector)):
+        case getType(search):
+          return initialState;
+        default:
+          return resetReducer(state, action, initialState);
+      }
+    };
+
+export const measurement = measurementReducerFor(reportActions.ReportSector.report);
+
+export const selectionMeasurement = measurementReducerFor(reportActions.ReportSector.selectionReport);

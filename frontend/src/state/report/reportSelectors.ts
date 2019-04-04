@@ -3,7 +3,7 @@ import {createSelector} from 'reselect';
 import {unique} from '../../helpers/collections';
 import {identity} from '../../helpers/commonHelpers';
 import {RootState} from '../../reducers/rootReducer';
-import {MeasurementParameters, Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
+import {MeasurementParameters, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {
   isMedium,
@@ -72,6 +72,20 @@ export const getMeasurementParameters =
     identity,
     ({
       report: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
+    }) => ({
+      dateRange: timePeriod,
+      resolution,
+      legendItems: getLegendItems(savedReports),
+      shouldComparePeriod,
+      shouldShowAverage: savedReports.meterPage.shouldShowAverage,
+    })
+  );
+
+export const getSelectionMeasurementParameters =
+  createSelector<RootState, RootState, MeasurementParameters>(
+    identity,
+    ({
+      selectionReport: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
     }) => ({
       dateRange: timePeriod,
       resolution,

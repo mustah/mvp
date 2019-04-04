@@ -3,7 +3,7 @@ import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
-import {LegendItem, LegendType} from '../../../../usecases/report/reportModels';
+import {LegendItem, LegendType} from '../../../report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
 import {MeasurementsApiResponse, MeasurementValue} from './measurementModels';

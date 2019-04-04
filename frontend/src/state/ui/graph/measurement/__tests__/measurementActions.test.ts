@@ -17,8 +17,8 @@ import {toIdNamed} from '../../../../../types/Types';
 import {logoutUser} from '../../../../../usecases/auth/authActions';
 import {AuthState, Unauthorized} from '../../../../../usecases/auth/authModels';
 import {toAggregateLegendItem} from '../../../../../usecases/report/helpers/legendHelper';
-import {getDefaultQuantity} from '../../../../../usecases/report/reportActions';
-import {isAggregate, isMedium, LegendItem, LegendType} from '../../../../../usecases/report/reportModels';
+import {getDefaultQuantity, ReportSector} from '../../../../report/reportActions';
+import {isAggregate, isMedium, LegendItem, LegendType} from '../../../../report/reportModels';
 import {noInternetConnection, requestTimeout} from '../../../../api/apiActions';
 import {NormalizedState} from '../../../../domain-models/domainModels';
 import {initialDomain} from '../../../../domain-models/domainModelsReducer';
@@ -26,7 +26,7 @@ import {Role, User} from '../../../../domain-models/user/userModels';
 import {ParameterName, UserSelection} from '../../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../../user-selection/userSelectionReducer';
 import {
-  exportToExcel,
+  exportReportToExcel,
   exportToExcelAction,
   fetchMeasurementsForReport,
   makeMeasurementMetersUriParameters,
@@ -207,8 +207,8 @@ describe('measurementActions', () => {
         expect(volume.searchParams.get('after')).toBeTruthy();
 
         expect(store.getActions()).toEqual([
-          measurementRequest(),
-          measurementSuccess({
+          measurementRequest(ReportSector.report)(),
+          measurementSuccess(ReportSector.report)({
             measurements: [
               makeMeasurementResponse(roomSensorMeter),
               makeMeasurementResponse(roomSensorMeter),
@@ -264,8 +264,8 @@ describe('measurementActions', () => {
         expect(url.searchParams.get('after')).toBeTruthy();
         expect(url.searchParams.get('city')).toBe(stockholm.id);
         expect(store.getActions().map(it => it.type)).toEqual([
-          getType(measurementRequest),
-          getType(measurementSuccess),
+          getType(measurementRequest(ReportSector.report)),
+          getType(measurementSuccess(ReportSector.report)),
         ]);
       });
 
@@ -298,8 +298,8 @@ describe('measurementActions', () => {
         await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
         expect(store.getActions()).toEqual([
-          measurementRequest(),
-          measurementSuccess({
+          measurementRequest(ReportSector.report)(),
+          measurementSuccess(ReportSector.report)({
             measurements: [makeMeasurementResponse(first)],
             average: aggregateItem.quantities.map(_ => ({
               ...makeMeasurementAverageResponse(aggregateItem),
@@ -322,8 +322,8 @@ describe('measurementActions', () => {
         await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
         expect(store.getActions()).toEqual([
-          measurementRequest(),
-          measurementSuccess({
+          measurementRequest(ReportSector.report)(),
+          measurementSuccess(ReportSector.report)({
             average: [{...makeMeasurementAverageResponse(item), values: justValues}],
             compare: [],
             measurements: [makeMeasurementAverageResponse(item)],
@@ -408,7 +408,7 @@ describe('measurementActions', () => {
         await onFetchMeasurements();
 
         expect(store.getActions()).toEqual([
-          measurementRequest(),
+          measurementRequest(ReportSector.report)(),
           logoutUser(error as Unauthorized),
           routerActions.push(`${routes.login}/${user.organisation.slug}`),
         ]);
@@ -420,8 +420,8 @@ describe('measurementActions', () => {
         await onFetchMeasurements();
 
         expect(store.getActions()).toEqual([
-          measurementRequest(),
-          measurementFailure(Maybe.just(requestTimeout()))
+          measurementRequest(ReportSector.report)(),
+          measurementFailure(ReportSector.report)(Maybe.just(requestTimeout()))
         ]);
       });
 
@@ -431,8 +431,8 @@ describe('measurementActions', () => {
         await onFetchMeasurements();
 
         expect(store.getActions()).toEqual([
-          measurementRequest(),
-          measurementFailure(Maybe.just(noInternetConnection()))
+          measurementRequest(ReportSector.report)(),
+          measurementFailure(ReportSector.report)(Maybe.just(noInternetConnection()))
         ]);
       });
 
@@ -443,8 +443,8 @@ describe('measurementActions', () => {
         await onFetchMeasurements();
 
         expect(store.getActions()).toEqual([
-          measurementRequest(),
-          measurementFailure(Maybe.maybe(response))
+          measurementRequest(ReportSector.report)(),
+          measurementFailure(ReportSector.report)(Maybe.maybe(response))
         ]);
       });
 
@@ -487,9 +487,9 @@ describe('measurementActions', () => {
     it('dispatches action if no export is ongoing', () => {
       const store = storeWith(initialState);
 
-      store.dispatch(exportToExcel());
+      store.dispatch(exportReportToExcel());
 
-      expect(store.getActions()).toEqual([exportToExcelAction()]);
+      expect(store.getActions()).toEqual([exportToExcelAction(ReportSector.report)()]);
     });
 
     it('does not dispatch action if export is ongoing', () => {
@@ -498,7 +498,7 @@ describe('measurementActions', () => {
         isExportingToExcel: true,
       });
 
-      store.dispatch(exportToExcel());
+      store.dispatch(exportReportToExcel());
 
       expect(store.getActions()).toEqual([]);
     });

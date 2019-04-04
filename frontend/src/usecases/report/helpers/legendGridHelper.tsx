@@ -8,10 +8,16 @@ import {IconRightArrow} from '../../../components/icons/IconRightArrow';
 import {RowLeft, RowMiddle, RowRight} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {
+  ColumnQuantities,
+  LegendType,
+  LegendViewOptions,
+  QuantityId,
+  SelectedQuantities
+} from '../../../state/report/reportModels';
 import {allQuantitiesMap, getGroupHeaderTitle, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickEventHandler, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
-import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantities} from '../reportModels';
 import {colorFor} from './graphContentsMapper';
 import {isGroupHeader} from './measurementGridHelper';
 
@@ -34,10 +40,16 @@ export interface RowProps extends ColumnQuantities, RowDispatch {
 }
 
 interface MediumTdProps {
-  removeAll: OnClick;
+  removeAll?: OnClick;
   hideAll: OnClick;
   isAllHidden: boolean;
 }
+
+const renderRemoveAll = (removeAll?: OnClick) =>
+  removeAll ? (
+    <RowRight title={firstUpperTranslated('remove all')}>
+      <ButtonDelete onClick={removeAll}/>
+    </RowRight>) : null;
 
 const MediumTd = ({hideAll, isAllHidden, removeAll}: MediumTdProps) => (
   <td className="check-box-td">
@@ -45,9 +57,7 @@ const MediumTd = ({hideAll, isAllHidden, removeAll}: MediumTdProps) => (
       <RowRight title={firstUpperTranslated('hide all')}>
         <ButtonVisibility onClick={hideAll} checked={isAllHidden}/>
       </RowRight>
-      <RowRight title={firstUpperTranslated('remove all')}>
-        <ButtonDelete onClick={removeAll}/>
-      </RowRight>
+      {renderRemoveAll(removeAll)}
     </RowLeft>
   </td>
 );
@@ -75,7 +85,7 @@ const renderGroupHeaderTds = ({
     }
   });
 
-  const removeAll = () => removeAllByType(type);
+  const removeAll = removeAllByType ? () => removeAllByType(type) : undefined;
   const hideAll = () => showHideAllByType(type);
   const isAllHidden = !(!mediumViewOptions[type].isAllLinesHidden);
   tds.push(

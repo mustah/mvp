@@ -169,7 +169,7 @@ const resetStateReducer = <T extends Identifiable>(
 ): NormalizedState<T> =>
   resetReducer<NormalizedState<T>>(state, action, initialDomain<T>());
 
-const resetStateOnLogoutReducer = <S extends Identifiable>(
+export const resetStateOnLogoutReducer = <S extends Identifiable>(
   state: NormalizedState<S> = initialDomain<S>(),
   {type}: ActionTypes<S>,
 ): NormalizedState<S> =>

@@ -1,4 +1,4 @@
-import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {isAggregate, isMedium, LegendType} from '../reportModels';
 
 describe('reportModels', () => {

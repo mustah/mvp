@@ -12,7 +12,7 @@ import {SelectionInterval} from '../../../../state/user-selection/userSelectionM
 import {getUserSelectionId} from '../../../../state/user-selection/userSelectionSelectors';
 import {Measurements} from '../../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../../report/containers/MeasurementsContainer';
-import {addAllToReport} from '../../../report/reportActions';
+import {addAllToReport, ReportSector} from '../../../../state/report/reportActions';
 import {meterDetailExportToExcelSuccess} from '../meterDetailMeasurementActions';
 import {getMeasurementParameters, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
 
@@ -33,6 +33,7 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
   const period: SelectionInterval = useCollectionPeriod && isTimePeriodDefault ? collection.timePeriod : timePeriod;
 
   return {
+    isSideMenuOpen: false,
     hasLegendItems: true,
     hasContent: hasMeasurementValues(meterDetailMeasurement.measurementResponse),
     hiddenLines,
@@ -49,7 +50,7 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addAllToReport,
-  clearError: measurementClearError,
+  clearError: measurementClearError(ReportSector.meterDetailsReport),
   exportToExcelSuccess: meterDetailExportToExcelSuccess,
   fetchMeasurements: fetchMeasurementsForMeterDetails,
   fetchUserSelections,

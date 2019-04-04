@@ -21,7 +21,7 @@ import {
   MeasurementsApiResponse
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
-import {LegendType} from '../reportModels';
+import {LegendType} from '../../../state/report/reportModels';
 
 export const isGroupHeader = (rowType?: GridRowType): boolean => rowType === 'groupHeader';
 

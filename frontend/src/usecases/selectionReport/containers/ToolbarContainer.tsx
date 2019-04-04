@@ -2,12 +2,12 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
-import {exportReportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
+import {exportSelectionReportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
-import {ReportToolbar} from '../components/ReportToolbar';
+import {ReportToolbar} from '../../report/components/ReportToolbar';
 import {
   ReportSector,
   selectResolution,
@@ -46,9 +46,9 @@ interface OwnProps {
 export type Props = StateToProps & DispatchToProps & OwnProps;
 
 const mapStateToProps = ({
-  report: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
-  measurement: {measurementResponse: {measurements, compare}, isFetching, isExportingToExcel},
-  ui: {toolbar: {measurement: {view}}}
+  selectionReport: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
+  selectionMeasurement: {measurementResponse: {measurements, compare}, isFetching, isExportingToExcel},
+  ui: {toolbar: {selectionReport: {view}}}
 }: RootState): StateToProps =>
   ({
     canShowAverage: getMeterLegendItems(savedReports).length > 1,
@@ -64,12 +64,12 @@ const mapStateToProps = ({
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  changeToolbarView: changeToolbarView(ReportSector.report),
-  exportToExcel: exportReportToExcel,
-  selectResolution: selectResolution(ReportSector.report),
-  setReportTimePeriod: setReportTimePeriod(ReportSector.report),
-  toggleComparePeriod: toggleComparePeriod(ReportSector.report),
-  toggleShowAverage: toggleShowAverage(ReportSector.report),
+  changeToolbarView: changeToolbarView(ReportSector.selectionReport),
+  exportToExcel: exportSelectionReportToExcel,
+  selectResolution: selectResolution(ReportSector.selectionReport),
+  setReportTimePeriod: setReportTimePeriod(ReportSector.selectionReport),
+  toggleComparePeriod: toggleComparePeriod(ReportSector.selectionReport),
+  toggleShowAverage: toggleShowAverage(ReportSector.selectionReport),
 }, dispatch);
 
 export const ToolbarContainer =

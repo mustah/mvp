@@ -4,11 +4,10 @@ import {TemporalResolution} from '../../../components/dates/dateModels';
 import {withContent} from '../../../components/hoc/withContent';
 import {RootState} from '../../../reducers/rootReducer';
 import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
-import {Legend} from '../components/Legend';
-import {makeColumnQuantities} from '../helpers/legendHelper';
+import {Legend} from '../../report/components/Legend';
+import {makeColumnQuantities} from '../../report/helpers/legendHelper';
 import {
-  deleteItem,
-  removeAllByType, ReportSector,
+  ReportSector,
   showHideAllByType,
   showHideLegendRows,
   toggleLine,
@@ -41,13 +40,13 @@ export interface StateToProps extends HasContent, ColumnQuantities {
 }
 
 export interface RowDispatch {
-  removeAllByType: OnClickWith<LegendType>;
+  removeAllByType?: OnClickWith<LegendType>;
   showHideAllByType: OnClickWith<LegendType>;
   toggleQuantityByType: OnClickWith<QuantityLegendType>;
 }
 
 export interface DispatchToProps extends RowDispatch {
-  deleteItem: OnClickWithId;
+  deleteItem?: OnClickWithId;
   showHideLegendRows: OnClickWith<LegendType>;
   toggleLine: OnClickWithId;
   toggleQuantityById: OnClickWith<QuantityId>;
@@ -59,8 +58,9 @@ export interface OwnProps extends Visible {
 
 const LegendComponent = withContent<DispatchToProps & StateToProps>(Legend);
 
-const mapStateToProps = ({report}: RootState): StateToProps => {
-  const {temporal: {resolution}, savedReports} = report;
+const mapStateToProps = ({selectionReport}: RootState): StateToProps => {
+  const {temporal: {resolution}, savedReports} = selectionReport;
+
   return ({
     columnQuantities: makeColumnQuantities(savedReports),
     hasContent: hasLegendItems(savedReports),
@@ -73,13 +73,11 @@ const mapStateToProps = ({report}: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  deleteItem,
-  showHideAllByType: showHideAllByType(ReportSector.report),
-  removeAllByType: removeAllByType(ReportSector.report),
-  showHideLegendRows: showHideLegendRows(ReportSector.report),
-  toggleLine: toggleLine(ReportSector.report),
-  toggleQuantityByType: toggleQuantityByType(ReportSector.report),
-  toggleQuantityById: toggleQuantityById(ReportSector.report),
+  showHideAllByType: showHideAllByType(ReportSector.selectionReport),
+  showHideLegendRows: showHideLegendRows(ReportSector.selectionReport),
+  toggleLine: toggleLine(ReportSector.selectionReport),
+  toggleQuantityByType: toggleQuantityByType(ReportSector.selectionReport),
+  toggleQuantityById: toggleQuantityById(ReportSector.selectionReport),
 }, dispatch);
 
 export const LegendContainer =

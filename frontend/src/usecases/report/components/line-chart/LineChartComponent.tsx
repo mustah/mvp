@@ -5,7 +5,7 @@ import {toggle} from '../../../../helpers/collections';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {OwnProps, StateToProps} from '../../containers/MeasurementLineChartContainer';
+import {OwnProps} from '../../containers/MeasurementLineChartContainer';
 import {ActiveDot, ActiveDotReChartProps} from './ActiveDot';
 import {CustomizedTooltip} from './CustomizedTooltip';
 import {Dot, KeyedDotProps} from './Dot';
@@ -27,9 +27,7 @@ type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
 
 const LineChartWrapper = withEmptyContent<GraphContentWrapperProps>(LineChart);
 
-type Props = StateToProps & OwnProps;
-
-export class LineChartComponent extends React.Component<Props, GraphComponentState> {
+export class LineChartComponent extends React.Component<OwnProps, GraphComponentState> {
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
