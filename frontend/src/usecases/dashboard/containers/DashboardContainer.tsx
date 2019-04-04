@@ -1,66 +1,53 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
-import {addDashboard, fetchDashboard, updateDashboard} from '../../../state/domain-models/dashboard/dashboardActions';
+import {updateDashboard} from '../../../state/domain-models/dashboard/dashboardActions';
 import {Dashboard as DashboardModel} from '../../../state/domain-models/dashboard/dashboardModels';
-import {DomainModel, NormalizedState} from '../../../state/domain-models/domainModels';
-import {
-  addWidgetToDashboard,
-  deleteWidget,
-  fetchWidgets,
-  updateWidget
-} from '../../../state/domain-models/widget/widgetActions';
+import {NormalizedState} from '../../../state/domain-models/domainModels';
+import {getFirstDomainModel} from '../../../state/domain-models/domainModelsSelectors';
+import {addWidgetToDashboard, deleteWidget, updateWidget} from '../../../state/domain-models/widget/widgetActions';
 import {Widget} from '../../../state/domain-models/widget/widgetModels';
-import {CallbackWithData, EncodedUriParameters, Fetch} from '../../../types/Types';
-import {MapMarker} from '../../map/mapModels';
-import {Dashboard} from '../components/Dashboard';
-import {makeWidgetParametersOf} from '../dashboardSelectors';
+import {Callback, CallbackWithData} from '../../../types/Types';
+import {DashboardComponent} from '../components/Dashboard';
+import {onFetchDashboards} from '../dashboardActions';
+import {hasDashboardWidgets} from '../dashboardSelectors';
 
 export interface StateToProps {
-  widgets: NormalizedState<Widget>;
-  dashboard?: DashboardModel;
+  dashboard: Maybe<DashboardModel>;
+  hasContent: boolean;
+  isFetching: boolean;
   isSuccessfullyFetched: boolean;
-  meterMapMarkers: DomainModel<MapMarker>;
-  parameters: EncodedUriParameters;
+  widgets: NormalizedState<Widget>;
 }
 
 export interface DispatchToProps {
-  fetchDashboard: Fetch;
-  fetchWidgets: Fetch;
   addWidgetToDashboard: CallbackWithData;
+  deleteWidget: CallbackWithData;
+  onFetchDashboards: Callback;
   updateWidget: CallbackWithData;
   updateDashboard: CallbackWithData;
-  addDashboard: CallbackWithData;
-  deleteWidget: CallbackWithData;
 }
 
-const mapStateToProps =
-  ({
-    domainModels: {
-      meterMapMarkers,
-      dashboards: {result, entities, isSuccessfullyFetched},
-      widgets
-    },
-  }: RootState): StateToProps => {
-    const dashboard = entities[result[0]];
-    return ({
-      dashboard,
-      isSuccessfullyFetched,
-      meterMapMarkers,
-      parameters: makeWidgetParametersOf(dashboard),
-      widgets,
-    });
-  };
+const mapStateToProps = ({domainModels: {dashboards, widgets}}: RootState): StateToProps => {
+  const {isFetching, isSuccessfullyFetched} = dashboards;
+  const dashboard = getFirstDomainModel<DashboardModel>(dashboards);
+  return ({
+    dashboard,
+    hasContent: hasDashboardWidgets(dashboards) && widgets.isSuccessfullyFetched,
+    isFetching: (isFetching && !isSuccessfullyFetched) || dashboard.isNothing(),
+    isSuccessfullyFetched,
+    widgets,
+  });
+};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  fetchDashboard,
-  fetchWidgets,
   addWidgetToDashboard,
+  deleteWidget,
+  onFetchDashboards,
   updateWidget,
   updateDashboard,
-  addDashboard,
-  deleteWidget,
 }, dispatch);
 
 export const DashboardContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Dashboard);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(DashboardComponent);

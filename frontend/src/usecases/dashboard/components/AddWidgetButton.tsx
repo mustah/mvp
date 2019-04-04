@@ -6,13 +6,13 @@ import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropd
 import {IconProps} from '../../../components/popover/PopoverMenu';
 import {translate} from '../../../services/translationService';
 import {OnClick, RenderFunction} from '../../../types/Types';
-import './AddNewWidgetButton.scss';
+import './AddWidgetButton.scss';
 
 interface Props {
   renderPopoverContent: RenderFunction<OnClick>;
 }
 
-export const AddNewWidgetButton = ({renderPopoverContent}: Props) => {
+export const AddWidgetButton = ({renderPopoverContent}: Props) => {
   const iconProps: IconProps = {
     color: svgIconProps.color,
     icon: <Add color={svgIconProps.color}/>,
@@ -30,7 +30,7 @@ export const AddNewWidgetButton = ({renderPopoverContent}: Props) => {
 
   return (
     <ActionsDropdown
-      className="AddNewWidgetButton"
+      className="AddWidgetButton"
       Icon={FlatButton}
       iconProps={iconProps}
       renderPopoverContent={renderPopoverContent}
