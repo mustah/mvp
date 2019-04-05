@@ -4,23 +4,21 @@ import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {topMenuInnerDivStyle, topMenuItemDivStyle, topMenuItemIconStyle} from '../../../app/themes';
-import {IconAvatar} from '../../../components/icons/IconAvatar';
-import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
-import {Row, RowCenter} from '../../../components/layouts/row/Row';
+import {colors, iconStyle, topMenuInnerDivStyle, topMenuItemDivStyle, topMenuItemIconStyle} from '../../../app/themes';
+import {ColumnCenter} from '../../../components/layouts/column/Column';
+import {RowCenter} from '../../../components/layouts/row/Row';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../../../components/popover/PopoverMenu';
 import {translate} from '../../../services/translationService';
 import {User} from '../../../state/domain-models/user/userModels';
 import {Clickable, OnClick, RenderFunction} from '../../../types/Types';
-import {MenuUnderline} from './MenuUnderline';
-import './Profile.scss';
+import {TopMenuItem} from './TopMenuItem';
 
 const makeAvatarTitle = ({name, email}: User): string => `${name} (${email})`;
 
 const makeAvatarIcon = (user: User) => (props: Clickable) => (
   <ColumnCenter {...props} title={makeAvatarTitle(user)}>
     <RowCenter>
-      <IconAvatar/>
+      <ActionAccountCircle color={colors.white} style={iconStyle}/>
     </RowCenter>
   </ColumnCenter>
 );
@@ -63,16 +61,14 @@ export const Profile = ({user, logout}: Props) => {
   );
 
   return (
-    <Column className="ProfileContainer TopMenu-Item">
-      <Row className="Profile">
-        <PopoverMenu
-          IconComponent={Icon}
-          anchorOrigin={anchorOrigin}
-          targetOrigin={targetOrigin}
-          renderPopoverContent={renderPopoverContent}
-        />
-      </Row>
-      <MenuUnderline/>
-    </Column>
+    <TopMenuItem>
+      <PopoverMenu
+        className="Row-center"
+        IconComponent={Icon}
+        anchorOrigin={anchorOrigin}
+        targetOrigin={targetOrigin}
+        renderPopoverContent={renderPopoverContent}
+      />
+    </TopMenuItem>
   );
 };

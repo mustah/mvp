@@ -7,7 +7,7 @@
   visibility: hidden;
   height: $height;
   background-color: $blue-A700;
-  width: 86px;
+  width: $top-menu-item-width;
   border-top-left-radius: $height * 2;
   border-top-right-radius: $height * 2;
 }

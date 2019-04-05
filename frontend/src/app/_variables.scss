@@ -25,6 +25,7 @@ $orange: #ff9800;
 $dark-orange: #e65100;
 $red: #e84d6f;
 $pink: #ff4081;
+$notification-color: #e10050;
 
 $border-color: $dark-grey;
 $link-color: $blue-A700;
@@ -89,7 +90,10 @@ $lg-icon: 30px;
 $map-height: 300px;
 $map-width: 800px;
 
-$main-menu-height: 60px;
+// top-menu
+$top-menu-item-width: 78px;
+$top-menu-height: 60px;
+
 $main-menu-z-index: 1400; // slightly larger than material design's app bar
 $main-menu-item-height: 56px;
 $list-item-height: 28px;

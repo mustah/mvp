@@ -3,6 +3,7 @@ import * as React from 'react';
 import {connectedAdminOnly} from '../../../components/hoc/withRoles';
 import {Row, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {ClassNamed, WithChildren} from '../../../types/Types';
+import {NotificationsContainer} from '../containers/NotificationsContainer';
 import {ProfileContainer} from '../containers/ProfileContainer';
 import {AppSwitch} from './AppSwitch';
 import './TopMenu.scss';
@@ -15,6 +16,7 @@ export const TopMenu = ({children, className}: ClassNamed & WithChildren) => (
       {children}
     </Row>
     <RowRight className="TopMenu-RightContent">
+      <NotificationsContainer/>
       <AppSwitchDropdownComponent/>
       <ProfileContainer/>
     </RowRight>
