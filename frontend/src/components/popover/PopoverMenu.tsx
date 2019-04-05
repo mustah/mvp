@@ -3,7 +3,7 @@ import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
 import {popoverStyle} from '../../app/themes';
-import {ClickableEventHandler, OnClick, RenderFunction} from '../../types/Types';
+import {OnClick, RenderFunction} from '../../types/Types';
 import {Row} from '../layouts/row/Row';
 import './PopoverMenu.scss';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
@@ -14,10 +14,12 @@ export interface IconProps extends React.CSSProperties {
   disabled?: boolean;
 }
 
+type ExtendedIconProps = IconProps & (FlatButtonProps | SvgIconProps);
+
 interface Props {
   renderPopoverContent: RenderFunction<OnClick>;
-  IconComponent: React.StatelessComponent<ClickableEventHandler>;
-  iconProps?: IconProps & (FlatButtonProps | SvgIconProps);
+  IconComponent: React.StatelessComponent<ExtendedIconProps>;
+  iconProps?: ExtendedIconProps;
   onRequestClose?: OnClick;
   className?: string;
   popoverClassName?: string;
@@ -55,8 +57,8 @@ export class PopoverMenu extends React.Component<Props, State> {
     } = this.props;
 
     return (
-      <Row className={classNames('PopoverMenu', className)}>
-        <IconComponent {...iconProps} onClick={this.onOpenMenu}/>
+      <Row className={classNames('PopoverMenu', className)} onClick={this.onOpenMenu}>
+        <IconComponent {...iconProps}/>
         <Popover
           className={classNames('PopoverMenu-Component', popoverClassName)}
           open={isOpen}
