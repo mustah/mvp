@@ -57,7 +57,7 @@ export const login = (username: string, password: string) =>
   };
 
 export const logout = (error?: Unauthorized) =>
-  async (dispatch, getState: GetState) => {
+  async (dispatch, getState: GetState): Promise<void> => {
     const {auth} = getState();
     if (isAuthenticated(auth)) {
       try {

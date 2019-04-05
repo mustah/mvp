@@ -9,15 +9,15 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {fetchMeter} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
+import {addToReport} from '../../state/report/reportActions';
+import {LegendItem} from '../../state/report/reportModels';
 import {CallbackWithId, OnClickWith, uuid} from '../../types/Types';
 import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {syncWithMetering} from '../../usecases/meter/meterActions';
-import {addToReport} from '../../state/report/reportActions';
-import {LegendItem} from '../../state/report/reportModels';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfoContainer';
-import {MeterDetailsTabsContainer} from './MeterDetailsTabs';
+import {MeterDetailsTabs} from './MeterDetailsTabs';
 
 interface StateToProps {
   isFetching: boolean;
@@ -43,7 +43,7 @@ const MeterDetailsContent = (props: Props) => {
   return (
     <div>
       <MeterDetailsInfoContainer {...newProps}/>
-      <MeterDetailsTabsContainer {...newProps}/>
+      <MeterDetailsTabs {...newProps}/>
     </div>
   );
 };

@@ -1,8 +1,6 @@
 import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import {toArray} from 'lodash';
 import * as React from 'react';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
@@ -22,16 +20,14 @@ import {GatewayMandatory} from '../../state/domain-models-paginated/gateway/gate
 import {EventLogType} from '../../state/domain-models-paginated/meter/meterModels';
 import {eventsDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
+import {LegendItem} from '../../state/report/reportModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {OnClickWith, OnClickWithId} from '../../types/Types';
-import {logout} from '../../usecases/auth/authActions';
-import {OnLogout} from '../../usecases/auth/authModels';
 import {Map as MapComponent} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
-import {LegendItem} from '../../state/report/reportModels';
 
 export interface MeterDetailsState {
   selectedTab: TabName;
@@ -46,17 +42,11 @@ interface MapProps {
   meterMapMarker: Maybe<MapMarker>;
 }
 
-interface OwnProps extends MapProps {
+interface Props extends MapProps {
   addToReport: OnClickWith<LegendItem>;
   syncWithMetering: OnClickWithId;
   useCollectionPeriod?: boolean;
 }
-
-interface DispatchToProps {
-  logout: OnLogout;
-}
-
-type Props = OwnProps & DispatchToProps;
 
 const renderEvent = ({dataItem: {name, type}}) => {
   const content = type === EventLogType.newMeter
@@ -98,7 +88,7 @@ const GatewayContentWrapper = withEmptyContent<MeterGatewayProps & WithEmptyCont
 
 const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
 
-class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
+export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
 
   constructor(props) {
     super(props);
@@ -173,11 +163,3 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
 
   changeTab = (selectedTab: TabName) => this.setState({selectedTab});
 }
-
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  logout,
-}, dispatch);
-
-export const MeterDetailsTabsContainer = connect<{}, DispatchToProps, OwnProps>(
-  mapDispatchToProps,
-)(MeterDetailsTabs);
