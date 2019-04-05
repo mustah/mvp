@@ -6,7 +6,7 @@ import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {MeterAlarm} from '../../components/status/MeterAlarm';
 import {CityInfo} from '../../components/texts/Labels';
-import {BoldFirstUpper} from '../../components/texts/Texts';
+import {Bold, BoldFirstUpper} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {formatReadInterval} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
@@ -63,10 +63,11 @@ const MeterDetailsInfo = ({
   const organisationName = organisation.map(({name}) => name).orElse(translate('unknown'));
   const sum = alarms ? alarms.reduce((previous, current) => previous + current.mask, 0) : 0;
 
-  const alarmCode = alarms && alarms.length
+  const alarmCodeBin =
     // tslint:disable-next-line:no-bitwise
-    ? ('00000000' + ((sum >>> 0).toString(2))).slice(-8) // zero-padded 8-bit string
-    : '-';
+    ('0000000000000000' + ((sum >>> 0).toString(2))).slice(-16); // zero-padded 16-bit string
+
+  const alarmCodeHex = sum > 0 ? '0x' + ('0000' + sum.toString(16)).slice(-4) : '-';
 
   return (
     <Column className="Overview">
@@ -109,7 +110,7 @@ const MeterDetailsInfo = ({
           <MeterAlarm items={alarms}/>
         </Info>
         <Info label={translate('alarm code')}>
-          <BoldFirstUpper>{alarmCode}</BoldFirstUpper>
+          <Bold title={alarmCodeBin}>{alarmCodeHex}</Bold>
         </Info>
         <Info label={translate('status change')}>
           <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
