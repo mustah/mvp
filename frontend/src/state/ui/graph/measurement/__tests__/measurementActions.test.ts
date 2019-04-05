@@ -5,6 +5,7 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {getType} from 'typesafe-actions';
+import {makeUser} from '../../../../../__tests__/testDataFactory';
 import {routes} from '../../../../../app/routes';
 import {Period, TemporalResolution} from '../../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../../exceptions/InvalidToken';
@@ -17,12 +18,12 @@ import {toIdNamed} from '../../../../../types/Types';
 import {logoutUser} from '../../../../../usecases/auth/authActions';
 import {AuthState, Unauthorized} from '../../../../../usecases/auth/authModels';
 import {toAggregateLegendItem} from '../../../../../usecases/report/helpers/legendHelper';
-import {getDefaultQuantity, ReportSector} from '../../../../report/reportActions';
-import {isAggregate, isMedium, LegendItem, LegendType} from '../../../../report/reportModels';
 import {noInternetConnection, requestTimeout} from '../../../../api/apiActions';
 import {NormalizedState} from '../../../../domain-models/domainModels';
 import {initialDomain} from '../../../../domain-models/domainModelsReducer';
-import {Role, User} from '../../../../domain-models/user/userModels';
+import {User} from '../../../../domain-models/user/userModels';
+import {getDefaultQuantity, ReportSector} from '../../../../report/reportActions';
+import {isAggregate, isMedium, LegendItem, LegendType} from '../../../../report/reportModels';
 import {ParameterName, UserSelection} from '../../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../../user-selection/userSelectionReducer';
 import {
@@ -44,7 +45,8 @@ import {
   MeasurementState,
   MeasurementValue,
   Medium,
-  Quantity, quantityAttributes
+  Quantity,
+  quantityAttributes
 } from '../measurementModels';
 import {initialState} from '../measurementReducer';
 
@@ -201,7 +203,7 @@ describe('measurementActions', () => {
 
         expect(volume.pathname).toEqual('/measurements');
         expect(volume.searchParams.get('quantity'))
-          .toEqual(Quantity.externalTemperature  + ':' + externalTempAttr.unit + ':' + externalTempAttr.displayMode);
+          .toEqual(Quantity.externalTemperature + ':' + externalTempAttr.unit + ':' + externalTempAttr.displayMode);
         expect(volume.searchParams.get('logicalMeterId')).toEqual(roomSensorMeter.id);
         expect(volume.searchParams.get('before')).toBeTruthy();
         expect(volume.searchParams.get('after')).toBeTruthy();
@@ -392,14 +394,7 @@ describe('measurementActions', () => {
       });
 
       it('logs out user when token is invalid', async () => {
-        const user: User = {
-          id: 1,
-          name: 'clark',
-          email: 'ck@dailyplanet.net',
-          language: 'sv',
-          organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
-          roles: [Role.USER],
-        };
+        const user: User = makeUser();
         store = storeWith(initialState, {user, isAuthenticated: true});
         const error = new InvalidToken('Token missing or invalid');
 

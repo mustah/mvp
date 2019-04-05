@@ -36,6 +36,10 @@ type Props = StateToProps & DispatchToProps;
 export const Profile = ({user, logout}: Props) => {
   const Icon = makeAvatarIcon(user);
 
+  const asyncLogout = async () => {
+    await logout();
+  };
+
   const renderPopoverContent: RenderFunction<OnClick> = () => (
     <>
       <Link to={routes.userProfile} className="link" key="goToProfile">
@@ -53,7 +57,7 @@ export const Profile = ({user, logout}: Props) => {
         leftIcon={<ActionExitToApp style={{...topMenuItemIconStyle, transform: 'rotate(180deg)'}}/>}
         style={topMenuItemDivStyle}
         className="first-uppercase"
-        onClick={logout}
+        onClick={asyncLogout}
       >
         {translate('logout')}
       </MenuItem>

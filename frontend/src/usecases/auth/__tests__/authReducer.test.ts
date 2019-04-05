@@ -1,5 +1,6 @@
+import {makeUser} from '../../../__tests__/testDataFactory';
 import {makeToken} from '../../../services/authService';
-import {Role, User} from '../../../state/domain-models/user/userModels';
+import {User} from '../../../state/domain-models/user/userModels';
 import {authSetUser, loginFailure, loginRequest, loginSuccess, logoutUser} from '../authActions';
 import {Authorized, AuthState, Unauthorized} from '../authModels';
 import {auth, initialAuthState} from '../authReducer';
@@ -8,14 +9,7 @@ describe('authReducer', () => {
 
   const requestState: AuthState = {isAuthenticated: false, isLoading: true};
   const password = '1234';
-  const user: User = {
-    id: 1,
-    name: 'clark',
-    email: 'ck@dailyplanet.net',
-    language: 'en',
-    organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
-    roles: [Role.USER],
-  };
+  const user: User = makeUser();
   const token = makeToken(user.email, password);
   const loggedInState: AuthState = {isLoading: false, isAuthenticated: true, token, user};
 

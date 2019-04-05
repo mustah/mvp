@@ -46,6 +46,7 @@ export const colors = {
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',
   iconHover: '#0f2228',
+  menuItemLeftIcon: '#757575',
   link: palette.blueA700,
 };
 

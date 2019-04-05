@@ -1,9 +1,16 @@
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {Notifications, NotificationsProps} from '../component/Notifications';
+import {seenNotifications} from '../../../state/ui/notifications/notificationsActions';
+import {NotificationDispatchProps, Notifications, NotificationsProps} from '../component/Notifications';
 
-const mapStateToProps = (_: RootState): NotificationsProps => ({
-  hasNotifications: false,
+const mapStateToProps = ({ui: {notifications: {hasNotifications}}}: RootState): NotificationsProps => ({
+  hasNotifications,
 });
 
-export const NotificationsContainer = connect<NotificationsProps>(mapStateToProps)(Notifications);
+const mapDispatchToProps = (dispatch): NotificationDispatchProps => bindActionCreators({
+  seenNotifications,
+}, dispatch);
+
+export const NotificationsContainer =
+  connect<NotificationsProps, NotificationDispatchProps>(mapStateToProps, mapDispatchToProps)(Notifications);

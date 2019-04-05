@@ -1,8 +1,9 @@
 import {EventLog, Meter} from '../state/domain-models-paginated/meter/meterModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
-import {Identifiable, uuid} from '../types/Types';
+import {Role, User} from '../state/domain-models/user/userModels';
 import {LegendItem, SavedReportsState} from '../state/report/reportModels';
 import {makeInitialLegendViewOptions} from '../state/report/reportReducer';
+import {Identifiable, uuid} from '../types/Types';
 
 const meters = [
   {id: 'm1', name: 'UNICOcoder'},
@@ -78,3 +79,12 @@ export const savedReportsWith = (legendItems: LegendItem[]): SavedReportsState =
       shouldShowAverage: false,
     }
   });
+
+export const makeUser = (): User => ({
+  id: 1,
+  name: 'clark',
+  email: 'ck@dailyplanet.net',
+  language: 'en',
+  organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
+  roles: [Role.USER],
+});

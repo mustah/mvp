@@ -1,18 +1,18 @@
 import * as React from 'react';
+import {linkToReleaseNotes} from '../../app/routes';
 import {config} from '../../config/config';
 import {firstUpperTranslated} from '../../services/translationService';
-import {componentOrNothing} from '../hoc/hocs';
+import '../buttons/ButtonLink.scss';
 import {RowCenter} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
 import './Footer.scss';
 
 const frontendVersion = config().frontendVersion;
-const isProductionEnvironment = config().environment === 'production';
 
-const FooterComponent = () => (
+export const Footer = () => (
   <RowCenter className="Footer">
-    <Normal>{firstUpperTranslated('version')} {frontendVersion}</Normal>
+    <a href={linkToReleaseNotes} target="_blank" className="link">
+      <Normal>{`${firstUpperTranslated('version')}: ${frontendVersion}`}</Normal>
+    </a>
   </RowCenter>
 );
-
-export const Footer = componentOrNothing((_) => isProductionEnvironment)(FooterComponent);

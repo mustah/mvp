@@ -29,6 +29,8 @@ export const routes = {
   adminMeterDefinitionsModify: '/admin/meter-definitions/modify',
 };
 
+export const linkToReleaseNotes = 'https://support.elvaco.com/hc/sv/articles/360001339938-Release-notes-EVO';
+
 export const history: History = createHashHistory();
 
 const searchResultRegExp = new RegExp(`${routes.searchResult}.*`);

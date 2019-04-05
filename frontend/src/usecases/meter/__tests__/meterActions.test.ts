@@ -3,6 +3,7 @@ import {default as MockAdapter} from 'axios-mock-adapter';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {makeUser} from '../../../__tests__/testDataFactory';
 import {routes} from '../../../app/routes';
 import {InvalidToken} from '../../../exceptions/InvalidToken';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
@@ -11,7 +12,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {authenticate} from '../../../services/restClient';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {noInternetConnection, requestTimeout} from '../../../state/api/apiActions';
-import {Role, User} from '../../../state/domain-models/user/userModels';
+import {User} from '../../../state/domain-models/user/userModels';
 import {showFailMessage, showSuccessMessage} from '../../../state/ui/message/messageActions';
 import {Callback, ErrorResponse, uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
@@ -21,14 +22,7 @@ describe('syncWithMetering', () => {
 
   let store;
   let mockRestClient;
-  const user: User = {
-    id: 2,
-    name: 'test user',
-    email: 'test@test.se',
-    language: 'en',
-    organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
-    roles: [Role.USER],
-  };
+  const user: User = makeUser();
 
   const logicalMeterId: uuid = 123;
 
@@ -65,7 +59,7 @@ describe('syncWithMetering', () => {
 
       expect(store.getActions()).toEqual([
         logoutUser(error),
-        routerActions.push(`${routes.login}/elvaco`),
+        routerActions.push(`${routes.login}/daily-planet`),
       ]);
     });
   });
