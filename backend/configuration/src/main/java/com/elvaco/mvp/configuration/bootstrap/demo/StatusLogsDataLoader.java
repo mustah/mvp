@@ -23,9 +23,8 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 @Profile("demo")
 @Component
 @RequiredArgsConstructor
-class StatusLogsDataLoader {
+class StatusLogsDataLoader implements MockDataLoader {
 
-  private static final Random RANDOM = new Random();
   private static final StatusType[] STATUS_TYPES = {OK, ERROR};
 
   private final PhysicalMeters physicalMeters;
@@ -33,22 +32,22 @@ class StatusLogsDataLoader {
   private final Gateways gateways;
   private final GatewayStatusLogs gatewayStatusLogs;
 
-  void loadMockData() {
-    createMeterStatusLogMockData();
-    createGatewayLogMockData();
+  public void load(Random random) {
+    createMeterStatusLogMockData(random);
+    createGatewayLogMockData(random);
   }
 
-  private void createGatewayLogMockData() {
+  private void createGatewayLogMockData(Random random) {
     gateways.findAll().stream()
       .map(gateway -> StatusLogEntry.builder()
         .primaryKey(gateway.primaryKey())
-        .status(nextRandomStatusType())
+        .status(nextRandomStatusType(random))
         .start(subtractDays(90))
         .build())
       .forEach(gatewayStatusLogs::save);
   }
 
-  private void createMeterStatusLogMockData() {
+  private void createMeterStatusLogMockData(Random random) {
     int daySeed = 1;
 
     List<StatusLogEntry> statusLogs = new ArrayList<>();
@@ -60,18 +59,20 @@ class StatusLogsDataLoader {
         .start(subtractDays(daySeed))
         .build()
       );
-      statusLogs.add(StatusLogEntry.builder()
-        .primaryKey(meter.primaryKey())
-        .status(nextRandomStatusType())
-        .start(subtractDays(daySeed).plusHours(1))
-        .build()
-      );
+      if (random.nextBoolean()) {
+        statusLogs.add(StatusLogEntry.builder()
+          .primaryKey(meter.primaryKey())
+          .status(ERROR)
+          .start(subtractDays(daySeed).plusHours(1))
+          .build()
+        );
+      }
     }
     meterStatusLogs.save(statusLogs);
   }
 
-  private static StatusType nextRandomStatusType() {
-    return STATUS_TYPES[RANDOM.nextInt(STATUS_TYPES.length - 1)];
+  private StatusType nextRandomStatusType(Random random) {
+    return STATUS_TYPES[random.nextInt(STATUS_TYPES.length - 1)];
   }
 
   private static ZonedDateTime subtractDays(int daySeed) {

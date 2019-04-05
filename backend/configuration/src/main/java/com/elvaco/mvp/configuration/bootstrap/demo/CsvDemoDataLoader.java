@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -57,6 +58,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
   private final Organisation rootOrganisation;
   private final MediumProvider mediumProvider;
   private final SystemMeterDefinitionProvider meterDefinitionProvider;
+  private final AlarmDataLoader alarmDataLoader;
 
   private int daySeed = 1;
 
@@ -76,7 +78,12 @@ class CsvDemoDataLoader implements CommandLineRunner {
     importFrom("data/meters_perstorp.csv", locationMap);
     importFrom("data/meters_almhult.csv", locationMap);
 
-    statusLogsDataLoader.loadMockData();
+    long seed = 21914;
+    Random random = new Random(seed);
+    log.info("Creating mock demo data (seed: {})", seed);
+
+    statusLogsDataLoader.load(random);
+    alarmDataLoader.load(random);
 
     settingUseCases.setDemoDataLoaded();
   }
