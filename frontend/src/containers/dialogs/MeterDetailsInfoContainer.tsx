@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {MeterAlarm} from '../../components/status/MeterAlarm';
@@ -48,7 +47,6 @@ const MeterDetailsInfo = ({
     medium,
     organisationId,
     alarms,
-    statusChanged,
     facility,
     isReported,
     mbusDeviceType,
@@ -111,9 +109,6 @@ const MeterDetailsInfo = ({
         </Info>
         <Info label={translate('alarm code')}>
           <Bold title={alarmCodeBin}>{alarmCodeHex}</Bold>
-        </Info>
-        <Info label={translate('status change')}>
-          <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
         </Info>
       </Row>
       <Row>
