@@ -153,7 +153,21 @@ export const migrations = {
         }
       }
     };
+  },
+  9: (state: PersistedState | any) => {
+    const {ui} = state;
+    const toolbar = ui.toolbar || toolbarState;
+    return {
+      ...state,
+      ui: {
+        ...ui,
+        toolbar: {
+          ...toolbar,
+          selectionReport: toolbar.selectionReport || {view: ToolbarView.graph},
+        }
+      }
+    };
   }
 };
 
-export const currentVersion: number = 8;
+export const currentVersion: number = 9;
