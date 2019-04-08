@@ -187,3 +187,17 @@ tables. One that's served me well is the following:
 
 See https://www.postgresql.org/docs/10/static/pgstatstatements.html for more information on the `pg_stat_statements`
 module.
+
+
+### Running with APM
+First, start the APM stack (run `docker-compose up` in `./docker/apm`)
+
+Second, get a copy of the elastic-agent jar. Unless you're doing something Extra Cool, like testing a new version, get the latest version from here: http://artifactory.elvaco.se/artifactory/webapp/#/artifacts/browse/tree/General/Elvaco/elastic/apm
+
+Third, start the application with the following VM options:
+
+`-javaagent:${path-to-elastic-agent.jar} -Delastic.apm.service_name=EvoMvp -Delastic.apm.service_version=unreleased -Delastic.apm.application_packages=com.elvaco -Delastic.apm.server_urls=http://{your-ip-or-hostname}:8201`
+
+Kibana should now be running at http://localhost:5601/app/kibana. Select APM in the left-hand menu. Push the "Setup instructions" button - at the bottom of the page, first press "Load kibana objects", then press "Launch APM" (you could also check agent & server status, to make sure you've set everything up properly).
+
+Make a few requests to the application and you should be able to eventually see some transactions show up.
