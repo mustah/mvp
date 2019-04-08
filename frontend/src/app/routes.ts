@@ -2,7 +2,6 @@ import {createHashHistory, History, Location} from 'history';
 import evoLogoBlue from '../assets/images/elvaco.evo_logo_blue_cmyk.svg';
 import evoLogo from '../assets/images/elvaco.evo_logo_wt.svg';
 import wayneIndustries from '../assets/images/wayne-industries.png';
-import {uuid} from '../types/Types';
 
 export const routes = {
   collection: '/collection',
@@ -30,6 +29,8 @@ export const routes = {
   adminMeterDefinitionsModify: '/admin/meter-definitions/modify',
 };
 
+export const linkToReleaseNotes = 'https://support.elvaco.com/hc/sv/articles/360001339938-Release-notes-EVO';
+
 export const history: History = createHashHistory();
 
 const searchResultRegExp = new RegExp(`${routes.searchResult}.*`);
@@ -42,8 +43,6 @@ const organisationLogo = {
   'wayne-industries': wayneIndustries,
 };
 
-export const getLogoPath = (organisationId: uuid): string =>
-  organisationLogo[organisationId] || evoLogo;
+export const getLogoPath = (slug: string): string => organisationLogo[slug] || evoLogo;
 
-export const getLoginLogoPath = (organisationId: uuid): string =>
-  organisationLogo[organisationId] || evoLogoBlue;
+export const getLoginLogoPath = (slug: string): string => organisationLogo[slug] || evoLogoBlue;

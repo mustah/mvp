@@ -1,6 +1,8 @@
+import {default as MockAdapter} from 'axios-mock-adapter';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {makeUser} from '../../../__tests__/testDataFactory';
 import {routes} from '../../../app/routes';
 import {InvalidToken} from '../../../exceptions/InvalidToken';
 import {makeUrl} from '../../../helpers/urlFactory';
@@ -15,7 +17,6 @@ import {User} from '../../domain-models/user/userModels';
 import {fetchSummary} from '../summaryApiActions';
 import {SelectionSummary} from '../summaryModels';
 import {initialState} from '../summaryReducer';
-import {default as MockAdapter} from 'axios-mock-adapter';
 
 describe('summaryApiActions', () => {
 
@@ -40,14 +41,7 @@ describe('summaryApiActions', () => {
   describe('token has expired or is invalid', () => {
 
     it('redirect user to login page when token is invalid', async () => {
-      const user: User = {
-        id: 1,
-        name: 'al',
-        email: 'al@la.se',
-        language: 'en',
-        organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
-        roles: [],
-      };
+      const user: User = makeUser();
       const initialRootState = {
         auth: {
           user,

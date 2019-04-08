@@ -8,7 +8,7 @@
   z-index: $selection-header-z-index;
   padding: 0 0 0 $sm-space;
   background-color: $main-menu-color;
-  height: $main-menu-height;
+  height: $top-menu-height;
   justify-content: space-between;
   box-shadow: $box-shadow;
 
@@ -21,7 +21,25 @@
     margin-right: $space;
 
     .TopMenu-Item {
+      height: $top-menu-height;
+      width: $top-menu-item-width;
       cursor: pointer;
+
+      .Notification {
+        position: absolute;
+        top: 20px;
+        right: 200px;
+        height: 8px;
+        width: 8px;
+        border-radius: 5px;
+        background: $notification-color;
+        border: 1px solid $blue-A900;
+      }
+
+      .PopoverMenu {
+        height: $top-menu-height;
+        width: $top-menu-item-width;
+      }
     }
   }
 }

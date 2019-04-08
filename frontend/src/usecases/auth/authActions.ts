@@ -1,6 +1,7 @@
 import {routerActions} from 'react-router-redux';
 import {createAction, createStandardAction} from 'typesafe-actions';
 import {routes} from '../../app/routes';
+import {config} from '../../config/config';
 import {translatedErrorMessage} from '../../helpers/translations';
 import {GetState} from '../../reducers/rootReducer';
 import {makeToken} from '../../services/authService';
@@ -8,6 +9,7 @@ import {EndPoints} from '../../services/endPoints';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {User} from '../../state/domain-models/user/userModels';
 import {changeLanguage} from '../../state/language/languageActions';
+import {getCurrentVersion} from '../../state/ui/notifications/notificationsActions';
 import {uuid} from '../../types/Types';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 import {getOrganisationSlug} from './authSelectors';
@@ -42,6 +44,7 @@ export const login = (username: string, password: string) =>
       restClientWith(token);
       await dispatch(changeLanguage(user.language));
       dispatch(loginSuccess({token, user}));
+      dispatch(getCurrentVersion(config().frontendVersion));
       if (previousUserId && previousUserId !== user.id) {
         // cannot dispatch resetSelection() here when running tests (running application in browser is fine).
         // reason: unknown, possibly related to circular imports in non-bundled modes, such as yarn test
@@ -54,7 +57,7 @@ export const login = (username: string, password: string) =>
   };
 
 export const logout = (error?: Unauthorized) =>
-  async (dispatch, getState: GetState) => {
+  async (dispatch, getState: GetState): Promise<void> => {
     const {auth} = getState();
     if (isAuthenticated(auth)) {
       try {

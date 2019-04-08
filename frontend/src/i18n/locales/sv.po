@@ -11,6 +11,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "what's new"
+msgstr "vad är nytt"
+
+msgid "switch to"
+msgstr "byt till"
+
+msgid "notifications"
+msgstr "notiser"
+
 msgid "dashboard is empty"
 msgstr "dashboarden är tom"
 

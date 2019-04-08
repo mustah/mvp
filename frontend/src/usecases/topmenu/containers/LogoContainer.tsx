@@ -1,25 +1,10 @@
-import * as React from 'react';
 import {connect} from 'react-redux';
-import {Link} from 'react-router-dom';
-import {getLogoPath, routes} from '../../../app/routes';
-import {Logo} from '../../../components/logo/Logo';
 import {RootState} from '../../../reducers/rootReducer';
-import {uuid} from '../../../types/Types';
 import {getOrganisationSlug} from '../../auth/authSelectors';
-import './LogoContainer.scss';
-
-interface StateToProps {
-  organisationSlug: uuid;
-}
-
-const LogoComponent = ({organisationSlug}: StateToProps) => (
-  <Link className="Logo" to={routes.home}>
-    <Logo src={getLogoPath(organisationSlug)} className="small"/>
-  </Link>
-);
+import {Logo, StateToProps} from '../component/Logo';
 
 const mapStateToProps = ({auth}: RootState): StateToProps => ({
-  organisationSlug: getOrganisationSlug(auth),
+  slug: getOrganisationSlug(auth),
 });
 
-export const LogoContainer = connect<StateToProps, {}>(mapStateToProps)(LogoComponent);
+export const LogoContainer = connect<StateToProps>(mapStateToProps)(Logo);

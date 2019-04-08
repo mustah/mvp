@@ -3,15 +3,18 @@ import {default as MockAdapter} from 'axios-mock-adapter';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {makeUser} from '../../../__tests__/testDataFactory';
 import {routes} from '../../../app/routes';
+import {config} from '../../../config/config';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../services/endPoints';
 import {authenticate} from '../../../services/restClient';
 import {DomainModelsState} from '../../../state/domain-models/domainModels';
 import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
-import {Role, User} from '../../../state/domain-models/user/userModels';
+import {User} from '../../../state/domain-models/user/userModels';
 import {changeLanguageRequest} from '../../../state/language/languageActions';
 import {LanguageState} from '../../../state/language/languageModels';
+import {getCurrentVersion} from '../../../state/ui/notifications/notificationsActions';
 import {authSetUser, login, loginFailure, loginRequest, loginSuccess, logout, logoutUser} from '../authActions';
 import {Unauthorized} from '../authModels';
 
@@ -19,6 +22,7 @@ const configureMockStore = configureStore([thunk]);
 
 describe('authActions', () => {
   const windowReload = window.location.reload;
+  const version = config().frontendVersion;
 
   beforeEach(() => {
     const initialState: Partial<DomainModelsState> = {
@@ -46,14 +50,7 @@ describe('authActions', () => {
     window.location.reload = windowReload;
   });
 
-  const user: User = {
-    id: 1,
-    name: 'clark',
-    email: 'ck@dailyplanet.net',
-    language: 'en',
-    organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
-    roles: [Role.USER],
-  };
+  const user: User = makeUser();
   let mockRestClient;
   let store;
 
@@ -77,18 +74,12 @@ describe('authActions', () => {
       expect(store.getActions()).toEqual([
         loginRequest(),
         loginSuccess({token, user}),
+        getCurrentVersion(version),
       ]);
     });
 
     it('logs in and changes language when user language differs from current language', async () => {
-      const user: User = {
-        id: 1,
-        name: 'clark',
-        email: 'ck@dailyplanet.net',
-        language: 'sv',
-        organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
-        roles: [Role.USER],
-      };
+      const user: User = {...makeUser(), language: 'sv'};
 
       await dispatchLogin(user);
 
@@ -96,6 +87,7 @@ describe('authActions', () => {
         loginRequest(),
         changeLanguageRequest('sv'),
         loginSuccess({token, user}),
+        getCurrentVersion(version),
       ]);
     });
 
