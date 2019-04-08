@@ -3,7 +3,7 @@ import {CallbackWithId, Identifiable, OnClick, OnClickWithId, Opened, uuid} from
 
 type State = Opened & Partial<Identifiable>;
 
-interface ConfirmDialogHook extends Opened {
+interface ConfirmDialogHook extends State {
   closeConfirm: OnClick;
   openConfirm: OnClickWithId;
   confirm: OnClick;
@@ -16,9 +16,10 @@ export const useConfirmDialog = (onConfirm: CallbackWithId): ConfirmDialogHook =
   const confirm = () => onConfirm(id!);
 
   return {
-    isOpen,
     closeConfirm,
-    openConfirm,
     confirm,
+    isOpen,
+    id,
+    openConfirm,
   };
 };

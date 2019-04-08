@@ -1,7 +1,8 @@
 {
   "extends": [
     "tslint:latest",
-    "tslint-react"
+    "tslint-react",
+    "tslint-react-hooks"
   ],
   "jsRules": {
     "object-literal-sort-keys": false,
@@ -63,6 +64,7 @@
       "no-public"
     ],
     "prefer-const": true,
+    "react-hooks-nesting": "error",
     "trailing-comma": [
       true,
       {
