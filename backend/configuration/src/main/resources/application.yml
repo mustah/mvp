@@ -81,6 +81,7 @@ mvp:
       requeueRejected: false
       deadLetterExchange: "mvp.dead.letter"
       meteringFanoutExchange: "mvp.fanout"
+      nbiotTopicExchange: "nbiot-test-ponte"
       prefetchCount: 250
       txSize: 1
   superadmin:
