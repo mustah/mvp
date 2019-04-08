@@ -46,10 +46,13 @@ interface MediumTdProps {
 }
 
 const renderRemoveAll = (removeAll?: OnClick) =>
-  removeAll ? (
-    <RowRight title={firstUpperTranslated('remove all')}>
-      <ButtonDelete onClick={removeAll}/>
-    </RowRight>) : null;
+  removeAll
+    ? (
+      <RowRight title={firstUpperTranslated('remove all')}>
+        <ButtonDelete onClick={removeAll}/>
+      </RowRight>
+    )
+    : null;
 
 const MediumTd = ({hideAll, isAllHidden, removeAll}: MediumTdProps) => (
   <td className="check-box-td">
@@ -94,7 +97,8 @@ const renderGroupHeaderTds = ({
       hideAll={hideAll}
       isAllHidden={isAllHidden}
       removeAll={removeAll}
-    />);
+    />
+  );
   return tds;
 };
 
@@ -138,7 +142,8 @@ const renderQuantityCell =
         return (
           <td key={`item-td-${type}-${quantity}-${checked}`}>
             <Checkbox checked={checked} onCheck={onClick} iconStyle={{fill: colorFor(quantity)}}/>
-          </td>);
+          </td>
+        );
       } else {
         return <td/>;
       }
@@ -153,5 +158,5 @@ export const renderColumns = (props: QuantityCell): React.ReactNode[] =>
       title={`${translate(`${quantity} short`)}`}
       cell={renderQuantityCell({...props, quantity})}
       width={quantityColumnWidth}
-    />)
-  );
+    />
+  ));

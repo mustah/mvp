@@ -86,7 +86,8 @@ const renderWidget = (
         height={widgetHeightToPx(height)}
         widget={widget}
         {...widgetDispatchers}
-      />);
+      />
+    );
   } else if (widget.type === WidgetType.COLLECTION) {
     return <CollectionStatusWidgetContainer widget={widget} {...widgetDispatchers}/>;
   } else if (widget.type === WidgetType.COUNT) {
@@ -157,25 +158,29 @@ export const Dashboard = ({
     .map(settings => (
       <EditCollectionStatusWidgetContainer
         id={settings.id}
-        settings={settings as CollectionStatusWidget}
-        dashboardId={dashboard.id}
         isOpen={true}
+        dashboardId={dashboard.id}
+        key={`widget-${settings.id}-${settings.type}`}
         onCancel={closeConfigurationDialog}
         onSave={saveWidgetConfiguration}
-      />))
+        settings={settings as CollectionStatusWidget}
+      />
+    ))
     .getOrElseNull();
 
   const editWidgetDialog = currentWidget
     .filter(({type}) => type === WidgetType.MAP || type === WidgetType.COUNT)
     .map(settings => (
       <EditWidgetContainer
-        id={settings.id}
-        widgets={settings as MapWidget}
         dashboardId={dashboard.id}
+        id={settings.id}
         isOpen={true}
+        key={`widget-${settings.id}-${settings.type}`}
         onCancel={closeConfigurationDialog}
         onSave={saveWidgetConfiguration}
-      />))
+        widgets={settings as MapWidget}
+      />
+    ))
     .getOrElseNull();
 
   const renderPopoverContent =

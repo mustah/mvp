@@ -13,11 +13,11 @@ import {Column} from '../../../components/layouts/column/Column';
 import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
+import {isMedium, LegendType} from '../../../state/report/reportModels';
 import {uuid} from '../../../types/Types';
 import {DispatchToProps, OwnProps, StateToProps} from '../containers/LegendContainer';
 import {QuantityCell, quantityColumnWidth, renderColumns, RowProps, rowRenderer} from '../helpers/legendGridHelper';
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
-import {isMedium, LegendType} from '../../../state/report/reportModels';
 import './Legend.scss';
 
 const legendGridStyle: React.CSSProperties = {
@@ -36,7 +36,8 @@ const renderLabel = ({id, label, type}: any) =>
           iconStyle={iconStyle}
           title={orUnknown(label).toString()}
         />
-      </Link>)
+      </Link>
+    )
     : orUnknown(label);
 
 const renderLabelCell = ({dataItem: {id, label, city, address, type}}: GridCellProps) =>
