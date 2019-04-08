@@ -15,14 +15,14 @@ import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
 import {MeterListProps} from '../../../components/meters/MeterListContent';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
-import {MeterAlarm} from '../../../components/status/MeterAlarm';
+import {AlarmStatus, MeteringStatus} from '../../../components/status/MeterAlarms';
 import {Normal} from '../../../components/texts/Texts';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpper, firstUpperTranslated, translate} from '../../../services/translationService';
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
 import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
 
-const renderAlarm = ({dataItem: {alarm}}: GridCellProps) => <td><MeterAlarm items={alarm}/></td>;
+const renderAlarm = ({dataItem: {alarm}}: GridCellProps) => <td><AlarmStatus hasAlarm={alarm}/></td>;
 
 const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem meter={dataItem}/></td>;
 
@@ -62,7 +62,7 @@ export const MeterList = ({
   );
 
   const renderIsReported = ({dataItem: {isReported}}: GridCellProps) => (
-    <td><MeterAlarm items={isReported}/></td>
+    <td><MeteringStatus isReported={isReported}/></td>
   );
 
   const renderCityName = ({dataItem: {location: {city}}}: GridCellProps) =>

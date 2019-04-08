@@ -2,7 +2,7 @@ import * as React from 'react';
 import {OpenDialogInfoButton} from '../../components/dialog/OpenDialogInfoButton';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row, RowMiddle} from '../../components/layouts/row/Row';
-import {MeterAlarm} from '../../components/status/MeterAlarm';
+import {MeterAlarms, MeteringStatus} from '../../components/status/MeterAlarms';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
 import {Tab} from '../../components/tabs/components/Tab';
@@ -48,7 +48,7 @@ const iconStyle: React.CSSProperties = {
   height: 24,
 };
 
-const renderAlarm = ({alarms}: Meter) => <MeterAlarm items={alarms}/>;
+const renderAlarm = ({alarms}: Meter) => <MeterAlarms items={alarms}/>;
 
 const renderFacility = ({id, facility}: Meter) => {
   const selectedId: Maybe<uuid> = Maybe.maybe(id);
@@ -68,7 +68,7 @@ const renderMeterAddressAndReported = ({address, isReported}: Meter) => {
   return (
     <RowMiddle>
       <Normal>{label}</Normal>
-      <MeterAlarm items={isReported} label={translate('reported')}/>
+      <MeteringStatus isReported={isReported!} label={translate('reported')}/>
     </RowMiddle>
   );
 };

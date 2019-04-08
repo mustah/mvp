@@ -33,7 +33,6 @@ public class AlarmDataLoader implements MockDataLoader {
         if (availableMasks.isEmpty()) {
           return;
         }
-
         availableMasks
           .stream()
           .filter((mask) -> random.nextBoolean())

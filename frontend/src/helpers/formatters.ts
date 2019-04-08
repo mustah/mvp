@@ -49,3 +49,6 @@ export const formatReadInterval = (minutes: number | undefined): string => {
     return minutes + translate('minute in short');
   }
 };
+
+export const formatAlarmMaskHex = (mask: number): string =>
+  '0x' + ('0000' + mask.toString(16)).slice(-4).toUpperCase();
