@@ -210,9 +210,6 @@ msgstr "required field"
 msgid "organisation name"
 msgstr "organisation name"
 
-msgid "organisation slug"
-msgstr "organisation slug"
-
 msgid "parent organisation"
 msgstr "parent organisation"
 

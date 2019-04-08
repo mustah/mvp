@@ -8,7 +8,11 @@ import {
   MeterDefinitionMaybeId,
   Quantity,
 } from '../../state/domain-models/meter-definitions/meterDefinitionModels';
-import {noOrganisation, Organisation} from '../../state/domain-models/organisation/organisationModels';
+import {
+  noOrganisation,
+  noOrganisationId,
+  Organisation
+} from '../../state/domain-models/organisation/organisationModels';
 import {CallbackWithData, uuid} from '../../types/Types';
 import {QuantityList} from '../../usecases/administration/components/QuantityList';
 import {ButtonSave} from '../buttons/ButtonSave';
@@ -21,7 +25,7 @@ const mediumById = (mediumId: number, mediums: Medium[]): Medium =>
   mediums.find(({id}) => id === mediumId)!;
 
 const organisationById = (organisationId: uuid, organisations: Organisation[]): Organisation =>
-  organisationId === noOrganisation().id
+  organisationId === noOrganisationId
     ? noOrganisation()
     : organisations.find(({id}) => id === organisationId)!;
 
@@ -76,8 +80,8 @@ export const MeterDefinitionEditForm = (
     }
   };
 
-  const organisationId: uuid = organisation ? organisation.id : noOrganisation().id;
-  const isDefault: boolean = organisationId === noOrganisation().id;
+  const organisationId: uuid = organisation ? organisation.id : noOrganisationId;
+  const isDefault: boolean = organisationId === noOrganisationId;
 
   const requiredValidator: string[] = ['required'];
   const requiredMessage: string[] = [firstUpperTranslated('required field')];
