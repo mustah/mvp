@@ -62,7 +62,7 @@
     "@types/lodash": "^4.14.123",
     "@types/material-ui": "0.20.7",
     "@types/moment-timezone": "^0.5.12",
-    "@types/node": "^10.12.18",
+    "@types/node": "^11.13.0",
     "@types/react-dates": "17.1.5",
     "@types/react-dom": "^16.0.11",
     "@types/react-leaflet": "^1.1.6",
