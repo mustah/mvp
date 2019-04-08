@@ -119,7 +119,6 @@ prepare:gradle-clean:
     - master
     - develop
     - tags
-    - /^release-.*$/
 
 prepare:version:
   <<: *no_cache
@@ -143,7 +142,6 @@ prepare:update-salt:
   stage: prepare
   only:
     - schedules
-    - /^release-.*$/
     - tags
   script:
     - pepper --fail-any -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
@@ -308,7 +306,6 @@ deploy:staging:
     - prepare:version
   only:
     - schedules
-    - /^release-.*$/
     - tags
   variables:
     API_USER: "mvpadmin@elvaco.se"
@@ -336,7 +333,6 @@ post-staging:acceptance:
     - build
   only:
     - schedules
-    - /^release-.*$/
     - tags
   variables:
     CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
@@ -350,7 +346,6 @@ post-staging:performance:
   stage: post-staging
   only:
     - schedules
-    - /^release-.*$/
     - tags
   variables:
     MVP_URL: "https://evo-staging.elvaco.se"
@@ -397,7 +392,6 @@ post-prod:acceptance:
     - build
   only:
     - schedules
-    - /^release-.*$/
     - tags
   variables:
     CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
