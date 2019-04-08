@@ -1,9 +1,10 @@
 import {momentAtUtcPlusOneFrom} from '../dateHelpers';
 import {
   cityWithoutCountry,
-  formatPercentage,
+  formatAlarmMaskHex,
   formatCollectionPercentage,
   formatDate,
+  formatPercentage,
   round,
   roundMeasurement
 } from '../formatters';
@@ -146,4 +147,17 @@ describe('formatters', () => {
 
   });
 
+  describe('format alarm masks as hex', () => {
+    it('formats all zeroes as "0x0000"', () => {
+      expect(formatAlarmMaskHex(0)).toEqual('0x0000');
+    });
+
+    it('formats all ones as "0xFFFF"', () => {
+      expect(formatAlarmMaskHex(65535)).toEqual('0xFFFF');
+    });
+
+    it('formats 128 as "0x0080"', () => {
+      expect(formatAlarmMaskHex(128)).toEqual('0x0080');
+    });
+  });
 });

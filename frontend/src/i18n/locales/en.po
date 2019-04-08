@@ -309,6 +309,9 @@ msgstr "facility ID"
 msgid "manufacturer"
 msgstr "manufacturer"
 
+msgid "unknown alarm"
+msgstr "unknown alarm"
+
 msgid "alarm"
 msgstr "alarm"
 

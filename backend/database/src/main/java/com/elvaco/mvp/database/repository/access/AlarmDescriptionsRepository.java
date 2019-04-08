@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.access;
 
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
@@ -32,6 +33,15 @@ public class AlarmDescriptionsRepository implements AlarmDescriptions {
       deviceType,
       firmwareRevision,
       mask
+    );
+  }
+
+  @Override
+  public Map<Integer, String> descriptionsFor(
+    String manufacturer, int deviceType, int firmwareRevision
+  ) {
+    return alarmDescriptionsJooqRepository.descriptionsFor(
+      manufacturer, deviceType, firmwareRevision
     );
   }
 }

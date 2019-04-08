@@ -1,8 +1,10 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.access.QuantityProvider;
@@ -14,6 +16,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.spi.repository.AlarmDescriptions;
 import com.elvaco.mvp.database.entity.meter.DisplayQuantityEntity;
 import com.elvaco.mvp.database.entity.meter.DisplayQuantityPk;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -29,6 +32,7 @@ import org.junit.Test;
 import static com.elvaco.mvp.core.domainmodels.Quantity.QUANTITIES;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.testing.util.DateHelper.utcZonedDateTimeOf;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,6 +53,25 @@ public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
 
   private static final MediumProvider MEDIUM_PROVIDER = name -> Optional.of(UNKNOWN_MEDIUM);
 
+  private static final AlarmDescriptions ALARM_DESCRIPTIONS = new AlarmDescriptions() {
+    @Override
+    public Optional<String> descriptionFor(
+      String manufacturer,
+      @Nullable Integer deviceType,
+      @Nullable Integer firmwareRevision,
+      int mask
+    ) {
+      return Optional.empty();
+    }
+
+    @Override
+    public Map<Integer, String> descriptionsFor(
+      String manufacturer, int mbusDeviceType, int revision
+    ) {
+      return emptyMap();
+    }
+  };
+
   private static final LogicalMeterEntityMapper logicalMeterEntityMapper =
     new LogicalMeterEntityMapper(
       new MeterDefinitionEntityMapper(
@@ -57,7 +80,7 @@ public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
       ),
       METER_DEFINITION_PROVIDER,
       MEDIUM_PROVIDER,
-      (manufacturer, deviceType, firmwareRevision, mask) -> Optional.empty()
+      ALARM_DESCRIPTIONS
     );
 
   @Test

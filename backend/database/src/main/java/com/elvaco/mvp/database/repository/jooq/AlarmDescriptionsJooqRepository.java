@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.util.Map;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,18 @@ public class AlarmDescriptionsJooqRepository {
       .and(ALARM_DESCRIPTION.DEVICE_TYPE.eq(deviceType))
       .and(ALARM_DESCRIPTION.MASK.eq(mask))
       .fetchOptional(ALARM_DESCRIPTION.DESCRIPTION);
+  }
+
+  public Map<Integer, String> descriptionsFor(
+    String manufacturer,
+    Integer deviceType,
+    Integer firmwareVersion
+  ) {
+    return dsl.select(ALARM_DESCRIPTION.MASK, ALARM_DESCRIPTION.DESCRIPTION)
+      .from(ALARM_DESCRIPTION)
+      .where(ALARM_DESCRIPTION.MANUFACTURER.eq(manufacturer))
+      .and(ALARM_DESCRIPTION.FIRMWARE_VERSION.eq(firmwareVersion))
+      .and(ALARM_DESCRIPTION.DEVICE_TYPE.eq(deviceType))
+      .fetchMap(ALARM_DESCRIPTION.MASK, ALARM_DESCRIPTION.DESCRIPTION);
   }
 }

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
-import {MeterAlarm} from '../../components/status/MeterAlarm';
+import {MeterAlarms, MeteringStatus} from '../../components/status/MeterAlarms';
 import {CityInfo} from '../../components/texts/Labels';
-import {BoldFirstUpper} from '../../components/texts/Texts';
+import {Bold, BoldFirstUpper} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
-import {formatReadInterval} from '../../helpers/formatters';
+import {formatAlarmMaskHex, formatReadInterval} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
@@ -48,7 +47,6 @@ const MeterDetailsInfo = ({
     medium,
     organisationId,
     alarms,
-    statusChanged,
     facility,
     isReported,
     mbusDeviceType,
@@ -63,10 +61,8 @@ const MeterDetailsInfo = ({
   const organisationName = organisation.map(({name}) => name).orElse(translate('unknown'));
   const sum = alarms ? alarms.reduce((previous, current) => previous + current.mask, 0) : 0;
 
-  const alarmCode = alarms && alarms.length
-    // tslint:disable-next-line:no-bitwise
-    ? ('00000000' + ((sum >>> 0).toString(2))).slice(-8) // zero-padded 8-bit string
-    : '-';
+  const alarmCount = alarms ? alarms.length : 0;
+  const alarmCodePresentation = sum > 0 ? (sum.toString(10) + ` (${formatAlarmMaskHex(sum)})`) : '-';
 
   return (
     <Column className="Overview">
@@ -105,15 +101,10 @@ const MeterDetailsInfo = ({
         <Column>
           <Subtitle>{translate('validation')}</Subtitle>
         </Column>
-        <Info className="First-column" label={translate('alarm')}>
-          <MeterAlarm items={alarms}/>
+        <Info className="First-column" label={translate('alarm code')}>
+          <Bold title={`${alarmCount} ${translate('alarm', {count: alarmCount})}`}>{alarmCodePresentation}</Bold>
         </Info>
-        <Info label={translate('alarm code')}>
-          <BoldFirstUpper>{alarmCode}</BoldFirstUpper>
-        </Info>
-        <Info label={translate('status change')}>
-          <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
-        </Info>
+        <MeterAlarms items={alarms}/>
       </Row>
       <Row>
         <Column>
@@ -132,7 +123,7 @@ const MeterDetailsInfo = ({
           <BoldFirstUpper>{revision || '-'}</BoldFirstUpper>
         </Info>
         <Info label={translate('reported')}>
-          <MeterAlarm items={isReported}/>
+          <MeteringStatus isReported={isReported!}/>
         </Info>
       </Row>
     </Column>

@@ -348,6 +348,9 @@ msgstr "anläggnings-ID"
 msgid "manufacturer"
 msgstr "tillverkare"
 
+msgid "unknown alarm"
+msgstr "okänt larm"
+
 msgid "alarm"
 msgstr "larm"
 
