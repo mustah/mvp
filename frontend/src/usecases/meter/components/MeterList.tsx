@@ -10,6 +10,7 @@ import {
 import * as React from 'react';
 import {gridStyle} from '../../../app/themes';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
+import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
@@ -21,6 +22,7 @@ import {orUnknown} from '../../../helpers/translations';
 import {firstUpper, firstUpperTranslated, translate} from '../../../services/translationService';
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
 import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
+import {uuid} from '../../../types/Types';
 
 const renderAlarm = ({dataItem: {alarm}}: GridCellProps) => <td><AlarmStatus hasAlarm={alarm}/></td>;
 
@@ -52,6 +54,7 @@ export const MeterList = ({
   sort,
   sortTable,
 }: MeterListProps) => {
+  const {closeConfirm, confirm, id, isOpen, openConfirm} = useConfirmDialog((id: uuid) => deleteMeter(id, page));
 
   const renderMeterId = ({dataItem: {address}}: GridCellProps) => (
     <td>
@@ -75,27 +78,19 @@ export const MeterList = ({
     <td>{firstUpper(orUnknown(manufacturer))}</td>;
 
   const renderActions = ({dataItem}: GridCellProps) => {
-    // TODO[!must!] this will be replaced by the common hook for confirm dialogs, created in another branch
-    const [isOpen, setOpen] = React.useState<boolean>(false);
-    const {id, facility} = dataItem;
-    const openDialog = () => setOpen(true);
-    const closeDialog = () => setOpen(false);
-    const confirm = () => {
-      closeDialog();
-      deleteMeter(id, page);
-    };
+    const {facility, id: meterId} = dataItem;
     return (
       <td>
         <RowRight className="ActionsDropdown-list">
           <ListActionsDropdown
             item={dataItem}
-            deleteMeter={openDialog}
+            deleteMeter={openConfirm}
             addToReport={addToReport}
             syncWithMetering={syncWithMetering}
           />
           <ConfirmDialog
-            isOpen={isOpen}
-            close={closeDialog}
+            isOpen={isOpen && id === meterId}
+            close={closeConfirm}
             confirm={confirm}
             text={firstUpperTranslated('are you sure you want to delete the meter {{facility}}', {facility})}
           />
