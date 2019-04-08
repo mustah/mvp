@@ -9,8 +9,10 @@ export interface Organisation extends IdNamed {
 
 export type OrganisationWithoutId = Omit<Organisation, 'id'>;
 
+export const noOrganisationId = -1;
+
 export const noOrganisation = (): Organisation => ({
-  id: -1,
+  id: noOrganisationId,
   name: firstUpperTranslated('no parent organisation'),
   slug: 'none',
 });

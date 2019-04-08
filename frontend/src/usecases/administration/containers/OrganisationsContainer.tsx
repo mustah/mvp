@@ -37,7 +37,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: clearOrganisationErrors,
 }, dispatch);
 
-export const OrganisationsContainer = connect<StateToProps, DispatchToProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(OrganisationList);
+export const OrganisationsContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(OrganisationList);

@@ -246,9 +246,6 @@ msgstr "standard"
 msgid "organisation name"
 msgstr "organisationsnamn"
 
-msgid "organisation slug"
-msgstr "organisationskod"
-
 msgid "parent organisation"
 msgstr "huvudorganisation"
 
