@@ -44,7 +44,7 @@ public class MeteringMessageParser implements MessageParser {
       case INFRASTRUCTURE_STATUS_V_1_0:
         return Optional.of(parseInfrastructureStatusMessage(message)
           .orElseThrow(() ->
-            new FailedToParse("Failed to parse infrastructure statue message: " + message)
+            new FailedToParse("Failed to parse infrastructure status message: " + message)
           ));
       case INFRASTRUCTURE_EXTENDED_STATUS_v_1_0:
         log.info("Ignoring extended status message, not implemented yet {}", message);

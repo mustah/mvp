@@ -73,6 +73,7 @@ const MapContent = ({meter, meterMapMarker}: MapProps) => (
 
 const ExtraInfo = ({dataItem: {extraInfo}}: GridDetailRowProps) => {
   const rows = extraInfo && Object.keys(extraInfo).length && Object.keys(extraInfo)
+    .sort()
     .map(key =>
       (
         <tr key={key}>
