@@ -47,13 +47,8 @@ public class MeteringRequestPublisher {
         .orElse(null))
       .build();
 
-    try {
-      messagePublisher.publish(MessageSerializer.toJson(getReferenceInfoDto).getBytes(
-        StandardCharsets.UTF_8));
-    } catch (Exception exception) {
-      throw new UpstreamServiceUnavailable(exception.getMessage());
-    }
-    meterSyncJobService.newPendingJob(jobId);
+    publishMessage(jobId, getReferenceInfoDto);
+
     return getReferenceInfoDto.jobId;
   }
 
@@ -73,15 +68,20 @@ public class MeteringRequestPublisher {
       .gateway(new GatewayIdDto(gateway.serial))
       .build();
 
+    publishMessage(jobId, getReferenceInfoDto);
+
+    return getReferenceInfoDto.jobId;
+  }
+
+  private void publishMessage(String jobId, GetReferenceInfoDto getReferenceInfoDto) {
     try {
-      messagePublisher.publish(MessageSerializer.toJson(getReferenceInfoDto).getBytes(
-        StandardCharsets.UTF_8
-      ));
+      messagePublisher.publish(
+        MessageSerializer.toJson(getReferenceInfoDto).getBytes(StandardCharsets.UTF_8)
+      );
     } catch (Exception exception) {
       throw new UpstreamServiceUnavailable(exception.getMessage());
     }
     meterSyncJobService.newPendingJob(jobId);
-    return getReferenceInfoDto.jobId;
   }
 
   private Organisation findOrganisationOrThrowException(
