@@ -61,14 +61,7 @@ interface ThresholdProps {
   onChange: CallbackWith<ThresholdQuery>;
 }
 
-type RenderableThresholdQuery = Partial<{
-  value: string;
-  relationalOperator: RelationalOperator | string;
-  quantity: Quantity | string;
-  unit: string;
-  duration?: string | null;
-  dateRange: SelectionInterval;
-}>;
+type RenderableThresholdQuery = Partial<ThresholdQuery>;
 
 type Props = ThresholdProps & ClassNamed & Styled;
 
@@ -94,8 +87,8 @@ const emptyQuery: RenderableThresholdQuery = {
   dateRange: defaultDateRange
 };
 
-export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => {
-  const [currentQuery, setQuery] = useChangeQuery(query, onChange);
+export const Thresholds = ({query, onChange, className}: Props) => {
+  const [currentQuery, setQuery] = useChangeQuery(query || emptyQuery, onChange);
   const {quantity, relationalOperator, value, unit, duration, dateRange} = currentQuery;
   const decoratedUnit = unitPerHour(quantity, unit);
   const durationOrNull = !duration ? null : duration;

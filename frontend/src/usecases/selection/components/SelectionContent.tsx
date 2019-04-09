@@ -72,6 +72,14 @@ export const SelectionContent = ({
   const selectGatewaySerials = (item: SelectionListItem) =>
     toggleParameter({item, parameter: ParameterName.gatewaySerials});
 
+  // TODO[!must!] this cannot be inlined until React is updated. This is the workaround for Typescript 3.0.1
+  const organisationDropdownProps: SearchableProps = {
+    fetchItems: fetchOrganisationsToSelect,
+    selectedItems: organisations,
+    selectionText: `${translate('organisation')}: `,
+    select: selectOrganisations,
+  };
+
   return (
     <Column className="SelectionContentBox">
 
@@ -83,12 +91,7 @@ export const SelectionContent = ({
             selectionText={`${translate('facility')}: `}
             select={selectFacilities}
           />
-          <OrganisationDropDown
-            fetchItems={fetchOrganisationsToSelect}
-            selectedItems={organisations}
-            selectionText={`${translate('organisation')}: `}
-            select={selectOrganisations}
-          />
+          <OrganisationDropDown {...organisationDropdownProps}/>
           <SearchableDropdownSelector
             fetchItems={fetchCities}
             selectedItems={cities}

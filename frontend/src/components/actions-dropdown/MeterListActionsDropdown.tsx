@@ -21,6 +21,7 @@ export const MeterListActionsDropdown =
           onClick();
           syncMeters();
         },
+        leftIcon: <NotificationSync style={actionMenuItemIconStyle}/>,
       };
 
       const onAddAllToReport = () => {
@@ -30,11 +31,7 @@ export const MeterListActionsDropdown =
 
       return ([
         (
-          <SyncWithMeteringMenuItem
-            {...syncMetersProps}
-            leftIcon={<NotificationSync style={actionMenuItemIconStyle}/>}
-            key="sync-meters-menu-item"
-          />
+          <SyncWithMeteringMenuItem {...syncMetersProps} key="sync-meters-menu-item"/>
         ),
         (
           <ActionMenuItem
