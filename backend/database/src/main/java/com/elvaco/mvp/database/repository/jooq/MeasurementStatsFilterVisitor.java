@@ -60,13 +60,13 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
       measurementThresholdDuringFilter =
         MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
           .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(
-            threshold.quantity.isConsumptionByDefault()))
+            threshold.quantity.isConsumptionSeries()))
           .and(valueConditionFor(threshold));
     } else {
       measurementStatsFilter =
         MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
           .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(
-            threshold.quantity.isConsumptionByDefault()))
+            threshold.quantity.isConsumptionSeries()))
           .and(valueConditionFor(threshold));
     }
   }

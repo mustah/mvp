@@ -52,6 +52,7 @@ class QuantityProviderConfig {
           QuantityEntity.builder()
             .name(quantity.name)
             .storageUnit(quantity.storageUnit)
+            .storageMode(quantity.storageMode)
             .build()
         ))
     );
@@ -61,7 +62,8 @@ class QuantityProviderConfig {
       .map(quantityEntity -> new Quantity(
         quantityEntity.id,
         quantityEntity.name,
-        quantityEntity.storageUnit
+        quantityEntity.storageUnit,
+        quantityEntity.storageMode
       ))
       .collect(toList());
 

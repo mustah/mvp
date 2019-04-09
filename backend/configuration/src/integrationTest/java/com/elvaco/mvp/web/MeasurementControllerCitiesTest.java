@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
@@ -52,7 +53,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .parameter("quantity", Quantity.POWER.name + ":W")
           .parameter("label", "Stockholm")
           .city("sverige,stockholm")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -102,7 +103,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -148,7 +149,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", "External temperature")
           .city("sverige,kiruna")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -184,7 +185,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", "Relative humidity")
           .city("sverige,stockholm")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -203,7 +204,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.VOLUME.name)
           .city("sverige,stockholm")
-          .resolution("hour").build(),
+          .resolution(TemporalResolution.hour).build(),
         MeasurementSeriesDto.class
       );
 
@@ -228,7 +229,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
           .city("sverige,kungsbacka")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -264,7 +265,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     Url cityAverageUrl = measurementsCitiesUrl()
       .period(start, start.plusHours(1))
       .city("sverige,stockholm")
-      .resolution("hour")
+      .resolution(TemporalResolution.hour)
       .parameter("quantity", Quantity.POWER.name + ":W")
       .build();
 
@@ -272,7 +273,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .builder()
       .path("/measurements/average")
       .period(start, start.plusHours(1))
-      .resolution("hour")
+      .resolution(TemporalResolution.hour)
       .parameter("quantity", Quantity.POWER.name + ":W")
       .parameter("id", List.of(meterOne.id, meterTwo.id))
       .build();

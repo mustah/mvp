@@ -1,0 +1,31 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Make display quantity mode advisory" author="Anton Löfgren">
+    <!-- remove display mode from display_quantity PK -->
+    <dropPrimaryKey tableName="display_quantity"/>
+    <addPrimaryKey tableName="display_quantity" columnNames="meter_definition_id,quantity_id"/>
+
+    <!-- add storage mode to quantity-->
+    <addColumn tableName="quantity">
+      <column type="integer" name="storage_mode"/>
+    </addColumn>
+    <sql>
+      update quantity
+      set storage_mode = (
+        case
+          when name in ('Volume', 'Reactive energy', 'Energy', 'Energy return') then 2
+          else 1
+        end
+      );
+    </sql>
+    <addNotNullConstraint tableName="quantity" columnName="storage_mode"/>
+
+    <addColumn tableName="quantity_aud" schemaName="evoaudit">
+      <column type="integer" name="storage_mode"/>
+      <column type="boolean" name="storage_mode_mod" />
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

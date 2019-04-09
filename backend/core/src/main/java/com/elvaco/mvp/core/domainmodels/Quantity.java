@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 import lombok.AllArgsConstructor;
@@ -14,42 +13,41 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Quantity implements Identifiable<Integer> {
-
   public static final Quantity EXTERNAL_TEMPERATURE = new QuantityBuilder()
-    .name("External temperature").storageUnit("°C").build();
+    .name("External temperature").storageUnit("°C").storageMode(DisplayMode.READOUT).build();
 
   public static final Quantity VOLUME = new QuantityBuilder()
-    .name("Volume").storageUnit("m³").build();
+    .name("Volume").storageUnit("m³").storageMode(DisplayMode.CONSUMPTION).build();
 
   public static final Quantity VOLUME_FLOW = new QuantityBuilder()
-    .name("Flow").storageUnit("m³/h").build();
+    .name("Flow").storageUnit("m³/h").storageMode(DisplayMode.READOUT).build();
 
   public static final Quantity TEMPERATURE = new QuantityBuilder()
-    .name("Temperature").storageUnit("°C").build();
+    .name("Temperature").storageUnit("°C").storageMode(DisplayMode.READOUT).build();
 
   public static final Quantity HUMIDITY = new QuantityBuilder()
-    .name("Relative humidity").storageUnit("%").build();
+    .name("Relative humidity").storageUnit("%").storageMode(DisplayMode.READOUT).build();
 
   public static final Quantity ENERGY = new QuantityBuilder()
-    .name("Energy").storageUnit("kWh").build();
+    .name("Energy").storageUnit("kWh").storageMode(DisplayMode.CONSUMPTION).build();
 
   public static final Quantity POWER = new QuantityBuilder()
-    .name("Power").storageUnit("W").build();
+    .name("Power").storageUnit("W").storageMode(DisplayMode.READOUT).build();
 
   public static final Quantity FORWARD_TEMPERATURE = new QuantityBuilder()
-    .name("Forward temperature").storageUnit("°C").build();
+    .name("Forward temperature").storageUnit("°C").storageMode(DisplayMode.READOUT).build();
 
   public static final Quantity RETURN_TEMPERATURE = new QuantityBuilder()
-    .name("Return temperature").storageUnit("°C").build();
+    .name("Return temperature").storageUnit("°C").storageMode(DisplayMode.READOUT).build();
 
   public static final Quantity DIFFERENCE_TEMPERATURE = new QuantityBuilder()
-    .name("Difference temperature").storageUnit("K").build();
+    .name("Difference temperature").storageUnit("K").storageMode(DisplayMode.READOUT).build();
 
   public static final Quantity ENERGY_RETURN = new QuantityBuilder()
-    .name("Energy return").storageUnit("kWh").build();
+    .name("Energy return").storageUnit("kWh").storageMode(DisplayMode.CONSUMPTION).build();
 
   public static final Quantity REACTIVE_ENERGY = new QuantityBuilder()
-    .name("Reactive energy").storageUnit("kWh").build();
+    .name("Reactive energy").storageUnit("kWh").storageMode(DisplayMode.CONSUMPTION).build();
 
   public static final List<Quantity> QUANTITIES = List.of(
     VOLUME,
@@ -70,12 +68,14 @@ public class Quantity implements Identifiable<Integer> {
   public final Integer id;
   public final String name;
   public final String storageUnit;
+  //FIXME: This type has the wrong name for this ... Maybe rename to
+  // SeriesMode?
+  // MeasurementType?
+  // Mode?
+  public final DisplayMode storageMode;
 
-  public boolean isConsumptionByDefault() {
-    //TODO: This is a hack to support measurement thresholds. We should decide how to get the
-    // display information to the threshold parser
-    return Set.of(VOLUME.name, ENERGY.name, REACTIVE_ENERGY.name, ENERGY_RETURN.name)
-      .contains(this.name);
+  public boolean isConsumptionSeries() {
+    return storageMode.equals(DisplayMode.CONSUMPTION);
   }
 
   @Nullable

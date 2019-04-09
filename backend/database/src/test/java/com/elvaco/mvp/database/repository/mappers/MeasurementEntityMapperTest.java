@@ -27,7 +27,8 @@ public class MeasurementEntityMapperTest {
     QuantityProvider quantityProvider = (name) -> Optional.of(new Quantity(
       1,
       "Volume",
-      VOLUME.storageUnit
+      VOLUME.storageUnit,
+      VOLUME.storageMode
     ));
 
     entityMapper = new MeasurementEntityMapper(
