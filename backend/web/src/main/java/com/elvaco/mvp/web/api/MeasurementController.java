@@ -165,7 +165,7 @@ public class MeasurementController {
   @Nullable
   private static String singleCityOrNull(RequestParameters requestParameters) {
     var cities = requestParameters.getValues(CITY);
-    return cities.isEmpty() || cities.size() > 1 ? null : cities.iterator().next();
+    return cities.size() != 1 ? null : cities.iterator().next();
   }
 
   private static ZonedDateTime beforeOrNow(ZonedDateTime before) {
