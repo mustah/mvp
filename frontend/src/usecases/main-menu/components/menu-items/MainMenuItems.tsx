@@ -22,7 +22,8 @@ const BadgeComponent = ({isReportPage, numSelectedItems}: ReportPageProps) => {
         style={badgeStyle}
         className="Animate-zoom-in"
         key={`badge-${numSelectedItems}`}
-      />)
+      />
+    )
     : null;
 };
 

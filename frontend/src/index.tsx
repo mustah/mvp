@@ -18,14 +18,16 @@ import {persistor, store} from './store/configureStore';
 
 onTranslationInitialized(() =>
   ReactDOM.render(
-    <Provider store={store}>
-      <MuiThemeProvider muiTheme={mvpTheme}>
-        <PersistGate loading={<LoadingLarge/>} persistor={persistor}>
-          <ConnectedRouter history={history}>
-            <App/>
-          </ConnectedRouter>
-        </PersistGate>
-      </MuiThemeProvider>
-    </Provider>,
+    (
+      <Provider store={store}>
+        <MuiThemeProvider muiTheme={mvpTheme}>
+          <PersistGate loading={<LoadingLarge/>} persistor={persistor}>
+            <ConnectedRouter history={history}>
+              <App/>
+            </ConnectedRouter>
+          </PersistGate>
+        </MuiThemeProvider>
+      </Provider>
+    ),
     document.getElementById('app'),
   ));

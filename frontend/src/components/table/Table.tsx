@@ -44,7 +44,8 @@ export const Table = ({result, entities, children, className, style}: TableProps
   const renderRow = (id: uuid) => (
     <tr key={id}>
       {cellRenderFunctions.map((onRenderCell, index) => renderCell(onRenderCell, id, index))}
-    </tr>);
+    </tr>
+  );
 
   const rows = result.length ? result.map(renderRow) : null;
 

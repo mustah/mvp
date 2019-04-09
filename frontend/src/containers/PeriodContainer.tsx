@@ -32,7 +32,8 @@ const PeriodComponent =
       setCustomDateRange={setCustomDateRange}
       customDateRange={customDateRange}
       style={style}
-    />);
+    />
+  );
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectPeriod,

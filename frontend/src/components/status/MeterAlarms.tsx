@@ -37,13 +37,14 @@ const StatusComponent = ({status, label, tooltipText, className}: Props) => (
 
 export const MeterAlarms = ({items}: MeterAlarmProps) => {
   const alarmStatuses = Array.isArray(items) && items.length > 0
-    ? items.map(alarm =>
+    ? items.map(({id, description, mask}, index) =>
       (
         <StatusComponent
+          key={`alarms-${id}-${index}`}
           className="MeterAlarms-description"
-          label={alarm.description || (translate('unknown alarm') + ` (${translate('alarm code')} ${alarm.mask})`)}
+          label={description || (translate('unknown alarm') + ` (${translate('alarm code')} ${mask})`)}
           status={Status.error}
-          tooltipText={`${translate('alarm code')}: ${formatAlarmMaskHex(alarm.mask)}`}
+          tooltipText={`${translate('alarm code')}: ${formatAlarmMaskHex(mask)}`}
         />
       )
     ) : undefined;

@@ -70,7 +70,8 @@ const MeterDetailsComponent = (props: Props) => {
       isFetching={props.isFetching}
       hasContent={props.meter.isJust()}
       noContentText={noSuchMeterMessage(props.selectedId)}
-    />);
+    />
+  );
 };
 
 const mapStateToProps = (
