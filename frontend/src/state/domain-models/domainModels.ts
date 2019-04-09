@@ -47,6 +47,7 @@ export interface DomainModelsState {
   mediums: NormalizedState<Medium>;
   quantities: NormalizedState<Quantity>;
   collectionStats: NormalizedState<CollectionStat>;
+  meterCollectionStats: NormalizedState<CollectionStat>;
   meterDetailMeasurement: MeasurementState;
   dashboards: NormalizedState<Dashboard>;
   widgets: NormalizedState<Widget>;

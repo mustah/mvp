@@ -9,6 +9,7 @@ export interface PaginatedDomainModelsState {
   meters: MetersState;
   gateways: GatewaysState;
   collectionStatFacilities: CollectionStatFacilityState;
+  meterCollectionStatFacilities: CollectionStatFacilityState;
 }
 
 export interface NormalizedPaginatedResult {

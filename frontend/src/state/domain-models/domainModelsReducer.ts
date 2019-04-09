@@ -3,9 +3,11 @@ import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
-import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {Action, ErrorResponse, Identifiable, uuid, ActionKey, ModelSectors} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
+import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {meterDetailMeasurementRequest} from '../../usecases/meter/measurements/meterDetailMeasurementActions';
 import {meterDetailMeasurement} from '../../usecases/meter/measurements/meterDetailMeasurementReducer';
 import {search} from '../search/searchActions';
 import {QueryParameter} from '../search/searchModels';
@@ -23,7 +25,7 @@ import {
   domainModelsPostSuccess,
   domainModelsPutSuccess,
   domainModelsRequest,
-} from './domainModelsActions';
+  } from './domainModelsActions';
 import {Medium, MeterDefinition, Quantity} from './meter-definitions/meterDefinitionModels';
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
@@ -128,7 +130,7 @@ type ActionTypes<T extends Identifiable> =
 
 const reducerFor = <T extends Identifiable>(
   entity: keyof DomainModelsState,
-  endPoint: EndPoints,
+  actionKey: ActionKey,
   resetState = identity,
 ) =>
   (
@@ -136,27 +138,27 @@ const reducerFor = <T extends Identifiable>(
     action: ActionTypes<T>,
   ): NormalizedState<T> => {
     switch (action.type) {
-      case domainModelsRequest(endPoint):
+      case domainModelsRequest(actionKey):
         return {...state, isFetching: true};
-      case domainModelsGetSuccess(endPoint):
+      case domainModelsGetSuccess(actionKey):
         return setEntities<T>(entity, state, (action as Action<Normalized<T>>).payload);
-      case domainModelsGetEntitiesSuccess(endPoint):
+      case domainModelsGetEntitiesSuccess(actionKey):
         return addEntities<T>(entity, state, (action as Action<Normalized<T>>).payload);
-      case domainModelsGetEntitySuccess(endPoint):
+      case domainModelsGetEntitySuccess(actionKey):
         return addEntity<T>(state, action as Action<T>);
-      case domainModelsPostSuccess(endPoint):
+      case domainModelsPostSuccess(actionKey):
         return addEntity<T>(state, action as Action<T>);
-      case domainModelsPutSuccess(endPoint):
+      case domainModelsPutSuccess(actionKey):
         return modifyEntity<T>(state, action as Action<T>);
-      case domainModelsDeleteSuccess(endPoint):
+      case domainModelsDeleteSuccess(actionKey):
         return removeEntity<T>(state, action as Action<T>);
-      case domainModelsFailure(endPoint):
+      case domainModelsFailure(actionKey):
         return setError(state, action as Action<ErrorResponse>);
-      case domainModelsClearError(endPoint):
+      case domainModelsClearError(actionKey):
       case getType(search):
         return initialDomain<T>();
       default:
-        return resetState(state, action, endPoint);
+        return resetState(state, action, actionKey);
     }
   };
 
@@ -173,6 +175,19 @@ export const resetStateOnLogoutReducer = <S extends Identifiable>(
   {type}: ActionTypes<S>,
 ): NormalizedState<S> =>
   type === getType(logoutUser) ? initialDomain<S>() : state;
+
+const resetMeterCollectionReducer = <T extends Identifiable>(
+  state: NormalizedState<T> = initialDomain<T>(),
+  action: ActionTypes<T>,
+): NormalizedState<T> => {
+  switch (action.type) {
+    case getType(setCollectionTimePeriod(ModelSectors.meterCollection)):
+    case getType(meterDetailMeasurementRequest):
+      return initialDomain<T>();
+    default:
+      return resetReducer<NormalizedState<T>>(state, action, initialDomain<T>());
+  }
+};
 
 export const meters = reducerFor<MeterDetails>(
   'meters',
@@ -230,8 +245,14 @@ export const userSelections = reducerFor<UserSelection>(
 
 export const collectionStats = reducerFor<CollectionStat>(
   'collectionStats',
-  EndPoints.collectionStatDate,
+  ModelSectors.collection,
   resetStateReducer
+);
+
+export const meterCollectionStats = reducerFor<CollectionStat>(
+  'collectionStats',
+  ModelSectors.meterCollection,
+  resetMeterCollectionReducer
 );
 
 export const dashboards = reducerFor<Dashboard>(
@@ -248,6 +269,7 @@ export const widgets = reducerFor<Widget>(
 
 export const domainModels = combineReducers<DomainModelsState>({
   collectionStats,
+  meterCollectionStats,
   dashboards,
   gatewayMapMarkers,
   mediums,

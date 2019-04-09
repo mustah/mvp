@@ -4,8 +4,11 @@ import {RootState} from '../../../reducers/rootReducer';
 import {changeCollectionToolbarView} from '../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
-import {Callback, CallbackWith} from '../../../types/Types';
-import {exportToExcel, setCollectionTimePeriod} from '../collectionActions';
+import {Callback, CallbackWith, ModelSectors} from '../../../types/Types';
+import {
+  exportToExcel,
+  setCollectionTimePeriod
+} from '../collectionActions';
 import {CollectionToolbar} from '../components/CollectionToolbar';
 
 export interface StateToProps {
@@ -36,9 +39,9 @@ const mapStateToProps = ({
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  changeToolbarView: changeCollectionToolbarView,
+  changeToolbarView: changeCollectionToolbarView(ModelSectors.collection),
   exportToExcel,
-  setCollectionTimePeriod,
+  setCollectionTimePeriod: setCollectionTimePeriod(ModelSectors.collection),
 }, dispatch);
 
 export const CollectionToolbarContainer =

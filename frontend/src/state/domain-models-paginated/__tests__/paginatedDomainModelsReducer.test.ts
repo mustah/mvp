@@ -292,6 +292,13 @@ describe('paginatedDomainModelsReducer', () => {
   describe('clear paginatedDomainModels', () => {
 
     it('clears a cached data', () => {
+      const expextedState: PaginatedDomainModelsState = {
+        meters: makeInitialState<Meter>(),
+        gateways: makeInitialState<Gateway>(),
+        collectionStatFacilities: makeInitialState<CollectionStat>(),
+        meterCollectionStatFacilities: makeInitialState<CollectionStat>(),
+      };
+
       expect(paginatedDomainModels(
         {
           meters: {
@@ -304,13 +311,12 @@ describe('paginatedDomainModelsReducer', () => {
           collectionStatFacilities: {
             ...makeInitialState<CollectionStat>(),
           },
+          meterCollectionStatFacilities: {
+            ...makeInitialState<CollectionStat>(),
+          },
         },
         mockSelectionAction,
-      )).toEqual({
-        meters: makeInitialState<Meter>(),
-        gateways: makeInitialState<Gateway>(),
-        collectionStatFacilities: makeInitialState<CollectionStat>()
-      });
+      )).toEqual(expextedState);
     });
   });
 
@@ -438,12 +444,17 @@ describe('paginatedDomainModelsReducer', () => {
           ...makeInitialState<CollectionStat>(),
           isFetchingSingle: true,
         },
+        meterCollectionStatFacilities: {
+          ...makeInitialState<CollectionStat>(),
+          isFetchingSingle: true,
+        },
       };
 
       const expected: PaginatedDomainModelsState = {
         meters: {...makeInitialState<Meter>()},
         gateways: {...makeInitialState<Gateway>()},
         collectionStatFacilities: {...makeInitialState<CollectionStat>()},
+        meterCollectionStatFacilities: {...makeInitialState<CollectionStat>()},
       };
 
       state = paginatedDomainModels(state, logoutUser(undefined));

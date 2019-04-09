@@ -15,6 +15,7 @@ const convert = (name: keyof OldSelectionParameters, selectionParameters): IdNam
 const toolbarState: Omit<ToolbarState, 'meterMeasurement'> = {
   measurement: {view: ToolbarView.graph},
   collection: {view: ToolbarView.graph},
+  meterCollection: {view: ToolbarView.graph},
   selectionReport: {view: ToolbarView.graph},
 };
 
@@ -167,7 +168,21 @@ export const migrations = {
         }
       }
     };
+  },
+  10: (state: PersistedState | any) => {
+    const {ui} = state;
+    const toolbar = ui.toolbar;
+    return {
+      ...state,
+      ui: {
+        ...ui,
+        toolbar: {
+          ...toolbar,
+          meterCollection: toolbar.meterCollection || {view: ToolbarView.graph}
+        }
+      }
+    };
   }
 };
 
-export const currentVersion: number = 9;
+export const currentVersion: number = 10;

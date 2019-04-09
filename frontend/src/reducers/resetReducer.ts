@@ -7,6 +7,7 @@ import {
   selectSavedSelectionAction,
   setThresholdAction
 } from '../state/user-selection/userSelectionActions';
+import {ModelSectors} from '../types/Types';
 import {logoutUser} from '../usecases/auth/authActions';
 import {setCollectionTimePeriod} from '../usecases/collection/collectionActions';
 
@@ -17,7 +18,7 @@ export const resetReducer = <S>(
 ): S => {
   switch (type) {
     case getType(setThresholdAction):
-    case getType(setCollectionTimePeriod):
+    case getType(setCollectionTimePeriod(ModelSectors.collection)):
     case getType(addParameterToSelection):
     case getType(deselectSelection):
     case getType(selectSavedSelectionAction):

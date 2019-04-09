@@ -27,6 +27,7 @@ export const initialPaginationState: PaginationState = {
   meters: {...initialPaginationModel},
   gateways: {...initialPaginationModel},
   collectionStatFacilities: {...initialPaginationModel},
+  meterCollectionStatFacilities: {...initialPaginationModel},
 };
 
 type ActionTypes =

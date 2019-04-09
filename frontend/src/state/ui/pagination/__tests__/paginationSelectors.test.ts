@@ -47,6 +47,16 @@ describe('paginationSelectors', () => {
         totalPages: 10,
         totalElements: 40,
       },
+      meterCollectionStatFacilities: {
+        useCases: {
+          collectionStatList: {
+            page: 3,
+          },
+        },
+        size: 4,
+        totalPages: 10,
+        totalElements: 40,
+      },
     };
 
     it('retrieves pagination from existing entityType and componentId', () => {

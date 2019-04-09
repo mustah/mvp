@@ -24,7 +24,7 @@ import {widget, WidgetState} from '../state/widget/widgetReducer';
 import {AuthState} from '../usecases/auth/authModels';
 import {auth} from '../usecases/auth/authReducer';
 import {CollectionState} from '../usecases/collection/collectionModels';
-import {collection} from '../usecases/collection/collectionReducer';
+import {collection, meterCollection} from '../usecases/collection/collectionReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
 import {MeterDetailState} from '../usecases/meter/measurements/meterDetailModels';
 import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
@@ -33,6 +33,7 @@ import {currentVersion, migrations} from './stateMigrations';
 export interface RootState {
   auth: AuthState;
   collection: CollectionState;
+  meterCollection: CollectionState;
   domainModels: DomainModelsState;
   language: LanguageState;
   map: MapState;
@@ -85,6 +86,7 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     search,
     previousSession,
     collection,
+    meterCollection,
     meterDetail,
     widget,
   });

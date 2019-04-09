@@ -5,7 +5,13 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
-import {Action, ErrorResponse, FetchPaginated, Identifiable, payloadActionOf} from '../../types/Types';
+import {
+  Action, ActionKey,
+  ErrorResponse,
+  FetchPaginated,
+  Identifiable,
+  payloadActionOf
+} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestType} from '../domain-models/domainModels';
@@ -18,15 +24,16 @@ import {
   PaginatedDomainModelsState,
 } from './paginatedDomainModels';
 
-export const domainModelsPaginatedRequest = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_REQUEST${endPoint}`;
-export const domainModelsPaginatedGetSuccess = (endPoint: EndPoints) =>
-  `DOMAIN_MODELS_PAGINATED_${RequestType.GET}_SUCCESS${endPoint}`;
-export const domainModelsPaginatedFailure = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_FAILURE${endPoint}`;
-export const domainModelPaginatedClearError = (endPoint: EndPoints) =>
-  `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${endPoint}`;
-
-export const sortTableAction = (endPoint: EndPoints) =>
-  createStandardAction(`SORT_TABLE${endPoint}`)<ApiRequestSortingOptions[] | undefined>();
+export const domainModelsPaginatedRequest = (actionKey: ActionKey) =>
+  `DOMAIN_MODELS_PAGINATED_REQUEST${actionKey}`;
+export const domainModelsPaginatedGetSuccess = (actionKey: ActionKey) =>
+  `DOMAIN_MODELS_PAGINATED_${RequestType.GET}_SUCCESS${actionKey}`;
+export const domainModelsPaginatedFailure = (actionKey: ActionKey) =>
+  `DOMAIN_MODELS_PAGINATED_FAILURE${actionKey}`;
+export const domainModelPaginatedClearError = (actionKey: ActionKey) =>
+  `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${actionKey}`;
+export const sortTableAction = (actionKey: ActionKey) =>
+  createStandardAction(`SORT_TABLE${actionKey}`)<ApiRequestSortingOptions[] | undefined>();
 
 export const clearError = (endPoint: EndPoints) =>
   payloadActionOf<PageNumbered>(domainModelPaginatedClearError(endPoint));
@@ -89,11 +96,12 @@ const needAnotherPage = (page: number, {result}: NormalizedPaginatedState<Identi
   !result[page]
   || (!result[page].isSuccessfullyFetched && !result[page].isFetching && !result[page].error);
 
-export const makeRequestActionsOf = <T>(endPoint: EndPoints): PaginatedRequestHandler<T> => ({
-  request: payloadActionOf<number>(domainModelsPaginatedRequest(endPoint)),
-  success: payloadActionOf<T>(domainModelsPaginatedGetSuccess(endPoint)),
-  failure: payloadActionOf<ErrorResponse & PageNumbered>(domainModelsPaginatedFailure(endPoint)),
-});
+export const makeRequestActionsOf =
+  <T>(actionKey: ActionKey): PaginatedRequestHandler<T> => ({
+    request: payloadActionOf<number>(domainModelsPaginatedRequest(actionKey)),
+    success: payloadActionOf<T>(domainModelsPaginatedGetSuccess(actionKey)),
+    failure: payloadActionOf<ErrorResponse & PageNumbered>(domainModelsPaginatedFailure(actionKey)),
+  });
 
 export const fetchIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
@@ -108,6 +116,32 @@ export const fetchIfNeeded = <T extends Identifiable>(
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, NormalizedPaginated<T>>({
           ...makeRequestActionsOf<NormalizedPaginated<T>>(endPoint),
+          formatData: (data) => ({...formatData(data), page}),
+          requestFunc,
+          requestData,
+          page,
+          ...requestCallbacks,
+          dispatch,
+        });
+      } else {
+        return null;
+      }
+    };
+
+export const fetchIfNeededForSector = <T extends Identifiable>(
+  actionKey: ActionKey,
+  endPoint: EndPoints,
+  formatData: DataFormatter<NormalizedPaginated<T>>,
+  entityType: keyof PaginatedDomainModelsState,
+  requestCallbacks?: RequestCallbacks<NormalizedPaginated<T>>,
+): FetchPaginated =>
+  (page: number, requestData?: string) =>
+    (dispatch: Dispatch<RootState>, getState: GetState) => {
+      const {paginatedDomainModels} = getState();
+      if (needAnotherPage(page, paginatedDomainModels[entityType])) {
+        const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
+        return asyncRequest<string, NormalizedPaginated<T>>({
+          ...makeRequestActionsOf<NormalizedPaginated<T>>(actionKey),
           formatData: (data) => ({...formatData(data), page}),
           requestFunc,
           requestData,
