@@ -3,9 +3,10 @@
 .GlobalSearch-Container {
   position: fixed;
   left: $side-menu-width + $lg-space;
+  z-index: 1;
 
   .GlobalSearch {
-    width: 512px;
+    width: $global-search-width;
     position: relative;
 
     &:hover, &.hasValue {
@@ -37,6 +38,32 @@
         background-color: $white;
         color: $blackest;
       }
+    }
+  }
+
+  @media all and (max-width: $global-search-max-width) {
+    .GlobalSearch {
+      width: $global-search-width - $global-search-scale-width;
+      transition: 0.3s;
+    }
+  }
+
+  @media all and (max-width: $global-search-max-width - $global-search-scale-width) {
+    .GlobalSearch {
+      width: $global-search-width - ($global-search-scale-width * 2);
+      transition: 0.3s;
+    }
+  }
+
+  @media all and (max-width: $global-search-max-width - ($global-search-scale-width * 2)) {
+    left: 174px;
+    transition: 0.3s;
+  }
+
+  @media all and (max-width: $global-search-max-width - ($global-search-scale-width * 3)) {
+    & {
+      left: 14px;
+      transition: 0.2s;
     }
   }
 }

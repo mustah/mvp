@@ -12,9 +12,15 @@
   justify-content: space-between;
   box-shadow: $box-shadow;
 
-  .SelectionMenu {
+  .TopMenu-LeftContent {
     color: $blackest;
     align-items: center;
+
+    @media all and (max-width: $global-search-max-width - ($global-search-scale-width * 3)) {
+      & {
+        padding-left: 8px;
+      }
+    }
   }
 
   .TopMenu-RightContent {
