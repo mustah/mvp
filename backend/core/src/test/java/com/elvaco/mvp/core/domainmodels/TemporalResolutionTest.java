@@ -11,6 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TemporalResolutionTest {
 
   private static final ZonedDateTime DATE = ZonedDateTime.parse("2018-10-04T21:47:15.34Z");
+  private static final ZonedDateTime DATE_WITH_OFFSET =
+    ZonedDateTime.parse("2018-10-04T21:47:15.34+02");
   private static final ZonedDateTime START = ZonedDateTime.parse("2018-03-26T02:10:45Z");
 
   @Test
@@ -20,15 +22,33 @@ public class TemporalResolutionTest {
   }
 
   @Test
+  public void intervalStartForDayInterval_withOffset() {
+    ZonedDateTime startInterval = TemporalResolution.day.getStart(DATE_WITH_OFFSET);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T00:00:00.000+02"));
+  }
+
+  @Test
   public void intervalStartForHourInterval() {
     ZonedDateTime startInterval = TemporalResolution.hour.getStart(DATE);
     assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T21:00:00.000Z"));
   }
 
   @Test
+  public void intervalStartForHourInterval_withOffset() {
+    ZonedDateTime startInterval = TemporalResolution.hour.getStart(DATE_WITH_OFFSET);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T19:00:00.000Z"));
+  }
+
+  @Test
   public void intervalStartForMonthInterval() {
     ZonedDateTime startInterval = TemporalResolution.month.getStart(DATE);
     assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-01T00:00:00.000Z"));
+  }
+
+  @Test
+  public void intervalStartForMonthInterval_withOffset() {
+    ZonedDateTime startInterval = TemporalResolution.month.getStart(DATE_WITH_OFFSET);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-01T00:00:00.000+02"));
   }
 
   @Test

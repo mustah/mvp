@@ -15,7 +15,9 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementRepositoryTest {
-  private static final ZonedDateTime NOW = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS);
+  private static final ZonedDateTime NOW = ZonedDateTime.now()
+    .withZoneSameInstant(ZoneId.of("UTC"))
+    .truncatedTo(ChronoUnit.HOURS);
 
   @Test
   public void fillMissing_empty() {

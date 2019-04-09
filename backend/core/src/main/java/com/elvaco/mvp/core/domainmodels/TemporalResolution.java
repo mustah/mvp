@@ -18,30 +18,21 @@ public enum TemporalResolution implements StartInterval, TemporalUnit {
   hour(HOURS) {
     @Override
     public ZonedDateTime getStart(ZonedDateTime zonedDateTime) {
-      return ZonedDateTime.ofInstant(
-        zonedDateTime.truncatedTo(HOURS).toInstant(),
-        zonedDateTime.getZone()
-      );
+      return zonedDateTime.truncatedTo(HOURS);
     }
   },
 
   day(DAYS) {
     @Override
     public ZonedDateTime getStart(ZonedDateTime zonedDateTime) {
-      return ZonedDateTime.ofInstant(
-        zonedDateTime.truncatedTo(DAYS).toInstant(),
-        zonedDateTime.getZone()
-      );
+      return zonedDateTime.truncatedTo(DAYS);
     }
   },
 
   month(MONTHS) {
     @Override
     public ZonedDateTime getStart(ZonedDateTime zonedDateTime) {
-      return ZonedDateTime.ofInstant(
-        zonedDateTime.truncatedTo(DAYS).with(firstDayOfMonth()).toInstant(),
-        zonedDateTime.getZone()
-      );
+      return zonedDateTime.with(firstDayOfMonth()).truncatedTo(DAYS);
     }
   };
 
