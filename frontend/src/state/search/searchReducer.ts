@@ -1,6 +1,6 @@
 import {Location} from 'history';
 import {ActionType, getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {isOnSearchPage} from '../../app/routes';
 import {Action} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';

@@ -1,5 +1,5 @@
 import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {GeoPosition} from '../../state/domain-models/location/locationModels';
 import {Action, uuid} from '../../types/Types';
 import {logoutUser} from '../auth/authActions';

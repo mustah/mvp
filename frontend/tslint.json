@@ -12,6 +12,13 @@
       "jsx-double"
     ]
   },
+  "linterOptions": {
+    "exclude": [
+      "package.json",
+      "dist/**/*",
+      "node_modules/**/*"
+    ]
+  },
   "rules": {
     "arrow-return-shorthand": [
       true,

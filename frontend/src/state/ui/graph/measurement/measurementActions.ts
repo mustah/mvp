@@ -1,6 +1,6 @@
 import {find, flatMap, groupBy, map, sortBy} from 'lodash';
 import {createAction, createStandardAction} from 'typesafe-actions';
-import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/types';
+import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {DateRange, Period, TemporalResolution} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonHelpers';
@@ -17,10 +17,10 @@ import {
   meterDetailMeasurementRequest,
   meterDetailMeasurementSuccess
 } from '../../../../usecases/meter/measurements/meterDetailMeasurementActions';
-import {ReportSector} from '../../../report/reportActions';
-import {isAggregate, isMedium, LegendType} from '../../../report/reportModels';
 import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {getDomainModelById} from '../../../domain-models/domainModelsSelectors';
+import {ReportSector} from '../../../report/reportActions';
+import {isAggregate, isMedium, LegendType} from '../../../report/reportModels';
 import {SelectionInterval, UserSelection} from '../../../user-selection/userSelectionModels';
 import {
   getGroupHeaderTitle,

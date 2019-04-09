@@ -1,5 +1,5 @@
 import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {EndPoints} from '../../services/endPoints';
 import {Action, IdNamed} from '../../types/Types';

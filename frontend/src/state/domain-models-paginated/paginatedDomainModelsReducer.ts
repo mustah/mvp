@@ -2,7 +2,7 @@ import {Location} from 'history';
 import {isEqual, pick} from 'lodash';
 import {combineReducers, Reducer} from 'redux';
 import {ActionType, getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {isOnSearchPage} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
 import {resetReducer} from '../../reducers/resetReducer';

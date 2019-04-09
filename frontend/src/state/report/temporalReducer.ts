@@ -1,5 +1,5 @@
 import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {Period, TemporalResolution} from '../../components/dates/dateModels';
 import {SelectionInterval} from '../user-selection/userSelectionModels';
 import {Action} from '../../types/Types';

@@ -59,6 +59,7 @@ export const ListActionsDropdown = ({item, deleteMeter, addToReport, syncWithMet
           syncWithMetering(id);
         }
       },
+      leftIcon: <NotificationSync style={actionMenuItemIconStyle}/>,
     };
 
     const deleteMenuItemProps: DeleteMeterMenuItemProps = {
@@ -72,11 +73,7 @@ export const ListActionsDropdown = ({item, deleteMeter, addToReport, syncWithMet
 
     return ([
       (
-        <SyncWithMeteringMenuItem
-          {...syncMenuItemProps}
-          key={`sync-${id}`}
-          leftIcon={<NotificationSync style={actionMenuItemIconStyle}/>}
-        />
+        <SyncWithMeteringMenuItem{...syncMenuItemProps} key={`sync-${id}`}/>
       ),
       (
         <ActionMenuItem
