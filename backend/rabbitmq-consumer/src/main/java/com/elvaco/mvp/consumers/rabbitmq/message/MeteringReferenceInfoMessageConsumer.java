@@ -179,7 +179,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     return logicalMeterUseCases.findBy(organisation.id, facilityId)
       .map(logicalMeter -> logicalMeter.toBuilder()
         .location(location)
-        .meterDefinition(meterDefinition)
+        .meterDefinition(meter.map(m -> meterDefinition).orElse(logicalMeter.meterDefinition))
         .build())
       .orElseGet(() -> meter.map(dto -> LogicalMeter.builder()
         .externalId(facilityId)
