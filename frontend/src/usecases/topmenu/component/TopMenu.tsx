@@ -12,7 +12,7 @@ const AppSwitchDropdownComponent = connectedAdminOnly(AppSwitch);
 
 export const TopMenu = ({children, className}: ClassNamed & WithChildren) => (
   <RowSpaceBetween className={classNames('TopMenu', className)}>
-    <Row className="SelectionMenu">
+    <Row className="TopMenu-LeftContent">
       {children}
     </Row>
     <RowRight className="TopMenu-RightContent">
