@@ -11,7 +11,4 @@
     <Class name="~com.elvaco.*\.*Test"/>
     <Bug code="NP"/>
   </Match>
-  <Match>
-    <Bug code="Dm"/>
-  </Match>
 </FindBugsFilter>

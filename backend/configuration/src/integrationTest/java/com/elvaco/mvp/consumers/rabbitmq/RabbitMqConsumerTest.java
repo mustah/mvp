@@ -1,5 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -47,7 +48,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   public void messagesSentToRabbitAreReceivedAndProcessed() throws Exception {
     MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto();
 
-    publishMessage(toJson(message).getBytes());
+    publishMessage(toJson(message).getBytes(StandardCharsets.UTF_8));
 
     assertOrganisationWithSlugWasCreated("some-organisation");
 
@@ -61,7 +62,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   public void processMessageWithMissingMeter() throws Exception {
     MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto();
 
-    publishMessage(toJson(message).getBytes());
+    publishMessage(toJson(message).getBytes(StandardCharsets.UTF_8));
 
     assertOrganisationWithSlugWasCreated("some-organisation");
     UUID organisationId = organisationJpaRepository.findBySlug("some-organisation").get().id;
@@ -78,7 +79,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       ))
       .withGatewayStatus(new GatewayStatusDto("123987", "Gateway 3100", "OK", "8.8.8.8", ""));
 
-    publishMessage(toJson(newMessage).getBytes());
+    publishMessage(toJson(newMessage).getBytes(StandardCharsets.UTF_8));
 
     assertLogicalMeterLocation(
       organisationId,
@@ -105,7 +106,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       ))
       .withGatewayStatus(null);
 
-    publishMessage(toJson(newMessage).getBytes());
+    publishMessage(toJson(newMessage).getBytes(StandardCharsets.UTF_8));
 
     assertOrganisationWithSlugWasCreated("some-organisation");
 
@@ -124,7 +125,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       List.of(new ValueDto(LocalDateTime.now(), 0.659, "°C", "Return temp."))
     );
 
-    publishMessage(toJson(message).getBytes());
+    publishMessage(toJson(message).getBytes(StandardCharsets.UTF_8));
 
     assertOrganisationWithSlugWasCreated("organisation-123-456");
   }
@@ -133,15 +134,15 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   public void meterWithSameStatus_ShouldNotCreateNewStatusWithCurrentTimestamp() throws Exception {
     MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto();
 
-    publishMessage(toJson(message).getBytes());
+    publishMessage(toJson(message).getBytes(StandardCharsets.UTF_8));
 
     assertOrganisationWithSlugWasCreated("some-organisation");
 
-    publishMessage(toJson(message).getBytes());
+    publishMessage(toJson(message).getBytes(StandardCharsets.UTF_8));
 
     waitFor(100);
 
-    publishMessage(toJson(message).getBytes());
+    publishMessage(toJson(message).getBytes(StandardCharsets.UTF_8));
 
     assertThat(waitForCondition(() -> physicalMeterStatusLogJpaRepository.findAll().size() == 1))
       .as("Just one status log has been created").isTrue();
