@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
@@ -14,7 +15,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementRepositoryTest {
-  private static final ZonedDateTime NOW = ZonedDateTime.now();
+  private static final ZonedDateTime NOW = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS);
 
   @Test
   public void fillMissing_empty() {
@@ -130,6 +131,43 @@ public class MeasurementRepositoryTest {
     )).containsExactly(
       measurement(NOW),
       measurement(NOW.plusHours(1))
+    );
+  }
+
+  @Test
+  public void fillMissing_roundsStartUpToClosesIntervalTimestamp() {
+    List<MeasurementValue> values = List.of(
+      measurement(NOW),
+      measurement(NOW.plusHours(1))
+    );
+
+    assertThat(fillMissing(
+      values,
+      NOW.minusMinutes(1),
+      NOW.plusHours(1),
+      TemporalResolution.hour
+    )).containsExactly(
+      measurement(NOW),
+      measurement(NOW.plusHours(1))
+    );
+  }
+
+  @Test
+  public void fillMissing_roundsStartUpToClosesIntervalTimestamp_MonthResolution() {
+    ZonedDateTime start = NOW.withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+    List<MeasurementValue> values = List.of(
+      measurement(start),
+      measurement(start.plusMonths(1))
+    );
+
+    assertThat(fillMissing(
+      values,
+      start.minusMinutes(1),
+      start.plusMonths(1),
+      TemporalResolution.month
+    )).containsExactly(
+      measurement(start),
+      measurement(start.plusMonths(1))
     );
   }
 

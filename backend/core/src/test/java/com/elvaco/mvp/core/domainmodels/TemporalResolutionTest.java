@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 import org.junit.Test;
@@ -16,23 +15,20 @@ public class TemporalResolutionTest {
 
   @Test
   public void intervalStartForDayInterval() {
-    OffsetDateTime startInterval = TemporalResolution.day.getStart(DATE);
-    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T00:00:00.000Z")
-      .toOffsetDateTime());
+    ZonedDateTime startInterval = TemporalResolution.day.getStart(DATE);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T00:00:00.000Z"));
   }
 
   @Test
   public void intervalStartForHourInterval() {
-    OffsetDateTime startInterval = TemporalResolution.hour.getStart(DATE);
-    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T21:00:00.000Z")
-      .toOffsetDateTime());
+    ZonedDateTime startInterval = TemporalResolution.hour.getStart(DATE);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T21:00:00.000Z"));
   }
 
   @Test
   public void intervalStartForMonthInterval() {
-    OffsetDateTime startInterval = TemporalResolution.month.getStart(DATE);
-    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-01T00:00:00.000Z")
-      .toOffsetDateTime());
+    ZonedDateTime startInterval = TemporalResolution.month.getStart(DATE);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-01T00:00:00.000Z"));
   }
 
   @Test
