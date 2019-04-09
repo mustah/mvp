@@ -1,8 +1,8 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalUnit;
 
 import lombok.ToString;
@@ -13,12 +13,12 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 
 @ToString
-public enum TemporalResolution implements StartInterval {
+public enum TemporalResolution implements StartInterval, TemporalUnit {
 
   hour(HOURS) {
     @Override
-    public OffsetDateTime getStart(ZonedDateTime zonedDateTime) {
-      return OffsetDateTime.ofInstant(
+    public ZonedDateTime getStart(ZonedDateTime zonedDateTime) {
+      return ZonedDateTime.ofInstant(
         zonedDateTime.truncatedTo(HOURS).toInstant(),
         zonedDateTime.getZone()
       );
@@ -27,8 +27,8 @@ public enum TemporalResolution implements StartInterval {
 
   day(DAYS) {
     @Override
-    public OffsetDateTime getStart(ZonedDateTime zonedDateTime) {
-      return OffsetDateTime.ofInstant(
+    public ZonedDateTime getStart(ZonedDateTime zonedDateTime) {
+      return ZonedDateTime.ofInstant(
         zonedDateTime.truncatedTo(DAYS).toInstant(),
         zonedDateTime.getZone()
       );
@@ -37,8 +37,8 @@ public enum TemporalResolution implements StartInterval {
 
   month(MONTHS) {
     @Override
-    public OffsetDateTime getStart(ZonedDateTime zonedDateTime) {
-      return OffsetDateTime.ofInstant(
+    public ZonedDateTime getStart(ZonedDateTime zonedDateTime) {
+      return ZonedDateTime.ofInstant(
         zonedDateTime.truncatedTo(DAYS).with(firstDayOfMonth()).toInstant(),
         zonedDateTime.getZone()
       );
@@ -61,9 +61,34 @@ public enum TemporalResolution implements StartInterval {
     }
   }
 
-  public TemporalUnit getTemporalUnit() {
-    return this.unit;
+  @Override
+  public Duration getDuration() {
+    return unit.getDuration();
   }
 
+  @Override
+  public boolean isDurationEstimated() {
+    return unit.isDurationEstimated();
+  }
+
+  @Override
+  public boolean isDateBased() {
+    return unit.isDateBased();
+  }
+
+  @Override
+  public boolean isTimeBased() {
+    return unit.isTimeBased();
+  }
+
+  @Override
+  public <R extends Temporal> R addTo(R r, long l) {
+    return unit.addTo(r, l);
+  }
+
+  @Override
+  public long between(Temporal temporal, Temporal temporal1) {
+    return unit.between(temporal, temporal1);
+  }
 }
 

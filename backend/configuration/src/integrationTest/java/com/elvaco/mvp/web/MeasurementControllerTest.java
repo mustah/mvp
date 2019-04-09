@@ -11,8 +11,11 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
@@ -27,11 +30,13 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.DisplayMode.CONSUMPTION;
 import static com.elvaco.mvp.core.domainmodels.DisplayMode.READOUT;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
 import static com.elvaco.mvp.core.domainmodels.Quantity.DIFFERENCE_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.EXTERNAL_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.HUMIDITY;
+import static com.elvaco.mvp.core.domainmodels.Quantity.POWER;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
 import static com.elvaco.mvp.core.domainmodels.Units.DEGREES_CELSIUS;
 import static com.elvaco.mvp.core.domainmodels.Units.KELVIN;
@@ -636,6 +641,48 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response).hasSize(0);
   }
 
+  @Test
+  public void measurementsWithNonExpectedMeasurementAtMeterActivePeriodStart() {
+    var activePeriodStart = context().now().plusMinutes(1);
+
+    var meter = given(
+      logicalMeter()
+        .meterDefinition(DEFAULT_DISTRICT_HEATING),
+      physicalMeter()
+        .activePeriod(PeriodRange.halfOpenFrom(activePeriodStart, null))
+        .readIntervalMinutes(60)
+    );
+
+    // We need to create measurements before the meter's active period starts
+    PhysicalMeter physicalMeter = meter.activePhysicalMeter().orElseThrow();
+
+    given(
+      series(physicalMeter, POWER, context().now(),
+        1.0, //+00:00 (before meter became active)
+        2.0, //+01:00
+        3.0 //+02:00
+      )
+    );
+
+    List<MeasurementSeriesDto> response = asUser()
+      .getList(measurementsUrl()
+        .period(context().now(), context().now().plusHours(2))
+        .quantity(POWER)
+        .resolution("hour")
+        .logicalMeterId(meter.id), MeasurementSeriesDto.class).getBody();
+
+    assertThat(response.size()).isEqualTo(1);
+
+    MeasurementSeriesDto seriesDto = response.get(0);
+
+    assertThat(seriesDto.values).containsExactly(
+      //1.0 is not expected, since the meter is not active at that point
+      // 9999.0 is not expected, since it does not coincide with the meter's read interval
+      new MeasurementValueDto(context().now().plusHours(1).toInstant(), 2.0),
+      new MeasurementValueDto(context().now().plusHours(2).toInstant(), 3.0)
+    );
+  }
+
   public LogicalMeter createMeterWithBothReadoutAndConsumtion(ZonedDateTime date) {
     MeterDefinition customMeterDefinition = new MeterDefinition(
       666L,
@@ -720,5 +767,9 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   private List<MeasurementSeriesDto> getListAsSuperAdmin(String url) {
     return asSuperAdmin().getList(url, MeasurementSeriesDto.class).getBody();
+  }
+
+  private Url.UrlBuilder measurementsUrl() {
+    return Url.builder().path("/measurements");
   }
 }

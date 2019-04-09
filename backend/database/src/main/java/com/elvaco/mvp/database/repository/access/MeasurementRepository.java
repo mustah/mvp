@@ -108,7 +108,11 @@ public class MeasurementRepository implements Measurements {
     ZonedDateTime stop,
     TemporalResolution resolution
   ) {
-    ZonedDateTime t = start;
+    ZonedDateTime t = resolution.getStart(start);
+    if (!t.isEqual(start)) {
+      t = resolution.getStart(start.plus(1, resolution));
+    }
+
     Queue<MeasurementValue> queue = new PriorityQueue<>(
       Math.max(values.size(), 1),
       Comparator.comparing((MeasurementValue value) -> value.when)
@@ -131,7 +135,7 @@ public class MeasurementRepository implements Measurements {
       } else {
         filled.add(new MeasurementValue(null, t.toInstant()));
       }
-      t = t.plus(1, resolution.getTemporalUnit());
+      t = t.plus(1, resolution);
     }
     return filled;
   }
@@ -310,8 +314,10 @@ public class MeasurementRepository implements Measurements {
       .andJoinsOn(measurementSeries);
 
     OffsetDateTime start = parameter.getResolution()
-      .getStart(parameter.getFrom());
-    OffsetDateTime stop = parameter.getResolution().getStart(parameter.getTo());
+      .getStart(parameter.getFrom()).toOffsetDateTime();
+
+    OffsetDateTime stop = parameter.getResolution()
+      .getStart(parameter.getTo()).toOffsetDateTime();
 
     Condition condition = valueDate.greaterOrEqual(start)
       .and(valueDate.lessOrEqual(stop));
@@ -377,7 +383,9 @@ public class MeasurementRepository implements Measurements {
       quantity,
       valueDate
     ).from(withAdditionalJoins(query, parameter))
-      .where(valueDate.lessOrEqual(parameter.getResolution().getStart(parameter.getTo())))
+      .where(valueDate.lessOrEqual(parameter.getResolution()
+        .getStart(parameter.getTo())
+        .toOffsetDateTime()))
       .groupBy(valueDate, quantity)
       .orderBy(valueDate, quantity);
   }
@@ -396,7 +404,7 @@ public class MeasurementRepository implements Measurements {
     OffsetDateTime stop = parameter.getTo().toOffsetDateTime();
 
     if (parameter.getQuantities().get(0).isConsumption()) {
-      stop = stop.plus(1, parameter.getResolution().getTemporalUnit());
+      stop = stop.plus(1, parameter.getResolution());
     }
 
     return query
