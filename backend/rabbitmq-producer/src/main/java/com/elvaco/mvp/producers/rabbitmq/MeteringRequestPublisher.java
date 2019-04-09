@@ -1,5 +1,6 @@
 package com.elvaco.mvp.producers.rabbitmq;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -29,9 +30,11 @@ public class MeteringRequestPublisher {
 
   public String request(LogicalMeter logicalMeter) {
     ensureSuperUser();
-    Organisation meterOrganisation = findOrganisationOrThrowException(logicalMeter.organisationId,
+    Organisation meterOrganisation = findOrganisationOrThrowException(
+      logicalMeter.organisationId,
       "logical meter",
-      logicalMeter.id);
+      logicalMeter.id
+    );
 
     String jobId = UUID.randomUUID().toString();
 
@@ -45,7 +48,8 @@ public class MeteringRequestPublisher {
       .build();
 
     try {
-      messagePublisher.publish(MessageSerializer.toJson(getReferenceInfoDto).getBytes());
+      messagePublisher.publish(MessageSerializer.toJson(getReferenceInfoDto).getBytes(
+        StandardCharsets.UTF_8));
     } catch (Exception exception) {
       throw new UpstreamServiceUnavailable(exception.getMessage());
     }
@@ -70,7 +74,9 @@ public class MeteringRequestPublisher {
       .build();
 
     try {
-      messagePublisher.publish(MessageSerializer.toJson(getReferenceInfoDto).getBytes());
+      messagePublisher.publish(MessageSerializer.toJson(getReferenceInfoDto).getBytes(
+        StandardCharsets.UTF_8
+      ));
     } catch (Exception exception) {
       throw new UpstreamServiceUnavailable(exception.getMessage());
     }
@@ -78,9 +84,11 @@ public class MeteringRequestPublisher {
     return getReferenceInfoDto.jobId;
   }
 
-  private Organisation findOrganisationOrThrowException(UUID organisationId,
-                                                        String entityName,
-                                                        UUID id) {
+  private Organisation findOrganisationOrThrowException(
+    UUID organisationId,
+    String entityName,
+    UUID id
+  ) {
     return organisations.findById(organisationId)
       .orElseThrow(
         () -> new RuntimeException(String.format(
