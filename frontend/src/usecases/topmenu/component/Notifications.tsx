@@ -1,10 +1,10 @@
 import {default as classNames} from 'classnames';
 import SocialNotifications from 'material-ui/svg-icons/social/notifications';
-import SocialPages from 'material-ui/svg-icons/social/pages';
 import * as React from 'react';
 import {linkToReleaseNotes} from '../../../app/routes';
-import {colors, iconStyle, topMenuItemIconStyle} from '../../../app/themes';
+import {colors, iconStyle} from '../../../app/themes';
 import {withContent} from '../../../components/hoc/withContent';
+import {IconDuck} from '../../../components/icons/IconDuck';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../../../components/popover/PopoverMenu';
 import {Large} from '../../../components/texts/Texts';
@@ -13,6 +13,13 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {OnClick, OnClickWith, RenderFunction} from '../../../types/Types';
 import {HrefMenuItem} from './LinkMenuItem';
 import {TopMenuItem} from './TopMenuItem';
+
+const duckIconStyle: React.CSSProperties = {
+  padding: '0 0 0 1px',
+  margin: '2px 0 0 2px',
+  width: 26,
+  height: 26,
+};
 
 const NotificationIndicator = withContent(() => <div className="Notification"/>);
 
@@ -34,14 +41,13 @@ export const Notifications = ({hasNotifications, seenNotifications}: Props) => {
       seenNotifications(config().frontendVersion);
       onClick();
     };
-    const iconColor: string = hasNotifications ? colors.black : colors.menuItemLeftIcon;
 
     return ([
         (
           <HrefMenuItem
             className="Notifications-MenuItem"
             onClick={onClickToReleaseNotes}
-            leftIcon={<SocialPages style={topMenuItemIconStyle} color={iconColor}/>}
+            leftIcon={<IconDuck style={duckIconStyle} color={colors.black}/>}
             to={linkToReleaseNotes}
             target="_blank"
             key="link-to-release-notes"
