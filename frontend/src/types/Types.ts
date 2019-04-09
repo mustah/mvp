@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Dispatch} from 'react-redux';
 import {action} from 'typesafe-actions';
-import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/types';
+import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {Maybe} from '../helpers/Maybe';
 import {PageNumbered} from '../state/domain-models-paginated/paginatedDomainModels';
 import {ApiRequestSortingOptions} from '../state/ui/pagination/paginationModels';

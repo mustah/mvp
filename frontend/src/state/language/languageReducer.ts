@@ -1,5 +1,5 @@
 import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {Action} from '../../types/Types';
 import {changeLanguageRequest} from './languageActions';
 import {LanguageCode, languages, LanguageState} from './languageModels';

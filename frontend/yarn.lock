@@ -10624,10 +10624,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typesafe-actions@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-2.2.0.tgz#2d2d8e403745446852f9f88ebf45ec07fa58c0fe"
-  integrity sha512-qjrFDl6S2yejKEz0M2c3c5D5z8sGJTjma94O9kRHStiqauXP9dKUM0Nbdmn90HCZBZl3jzFNT21bOtxRfCkc0w==
+typesafe-actions@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-4.0.0.tgz#b41aca3538dd4cf51ed7c7f4e6ee3b517a1d6dc8"
+  integrity sha512-VWIQZpUgEqddDbNi1c9eq5T6nzQVGP01HA74O4PXnyzDrewBL6L6usSigH8ZEpqmM/pw59BKttXeiCu6bF7RNA==
 
 typescript@^3.0.1:
   version "3.0.1"
@@ -10811,10 +10811,10 @@ util@^0.10.3:
   dependencies:
     inherits "2.0.3"
 
-utility-types@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/utility-types/-/utility-types-2.1.0.tgz#0c78fc9f7eb424d14302222b4ddd13fdb17f44ab"
-  integrity sha512-/nP2gqavggo6l38rtQI/CdeV+2fmBGXVvHgj9kV2MAnms3TIi77Mz9BtapPFI0+GZQCqqom0vACQ+VlTTaCovw==
+utility-types@3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/utility-types/-/utility-types-3.5.0.tgz#d80c95b774575d1683f5ba807879c52d8f35db1c"
+  integrity sha512-1XdYkHN+Dcgh1PQEER1CF5BXkGLvf7Owor6tYSyEs+lbHi4obz4ZeJZQVZyinKvFaGwriBKRlEk5hiApfhglQg==
 
 utils-extend@^1.0.4, utils-extend@^1.0.6, utils-extend@^1.0.7:
   version "1.0.8"

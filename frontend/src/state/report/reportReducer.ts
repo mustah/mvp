@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
 import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {toggle} from '../../helpers/collections';
 import {resetReducer} from '../../reducers/resetReducer';
 import {Medium} from '../ui/graph/measurement/measurementModels';

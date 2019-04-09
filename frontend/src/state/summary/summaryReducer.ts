@@ -1,6 +1,6 @@
 import {Location} from 'history';
-import {getType} from 'typesafe-actions';
-import {ActionType, EmptyAction} from 'typesafe-actions/dist/types';
+import {ActionType, getType} from 'typesafe-actions';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {isOnSearchPage} from '../../app/routes';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';

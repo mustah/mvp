@@ -1,5 +1,5 @@
 import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/types';
+import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {User} from '../../state/domain-models/user/userModels';
 import {Action} from '../../types/Types';
 import {authSetUser, loginFailure, loginRequest, loginSuccess, logoutUser} from './authActions';
