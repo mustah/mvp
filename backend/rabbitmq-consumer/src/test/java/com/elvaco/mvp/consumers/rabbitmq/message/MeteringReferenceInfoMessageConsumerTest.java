@@ -217,6 +217,36 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   }
 
   @Test
+  public void meterDefintionRemainsWhenMeterIsUpdated() {
+    UUID meterId = randomUUID();
+    Organisation organisation = saveDefaultOrganisation();
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(EXTERNAL_ID)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
+      .organisationId(organisation.id)
+      .build());
+
+    Location newLocation = new LocationBuilder()
+      .country("")
+      .city("Växjö")
+      .address("Gatvägen 41")
+      .zip("12345")
+      .build();
+    var message = messageBuilder()
+      .location(newLocation).build()
+      .withMeter(null);
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findById(meterId))
+      .isPresent()
+      .get()
+      .extracting(m -> m.meterDefinition, m -> m.location)
+      .containsExactly(MeterDefinition.DEFAULT_DISTRICT_HEATING, newLocation);
+  }
+
+  @Test
   public void createsOrganisationWithSameNameAsExternalId() {
     messageHandler.accept(messageBuilder()
       .organisationExternalId(ORGANISATION_EXTERNAL_ID)
