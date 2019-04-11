@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Period;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
@@ -44,10 +45,18 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = context().now();
 
     var logicalMeter = given(logicalMeter());
-    given(series(logicalMeter, POWER, 1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
 
     var uninterestingMeter = given(logicalMeter());
-    given(series(uninterestingMeter, POWER, 99.0, 100.0));
+    given(measurementSeries()
+      .forMeter(uninterestingMeter)
+      .withQuantity(POWER)
+      .startingAt(context().now())
+      .withValues(99.0, 100.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -78,7 +87,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   public void oneMeter_TwoHours() {
     var date = context().now();
     var logicalMeter = given(logicalMeter());
-    given(series(logicalMeter, POWER, 1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -111,8 +124,16 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var logicalMeter1 = given(logicalMeter());
     var logicalMeter2 = given(logicalMeter());
 
-    given(series(logicalMeter1, POWER, 1.0, 2.0));
-    given(series(logicalMeter2, POWER, 3.0, 4.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter1)
+      .withQuantity(POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter2)
+      .withQuantity(POWER)
+      .startingAt(context().now())
+      .withValues(3.0, 4.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -149,8 +170,16 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var logicalMeter1 = given(logicalMeter());
     var logicalMeter2 = given(logicalMeter());
 
-    given(series(logicalMeter1, ENERGY, 1.0, 12.0));
-    given(series(logicalMeter2, ENERGY, 3.0, 8.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter1)
+      .withQuantity(ENERGY)
+      .startingAt(context().now())
+      .withValues(1.0, 12.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter2)
+      .withQuantity(ENERGY)
+      .startingAt(context().now())
+      .withValues(3.0, 8.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -185,7 +214,12 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = context().now();
 
     var logicalMeter = given(logicalMeter());
-    given(series(logicalMeter, POWER, Duration.ofSeconds(1), 2.0, 4.0, 6.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .withInterval(Duration.ofSeconds(1))
+      .startingAt(context().now())
+      .withValues(2.0, 4.0, 6.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -314,7 +348,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   public void allowsOverridingDefinitionsPresentationUnit() {
     var date = context().now();
     var logicalMeter = given(logicalMeter());
-    given(series(logicalMeter, POWER, 40000.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .startingAt(context().now())
+      .withValues(40000.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
@@ -347,7 +385,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = context().now();
     var logicalMeter = given(logicalMeter());
 
-    given(series(logicalMeter, POWER, Duration.ofSeconds(1), 1.0, 2.0));
+    given(measurementSeries().forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .withInterval((TemporalAmount) Duration.ofSeconds(1))
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
@@ -384,13 +426,12 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = context().now();
     var logicalMeter = given(logicalMeter());
 
-    given(series(
-      logicalMeter,
-      POWER,
-      date,
-      Period.ofMonths(1),
-      1.0, 2.0, 4.0
-    ));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .startingAt(date)
+      .withInterval(Period.ofMonths(1))
+      .withValues(1.0, 2.0, 4.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
@@ -548,7 +589,12 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   public void toTimestampDefaultsToNow() {
     ZonedDateTime date = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS);
     var logicalMeter = given(logicalMeter());
-    given(series(logicalMeter, POWER, date, Duration.ofHours(1), 1.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .startingAt(date)
+      .withInterval(Duration.ofHours(1))
+      .withValues(1.0));
 
     List<MeasurementSeriesDto> response = asUser()
       .getList(
@@ -592,7 +638,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   public void findsAverageConsumptionForGasMeters_ByMeterIds() {
     var date = context().now();
     var logicalMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
-    given(series(logicalMeter, VOLUME, 1.0, 2.0, 5.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(VOLUME)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0, 5.0));
 
     var response = asUser()
       .getList(
@@ -623,11 +673,19 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var kungsbacka = kungsbacka().build();
     var kungsbackaLogical = given(logicalMeter().meterDefinition(DEFAULT_ROOM_SENSOR)
       .location(kungsbacka));
-    given(series(kungsbackaLogical, EXTERNAL_TEMPERATURE, 1.0));
+    given(measurementSeries()
+      .forMeter(kungsbackaLogical)
+      .withQuantity(EXTERNAL_TEMPERATURE)
+      .startingAt(context().now())
+      .withValues(1.0));
 
     var stockholmLogical = given(logicalMeter().meterDefinition(DEFAULT_ROOM_SENSOR)
       .location(stockholm().build()));
-    given(series(stockholmLogical, EXTERNAL_TEMPERATURE, 2.0));
+    given(measurementSeries()
+      .forMeter(stockholmLogical)
+      .withQuantity(EXTERNAL_TEMPERATURE)
+      .startingAt(context().now())
+      .withValues(2.0));
 
     var response = asUser()
       .getList(
@@ -652,7 +710,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = context().now();
     var logicalMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
-    given(series(logicalMeter, VOLUME, 1.0, 2.0, 5.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(VOLUME)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0, 5.0));
 
     var response = asUser()
       .getList(

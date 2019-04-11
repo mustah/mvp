@@ -31,10 +31,18 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   public void isPageable() {
     var date = context().now();
     var logicalGasMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
-    given(series(logicalGasMeter, Quantity.VOLUME, 1, 2, 5, 6));
+    given(measurementSeries()
+      .forMeter(logicalGasMeter)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(context().now())
+      .withValues(1, 2, 5, 6));
 
     var logicalMeter2 = given(logicalMeter().meterDefinition(DEFAULT_GAS));
-    given(series(logicalMeter2, Quantity.VOLUME, date.plusHours(4), 7));
+    given(measurementSeries()
+      .forMeter(logicalMeter2)
+      .startingAt(date.plusHours(4))
+      .withQuantity(Quantity.VOLUME)
+      .withValues(7));
 
     var url = urlFrom(logicalGasMeter.id);
 
@@ -63,7 +71,11 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     var meter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING)
       .organisationId(organisationWithUsers.getId()));
 
-    given(series(meter, Quantity.DIFFERENCE_TEMPERATURE, created, 285.59));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(created)
+      .withQuantity(Quantity.DIFFERENCE_TEMPERATURE)
+      .withValues(285.59));
 
     var url = urlFrom(meter.id);
     Page<MeasurementDto> wrongUserResponse = asUser().getPage(url, MeasurementDto.class);
@@ -82,7 +94,11 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   public void defaultsToDecidedUponUnits() {
     var after = context().now();
     var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
-    given(series(districtHeatingMeter, Quantity.ENERGY, after, 1.0));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(after)
+      .withQuantity(Quantity.ENERGY)
+      .withValues(1.0));
 
     var url = urlFrom(districtHeatingMeter.id);
     Page<MeasurementDto> firstPage = asUser().getPage(url, MeasurementDto.class);

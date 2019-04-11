@@ -274,8 +274,16 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     var start = context().now();
     var logicalMeter = given(logicalMeter()
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
-    given(series(logicalMeter, Quantity.ENERGY, start, 2000, 4000, 12000));
-    given(series(logicalMeter, Quantity.POWER, start, 1, 5));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .startingAt(start)
+      .withQuantity(Quantity.ENERGY)
+      .withValues(2000, 4000, 12000));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(1, 5));
 
     String url = "/measurements?quantity=Energy,Power"
       + "&logicalMeterId=" + logicalMeter.id

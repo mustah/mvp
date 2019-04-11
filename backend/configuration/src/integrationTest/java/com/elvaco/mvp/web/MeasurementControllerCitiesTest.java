@@ -43,8 +43,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       logicalMeter().location(stockholm().address("stora gatan 2").build())
     );
 
-    given(series(storaGatan1, Quantity.POWER, 1.0, 2.0));
-    given(series(storaGatan2, Quantity.POWER, 3.0, 4.0));
+    given(measurementSeries()
+      .forMeter(storaGatan1)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(storaGatan2)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(3.0, 4.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -93,9 +101,21 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       logicalMeter().location(kungsbacka().build()
       ));
 
-    given(series(stockholm1, Quantity.POWER, 1.0, 2.0));
-    given(series(stockholm2, Quantity.POWER, 3.0, 4.0));
-    given(series(kungsbacka, Quantity.POWER, 10.0, 10.0));
+    given(measurementSeries()
+      .forMeter(stockholm1)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(stockholm2)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(3.0, 4.0));
+    given(measurementSeries()
+      .forMeter(kungsbacka)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(10.0, 10.0));
 
     var response = asUser()
       .getList(
@@ -140,8 +160,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     ZonedDateTime start = context().now();
 
-    given(series(roomSensorMeter, Quantity.EXTERNAL_TEMPERATURE, 1.0, 2.0));
-    given(series(gasMeter, Quantity.VOLUME, 10.0, 11.0));
+    given(measurementSeries()
+      .forMeter(roomSensorMeter)
+      .withQuantity(Quantity.EXTERNAL_TEMPERATURE)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(gasMeter)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(context().now())
+      .withValues(10.0, 11.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -177,7 +205,11 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   public void cityAverageIsEmptyWhenCityOnlyContainNonMatchingQuantities() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter().location(stockholm().build()));
-    given(series(meter, Quantity.POWER, 1.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -219,8 +251,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     var stockholm = given(logicalMeter().location(stockholm().build()));
     var kungsbacka = given(logicalMeter().location(kungsbacka().build()));
 
-    given(series(stockholm, Quantity.POWER, 1.0, 2.0));
-    given(series(kungsbacka, Quantity.POWER, 10.0, 10.0));
+    given(measurementSeries()
+      .forMeter(stockholm)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(kungsbacka)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(10.0, 10.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -259,8 +299,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     var meterOne = given(logicalMeter().location(stockholm().address("1").build()));
     var meterTwo = given(logicalMeter().location(stockholm().address("2").build()));
 
-    given(series(meterOne, Quantity.POWER, 1.0, 2.0));
-    given(series(meterTwo, Quantity.POWER, 3.0, 4.0));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(3.0, 4.0));
 
     Url cityAverageUrl = measurementsCitiesUrl()
       .period(start, start.plusHours(1))

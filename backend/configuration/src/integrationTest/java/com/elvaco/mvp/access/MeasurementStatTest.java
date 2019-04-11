@@ -309,7 +309,11 @@ public class MeasurementStatTest extends IntegrationTest {
   @Test
   public void consumptionFor24hReadInterval() {
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(24 * 60));
-    given(series(meter, Quantity.VOLUME, 1, 2, 3));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(context().now())
+      .withValues(1, 2, 3));
     var result = fetchConsumptionMeasurementStats();
 
     assertThat(result)
