@@ -38,7 +38,7 @@ class MeasurementSpecification {
       value = new MeasurementValue(seriesGenerator.next(value.value), t.toInstant());
       if (random.nextDouble() > lossFactor) {
         generatedMeasurements.add(Measurement.builder()
-          .created(value.when.atZone(start.getZone()))
+          .readoutTime(value.when.atZone(start.getZone()))
           .quantity(quantity.quantity.name)
           .value(value.value)
           .unit(quantity.unit)

@@ -70,7 +70,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(1);
-    assertThat(all.get(0).id.created).isEqualTo(CREATED);
+    assertThat(all.get(0).id.readoutTime).isEqualTo(CREATED);
     assertThat(all.get(0).value).isCloseTo(2.0, offset(0.1));
   }
 
@@ -99,7 +99,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
     all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(1);
-    assertThat(all.get(0).id.created).isEqualTo(CREATED);
+    assertThat(all.get(0).id.readoutTime).isEqualTo(CREATED);
     assertThat(all.get(0).value).isCloseTo(2.0, offset(0.1));
   }
 
@@ -182,7 +182,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(1);
-    assertThat(all.get(0).id.created).isEqualTo(CREATED);
+    assertThat(all.get(0).id.readoutTime).isEqualTo(CREATED);
     assertThat(all.get(0).value).isCloseTo(2.0, offset(0.1));
   }
 

@@ -21,7 +21,9 @@ public class MeasurementEntityMapper {
 
   public Measurement toDomainModel(MeasurementEntity entity) {
     return Measurement.builder()
-      .created(entity.id.created)
+      .readoutTime(entity.id.readoutTime)
+      .receivedTime(entity.receivedTime)
+      .expectedTime(entity.expectedTime)
       .quantity(entity.id.quantity.name)
       .value(entity.value)
       .unit(entity.id.quantity.storageUnit)
@@ -33,10 +35,13 @@ public class MeasurementEntityMapper {
     Quantity quantity = quantityProvider.getByNameOrThrow(domainModel.quantity);
     return new MeasurementEntity(
       new MeasurementPk(
-        domainModel.created,
+        domainModel.readoutTime,
         quantityEntityMapper.toEntity(quantity),
-        PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter)
+        PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter),
+        domainModel.physicalMeter.organisationId
       ),
+      domainModel.receivedTime,
+      domainModel.expectedTime,
       unitConverter.convert(
         new MeasurementUnit(domainModel.unit, domainModel.value),
         quantity.storageUnit

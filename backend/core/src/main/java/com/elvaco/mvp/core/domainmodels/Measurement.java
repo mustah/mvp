@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,8 +14,10 @@ import lombok.ToString;
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Measurement implements Identifiable<Measurement.Id> {
-
-  public final ZonedDateTime created;
+  // TODO: rename to readoutTime
+  public final ZonedDateTime readoutTime;
+  public final ZonedDateTime receivedTime;
+  public final ZonedDateTime expectedTime;
   public final String quantity;
   public final Double value;
   public final String unit;
@@ -34,18 +37,19 @@ public class Measurement implements Identifiable<Measurement.Id> {
 
   @Override
   public Measurement.Id getId() {
-    return idOf(created, quantity, physicalMeter);
+    return idOf(readoutTime, quantity, physicalMeter);
   }
 
   @ToString
   @EqualsAndHashCode
   public static class Id {
-
+    public final UUID organisationId;
     public final ZonedDateTime created;
     public final String quantity;
     public final PhysicalMeter physicalMeter;
 
     private Id(ZonedDateTime created, String quantity, PhysicalMeter physicalMeter) {
+      this.organisationId = physicalMeter.organisationId;
       this.created = created;
       this.quantity = quantity;
       this.physicalMeter = physicalMeter;

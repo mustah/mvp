@@ -21,7 +21,7 @@ public class MeasurementSeriesBuilder {
   private ZonedDateTime startTime;
   private Quantity quantity;
   private TemporalAmount interval;
-  private LogicalMeter logicalMeter;
+  public LogicalMeter logicalMeter;
   private PhysicalMeter physicalMeter;
   private DoubleStream valueStream;
 
@@ -31,7 +31,7 @@ public class MeasurementSeriesBuilder {
     ZonedDateTime[] t = {startTime};
     return valueStream.mapToObj(v -> {
         Measurement m = Measurement.builder()
-          .created(t[0])
+          .readoutTime(t[0])
           .value(v)
           .physicalMeter(getPhysicalMeter(t[0]))
           .quantity(quantity.name)
@@ -65,7 +65,7 @@ public class MeasurementSeriesBuilder {
     return this;
   }
 
-  public MeasurementSeriesBuilder forMeter(PhysicalMeter physicalMeter) {
+  public MeasurementSeriesBuilder forPhysicalMeter(PhysicalMeter physicalMeter) {
     this.physicalMeter = physicalMeter;
     return this;
   }
@@ -96,7 +96,7 @@ public class MeasurementSeriesBuilder {
       throw new IllegalStateException("startTime should not be null");
     }
 
-    if (logicalMeter == null && physicalMeter == null) {
+    if (logicalMeter == null) {
       throw new IllegalStateException("meter should not be null");
     }
 

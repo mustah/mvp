@@ -166,8 +166,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
         .start(context().yesterday().plusHours(1))
     );
 
-    given(
-      measurementSeries()
+    given(measurementSeries()
         .forMeter(districtHeatingMeter)
         .startingAt(context().yesterday())
         .withQuantity(Quantity.RETURN_TEMPERATURE)
@@ -199,8 +198,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
         .start(context().yesterday().plusHours(1))
     );
 
-    given(
-      measurementSeries()
+    given(measurementSeries()
         .forMeter(districtHeatingMeter)
         .startingAt(context().yesterday())
         .withQuantity(Quantity.RETURN_TEMPERATURE)

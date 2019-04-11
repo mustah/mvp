@@ -32,7 +32,7 @@ public class MeterAlarmUseCases {
           .description(alarm.description)
           .start(alarm.start)
           .lastSeen(alarm.lastSeen)
-          .stop(firstMeasurementAfterLastSeen.created)
+          .stop(firstMeasurementAfterLastSeen.readoutTime)
           .build())));
   }
 }

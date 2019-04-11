@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
@@ -13,9 +14,9 @@ import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 
 public interface Measurements {
 
-  Measurement save(Measurement measurement);
+  Measurement save(Measurement measurement, LogicalMeter logicalMeter);
 
-  void createOrUpdate(Measurement measurement);
+  void createOrUpdate(Measurement measurement, LogicalMeter logicalMeter);
 
   Map<String, List<MeasurementValue>> findAverageForPeriod(MeasurementParameter parameter);
 

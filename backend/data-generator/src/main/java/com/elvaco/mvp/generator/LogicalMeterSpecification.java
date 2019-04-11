@@ -106,7 +106,7 @@ class LogicalMeterSpecification {
       .externalId(externalId)
       .organisationId(organisation.id)
       .meterDefinition(meterDefinition)
-      .created(measurements.get(0).created)
+      .created(measurements.get(0).readoutTime)
       .physicalMeter(physicalMeter)
       .gateway(gateway)
       .location(Location.UNKNOWN_LOCATION)

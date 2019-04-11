@@ -109,7 +109,9 @@ class GeneratedDataLoader implements CommandLineRunner {
     for (int i = 0; i < allMeasurements.size(); i += batchSz) {
       long start = System.nanoTime();
       int sz = Math.min(batchSz, allMeasurements.size() - i);
-      allMeasurements.subList(i, i + sz).forEach(measurementUseCases::createOrUpdate);
+      allMeasurements.subList(i, i + sz).forEach( (measurement) ->
+        measurementUseCases.createOrUpdate(measurement,
+          logicalMeters.findById(measurement.physicalMeter.logicalMeterId).orElseThrow()));
       log.info(
         "Saved {} measurements ({}/{} total) in {} seconds ({}s total)",
         sz,

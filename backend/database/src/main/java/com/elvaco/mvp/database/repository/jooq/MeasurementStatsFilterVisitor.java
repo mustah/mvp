@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
+import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.ThresholdPeriodFilter;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.util.DurationLongerThanSelectionException;
@@ -29,6 +30,7 @@ import static org.jooq.impl.DSL.partitionBy;
 import static org.jooq.impl.DSL.rowNumber;
 import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.selectOne;
+import static org.jooq.impl.DSL.trueCondition;
 
 class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
 
@@ -37,12 +39,18 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
   private Condition measurementStatsCondition = falseCondition();
   private Condition measurementStatsFilter = falseCondition();
   private Condition measurementThresholdDuringFilter;
+  private Condition orgCondition = trueCondition();
   private Long measurementThresholdDuringDuration;
   private Long selectionDurationInDays;
 
   MeasurementStatsFilterVisitor(MeasurementThresholdParser thresholdParser) {
     super();
     this.thresholdParser = thresholdParser;
+  }
+
+  @Override
+  public void visit(OrganisationIdFilter filter) {
+    orgCondition = MEASUREMENT_STAT_DATA.ORGANISATION_ID.in(filter.values());
   }
 
   @Override
@@ -58,13 +66,13 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
     if (threshold.duration != null) {
       measurementThresholdDuringDuration = threshold.duration.toDays();
       measurementThresholdDuringFilter =
-        MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
+        MEASUREMENT_STAT_DATA.QUANTITY_ID.equal(threshold.quantity.getId())
           .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(
             threshold.quantity.isConsumptionSeries()))
           .and(valueConditionFor(threshold));
     } else {
       measurementStatsFilter =
-        MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
+        MEASUREMENT_STAT_DATA.QUANTITY_ID.equal(threshold.quantity.getId())
           .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(
             threshold.quantity.isConsumptionSeries()))
           .and(valueConditionFor(threshold));
@@ -76,7 +84,7 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
     if (!measurementStatsFilter.equals(falseCondition())
       && !measurementStatsCondition.equals(falseCondition())) {
       addCondition(exists(selectOne().from(MEASUREMENT_STAT_DATA)
-        .where(measurementStatsFilter.and(measurementStatsCondition))));
+        .where(measurementStatsFilter.and(measurementStatsCondition).and(orgCondition))));
     }
 
     if (measurementThresholdDuringFilter != null
@@ -92,12 +100,16 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
         MEASUREMENT_STAT_DATA.STAT_DATE,
         MEASUREMENT_STAT_DATA.STAT_DATE.minus(
           rowNumber().over(
-            partitionBy(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID)
+            partitionBy(
+              MEASUREMENT_STAT_DATA.ORGANISATION_ID,
+              MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID
+            )
               .orderBy(MEASUREMENT_STAT_DATA.STAT_DATE)
           ).concat(" days").cast(SQLDataType.INTERVALDAYTOSECOND)).as("period_group")
       ).from(MEASUREMENT_STAT_DATA)
         .where(measurementThresholdDuringFilter)
         .and(measurementStatsCondition)
+        .and(orgCondition)
         .asTable("period_groups");
 
       addCondition(exists(

@@ -73,7 +73,7 @@ dump_structure
 start_container
 
 # Pre fetch data stuff
-dump_table measurement created
+dump_table measurement readout_time
 dump_table measurement_stat_data stat_date
 
 # Setup initial users and db

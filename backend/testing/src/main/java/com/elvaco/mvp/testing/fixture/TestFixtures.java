@@ -135,7 +135,7 @@ public interface TestFixtures {
       .unit(quantity.quantity.storageUnit)
       .value(0.0)
       .quantity(quantity.quantity.name)
-      .created(now());
+      .readoutTime(now());
   }
 
   default MeasurementBuilder measurement(
@@ -147,7 +147,7 @@ public interface TestFixtures {
       .unit(quantity.storageUnit)
       .value(0.0)
       .quantity(quantity.name)
-      .created(now());
+      .readoutTime(now());
   }
 
   default LogicalMeterBuilder logicalMeter() {

@@ -47,6 +47,20 @@ abstract class BaseJooqRepository<T, I extends Serializable>
     return resultList;
   }
 
+  void executeUpdate(Query query) {
+    var nativeQuery = entityManager.createNativeQuery(query.getSQL());
+
+    int i = 0;
+    for (Param<?> param : query.getParams().values()) {
+      if (!param.isInline()) {
+        nativeQuery.setParameter(i + 1, convertToDatabaseType(param));
+        i++;
+      }
+    }
+
+    nativeQuery.executeUpdate();
+  }
+
   private static <T> Object convertToDatabaseType(Param<T> param) {
     return param.getBinding().converter().to(param.getValue());
   }

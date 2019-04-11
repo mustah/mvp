@@ -293,7 +293,7 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
     messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
     Measurement expectedMeasurement = Measurement.builder()
-      .created(ZONED_MEASUREMENT_TIMESTAMP)
+      .readoutTime(ZONED_MEASUREMENT_TIMESTAMP)
       .quantity(QUANTITY)
       .value(1.0)
       .unit("kWh")
@@ -301,7 +301,8 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
       .build();
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
-    assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
+    assertThat(createdMeasurements.get(0)).isEqualToIgnoringGivenFields(expectedMeasurement,
+      "receivedTime");
   }
 
   @Test
@@ -334,8 +335,8 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
 
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
-    assertThat(createdMeasurements.get(0)).isEqualTo(Measurement.builder()
-      .created(ZONED_MEASUREMENT_TIMESTAMP)
+    assertThat(createdMeasurements.get(0)).isEqualToIgnoringGivenFields(Measurement.builder()
+      .readoutTime(ZONED_MEASUREMENT_TIMESTAMP)
       .quantity(QUANTITY)
       .value(1.0)
       .unit("kWh")
@@ -349,7 +350,7 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
         .readIntervalMinutes(60)
         .activePeriod(physicalMeter.activePeriod)
         .build()
-      ).build());
+      ).build(),"receivedTime");
   }
 
   @Test
@@ -435,7 +436,8 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
     messageConsumer.accept(newMeasurementMessage(valueAtNormalTime));
 
     List<Measurement> all = measurements.allMocks();
-    assertThat(all.get(0).created.toOffsetDateTime().getOffset()).isEqualTo(ZoneOffset.ofHours(1));
+    assertThat(all.get(0).readoutTime.toOffsetDateTime().getOffset())
+      .isEqualTo(ZoneOffset.ofHours(1));
   }
 
   @Test
@@ -450,7 +452,8 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
     messageConsumer.accept(newMeasurementMessage(valueAtDaylightSavingTime));
 
     List<Measurement> all = measurements.allMocks();
-    assertThat(all.get(0).created.toOffsetDateTime().getOffset()).isEqualTo(ZoneOffset.ofHours(1));
+    assertThat(all.get(0).readoutTime.toOffsetDateTime().getOffset())
+      .isEqualTo(ZoneOffset.ofHours(1));
   }
 
   @Test

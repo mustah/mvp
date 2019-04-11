@@ -607,13 +607,15 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var interval = Duration.ofDays(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeterOne)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterOne)
       .withQuantity(Quantity.POWER)
       .startingAt(start.minusDays(2))
       .withInterval(interval)
       .withValues(2.0, 4.0));
     given(measurementSeries()
-      .forMeter(physicalMeterTwo)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterTwo)
       .withQuantity(Quantity.POWER)
       .startingAt(start)
       .withInterval(interval)
@@ -647,13 +649,15 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var interval = Duration.ofDays(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeterOne)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterOne)
       .withQuantity(Quantity.VOLUME)
       .startingAt(start.minusDays(2))
       .withInterval(interval)
       .withValues(2.0, 4.0));
     given(measurementSeries()
-      .forMeter(physicalMeterTwo)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterTwo)
       .withQuantity(Quantity.VOLUME)
       .startingAt(start)
       .withInterval(interval)

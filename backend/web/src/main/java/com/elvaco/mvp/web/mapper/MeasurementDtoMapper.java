@@ -22,7 +22,7 @@ public class MeasurementDtoMapper {
       measurement.quantity,
       measurement.value,
       measurement.unit,
-      measurement.created
+      measurement.readoutTime
     );
   }
 

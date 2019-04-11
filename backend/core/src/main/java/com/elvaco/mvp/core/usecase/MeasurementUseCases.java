@@ -4,6 +4,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
@@ -30,8 +31,8 @@ public class MeasurementUseCases {
   private final Measurements measurements;
   private final LogicalMeters logicalMeters;
 
-  public void createOrUpdate(Measurement m) {
-    measurements.createOrUpdate(m);
+  public void createOrUpdate(Measurement m, LogicalMeter logicalMeter) {
+    measurements.createOrUpdate(m, logicalMeter);
   }
 
   public Map<String, List<MeasurementValue>> findAverageForPeriod(

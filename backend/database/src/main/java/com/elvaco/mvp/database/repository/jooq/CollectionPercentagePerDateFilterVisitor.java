@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
+import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
@@ -34,9 +35,16 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
 
   private FilterPeriod period;
 
+  private Condition orgCondition;
+
   @Override
   public void visit(CollectionPeriodFilter filter) {
     period = filter.getPeriod();
+  }
+
+  @Override
+  public void visit(OrganisationIdFilter filter) {
+    orgCondition = MEASUREMENT_STAT_DATA.ORGANISATION_ID.in(filter.values());
   }
 
   @Override
@@ -54,10 +62,12 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
 
       condition = measurementStatsConditionFor(period)
         .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
-        .and(MEASUREMENT_STAT_DATA.QUANTITY.equal(
-          dsl.select(MEASUREMENT_STAT_DATA.QUANTITY)
+        .and(MEASUREMENT_STAT_DATA.QUANTITY_ID.equal(
+          dsl.select(MEASUREMENT_STAT_DATA.QUANTITY_ID)
             .from(MEASUREMENT_STAT_DATA)
             .where(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+            .and(MEASUREMENT_STAT_DATA.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID))
+            .and(orgCondition)
             .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
             .orderBy(MEASUREMENT_STAT_DATA.STAT_DATE.desc())
             .limit(1)
@@ -97,7 +107,8 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
               )
                 .from(PHYSICAL_METER)
                 .leftJoin(MEASUREMENT_STAT_DATA)
-                .on(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+                .on(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+                  .and(MEASUREMENT_STAT_DATA.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)))
                 .where(condition)
                 .groupBy(
                   MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID,

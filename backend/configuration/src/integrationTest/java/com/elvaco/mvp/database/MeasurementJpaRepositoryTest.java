@@ -54,7 +54,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         START_TIME.plusHours(3).toZonedDateTime()
       ).get();
 
-    assertThat(firstEnergy.id.created.toInstant()).isEqualTo(START_TIME.toInstant());
+    assertThat(firstEnergy.id.readoutTime.toInstant()).isEqualTo(START_TIME.toInstant());
     assertThat(firstEnergy.value).isEqualTo(1.0);
 
     firstEnergy = measurementJpaRepository
@@ -64,7 +64,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         START_TIME.plusHours(2).toZonedDateTime()
       ).get();
 
-    assertThat(firstEnergy.id.created.toInstant()).isEqualTo(START_TIME.plusHours(2).toInstant());
+    assertThat(firstEnergy.id.readoutTime.toInstant())
+      .isEqualTo(START_TIME.plusHours(2).toInstant());
     assertThat(firstEnergy.value).isEqualTo(3.0);
   }
 
@@ -95,6 +96,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       when.toZonedDateTime(),
+      when.toZonedDateTime(),
+      null,
       quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)
         .orElseThrow(() -> new NoSuchQuantity(quantity))),
       value,

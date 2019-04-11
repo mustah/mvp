@@ -103,7 +103,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     LogicalMeter meter = given(logicalMeter()
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
-    given(measurement(meter).created(date)
+    given(meter, measurement(meter).readoutTime(date)
       .unit(DEGREES_CELSIUS)
       .quantity(DIFFERENCE_TEMPERATURE.name)
       .value(DIFF_TEMP_VALUE_CELSIUS));
@@ -184,17 +184,17 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     var heatMeter = given(logicalMeter()
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
-    given(
-      measurement(heatMeter).created(date.minusHours(1))
+    given(heatMeter,
+      measurement(heatMeter).readoutTime(date.minusHours(1))
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
-      measurement(heatMeter).created(date.plusHours(1))
+      measurement(heatMeter).readoutTime(date.plusHours(1))
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
       measurement(heatMeter)
-        .created(date.plusHours(1))
+        .readoutTime(date.plusHours(1))
         .unit("J")
         .quantity(ENERGY.name)
         .value(ENERGY_VALUE)
@@ -222,12 +222,12 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     LogicalMeter heatMeter = given(logicalMeter()
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
-    given(
-      measurement(heatMeter).created(date)
+    given(heatMeter,
+      measurement(heatMeter).readoutTime(date)
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
-      measurement(heatMeter).created(date.plusHours(2))
+      measurement(heatMeter).readoutTime(date.plusHours(2))
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS)
@@ -265,12 +265,12 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     LogicalMeter heatMeter = given(logicalMeter()
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
-    given(
-      measurement(heatMeter).created(date.minusHours(1))
+    given(heatMeter,
+      measurement(heatMeter).readoutTime(date.minusHours(1))
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
-      measurement(heatMeter).created(date.plusHours(1))
+      measurement(heatMeter).readoutTime(date.plusHours(1))
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS)
@@ -298,14 +298,14 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     LogicalMeter roomSensorMeter = given(logicalMeter()
       .meterDefinition(MeterDefinition.DEFAULT_ROOM_SENSOR));
-    given(
+    given(roomSensorMeter,
       measurement(roomSensorMeter)
-        .created(date)
+        .readoutTime(date)
         .unit(DEGREES_CELSIUS)
         .quantity(EXTERNAL_TEMPERATURE.name)
         .value(TEMP_VALUE),
       measurement(roomSensorMeter)
-        .created(date)
+        .readoutTime(date)
         .unit(PERCENT)
         .quantity(HUMIDITY.name)
         .value(HUMIDITY_VALUE)
@@ -335,17 +335,17 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     LogicalMeter heatMeter = given(logicalMeter()
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
-    given(
-      measurement(heatMeter).created(date)
+    given(heatMeter,
+      measurement(heatMeter).readoutTime(date)
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
-      measurement(heatMeter).created(date.plusHours(1))
+      measurement(heatMeter).readoutTime(date.plusHours(1))
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
       measurement(heatMeter)
-        .created(date)
+        .readoutTime(date)
         .unit("J")
         .quantity(ENERGY.name)
         .value(ENERGY_VALUE)
@@ -489,37 +489,37 @@ public class MeasurementControllerTest extends IntegrationTest {
     LogicalMeter meter12 = given(logicalMeter().meterDefinition(meterDefinition1));
     LogicalMeter meter2 = given(logicalMeter().meterDefinition(meterDefinition2));
 
-    given(
-      measurement(meter11).created(date)
+    given(meter11,
+      measurement(meter11).readoutTime(date)
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
       measurement(meter11)
-        .created(date)
+        .readoutTime(date)
         .unit("J")
         .quantity(ENERGY.name)
         .value(ENERGY_VALUE)
     );
 
-    given(
-      measurement(meter12).created(date)
+    given(meter12,
+      measurement(meter12).readoutTime(date)
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
       measurement(meter12)
-        .created(date)
+        .readoutTime(date)
         .unit("J")
         .quantity(ENERGY.name)
         .value(ENERGY_VALUE)
     );
 
-    given(
-      measurement(meter2).created(date)
+    given(meter2,
+      measurement(meter2).readoutTime(date)
         .unit(DEGREES_CELSIUS)
         .quantity(DIFFERENCE_TEMPERATURE.name)
         .value(DIFF_TEMP_VALUE_CELSIUS),
       measurement(meter2)
-        .created(date)
+        .readoutTime(date)
         .unit("J")
         .quantity(ENERGY.name)
         .value(ENERGY_VALUE)
@@ -555,7 +555,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       logicalMeter().meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
     );
 
-    given(measurement(logicalMeter).created(date)
+    given(logicalMeter,
+      measurement(logicalMeter).readoutTime(date)
       .unit(DEGREES_CELSIUS)
       .quantity(DIFFERENCE_TEMPERATURE.name)
       .value(DIFF_TEMP_VALUE_CELSIUS));
@@ -586,13 +587,15 @@ public class MeasurementControllerTest extends IntegrationTest {
     var interval = Duration.ofDays(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeterOne)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterOne)
       .withQuantity(POWER)
       .startingAt(date.minusDays(2))
       .withInterval(interval)
       .withValues(2.0, 4.0, 6.0));
     given(measurementSeries()
-      .forMeter(physicalMeterTwo)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterTwo)
       .withQuantity(POWER)
       .startingAt(date)
       .withInterval(interval)
@@ -768,10 +771,10 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withInterval(Duration.ofHours(1))
       .withValues(10.0, 11.0));
 
-    given(measurement(logicalMeter)
+    given(logicalMeter, measurement(logicalMeter)
       .quantity(POWER.name)
       .unit(Units.WATT)
-      .created(date.plusNanos(370000000))
+      .readoutTime(date.plusNanos(370000000))
       .value(370.0));
 
     List<MeasurementSeriesDto> contents = getListAsSuperAdmin(
@@ -818,10 +821,10 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withInterval(Duration.ofHours(1))
       .withValues(10.0, 15.0));
 
-    given(measurement(logicalMeter)
+    given(logicalMeter, measurement(logicalMeter)
       .quantity(ENERGY.name)
       .unit(Units.KILOWATT_HOURS)
-      .created(date.plusNanos(370000000))
+      .readoutTime(date.plusNanos(370000000))
       .value(1.7));
 
     List<MeasurementSeriesDto> contents = getListAsSuperAdmin(
@@ -864,7 +867,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       logicalMeter().meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
     );
 
-    given(measurement(heatMeter).created(date)
+    given(heatMeter,
+      measurement(heatMeter).readoutTime(date)
       .unit(DEGREES_CELSIUS)
       .quantity(DIFFERENCE_TEMPERATURE.name)
       .value(DIFF_TEMP_VALUE_CELSIUS));
@@ -891,7 +895,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       logicalMeter().meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
     );
 
-    given(measurement(heatMeter).created(date)
+    given(heatMeter,
+      measurement(heatMeter).readoutTime(date)
       .unit(DEGREES_CELSIUS)
       .quantity(DIFFERENCE_TEMPERATURE.name)
       .value(DIFF_TEMP_VALUE_CELSIUS));
@@ -927,8 +932,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime when = context().now();
     var consumptionMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
-    given(
-      measurementSeries()
+    given(measurementSeries()
         .forMeter(consumptionMeter)
         .withQuantity(VOLUME)
         .startingAt(context().now())
@@ -1004,8 +1008,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime when = context().now();
     var logicalMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
-    given(
-      measurementSeries()
+    given(measurementSeries()
         .forMeter(logicalMeter)
         .withQuantity(VOLUME)
         .startingAt(context().now())
@@ -1074,9 +1077,9 @@ public class MeasurementControllerTest extends IntegrationTest {
     // We need to create measurements before the meter's active period starts
     PhysicalMeter physicalMeter = meter.activePhysicalMeter().orElseThrow();
 
-    given(
-      measurementSeries()
-        .forMeter(physicalMeter)
+    given(measurementSeries()
+      .forMeter(meter)
+      .forPhysicalMeter(physicalMeter)
         .withQuantity(POWER)
         .startingAt(context().now())
         .withValues(
@@ -1086,9 +1089,9 @@ public class MeasurementControllerTest extends IntegrationTest {
         )
     );
 
-    given(
-      measurementSeries()
-        .forMeter(physicalMeter)
+    given(measurementSeries()
+        .forMeter(meter)
+        .forPhysicalMeter(physicalMeter)
         .withQuantity(POWER)
         .startingAt(activePeriodStart)
         .withValues(9999.0)
@@ -1143,7 +1146,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     LogicalMeter heatMeter = given(logicalMeter()
       .meterDefinition(customMeterDefinition));
-    given(
+    given(heatMeter,
       energyMeasurement(heatMeter, date),
       energyMeasurement(heatMeter, date.plusHours(1)),
       diffTempMeasurement(heatMeter, date),
@@ -1164,7 +1167,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   private Measurement.MeasurementBuilder energyMeasurement(LogicalMeter meter, ZonedDateTime date) {
     return measurement(meter)
-      .created(date)
+      .readoutTime(date)
       .unit("J")
       .quantity(ENERGY.name)
       .value(ENERGY_VALUE);
@@ -1174,7 +1177,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     LogicalMeter meter,
     ZonedDateTime date
   ) {
-    return measurement(meter).created(date)
+    return measurement(meter).readoutTime(date)
       .unit(DEGREES_CELSIUS)
       .quantity(DIFFERENCE_TEMPERATURE.name)
       .value(DIFF_TEMP_VALUE_CELSIUS);

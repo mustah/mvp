@@ -190,14 +190,14 @@ public class IntegrationTestFixtureContext implements TestFixtures {
       .collect(toList()));
   }
 
-  void given(MeasurementBuilder... measurementBuilders) {
+  void given(LogicalMeter logicalMeter, MeasurementBuilder... measurementBuilders) {
     Arrays.stream(measurementBuilders)
       .map(MeasurementBuilder::build)
-      .forEach(measurements::save);
+      .forEach(measurement -> measurements.save(measurement, logicalMeter));
   }
 
-  void given(Collection<Measurement> series) {
-    series.forEach(measurements::save);
+  void given(Collection<Measurement> series, LogicalMeter logicalMeter) {
+    series.forEach(m -> measurements.save(m, logicalMeter));
   }
 
   MeterDefinition given(MeterDefinitionBuilder meterDefinitionBuilder) {
@@ -214,7 +214,8 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   }
 
   Collection<Measurement> given(MeasurementSeriesBuilder seriesBuilder) {
-    return seriesBuilder.build().stream().map(measurements::save).collect(toList());
+    return seriesBuilder.build().stream().map(
+      measurement -> measurements.save(measurement, seriesBuilder.logicalMeter)).collect(toList());
   }
 
   Widget given(WidgetBuilder widgetBuilder) {
@@ -228,4 +229,5 @@ public class IntegrationTestFixtureContext implements TestFixtures {
       .logicalMeterId(logicalMeter.id)
       .build();
   }
+
 }
