@@ -31,15 +31,20 @@
       width: $top-menu-item-width;
       cursor: pointer;
 
-      .Notification {
-        position: absolute;
-        top: 20px;
-        right: 200px;
-        height: 8px;
-        width: 8px;
-        border-radius: 5px;
-        background: $notification-color;
-        border: 1px solid $blue-A900;
+      .Notifications {
+        position: relative;
+
+        .Notification {
+          position: relative;
+          height: 8px;
+          width: 8px;
+          border-radius: 5px;
+          background: $notification-color;
+          border: 1px solid $blue-A900;
+          top: 22px;
+          left: 7px;
+          margin-bottom: -8px;
+        }
       }
 
       .PopoverMenu {
