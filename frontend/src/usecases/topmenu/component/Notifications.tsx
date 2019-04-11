@@ -60,7 +60,7 @@ export const Notifications = ({hasNotifications, seenNotifications}: Props) => {
   };
   return (
     <TopMenuItem title={firstUpperTranslated('notifications')}>
-      <RowCenter>
+      <RowCenter className="Notifications">
         <NotificationIndicator hasContent={hasNotifications}/>
         <PopoverMenu
           className="Row-center"
