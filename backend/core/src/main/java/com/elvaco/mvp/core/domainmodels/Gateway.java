@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.util.StatusLogEntryHelper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
+import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static java.util.UUID.randomUUID;
 
 @Builder(toBuilder = true)
@@ -23,14 +25,15 @@ import static java.util.UUID.randomUUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Gateway implements Identifiable<UUID>, PrimaryKeyed {
 
-  @Default
-  public UUID id = randomUUID();
   public final UUID organisationId;
   public final String serial;
   public final String productModel;
   public final String ip;
   public final String phoneNumber;
-
+  @Default
+  public final JsonNode extraInfo = toJsonNode("{}");
+  @Default
+  public UUID id = randomUUID();
   @Singular
   public List<LogicalMeter> meters;
   @Singular

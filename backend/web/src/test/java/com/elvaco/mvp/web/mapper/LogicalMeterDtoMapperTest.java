@@ -24,6 +24,7 @@ import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
+import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper.toDto;
 import static java.util.UUID.randomUUID;
@@ -99,12 +100,14 @@ public class LogicalMeterDtoMapperTest {
     expected.alarms = List.of();
 
     ZonedDateTime statusChanged = ZonedDateTime.parse(CREATED_DATE_STRING);
+    var extraInfo = toJsonNode("{\"hello\": \"there\"");
     expected.gateway = GatewayMandatoryDto.builder()
       .id(randomUUID())
       .productModel("CMi2110")
       .serial("123123")
       .status(new IdNamedDto(StatusType.OK.name))
       .statusChanged(formatUtc(statusChanged))
+      .extraInfo(extraInfo)
       .build();
     expected.collectionPercentage = 75.0;
     expected.readIntervalMinutes = 15L;
@@ -141,6 +144,7 @@ public class LogicalMeterDtoMapperTest {
             .organisationId(organisationId)
             .serial(expected.gateway.serial)
             .productModel(expected.gateway.productModel)
+            .extraInfo(extraInfo)
             .statusLog(StatusLogEntry.builder()
               .id(1L)
               .status(StatusType.OK)

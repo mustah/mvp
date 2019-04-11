@@ -33,6 +33,8 @@ public interface GatewayJpaRepository {
 
   Optional<GatewayEntity> findByOrganisationIdAndSerial(UUID organisationId, String serial);
 
+  List<GatewayEntity> findBySerial(String serial);
+
   Optional<GatewayEntity> findById(UUID id);
 
   Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);

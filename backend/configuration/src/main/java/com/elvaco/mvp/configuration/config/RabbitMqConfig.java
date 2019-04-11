@@ -31,6 +31,7 @@ import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -122,8 +123,21 @@ class RabbitMqConfig {
   }
 
   @Bean
+  TopicExchange nbiotTopicExchange() {
+    return (TopicExchange) ExchangeBuilder
+      .topicExchange(consumerProperties.getNbiotTopicExchange())
+      .autoDelete()
+      .build();
+  }
+
+  @Bean
   Binding meteringBinding(Queue incomingQueue, FanoutExchange meteringPublishFanoutExchange) {
     return BindingBuilder.bind(incomingQueue).to(meteringPublishFanoutExchange);
+  }
+
+  @Bean
+  Binding nbiotExchangeBinding(Queue incomingQueue, TopicExchange nbiotTopicExchange) {
+    return BindingBuilder.bind(incomingQueue).to(nbiotTopicExchange).with("#");
   }
 
   @Bean

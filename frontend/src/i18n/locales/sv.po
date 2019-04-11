@@ -23,6 +23,9 @@ msgstr "notiser"
 msgid "dashboard is empty"
 msgstr "dashboarden är tom"
 
+msgid "no additional data exists for this gateway"
+msgstr "ytterligare information saknas för denna gateway"
+
 msgid "pcs"
 msgstr "st"
 

@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 
 public class MockGateways extends MockRepository<UUID, Gateway> implements Gateways {
 
@@ -47,6 +48,11 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
     return filter(gateway -> gateway.serial.equals(serial))
       .filter(gateway -> gateway.organisationId.equals(organisationId))
       .findFirst();
+  }
+
+  @Override
+  public List<Gateway> findBy(String serial) {
+    return filter(gateway -> gateway.serial.equals(serial)).collect(toList());
   }
 
   @Override

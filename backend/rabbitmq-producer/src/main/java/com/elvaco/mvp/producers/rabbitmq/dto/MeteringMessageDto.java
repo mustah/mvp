@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import javax.annotation.Nullable;
 
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.annotations.SerializedName;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -13,6 +14,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class MeteringMessageDto {
 
+  @SerializedName(value = "message_type", alternate = {"MF"})
   public final MessageType messageType;
 
   public final boolean validate() throws IllegalAccessException {

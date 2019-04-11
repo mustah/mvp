@@ -1,0 +1,10 @@
+@import '../../app/variables';
+.GatewayDetails {
+  td:first-child {
+    font-weight: bold;
+    width: 150px;
+    text-align: left;
+    padding-right: $xxl-space;
+    padding-left: $xxl-space;
+  }
+}

@@ -3,6 +3,7 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.util.Collections;
 import java.util.Optional;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.InfrastructureStatusMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.core.util.MessageThrottler;
@@ -25,6 +26,7 @@ public class MeteringMessageListenerTest {
   private MessageConsumerSpy messageConsumerSpy;
   private ReferenceInfoMessageConsumerSpy referenceInfoMessageConsumerSpy;
   private AlarmMessageConsumerSpy alarmMessageConsumerSpy;
+  private InfrastructureStatusMessageConsumerSpy infrastructureStatusMessageConsumerSpy;
   private MessageListener messageListener;
 
   @Before
@@ -32,11 +34,13 @@ public class MeteringMessageListenerTest {
     messageConsumerSpy = new MessageConsumerSpy();
     referenceInfoMessageConsumerSpy = new ReferenceInfoMessageConsumerSpy();
     alarmMessageConsumerSpy = new AlarmMessageConsumerSpy();
+    infrastructureStatusMessageConsumerSpy = new InfrastructureStatusMessageConsumerSpy();
     messageListener = new MeteringMessageListener(
       new MeteringMessageParser(),
       messageConsumerSpy,
       referenceInfoMessageConsumerSpy,
       alarmMessageConsumerSpy,
+      infrastructureStatusMessageConsumerSpy,
       new MessageThrottler<>(new MockCache<>(), String::valueOf)
     );
   }
@@ -63,8 +67,8 @@ public class MeteringMessageListenerTest {
   public void receiveMessageOfUnknownType() {
     String measurementMessage =
       ("{\n"
-       + "  \"message_type\": \"Some unknown, unsupported message type\",\n"
-       + "}");
+         + "  \"message_type\": \"Some unknown, unsupported message type\",\n"
+         + "}");
 
     assertThatThrownBy(() -> messageListener.onMessage(measurementMessage))
       .hasMessageContaining("message_type\": \"...");
@@ -74,33 +78,34 @@ public class MeteringMessageListenerTest {
   public void receiveReferenceInfoMessage() {
     String message =
       ("{\n"
-       + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
-       + "  \"facility\": {\n"
-       + "    \"id\": \"ABC-123\",\n"
-       + "    \"country\": \"Zimbabwe\",\n"
-       + "    \"city\": \"Harare\",\n"
-       + "    \"address\": \"Duv\"\n"
-       + "  },\n"
-       + "  \"gateway\": {\n"
-       + "    \"id\": \"12031925\",\n"
-       + "    \"product_model\": \"CMi2110\",\n"
-       + "    \"status\": \"OK\"\n"
-       + "  },\n"
-       + "  \"meter\": {\n"
-       + "    \"id\": \"1\",\n"
-       + "    \"medium\": \"Heat, Return temp\",\n"
-       + "    \"status\": \"ERROR\",\n"
-       + "    \"manufacturer\": \"ELV\",\n"
-       + "    \"expectedInterval\": 15\n"
-       + "  },\n"
-       + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
-       + "  \"source_system_id\": \"The Source System\"\n"
-       + "}\n");
+         + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
+         + "  \"facility\": {\n"
+         + "    \"id\": \"ABC-123\",\n"
+         + "    \"country\": \"Zimbabwe\",\n"
+         + "    \"city\": \"Harare\",\n"
+         + "    \"address\": \"Duv\"\n"
+         + "  },\n"
+         + "  \"gateway\": {\n"
+         + "    \"id\": \"12031925\",\n"
+         + "    \"product_model\": \"CMi2110\",\n"
+         + "    \"status\": \"OK\"\n"
+         + "  },\n"
+         + "  \"meter\": {\n"
+         + "    \"id\": \"1\",\n"
+         + "    \"medium\": \"Heat, Return temp\",\n"
+         + "    \"status\": \"ERROR\",\n"
+         + "    \"manufacturer\": \"ELV\",\n"
+         + "    \"expectedInterval\": 15\n"
+         + "  },\n"
+         + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
+         + "  \"source_system_id\": \"The Source System\"\n"
+         + "}\n");
 
     messageListener.onMessage(message);
 
     assertThat(referenceInfoMessageConsumerSpy.messageReceived).isTrue();
     assertThat(messageConsumerSpy.messageReceived).isFalse();
+    assertThat(infrastructureStatusMessageConsumerSpy.messageReceived).isFalse();
   }
 
   @Test
@@ -112,65 +117,79 @@ public class MeteringMessageListenerTest {
     assertThat(alarmMessageConsumerSpy.messageReceived).isTrue();
     assertThat(messageConsumerSpy.messageReceived).isFalse();
     assertThat(referenceInfoMessageConsumerSpy.messageReceived).isFalse();
+    assertThat(infrastructureStatusMessageConsumerSpy.messageReceived).isFalse();
+  }
+
+  @Test
+  public void receiveInfrastructureStatusMessage() {
+    String message = parseJsonFile("messages/infrastructure-status.json");
+
+    messageListener.onMessage(message);
+
+    assertThat(alarmMessageConsumerSpy.messageReceived).isFalse();
+    assertThat(messageConsumerSpy.messageReceived).isFalse();
+    assertThat(referenceInfoMessageConsumerSpy.messageReceived).isFalse();
+    assertThat(infrastructureStatusMessageConsumerSpy.messageReceived).isTrue();
   }
 
   @Test
   public void receiveMeasurementMessage() {
     String measurementMessage =
       ("{\n"
-       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
-       + "  \"gateway\": {\n"
-       + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
-       + "  },\n"
-       + "  \"meter\": {\n"
-       + "    \"id\": \"123456789\"\n"
-       + "  },\n"
-       + "  \"facility\": {\n"
-       + "    \"id\": \"42402519\"\n"
-       + "  },\n"
-       + "  \"organisation_id\": \"Elvaco AB\",\n"
-       + "  \"source_system_id\": \"Elvaco Metering\",\n"
-       + "  \"values\": [\n"
-       + "    {\n"
-       + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
-       + "      \"value\": 0.659,\n"
-       + "      \"unit\": \"wH\",\n"
-       + "      \"quantity\": \"power\"\n"
-       + "    }\n"
-       + "  ]\n"
-       + "}");
+         + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
+         + "  \"gateway\": {\n"
+         + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
+         + "  },\n"
+         + "  \"meter\": {\n"
+         + "    \"id\": \"123456789\"\n"
+         + "  },\n"
+         + "  \"facility\": {\n"
+         + "    \"id\": \"42402519\"\n"
+         + "  },\n"
+         + "  \"organisation_id\": \"Elvaco AB\",\n"
+         + "  \"source_system_id\": \"Elvaco Metering\",\n"
+         + "  \"values\": [\n"
+         + "    {\n"
+         + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
+         + "      \"value\": 0.659,\n"
+         + "      \"unit\": \"wH\",\n"
+         + "      \"quantity\": \"power\"\n"
+         + "    }\n"
+         + "  ]\n"
+         + "}");
 
     messageListener.onMessage(measurementMessage);
 
     assertThat(messageConsumerSpy.messageReceived).isTrue();
     assertThat(referenceInfoMessageConsumerSpy.messageReceived).isFalse();
+    assertThat(infrastructureStatusMessageConsumerSpy.messageReceived).isFalse();
   }
 
   @Test
   public void repeatedMessagesAreThrottled() {
     String measurementMessage =
       ("{\n"
-       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
-       + "  \"gateway\": {\n"
-       + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
-       + "  },\n"
-       + "  \"meter\": {\n"
-       + "    \"id\": \"123456789\"\n"
-       + "  },\n"
-       + "  \"facility\": {\n"
-       + "    \"id\": \"42402519\"\n"
-       + "  },\n"
-       + "  \"organisation_id\": \"Elvaco AB\",\n"
-       + "  \"source_system_id\": \"Elvaco Metering\",\n"
-       + "  \"values\": [\n"
-       + "    {\n"
-       + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
-       + "      \"value\": 0.659,\n"
-       + "      \"unit\": \"wH\",\n"
-       + "      \"quantity\": \"power\"\n"
-       + "    }\n"
-       + "  ]\n"
-       + "}");
+         + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
+         + "  \"gateway\": {\n"
+         + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
+         + "  },\n"
+         + "  \"meter\": {\n"
+         + "    \"id\": \"123456789\"\n"
+         + "  },\n"
+         + "  \"facility\": {\n"
+         + "    \"id\": \"42402519\"\n"
+         + "  },\n"
+         + "  \"organisation_id\": \"Elvaco AB\",\n"
+         + "  \"source_system_id\": \"Elvaco Metering\",\n"
+         + "  \"values\": [\n"
+         + "    {\n"
+         + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
+         + "      \"value\": 0.659,\n"
+         + "      \"unit\": \"wH\",\n"
+         + "      \"quantity\": \"power\"\n"
+         + "    }\n"
+         + "  ]\n"
+         + "}");
 
     assertThat(messageListener.onMessage(measurementMessage)).isNotNull();
     assertThat(messageListener.onMessage(measurementMessage)).isNull();
@@ -215,6 +234,17 @@ public class MeteringMessageListenerTest {
     public Optional<GetReferenceInfoDto> accept(MeteringAlarmMessageDto message) {
       messageReceived = true;
       return Optional.empty();
+    }
+  }
+
+  private static class InfrastructureStatusMessageConsumerSpy
+    implements InfrastructureMessageConsumer {
+
+    private boolean messageReceived;
+
+    @Override
+    public void accept(InfrastructureStatusMessageDto message) {
+      messageReceived = true;
     }
   }
 }

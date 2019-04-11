@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RabbitConsumerProperties {
 
   private String meteringFanoutExchange = "mvp.fanout";
+  private String nbiotTopicExchange = "nbiot-test-ponte";
   private String queueName = "MVP";
   private String responseExchange = "";
   private String responseRoutingKey = "mvp.to.metering";

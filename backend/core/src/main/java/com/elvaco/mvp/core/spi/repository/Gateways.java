@@ -26,6 +26,8 @@ public interface Gateways {
 
   Optional<Gateway> findBy(UUID organisationId, String serial);
 
+  List<Gateway> findBy(String serial);
+
   Optional<Gateway> findById(UUID id);
 
   Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id);

@@ -3,6 +3,7 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.InfrastructureStatusMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.core.util.MessageThrottler;
@@ -26,6 +27,7 @@ public class MeteringMessageListener implements MessageListener {
   private final MeasurementMessageConsumer measurementMessageConsumer;
   private final ReferenceInfoMessageConsumer referenceInfoMessageConsumer;
   private final AlarmMessageConsumer alarmMessageConsumer;
+  private final InfrastructureMessageConsumer infrastructureStatusMessageConsumer;
   private final MessageThrottler<String, GetReferenceInfoDto> referenceInfoThrottler;
 
   @Nullable
@@ -33,7 +35,7 @@ public class MeteringMessageListener implements MessageListener {
   public String onMessage(String message) {
     try {
       MESSAGE_LOGGER.info(message);
-      return handleMessage(messageParser.parse(message));
+      return messageParser.parse(message).map(this::handleMessage).orElse(null);
     } catch (RuntimeException exception) {
       log.warn("Message handling raised exception. Offending message is: {}", message);
       throw exception;
@@ -61,6 +63,11 @@ public class MeteringMessageListener implements MessageListener {
         .filter(this::throttleAndLog)
         .map(MessageSerializer::toJson)
         .orElse(null);
+    } else if (meteringMessage instanceof InfrastructureStatusMessageDto) {
+      long start = System.nanoTime();
+      infrastructureStatusMessageConsumer.accept((InfrastructureStatusMessageDto) meteringMessage);
+      stopAndLog("Infrastructure status", start);
+      return null;
     } else {
       throw new RuntimeException("Unknown message type: " + meteringMessage.getClass().getName());
     }

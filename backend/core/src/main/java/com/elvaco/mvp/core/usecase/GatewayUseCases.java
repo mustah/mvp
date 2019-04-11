@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.usecase;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,6 +42,10 @@ public class GatewayUseCases {
 
   public Optional<Gateway> findBy(UUID organisationId, String serial) {
     return gateways.findBy(organisationId, serial);
+  }
+
+  public List<Gateway> findBy(String serial) {
+    return gateways.findBy(serial);
   }
 
   public Optional<Gateway> findById(UUID id) {

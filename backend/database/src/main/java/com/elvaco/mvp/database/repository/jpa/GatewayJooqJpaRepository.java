@@ -150,6 +150,12 @@ class GatewayJooqJpaRepository
   }
 
   @Override
+  public List<GatewayEntity> findBySerial(String serial) {
+    return nativeQuery(dsl.select().from(GATEWAY)
+      .where(GATEWAY.SERIAL.equal(serial)));
+  }
+
+  @Override
   public Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return fetchOne(GATEWAY.ORGANISATION_ID.equal(organisationId).and(GATEWAY.ID.equal(id)));
   }
@@ -168,7 +174,7 @@ class GatewayJooqJpaRepository
     @Override
     public void next(
       Record16<UUID, UUID, String, String, Long, String, OffsetDateTime, OffsetDateTime, UUID,
-              Double, Double, Double, String, String, String,String> record
+        Double, Double, Double, String, String, String, String> record
     ) {
       GatewaySummaryDto summaryDto = gatewaySummaryDtos.getOrDefault(
         record.value1(),
