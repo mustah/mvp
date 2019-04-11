@@ -1,7 +1,5 @@
 package com.elvaco.mvp.testdata;
 
-import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAmount;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -19,9 +17,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition.MeterDefinitionBuilder;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Organisation.OrganisationBuilder;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
@@ -114,6 +110,10 @@ public interface ContextDsl {
     return context().given(dashboardBuilder);
   }
 
+  default Collection<Measurement> given(MeasurementSeriesBuilder seriesBuilder) {
+    return context().given(seriesBuilder);
+  }
+
   default Widget given(WidgetBuilder widgetBuilder) {
     return context().given(widgetBuilder);
   }
@@ -182,58 +182,7 @@ public interface ContextDsl {
       .selection(userSelection);
   }
 
-  default Collection<Measurement> series(
-    LogicalMeter logicalMeter,
-    Quantity quantity,
-    double... values
-  ) {
-    return context().series(logicalMeter, quantity, values);
-  }
-
-  default Collection<Measurement> series(
-    LogicalMeter logicalMeter,
-    Quantity quantity,
-    TemporalAmount interval,
-    double... values
-  ) {
-    return context().series(logicalMeter, quantity, interval, values);
-  }
-
-  default Collection<Measurement> series(
-    LogicalMeter logicalMeter,
-    Quantity quantity,
-    ZonedDateTime start,
-    double... values
-  ) {
-    return context().series(logicalMeter, quantity, start, values);
-  }
-
-  default Collection<Measurement> series(
-    LogicalMeter logicalMeter,
-    Quantity quantity,
-    ZonedDateTime start,
-    TemporalAmount interval,
-    double... values
-  ) {
-    return context().series(logicalMeter, quantity, start, interval, values);
-  }
-
-  default Collection<Measurement> series(
-    PhysicalMeter physicalMeter,
-    Quantity quantity,
-    ZonedDateTime start,
-    TemporalAmount interval,
-    double... values
-  ) {
-    return context().series(physicalMeter, quantity, start, interval, values);
-  }
-
-  default Collection<Measurement> series(
-    PhysicalMeter physicalMeter,
-    Quantity quantity,
-    ZonedDateTime start,
-    double... values
-  ) {
-    return context().series(physicalMeter, quantity, start, values);
+  default MeasurementSeriesBuilder measurementSeries() {
+    return new MeasurementSeriesBuilder();
   }
 }

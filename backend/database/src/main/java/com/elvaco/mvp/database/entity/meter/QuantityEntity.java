@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 
 import lombok.AllArgsConstructor;
@@ -37,6 +38,8 @@ public class QuantityEntity extends IdentifiableType<Integer> {
   public String name;
 
   public String storageUnit;
+
+  public DisplayMode storageMode;
 
   @Override
   public Integer getId() {

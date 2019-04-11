@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.access;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -229,11 +230,11 @@ public class MeasurementRepository implements Measurements {
           Dates.latest(List.of(
             key.activePeriod.getFirstIncluded().orElse(parameter.getFrom()),
             parameter.getFrom()
-          )),
+          )).withZoneSameInstant(ZoneId.of("Z")),
           Dates.earliest(List.of(
             key.activePeriod.getLastIncluded().orElse(parameter.getTo()),
             parameter.getTo()
-          )),
+          )).withZoneSameInstant(ZoneId.of("Z")),
           parameter.getResolution()
         )
       ));

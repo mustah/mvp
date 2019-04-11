@@ -69,9 +69,12 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    given(series(meter, Quantity.VOLUME, start, Duration.ofHours(1),
-      1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0
-    ));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(start)
+      .withInterval(Duration.ofHours(1))
+      .withValues(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -89,7 +92,12 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(physicalMeter());
 
-    given(series(meter, Quantity.POWER, start, Duration.ofDays(1), 2.0, 4.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start)
+      .withInterval(Duration.ofDays(1))
+      .withValues(2.0, 4.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -108,7 +116,12 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(physicalMeter());
 
-    given(series(meter, Quantity.POWER, start, Period.ofMonths(1), 2.0, 4.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start)
+      .withInterval(Period.ofMonths(1))
+      .withValues(2.0, 4.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -127,8 +140,16 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(physicalMeter());
 
-    given(series(meter, Quantity.POWER, start, 2.0));
-    given(series(meter, Quantity.POWER, start.plusHours(2), 3.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(2.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start.plusHours(2))
+      .withQuantity(Quantity.POWER)
+      .withValues(3.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -152,8 +173,18 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var meter = given(physicalMeter());
     var interval = Duration.ofMinutes(1);
 
-    given(series(meter, Quantity.POWER, start, interval, 2.0, 100.0));
-    given(series(meter, Quantity.POWER, start.plusHours(1), interval, 1.0, 9.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start)
+      .withInterval(interval)
+      .withValues(2.0, 100.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start.plusHours(1))
+      .withInterval(interval)
+      .withValues(1.0, 9.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -173,8 +204,16 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var meterOne = given(logicalMeter());
     var meterTwo = given(logicalMeter());
 
-    given(series(meterOne, Quantity.POWER, start, 12));
-    given(series(meterTwo, Quantity.POWER, start, 99.8));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(12));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(99.8));
 
     RequestParameters parameters = idParametersOf(meterOne);
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
@@ -194,8 +233,16 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    given(series(meter, Quantity.POWER, start, 2.0));
-    given(series(meter, Quantity.RETURN_TEMPERATURE, start, 6.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(2.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(6.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -215,8 +262,16 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_ROOM_SENSOR));
 
-    given(series(meter, Quantity.EXTERNAL_TEMPERATURE, start, 2.0));
-    given(series(meter, Quantity.HUMIDITY, start, 6.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.EXTERNAL_TEMPERATURE)
+      .withValues(2.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.HUMIDITY)
+      .withValues(6.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -238,8 +293,16 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    given(series(meter, Quantity.ENERGY, start, 2.0, 4.0));
-    given(series(meter, Quantity.VOLUME, start, 6.0, 12.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.ENERGY)
+      .withValues(2.0, 4.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(6.0, 12.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -260,11 +323,23 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var meter = given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
 
     //should be included
-    given(series(meter, Quantity.POWER, start, 2.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(2.0));
     //should not be included (not requested)
-    given(series(meter, Quantity.RETURN_TEMPERATURE, start, 6.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(6.0));
     //should be included but not contain values (not part of meter definition)
-    given(series(meter, Quantity.HUMIDITY, start, 18.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.HUMIDITY)
+      .withValues(18.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -288,7 +363,11 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    given(series(meter, Quantity.ENERGY, start, 2.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.ENERGY)
+      .withValues(2.0));
 
     Map<String, List<MeasurementValue>> resultDayResolution = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -321,8 +400,18 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var meterTwo = given(logicalMeter());
     var interval = Duration.ofHours(1);
 
-    given(series(meterOne, Quantity.ENERGY, start.plusHours(1), interval, 0.0, 1.0, 5.0));
-    given(series(meterTwo, Quantity.ENERGY, start.plusHours(1), interval, 1.0, 2.0, 3.0));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .withQuantity(Quantity.ENERGY)
+      .startingAt(start.plusHours(1))
+      .withInterval(interval)
+      .withValues(0.0, 1.0, 5.0));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .withQuantity(Quantity.ENERGY)
+      .startingAt(start.plusHours(1))
+      .withInterval(interval)
+      .withValues(1.0, 2.0, 3.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -347,8 +436,18 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var meterTwo = given(logicalMeter());
     var interval = Duration.ofHours(1);
 
-    given(series(meterOne, Quantity.ENERGY, start.plusHours(1), interval, 0.0, 1.0, 5.0));
-    given(series(meterTwo, Quantity.ENERGY, start.plusHours(1), interval, 1.0, 2.0, 3.0));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .withQuantity(Quantity.ENERGY)
+      .startingAt(start.plusHours(1))
+      .withInterval(interval)
+      .withValues(0.0, 1.0, 5.0));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .withQuantity(Quantity.ENERGY)
+      .startingAt(start.plusHours(1))
+      .withInterval(interval)
+      .withValues(1.0, 2.0, 3.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -372,8 +471,18 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var meterTwo = given(logicalMeter());
     var interval = Duration.ofHours(1);
 
-    given(series(meterOne, Quantity.POWER, start.plusHours(2), interval, 1.0, 5.0));
-    given(series(meterTwo, Quantity.POWER, start.plusHours(1), interval, 7.0, 2.0, 3.0));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start.plusHours(2))
+      .withInterval(interval)
+      .withValues(1.0, 5.0));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start.plusHours(1))
+      .withInterval(interval)
+      .withValues(7.0, 2.0, 3.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -399,8 +508,18 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var meterTwo = given(logicalMeter());
     var interval = Duration.ofHours(1);
 
-    given(series(meterOne, Quantity.ENERGY, start.plusHours(2), interval, 1.0, 5.0));
-    given(series(meterTwo, Quantity.ENERGY, start.plusHours(1), interval, 0.0, 2.0, 3.0));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .withQuantity(Quantity.ENERGY)
+      .startingAt(start.plusHours(2))
+      .withInterval(interval)
+      .withValues(1.0, 5.0));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .withQuantity(Quantity.ENERGY)
+      .startingAt(start.plusHours(1))
+      .withInterval(interval)
+      .withValues(0.0, 2.0, 3.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -430,8 +549,18 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var physicalMeterTwo = logicalMeter.physicalMeters.get(1);
     var interval = Duration.ofDays(1);
 
-    given(series(physicalMeterOne, Quantity.POWER, start.minusDays(2), interval, 2.0, 4.0));
-    given(series(physicalMeterTwo, Quantity.POWER, start, interval, 6.0, 12.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterOne)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start.minusDays(2))
+      .withInterval(interval)
+      .withValues(2.0, 4.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterTwo)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start)
+      .withInterval(interval)
+      .withValues(6.0, 12.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -460,8 +589,18 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
     var physicalMeterTwo = logicalMeter.physicalMeters.get(1);
     var interval = Duration.ofDays(1);
 
-    given(series(physicalMeterOne, Quantity.VOLUME, start.minusDays(2), interval, 2.0, 4.0));
-    given(series(physicalMeterTwo, Quantity.VOLUME, start, interval, 6.0, 12.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterOne)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(start.minusDays(2))
+      .withInterval(interval)
+      .withValues(2.0, 4.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterTwo)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(start)
+      .withInterval(interval)
+      .withValues(6.0, 12.0));
 
     Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
       new MeasurementParameter(

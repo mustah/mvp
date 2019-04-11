@@ -5,10 +5,6 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -139,112 +135,6 @@ public interface TestFixtures {
     return Medium.builder()
       .id(random().nextLong())
       .name(randomUUID().toString());
-  }
-
-  default Collection<Measurement> series(
-    PhysicalMeter physicalMeter,
-    Quantity quantity,
-    ZonedDateTime start,
-    TemporalAmount interval,
-    double... values
-  ) {
-    List<Measurement> series = new ArrayList<>();
-    ZonedDateTime t = start;
-    for (double value : values) {
-      series.add(
-        measurement(physicalMeter, quantity)
-          .value(value)
-          .created(t)
-          .quantity(quantity.name)
-          .unit(quantity.storageUnit)
-          .build()
-      );
-
-      t = t.plus(interval);
-    }
-    return series;
-  }
-
-  default Collection<Measurement> series(
-    LogicalMeter logicalMeter,
-    Quantity quantity,
-    ZonedDateTime start,
-    TemporalAmount interval,
-    double... values
-  ) {
-    List<Measurement> series = new ArrayList<>();
-    ZonedDateTime t = start;
-    for (double value : values) {
-      series.add(
-        measurement(logicalMeter)
-          .value(value)
-          .created(t)
-          .quantity(quantity.name)
-          .unit(quantity.storageUnit)
-          .build()
-      );
-
-      t = t.plus(interval);
-    }
-    return series;
-  }
-
-  default Collection<Measurement> series(
-    LogicalMeter logicalMeter,
-    Quantity quantity,
-    ZonedDateTime start,
-    double... values
-  ) {
-    return series(
-      logicalMeter,
-      quantity,
-      start,
-      Duration.ofMinutes(logicalMeter.activePhysicalMeter(now()).orElseThrow().readIntervalMinutes),
-      values
-    );
-  }
-
-  default Collection<Measurement> series(
-    PhysicalMeter physicalMeter,
-    Quantity quantity,
-    ZonedDateTime start,
-    double... values
-  ) {
-    return series(
-      physicalMeter,
-      quantity,
-      start,
-      Duration.ofMinutes(physicalMeter.readIntervalMinutes),
-      values
-    );
-  }
-
-  default Collection<Measurement> series(
-    LogicalMeter logicalMeter,
-    Quantity quantity,
-    TemporalAmount interval,
-    double... values
-  ) {
-    return series(
-      logicalMeter,
-      quantity,
-      now(),
-      interval,
-      values
-    );
-  }
-
-  default Collection<Measurement> series(
-    LogicalMeter logicalMeter,
-    Quantity quantity,
-    double... values
-  ) {
-    return series(
-      logicalMeter,
-      quantity,
-      Duration.ofMinutes(logicalMeter.activePhysicalMeter(now()).orElseThrow().readIntervalMinutes),
-      values
-    );
   }
 
   default MeasurementBuilder measurement(LogicalMeter logicalMeter) {

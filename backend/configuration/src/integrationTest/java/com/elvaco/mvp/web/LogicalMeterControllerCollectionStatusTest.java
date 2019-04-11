@@ -44,7 +44,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void nullWhenNoInterval() {
     var districtHeatingMeter = given(logicalMeter(), physicalMeter().readIntervalMinutes(0));
 
-    given(series(districtHeatingMeter, Quantity.ENERGY, 1.0));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .withQuantity(Quantity.ENERGY)
+      .startingAt(context().now())
+      .withValues(1.0));
 
     Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
@@ -78,7 +82,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void fiftyPercent_readout() {
     LogicalMeter districtHeatingMeter = given(logicalMeter());
 
-    given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, 1.0));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .startingAt(context().now())
+      .withValues(1.0));
 
     Page<CollectionStatsDto> response = asUser()
       .getPage(
@@ -97,9 +105,12 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void collectionPercentageOnlyConsidersExpectedMeasurements() {
     LogicalMeter districtHeatingMeter = given(logicalMeter());
 
-    given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().now().plusMinutes(5),
-      Duration.ofMinutes(5), DoubleStream.iterate(1, d -> d).limit(24 * 12 - 1).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .startingAt(context().now().plusMinutes(5))
+      .withInterval(Duration.ofMinutes(5))
+      .withValues(DoubleStream.iterate(1, d -> d).limit(24 * 12 - 1).toArray()));
 
     Page<CollectionStatsDto> response = asUser()
       .getPage(
@@ -118,7 +129,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void fiftyPercent_consumption() {
     LogicalMeter districtHeatingMeter = given(logicalMeter());
 
-    given(series(districtHeatingMeter, Quantity.ENERGY, 1.0));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .withQuantity(Quantity.ENERGY)
+      .startingAt(context().now())
+      .withValues(1.0));
 
     Page<CollectionStatsDto> response = asUser()
       .getPage(
@@ -149,7 +164,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     );
 
     given(
-      series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().yesterday(), 1.0, 2.0)
+      measurementSeries()
+        .forMeter(districtHeatingMeter)
+        .startingAt(context().yesterday())
+        .withQuantity(Quantity.RETURN_TEMPERATURE)
+        .withValues(1.0, 2.0)
     );
 
     var response = asUser()
@@ -178,7 +197,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     );
 
     given(
-      series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().yesterday(), 1.0, 2.0)
+      measurementSeries()
+        .forMeter(districtHeatingMeter)
+        .startingAt(context().yesterday())
+        .withQuantity(Quantity.RETURN_TEMPERATURE)
+        .withValues(1.0, 2.0)
     );
 
     var content = asUser()
@@ -195,7 +218,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void twoOutOfThreeMissing() {
     var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
-    given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().yesterday(), 1.0));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0));
 
     CollectionStatsDto logicalMeterDto = asUser()
       .getPage(
@@ -228,12 +255,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       physicalMeter().logicalMeterId(meterId).activePeriod(secondMeterActivePeriod)
     );
 
-    given(series(
-      districtHeatingMeter,
-      Quantity.RETURN_TEMPERATURE,
-      secondMeterActivePeriod.getStartDateTime().get().plusHours(1),
-      DoubleStream.iterate(2, d -> d + 1.0).limit(23).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(secondMeterActivePeriod.getStartDateTime().get().plusHours(1))
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(2, d -> d + 1.0).limit(23).toArray()));
 
     List<CollectionStatsDto> pagedMeters = asUser()
       .getPage(
@@ -256,12 +282,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void oneHundredPercent() {
     var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
-    given(series(
-      districtHeatingMeter,
-      Quantity.RETURN_TEMPERATURE,
-      context().now(),
-      DoubleStream.iterate(1, d -> d + 1.0).limit(24).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().now())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(24).toArray()));
 
     Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
@@ -289,12 +314,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void oneHundredPercentForTwoDays() {
     var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
-    given(series(
-      districtHeatingMeter,
-      Quantity.RETURN_TEMPERATURE,
-      context().now(),
-      DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().now())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
 
     Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
@@ -338,12 +362,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       physicalMeter().logicalMeterId(meterId).activePeriod(secondMeterActivePeriod)
     );
 
-    given(series(
-      districtHeatingMeter,
-      Quantity.RETURN_TEMPERATURE,
-      context().now(),
-      DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().now())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
 
     Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
@@ -374,12 +397,11 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       physicalMeter().logicalMeterId(meterId).activePeriod(secondMeterActivePeriod)
     );
 
-    given(series(
-      districtHeatingMeter,
-      Quantity.RETURN_TEMPERATURE,
-      context().now().plusHours(12),
-      DoubleStream.iterate(1, d -> d + 1.0).limit(36).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().now().plusHours(12))
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(36).toArray()));
 
     Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
@@ -402,15 +424,21 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       logicalMeter().externalId("0004"),
       logicalMeter().externalId("0005").physicalMeters(List.of(phys))
     ));
-    given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0, 1, 1, 1, 1, 1
-    ));
-    given(series(meters.get(2), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0, 1, 1, 1, 1
-    ));
-    given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday().plusHours(6),
-      1.0, 1, 1, 1
-    ));
+    given(measurementSeries()
+      .forMeter(meters.get(0))
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 1, 1, 1, 1, 1));
+    given(measurementSeries()
+      .forMeter(meters.get(2))
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 1, 1, 1, 1));
+    given(measurementSeries()
+      .forMeter(meters.get(1))
+      .startingAt(context().yesterday().plusHours(6))
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 1, 1, 1));
     testSorting(
       "collectionPercentage,asc",
       meter -> meter.facility,
@@ -432,15 +460,21 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       logicalMeter().externalId("0003"),
       logicalMeter().externalId("0004")
     ));
-    given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0, 1, 1, 1, 1, 1
-    ));
-    given(series(meters.get(2), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0, 1, 1, 1, 1
-    ));
-    given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday().plusHours(6),
-      1.0, 1, 1, 1
-    ));
+    given(measurementSeries()
+      .forMeter(meters.get(0))
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 1, 1, 1, 1, 1));
+    given(measurementSeries()
+      .forMeter(meters.get(2))
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 1, 1, 1, 1));
+    given(measurementSeries()
+      .forMeter(meters.get(1))
+      .startingAt(context().yesterday().plusHours(6))
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 1, 1, 1));
 
     testSorting(
       "lastData,asc",
@@ -487,12 +521,16 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       logicalMeter().physicalMeters(List.of(phys0)),
       logicalMeter().physicalMeters(List.of(phys24))
     ));
-    given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      DoubleStream.iterate(0, d -> d + 1.0).limit(24).toArray()
-    ));
-    given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday(),
-      1.0, 1, 1, 1, 1
-    ));
+    given(measurementSeries()
+      .forMeter(meters.get(0))
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(0, d -> d + 1.0).limit(24).toArray()));
+    given(measurementSeries()
+      .forMeter(meters.get(1))
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 1, 1, 1, 1));
 
     var listedPercentage = asUser()
       .getList(

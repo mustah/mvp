@@ -26,8 +26,16 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void findAllMeters_WithMeasurementThresholdMatching_OnAnotherDay() {
     ZonedDateTime now = context().now();
     var meter = given(physicalMeter());
-    given(series(meter, Quantity.POWER, -1));
-    given(series(meter, Quantity.POWER, now.plusDays(2), 1));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(-1));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(now.plusDays(2))
+      .withQuantity(Quantity.POWER)
+      .withValues(1));
 
     Url url = Url.builder()
       .path("/meters")
@@ -46,7 +54,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void findAllMeters_WithMeasurementThresholdMatchingOneButNotAll() {
     ZonedDateTime now = context().now();
     var meter = given(physicalMeter());
-    given(series(meter, Quantity.POWER, -1, 1.1));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(-1, 1.1));
 
     Url url = Url.builder()
       .path("/meters")
@@ -64,7 +76,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   @Test
   public void findAllMeters_WithMeasurementThresholdNotMatching() {
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 1.1));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.1));
 
     ZonedDateTime now = context().now();
     Url url = Url.builder()
@@ -83,7 +99,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_LessThan() {
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, -0.1));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(-0.1));
     var now = context().now();
 
     Url url = Url.builder()
@@ -103,7 +123,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void findAllMeters_WithMeasurementThresholdMatching_LessThanOrEquals() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(0));
 
     Url url = Url.builder()
       .path("/meters")
@@ -122,7 +146,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void findAllMeters_WithMeasurementThresholdMatching_GreaterThanOrEquals() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 9));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(9));
 
     Url url = Url.builder()
       .path("/meters")
@@ -141,7 +169,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void findAllMeters_WithMeasurementThresholdMatching_GreaterThan() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 9001));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(9001));
 
     Url url = Url.builder()
       .path("/meters")
@@ -160,7 +192,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void findAllMeters_WithMeasurementThresholdMatching_DifferentUnitSameDimension() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 8999));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(8999));
 
     Url url = Url.builder()
       .path("/meters")
@@ -179,7 +215,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void findAllMeters_WithMeasurementThresholdWrongDimension() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 8999));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(8999));
 
     Url url = Url.builder()
       .path("/meters")
@@ -200,12 +240,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void atAnyTime_24hIntervalAsHourConsumption() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
-    given(series(
-      meter,
-      Quantity.VOLUME,
-      now,
-      DoubleStream.iterate(0, (m) -> m + 24).limit(4).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(now)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(0, (m) -> m + 24).limit(4).toArray()));
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
@@ -228,12 +267,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void atAnyTime_15mIntervalAsHourConsumption() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(15));
-    given(series(
-      meter,
-      Quantity.VOLUME,
-      now,
-      DoubleStream.iterate(0, (m) -> m + 1).limit(24 * 8).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(now)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(0, (m) -> m + 1).limit(24 * 8).toArray()));
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
@@ -258,20 +296,18 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     var leakingMeter = given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_HOT_WATER));
 
     //first, it leaks for a day
-    given(series(
-      leakingMeter,
-      Quantity.VOLUME,
-      now,
-      DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(leakingMeter)
+      .startingAt(now)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()));
 
     //then, someone fixes it
-    given(series(
-      leakingMeter,
-      Quantity.VOLUME,
-      now.plusDays(1),
-      DoubleStream.generate(() -> 24).limit(24).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(leakingMeter)
+      .startingAt(now.plusDays(1))
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.generate(() -> 24).limit(24).toArray()));
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
@@ -299,20 +335,18 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
 
     // first, it works for a day
-    given(series(
-      brokenMeter,
-      Quantity.VOLUME,
-      now,
-      DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(brokenMeter)
+      .startingAt(now)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()));
 
     // then, it breaks, and stays broken for a week
-    given(series(
-      brokenMeter,
-      Quantity.ENERGY,
-      now.plusDays(1),
-      DoubleStream.generate(() -> 0.1).limit(24 * 7).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(brokenMeter)
+      .startingAt(now.plusDays(1))
+      .withQuantity(Quantity.ENERGY)
+      .withValues(DoubleStream.generate(() -> 0.1).limit(24 * 7).toArray()));
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
@@ -339,20 +373,18 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     var brokenMeter = given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_ROOM_SENSOR));
 
     // first, it's cold
-    given(series(
-      brokenMeter,
-      Quantity.EXTERNAL_TEMPERATURE,
-      now,
-      DoubleStream.generate(() -> 19.5).limit(24 * 3).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(brokenMeter)
+      .startingAt(now)
+      .withQuantity(Quantity.EXTERNAL_TEMPERATURE)
+      .withValues(DoubleStream.generate(() -> 19.5).limit(24 * 3).toArray()));
 
     // then, someone turns up the heat
-    given(series(
-      brokenMeter,
-      Quantity.EXTERNAL_TEMPERATURE,
-      now.plusDays(3),
-      DoubleStream.generate(() -> 23).limit(24 * 3).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(brokenMeter)
+      .startingAt(now.plusDays(3))
+      .withQuantity(Quantity.EXTERNAL_TEMPERATURE)
+      .withValues(DoubleStream.generate(() -> 23).limit(24 * 3).toArray()));
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
@@ -393,12 +425,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void forDuration_0mIntervalDoesNotCrashEverything() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(0));
-    given(series(
-      meter,
-      Quantity.VOLUME,
-      now,
-      DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(now)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()));
 
     ResponseEntity<PagedLogicalMeterDto> response = asUser()
       .get(Url.builder()
@@ -414,12 +445,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void forDuration_15mIntervalAsHourConsumption() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(15));
-    given(series(
-      meter,
-      Quantity.VOLUME,
-      now,
-      DoubleStream.iterate(0, (m) -> m + 1).limit(24 * 8).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(now)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(0, (m) -> m + 1).limit(24 * 8).toArray()));
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
@@ -442,12 +472,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void forDuration_24hIntervalAsHourConsumption() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
-    given(series(
-      meter,
-      Quantity.VOLUME,
-      now,
-      DoubleStream.iterate(0, (m) -> m + 24).limit(4).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(now)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(0, (m) -> m + 24).limit(4).toArray()));
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
@@ -470,12 +499,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void forDuration_NonConsumptionQuantityIsNotConvertedToHourly() {
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
-    given(series(
-      meter,
-      Quantity.RETURN_TEMPERATURE,
-      now,
-      DoubleStream.iterate(0, (m) -> m + 24).limit(2).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(now)
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(0, (m) -> m + 24).limit(2).toArray()));
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")

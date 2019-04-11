@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 
@@ -15,7 +16,8 @@ public class QuantityEntityMapper {
     return new Quantity(
       quantityEntity.id,
       quantityEntity.name,
-      quantityEntity.storageUnit
+      quantityEntity.storageUnit,
+      quantityEntity.storageMode
     );
   }
 
@@ -23,7 +25,8 @@ public class QuantityEntityMapper {
     return new QuantityEntity(
       quantityProvider.getId(quantity),
       quantity.name,
-      getStorageUnit(quantity)
+      getStorageUnit(quantity),
+      getStorageMode(quantity)
     );
   }
 
@@ -31,5 +34,11 @@ public class QuantityEntityMapper {
     return quantityProvider.getByName(inputQuantity.name)
       .map(q -> q.storageUnit)
       .orElse(inputQuantity.storageUnit);
+  }
+
+  private DisplayMode getStorageMode(Quantity inputQuantity) {
+    return quantityProvider.getByName(inputQuantity.name)
+      .map(q -> q.storageMode)
+      .orElse(inputQuantity.storageMode);
   }
 }

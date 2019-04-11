@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import java.util.List;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 
@@ -14,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class QuantityEntityMapperTest {
 
   private static final List<Quantity> FIXTURE_QUANTITIES = List.of(
-    new Quantity(1, "Volume", "m3")
+    new Quantity(1, "Volume", "m3", DisplayMode.CONSUMPTION)
   );
 
   private static final QuantityProvider QUANTITY_PROVIDER = name -> FIXTURE_QUANTITIES
@@ -31,11 +32,13 @@ public class QuantityEntityMapperTest {
     QuantityEntity entity = QUANTITY_ENTITY_MAPPER.toEntity(new Quantity(
       2,
       "Calle",
-      "m3"
+      "m3",
+      DisplayMode.READOUT
     ));
-    assertThat(entity.name).isEqualTo("Calle");
-    assertThat(entity.id).isEqualTo(2);
-    assertThat(entity.storageUnit).isEqualTo("m3");
+
+    assertThat(entity).isEqualTo(
+      new QuantityEntity(2, "Calle", "m3", DisplayMode.READOUT)
+    );
   }
 
   @Test
@@ -43,11 +46,13 @@ public class QuantityEntityMapperTest {
     QuantityEntity entity = QUANTITY_ENTITY_MAPPER.toEntity(new Quantity(
       null,
       "Volume",
-      "m3"
+      "m3",
+      DisplayMode.CONSUMPTION
     ));
-    assertThat(entity.name).isEqualTo("Volume");
-    assertThat(entity.id).isEqualTo(1);
-    assertThat(entity.storageUnit).isEqualTo("m3");
+
+    assertThat(entity).isEqualTo(
+      new QuantityEntity(1, "Volume", "m3", DisplayMode.CONSUMPTION)
+    );
   }
 
   @Test
@@ -55,7 +60,8 @@ public class QuantityEntityMapperTest {
     var volumeWithDifferentId = new Quantity(
       2,
       "Volume",
-      "m3"
+      "m3",
+      DisplayMode.CONSUMPTION
     );
 
     assertThatThrownBy(() -> QUANTITY_ENTITY_MAPPER.toEntity(volumeWithDifferentId))

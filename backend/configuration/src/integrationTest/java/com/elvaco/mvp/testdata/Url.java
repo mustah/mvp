@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 
 import lombok.Builder;
@@ -108,11 +109,19 @@ public class Url implements UrlTemplate {
     }
 
     public UrlBuilder quantity(Quantity quantity) {
-      return parameter(QUANTITY, quantity.name);
+      return quantity(quantity.name);
+    }
+
+    public UrlBuilder quantity(String quantityPresentation) {
+      return parameter(QUANTITY, quantityPresentation);
     }
 
     public UrlBuilder resolution(String resolution) {
       return parameter(RESOLUTION, resolution);
+    }
+
+    public UrlBuilder resolution(TemporalResolution resolution) {
+      return parameter(RESOLUTION, resolution.name());
     }
 
     public UrlBuilder page(long pageNum) {

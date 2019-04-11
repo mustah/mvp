@@ -136,7 +136,11 @@ public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
       UNKNOWN_MEDIUM,
       false,
       singleton(
-        new DisplayQuantity(new Quantity(1, "Speed", "kmh"), DisplayMode.READOUT, "kmh")
+        new DisplayQuantity(
+          new Quantity(1, "Speed", "kmh", DisplayMode.READOUT),
+          DisplayMode.READOUT,
+          "kmh"
+        )
 
       )
     );
@@ -174,7 +178,11 @@ public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
         UNKNOWN_MEDIUM,
         false,
         singleton(
-          new DisplayQuantity(new Quantity(1, "Energy", "kWh"), DisplayMode.READOUT, "kWh")
+          new DisplayQuantity(
+            new Quantity(1, "Energy", "kWh", DisplayMode.READOUT),
+            DisplayMode.READOUT,
+            "kWh"
+          )
 
         )
       );
@@ -218,7 +226,11 @@ public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
         UNKNOWN_MEDIUM,
         false,
         singleton(
-          new DisplayQuantity(new Quantity(null, "Energy", "kWh"), DisplayMode.READOUT, "kWh")
+          new DisplayQuantity(
+            new Quantity(null, "Energy", "kWh", DisplayMode.READOUT),
+            DisplayMode.READOUT,
+            "kWh"
+          )
 
         )
       );
@@ -254,7 +266,9 @@ public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
       null,
       singleton(new DisplayQuantityEntity(
         new DisplayQuantityPk(
-          new QuantityEntity(1, quantityName, quantityUnit), 0L, DisplayMode.READOUT
+          new QuantityEntity(1, quantityName, quantityUnit, DisplayMode.READOUT),
+          0L,
+          DisplayMode.READOUT
         ),
         quantityUnit,
         3

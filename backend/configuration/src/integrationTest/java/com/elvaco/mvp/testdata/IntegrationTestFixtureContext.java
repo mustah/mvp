@@ -209,6 +209,10 @@ public class IntegrationTestFixtureContext implements TestFixtures {
     return dashboards.save(dashboardBuilder.build());
   }
 
+  Collection<Measurement> given(MeasurementSeriesBuilder seriesBuilder) {
+    return seriesBuilder.build().stream().map(measurements::save).collect(toList());
+  }
+
   Widget given(WidgetBuilder widgetBuilder) {
     return widgets.save(widgetBuilder.build());
   }

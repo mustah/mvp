@@ -59,7 +59,11 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_PutConsumptionOnStartOfInterval() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.VOLUME, start, 3.0, 6.0, 12.0, 24.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(3.0, 6.0, 12.0, 24.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
@@ -81,8 +85,16 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_PutSumOfMissingIntervalsOnStartOfInterval() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.VOLUME, start, 3.0, 6.0));
-    given(series(meter, Quantity.VOLUME, start.plusHours(4), 48.0, 96.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(3.0, 6.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start.plusHours(4))
+      .withQuantity(Quantity.VOLUME)
+      .withValues(48.0, 96.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
@@ -109,9 +121,17 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_MissingMeasurementAtStartOfIntervalAndAfterInterval() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.VOLUME, start.minusHours(1), 1.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start.minusHours(1))
+      .withQuantity(Quantity.VOLUME)
+      .withValues(1.0));
     // missing measurement for 'start'
-    given(series(meter, Quantity.VOLUME, start.plusHours(1), 6.0, 12.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start.plusHours(1))
+      .withQuantity(Quantity.VOLUME)
+      .withValues(6.0, 12.0));
     // missing measurement after interval
 
     Map<MeasurementKey, List<MeasurementValue>> result =
@@ -138,7 +158,11 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_MissingMeasurementAtEndOfInterval() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.VOLUME, start, 3.0, 6.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(3.0, 6.0));
     // missing measurement at end of interval
 
     Map<MeasurementKey, List<MeasurementValue>> result =
@@ -165,9 +189,17 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_MissingMeasurementAtEndOfIntervalButLaterExists() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.VOLUME, start, 3.0, 6.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(3.0, 6.0));
     // missing measurement at end of interval
-    given(series(meter, Quantity.VOLUME, start.plusHours(4), 24.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start.plusHours(4))
+      .withQuantity(Quantity.VOLUME)
+      .withValues(24.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
@@ -193,7 +225,11 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_MissingMeasurementAfterInterval() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.VOLUME, start, 3.0, 6.0, 12.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(3.0, 6.0, 12.0));
     // missing measurement at START_TIME.plusHours(3)
 
     Map<MeasurementKey, List<MeasurementValue>> result =
@@ -215,7 +251,11 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   public void seriesShouldIncludeEmptyResolutionPoints() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, start, 1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(1.0, 2.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
@@ -240,7 +280,12 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   public void seriesShouldNotIncludeValuesInBetweenResolutionPoints() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, start, Duration.ofMinutes(30), 1.0, 1.5, 2.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start)
+      .withInterval(Duration.ofMinutes(30))
+      .withValues(1.0, 1.5, 2.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
@@ -266,8 +311,16 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var meterOne = given(logicalMeter());
     var meterTwo = given(logicalMeter());
 
-    given(series(meterOne, Quantity.POWER, start, 1.0, 2.0, 3.0));
-    given(series(meterTwo, Quantity.POWER, start, 10.0, 20.0, 30.0));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(1.0, 2.0, 3.0));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .startingAt(start)
+      .withQuantity(Quantity.POWER)
+      .withValues(10.0, 20.0, 30.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
@@ -302,8 +355,16 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var meterOne = given(logicalMeter());
     var meterTwo = given(logicalMeter());
 
-    given(series(meterOne, Quantity.VOLUME, start, 1.0, 2.0, 3.0));
-    given(series(meterTwo, Quantity.VOLUME, start, 10.0, 20.0, 30.0));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(1.0, 2.0, 3.0));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(10.0, 20.0, 30.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
@@ -335,12 +396,11 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meterOne = given(logicalMeter());
 
-    given(series(
-      meterOne,
-      Quantity.VOLUME,
-      start,
-      DoubleStream.iterate(1, d -> d + 1).limit(25).toArray()
-    ));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .startingAt(start)
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(1, d -> d + 1).limit(25).toArray()));
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
@@ -372,8 +432,18 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var physicalMeterTwo = logicalMeter.physicalMeters.get(1);
     var interval = Duration.ofDays(1);
 
-    given(series(physicalMeterOne, Quantity.POWER, start.minusDays(2), interval, 2.0, 4.0));
-    given(series(physicalMeterTwo, Quantity.POWER, start, interval, 6.0, 12.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterOne)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start.minusDays(2))
+      .withInterval(interval)
+      .withValues(2.0, 4.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterTwo)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start)
+      .withInterval(interval)
+      .withValues(6.0, 12.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
@@ -406,8 +476,18 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var physicalMeterTwo = logicalMeter.physicalMeters.get(1);
     var interval = Duration.ofDays(1);
 
-    given(series(physicalMeterOne, Quantity.VOLUME, start.minusDays(2), interval, 2.0, 4.0));
-    given(series(physicalMeterTwo, Quantity.VOLUME, start, interval, 6.0, 12.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterOne)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(start.minusDays(2))
+      .withInterval(interval)
+      .withValues(2.0, 4.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterTwo)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(start)
+      .withInterval(interval)
+      .withValues(6.0, 12.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
@@ -466,7 +546,11 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    given(series(meter.activePhysicalMeter().orElseThrow(), Quantity.POWER, start, 2000.0));
+    given(measurementSeries()
+      .forMeter(meter.activePhysicalMeter().orElseThrow())
+      .withQuantity(Quantity.POWER)
+      .startingAt(start)
+      .withValues(2000.0));
 
     DisplayQuantity displayQuantity = POWER_DISPLAY_KW;
 
@@ -525,7 +609,11 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var meter = given(logicalMeter());
     var physicalMeter = meter.activePhysicalMeter().get();
 
-    given(series(physicalMeter, Quantity.VOLUME, start, 2.0));
+    given(measurementSeries()
+      .forMeter(physicalMeter)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(start)
+      .withValues(2.0));
 
     assertThatThrownBy(() -> measurements.save(Measurement.builder()
       .physicalMeter(physicalMeter)

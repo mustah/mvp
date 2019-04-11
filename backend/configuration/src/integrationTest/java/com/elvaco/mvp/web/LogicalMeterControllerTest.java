@@ -493,7 +493,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void userCannotRemoveLogicalMeter() {
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 1));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1));
 
     ResponseEntity<ErrorMessageDto> response = asUser()
       .delete("/meters/" + meter.id, ErrorMessageDto.class);
@@ -516,7 +520,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void adminCannotRemoveLogicalMeter() {
     var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 1));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1));
 
     ResponseEntity<ErrorMessageDto> response = asAdmin()
       .delete("/meters/" + meter.id, ErrorMessageDto.class);
@@ -533,7 +541,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       physicalMeter().activePeriod(PeriodRange.from(context().now()))
     );
 
-    given(series(logicalMeter, Quantity.POWER, 1));
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1));
 
     ResponseEntity<LogicalMeterDto> response = asSuperAdmin()
       .delete("/meters/" + logicalMeter.id, LogicalMeterDto.class);

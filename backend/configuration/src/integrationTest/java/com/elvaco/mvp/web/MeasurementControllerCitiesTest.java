@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
@@ -42,8 +43,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       logicalMeter().location(stockholm().address("stora gatan 2").build())
     );
 
-    given(series(storaGatan1, Quantity.POWER, 1.0, 2.0));
-    given(series(storaGatan2, Quantity.POWER, 3.0, 4.0));
+    given(measurementSeries()
+      .forMeter(storaGatan1)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(storaGatan2)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(3.0, 4.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -52,7 +61,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .parameter("quantity", Quantity.POWER.name + ":W")
           .parameter("label", "Stockholm")
           .city("sverige,stockholm")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -92,9 +101,21 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       logicalMeter().location(kungsbacka().build()
       ));
 
-    given(series(stockholm1, Quantity.POWER, 1.0, 2.0));
-    given(series(stockholm2, Quantity.POWER, 3.0, 4.0));
-    given(series(kungsbacka, Quantity.POWER, 10.0, 10.0));
+    given(measurementSeries()
+      .forMeter(stockholm1)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(stockholm2)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(3.0, 4.0));
+    given(measurementSeries()
+      .forMeter(kungsbacka)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(10.0, 10.0));
 
     var response = asUser()
       .getList(
@@ -102,7 +123,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -139,8 +160,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     ZonedDateTime start = context().now();
 
-    given(series(roomSensorMeter, Quantity.EXTERNAL_TEMPERATURE, 1.0, 2.0));
-    given(series(gasMeter, Quantity.VOLUME, 10.0, 11.0));
+    given(measurementSeries()
+      .forMeter(roomSensorMeter)
+      .withQuantity(Quantity.EXTERNAL_TEMPERATURE)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(gasMeter)
+      .withQuantity(Quantity.VOLUME)
+      .startingAt(context().now())
+      .withValues(10.0, 11.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -148,7 +177,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", "External temperature")
           .city("sverige,kiruna")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -176,7 +205,11 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   public void cityAverageIsEmptyWhenCityOnlyContainNonMatchingQuantities() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter().location(stockholm().build()));
-    given(series(meter, Quantity.POWER, 1.0));
+    given(measurementSeries()
+      .forMeter(meter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -184,7 +217,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", "Relative humidity")
           .city("sverige,stockholm")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -203,7 +236,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.VOLUME.name)
           .city("sverige,stockholm")
-          .resolution("hour").build(),
+          .resolution(TemporalResolution.hour).build(),
         MeasurementSeriesDto.class
       );
 
@@ -218,8 +251,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     var stockholm = given(logicalMeter().location(stockholm().build()));
     var kungsbacka = given(logicalMeter().location(kungsbacka().build()));
 
-    given(series(stockholm, Quantity.POWER, 1.0, 2.0));
-    given(series(kungsbacka, Quantity.POWER, 10.0, 10.0));
+    given(measurementSeries()
+      .forMeter(stockholm)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(kungsbacka)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(10.0, 10.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -228,7 +269,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
           .city("sverige,kungsbacka")
-          .resolution("hour")
+          .resolution(TemporalResolution.hour)
           .build(),
         MeasurementSeriesDto.class
       );
@@ -258,13 +299,21 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     var meterOne = given(logicalMeter().location(stockholm().address("1").build()));
     var meterTwo = given(logicalMeter().location(stockholm().address("2").build()));
 
-    given(series(meterOne, Quantity.POWER, 1.0, 2.0));
-    given(series(meterTwo, Quantity.POWER, 3.0, 4.0));
+    given(measurementSeries()
+      .forMeter(meterOne)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(1.0, 2.0));
+    given(measurementSeries()
+      .forMeter(meterTwo)
+      .withQuantity(Quantity.POWER)
+      .startingAt(context().now())
+      .withValues(3.0, 4.0));
 
     Url cityAverageUrl = measurementsCitiesUrl()
       .period(start, start.plusHours(1))
       .city("sverige,stockholm")
-      .resolution("hour")
+      .resolution(TemporalResolution.hour)
       .parameter("quantity", Quantity.POWER.name + ":W")
       .build();
 
@@ -272,7 +321,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .builder()
       .path("/measurements/average")
       .period(start, start.plusHours(1))
-      .resolution("hour")
+      .resolution(TemporalResolution.hour)
       .parameter("quantity", Quantity.POWER.name + ":W")
       .parameter("id", List.of(meterOne.id, meterTwo.id))
       .build();
