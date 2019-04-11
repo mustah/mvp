@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
@@ -27,7 +26,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.Collections.emptySet;
@@ -69,12 +67,12 @@ public class MeasurementController {
     );
 
     return measurementUseCases.findAverageForPeriod(parameter)
-      .entrySet().stream().map(entry ->
+      .entrySet().stream()
+      .map(entry ->
         toSeries(
           entry.getValue(),
           label,
           String.format("average-%s", entry.getKey()),
-          singleCityOrNull(parameters),
           quantityMap.get(entry.getKey())
         ))
       .collect(toList());
@@ -111,21 +109,17 @@ public class MeasurementController {
     );
 
     return measurementUseCases.findSeriesForPeriod(parameter)
-      .entrySet().stream().map(entry -> {
-          var key = entry.getKey();
-          var value = entry.getValue();
-          return toSeries(
-            value,
-            key.logicalMeterId,
-            key.externalId,
-            key.city,
-            key.locationAddress,
-            key.mediumName,
-            key.physicalMeterAddress,
-            quantityMap.get(key.quantity)
-          );
-        }
-      ).collect(toList());
+      .entrySet().stream()
+      .map(entry ->
+        toSeries(
+          entry.getValue(),
+          entry.getKey().logicalMeterId,
+          entry.getKey().externalId,
+          entry.getKey().mediumName,
+          entry.getKey().physicalMeterAddress,
+          quantityMap.get(entry.getKey().quantity)
+        ))
+      .collect(toList());
   }
 
   @GetMapping("/paged")
@@ -160,12 +154,6 @@ public class MeasurementController {
           : preferredQuantityParameters.get(qp.name).displayMode)
         .build())
       .collect(toMap(qp -> qp.name, qp -> qp));
-  }
-
-  @Nullable
-  private static String singleCityOrNull(RequestParameters requestParameters) {
-    var cities = requestParameters.getValues(CITY);
-    return cities.size() != 1 ? null : cities.iterator().next();
   }
 
   private static ZonedDateTime beforeOrNow(ZonedDateTime before) {

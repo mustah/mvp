@@ -2,6 +2,7 @@ import {sortBy, toArray, uniqBy} from 'lodash';
 import {LegendPayload} from 'recharts';
 import {colors, secondaryBgActive} from '../../../app/themes';
 import {firstUpperTranslated} from '../../../services/translationService';
+import {AxesProps, GraphContents} from '../../../state/report/reportModels';
 import {
   MeasurementResponse,
   MeasurementResponsePart,
@@ -10,7 +11,6 @@ import {
   TooltipMeta
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
-import {AxesProps, GraphContents} from '../../../state/report/reportModels';
 
 const colorize =
   (colorSchema: {[key: string]: string}) =>
@@ -41,7 +41,9 @@ const yAxisIdLookup = (axes: AxesProps, unit: string): 'left' | 'right' | undefi
 
 interface DataKey {
   id: string;
+  name?: string;
   label: string;
+  meterAddress?: string;
   quantity: Quantity;
 }
 

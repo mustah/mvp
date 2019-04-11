@@ -3,9 +3,11 @@ package com.elvaco.mvp.web.dto;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
+import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSortedMeasurements;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementSeriesDtoTest {
@@ -13,15 +15,13 @@ public class MeasurementSeriesDtoTest {
   @Test
   public void valuesAreOrderedByWhen() {
     ZonedDateTime now = ZonedDateTime.now();
-    List<MeasurementValueDto> values = asList(
-      new MeasurementValueDto(now.toInstant(), 1.0),
-      new MeasurementValueDto(now.minusDays(1).toInstant(), 1.0),
-      new MeasurementValueDto(now.plusMinutes(12).toInstant(), 1.0)
+    List<MeasurementValue> values = List.of(
+      new MeasurementValue(1.0, now.toInstant()),
+      new MeasurementValue(1.0, now.minusDays(1).toInstant()),
+      new MeasurementValue(1.0, now.plusMinutes(12).toInstant())
     );
 
-    assertThat(new MeasurementSeriesDto(null, "quantity", "unit", "label", null, null, null,
-      values
-    ).values).containsExactly(
+    assertThat(toSortedMeasurements(values)).containsExactly(
       new MeasurementValueDto(now.minusDays(1).toInstant(), 1.0),
       new MeasurementValueDto(now.toInstant(), 1.0),
       new MeasurementValueDto(now.plusMinutes(12).toInstant(), 1.0)

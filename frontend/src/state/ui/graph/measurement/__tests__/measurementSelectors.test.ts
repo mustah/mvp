@@ -34,8 +34,6 @@ describe('measurementSelectors', () => {
 
   const responseItem: MeasurementResponsePart = {
     id: '1',
-    city: 'Varberg',
-    address: 'Drottningatan 1',
     label: 'a',
     medium: getMediumType(Medium.electricity),
     quantity: Quantity.power,

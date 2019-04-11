@@ -3,8 +3,8 @@ import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
-import {LegendItem, LegendType} from '../../../report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
+import {LegendItem, LegendType} from '../../../report/reportModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
 import {MeasurementsApiResponse, MeasurementValue} from './measurementModels';
 
@@ -62,11 +62,11 @@ export interface TooltipMeta {
 }
 
 export interface MeasurementResponsePart {
-  address?: string;
-  city?: string;
   id: string;
   label: string;
   medium?: string;
+  meterId?: string;
+  name?: string;
   quantity: Quantity;
   unit: string;
   values: MeasurementValue[];

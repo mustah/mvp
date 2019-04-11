@@ -42,7 +42,6 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record10;
 import org.jooq.Record3;
-import org.jooq.Result;
 import org.jooq.ResultQuery;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
@@ -180,8 +179,7 @@ public class MeasurementRepository implements Measurements {
     var consumptionParameter = getConsumptionParameter(parameter);
     if (!consumptionParameter.getQuantities().isEmpty()) {
       var r = getConsumptionAverageQuery(consumptionParameter);
-      Map<String, List<MeasurementValue>> map = mapAverageForPeriod(consumptionParameter, r);
-      result.putAll(map);
+      result.putAll(mapAverageForPeriod(consumptionParameter, r));
     }
 
     var readoutParameter = getReadoutParameter(parameter);
@@ -190,8 +188,7 @@ public class MeasurementRepository implements Measurements {
       result.putAll(mapAverageForPeriod(readoutParameter, r));
     }
 
-    return result.keySet()
-      .stream()
+    return result.keySet().stream()
       .collect(toMap(
         identity(),
         key -> fillMissing(
@@ -501,12 +498,10 @@ public class MeasurementRepository implements Measurements {
 
   private Map<String, List<MeasurementValue>> mapAverageForPeriod(
     MeasurementParameter parameter,
-    ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> r
+    ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> resultQuery
   ) {
     Map<String, QuantityParameter> quantityMap = getQuantityMap(parameter);
-
-    Result<Record3<BigDecimal, String, OffsetDateTime>> fetch = r.fetch();
-    return fetch.stream()
+    return resultQuery.fetch().stream()
       .collect(groupingBy(
         k -> k.get(k.field2()),
         mapping(
@@ -517,12 +512,6 @@ public class MeasurementRepository implements Measurements {
           ), toList())
         )
       );
-  }
-
-  private Map<String, QuantityParameter> getQuantityMap(MeasurementParameter parameter) {
-    return parameter.getQuantities()
-      .stream()
-      .collect(toMap(q -> q.name, q -> q));
   }
 
   private MeasurementValue toMeasurementValueConvertedToUnitFromQuantity(
@@ -544,6 +533,11 @@ public class MeasurementRepository implements Measurements {
       .map(MeasurementUnit::getValue)
       .orElse(null);
     return new MeasurementValue(value, when);
+  }
+
+  private static Map<String, QuantityParameter> getQuantityMap(MeasurementParameter parameter) {
+    return parameter.getQuantities().stream()
+      .collect(toMap(q -> q.name, q -> q));
   }
 
   private static Field<String> iso8601OffsetToPosixOffset(Field<String> iso8600Offset) {

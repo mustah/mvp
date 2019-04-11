@@ -29,45 +29,42 @@ public class MeasurementDtoMapper {
   public static MeasurementSeriesDto toSeries(
     List<MeasurementValue> values,
     UUID logicalMeterId,
-    String externalId,
-    String city,
-    String locationAddress,
+    String facilityId,
     String mediumName,
     String physicalMeterAddress,
     QuantityParameter quantityParameter
   ) {
-    return new MeasurementSeriesDto(
-      logicalMeterId.toString(),
-      quantityParameter.name,
-      quantityParameter.unit,
-      externalId + "-" + physicalMeterAddress,
-      city,
-      locationAddress,
-      mediumName,
-      values.stream()
-        .map(measurement -> new MeasurementValueDto(measurement.when, measurement.value))
-        .collect(toList())
-    );
+    return MeasurementSeriesDto.builder()
+      .id(logicalMeterId.toString())
+      .quantity(quantityParameter.name)
+      .unit(quantityParameter.unit)
+      .label(facilityId + "-" + physicalMeterAddress)
+      .name(facilityId)
+      .meterId(physicalMeterAddress)
+      .medium(mediumName)
+      .values(toSortedMeasurements(values))
+      .build();
   }
 
   public static MeasurementSeriesDto toSeries(
     List<MeasurementValue> values,
     String label,
     String id,
-    String city,
     QuantityParameter quantityParameter
   ) {
-    return new MeasurementSeriesDto(
-      id,
-      quantityParameter.name,
-      quantityParameter.unit,
-      label,
-      city,
-      null,
-      null,
-      values.stream()
-        .map(measurement -> new MeasurementValueDto(measurement.when, measurement.value))
-        .collect(toList())
-    );
+    return MeasurementSeriesDto.builder()
+      .id(id)
+      .quantity(quantityParameter.name)
+      .unit(quantityParameter.unit)
+      .label(label)
+      .values(toSortedMeasurements(values))
+      .build();
+  }
+
+  public static List<MeasurementValueDto> toSortedMeasurements(List<MeasurementValue> values) {
+    return values.stream()
+      .map(measurement -> new MeasurementValueDto(measurement.when, measurement.value))
+      .sorted()
+      .collect(toList());
   }
 }

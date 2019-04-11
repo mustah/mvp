@@ -56,7 +56,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
-        measurementsCitiesUrl()
+        measurementsAverageUrl()
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .parameter("label", "Stockholm")
@@ -69,19 +69,17 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     assertThat(response.getBody()).containsExactly(
-      new MeasurementSeriesDto(
-        "average-Power",
-        Quantity.POWER.name,
-        "W",
-        "Stockholm",
-        "sverige,stockholm",
-        null,
-        null,
-        asList(
+      MeasurementSeriesDto.builder()
+        .id("average-Power")
+        .quantity(Quantity.POWER.name)
+        .unit("W")
+        .label("Stockholm")
+        .medium(null)
+        .values(asList(
           new MeasurementValueDto(start.toInstant(), 2.0),
           new MeasurementValueDto(start.plusHours(1).toInstant(), 3.0)
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -119,7 +117,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     var response = asUser()
       .getList(
-        measurementsCitiesUrl()
+        measurementsAverageUrl()
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
@@ -134,10 +132,6 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertSoftly(softly -> {
       softly.assertThat(measurementSeries)
-        .extracting("city")
-        .containsExactly("sverige,stockholm");
-
-      softly.assertThat(measurementSeries)
         .flatExtracting("values")
         .extracting("value")
         .containsExactly(2.0, 3.0);
@@ -145,7 +139,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   }
 
   @Test
-  public void cityAverageCanContainBothMetersWithRequestedQuantitesAndOtherMeters() {
+  public void cityAverageCanContainBothMetersWithRequestedQuantitiesAndOtherMeters() {
     Location kiruna = new LocationBuilder()
       .country("sverige")
       .city("kiruna")
@@ -173,7 +167,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
-        measurementsCitiesUrl()
+        measurementsAverageUrl()
           .period(start, start.plusHours(1))
           .parameter("quantity", "External temperature")
           .city("sverige,kiruna")
@@ -185,19 +179,17 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     assertThat(response.getBody()).containsExactlyInAnyOrder(
-      new MeasurementSeriesDto(
-        "average-External temperature",
-        Quantity.EXTERNAL_TEMPERATURE.name,
-        Quantity.EXTERNAL_TEMPERATURE.storageUnit,
-        "average",
-        "sverige,kiruna",
-        null,
-        null,
-        asList(
+      MeasurementSeriesDto.builder()
+        .id("average-External temperature")
+        .quantity(Quantity.EXTERNAL_TEMPERATURE.name)
+        .unit(Quantity.EXTERNAL_TEMPERATURE.storageUnit)
+        .label("average")
+        .medium(null)
+        .values(asList(
           new MeasurementValueDto(start.toInstant(), 1.0),
           new MeasurementValueDto(start.plusHours(1).toInstant(), 2.0)
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -213,7 +205,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
-        measurementsCitiesUrl()
+        measurementsAverageUrl()
           .period(start, start.plusHours(1))
           .parameter("quantity", "Relative humidity")
           .city("sverige,stockholm")
@@ -232,7 +224,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
-        measurementsCitiesUrl()
+        measurementsAverageUrl()
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.VOLUME.name)
           .city("sverige,stockholm")
@@ -264,7 +256,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
-        measurementsCitiesUrl()
+        measurementsAverageUrl()
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
@@ -277,19 +269,17 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     assertThat(response.getBody()).containsExactly(
-      new MeasurementSeriesDto(
-        "average-Power",
-        Quantity.POWER.name,
-        "W",
-        "average",
-        null,
-        null,
-        null,
-        asList(
+      MeasurementSeriesDto.builder()
+        .id("average-Power")
+        .quantity(Quantity.POWER.name)
+        .unit("W")
+        .label("average")
+        .medium(null)
+        .values(asList(
           new MeasurementValueDto(start.toInstant(), 5.5),
           new MeasurementValueDto(start.plusHours(1).toInstant(), 6.0)
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -310,7 +300,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(3.0, 4.0));
 
-    Url cityAverageUrl = measurementsCitiesUrl()
+    Url cityAverageUrl = measurementsAverageUrl()
       .period(start, start.plusHours(1))
       .city("sverige,stockholm")
       .resolution(TemporalResolution.hour)
@@ -353,7 +343,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     measurementJpaRepository.deleteAll();
   }
 
-  private Url.UrlBuilder measurementsCitiesUrl() {
+  private Url.UrlBuilder measurementsAverageUrl() {
     return Url.builder().path("/measurements/average");
   }
 }
