@@ -19,7 +19,7 @@ import {
   selectSavedSelectionAction,
   selectSelection,
   setCustomDateRange,
-  setThresholdAction,
+  setThreshold,
   shouldMigrateSelectionParameters,
   toggleParameter,
 } from '../userSelectionActions';
@@ -429,7 +429,7 @@ describe('userSelectionActions', () => {
 
         expect(store.getActions()).toEqual(
           shouldTriggerAction
-            ? [setThresholdAction(newThreshold)]
+            ? [setThreshold(newThreshold)]
             : []
         );
       }

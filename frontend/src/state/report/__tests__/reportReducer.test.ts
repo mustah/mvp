@@ -2,7 +2,6 @@ import {mockSelectionAction} from '../../../__tests__/testActions';
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {DateRange} from '../../../components/dates/dateModels';
 import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
-import {resetReducer} from '../../../reducers/resetReducer';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
 import {selectSavedSelectionAction, setCustomDateRange} from '../../user-selection/userSelectionActions';
@@ -28,13 +27,10 @@ import {
   SavedReportsState,
   ViewOptions
 } from '../reportModels';
-import {initialSavedReportState, initialState, logoutReducer, report, reportReducerFor} from '../reportReducer';
+import {initialSavedReportState, initialState, report, reportReducer, selectionReportReducer} from '../reportReducer';
 import {getHiddenLines, getLegendItems, getViewOptions} from '../reportSelectors';
 
 describe('reportReducer', () => {
-  const reportSector: ReportSector = ReportSector.report;
-  const reportReducer = reportReducerFor(reportSector, logoutReducer);
-  const selectionReportReducer = reportReducerFor(ReportSector.selectionReport, resetReducer);
   const isHidden = false;
   const quantities: Quantity[] = [];
 
@@ -48,8 +44,9 @@ describe('reportReducer', () => {
 
   const savedReportsState: SavedReportsState = savedReportsWith(items);
   const emptySavedReportsState: SavedReportsState = savedReportsWith([]);
+
   it('makes sure the legend items is set to payload', () => {
-    const nextState: ReportState = report(initialState, addLegendItems(reportSector)(items));
+    const nextState: ReportState = report(initialState, addLegendItems(ReportSector.report)(items));
 
     const expected: ReportState = {
       ...initialState,
@@ -84,7 +81,7 @@ describe('reportReducer', () => {
       const end: Date = momentAtUtcPlusOneFrom('2018-12-24').toDate();
       const dateRange: DateRange = {start, end};
 
-      const state: ReportState = report(initialState, addLegendItems(reportSector)(items));
+      const state: ReportState = report(initialState, addLegendItems(ReportSector.report)(items));
 
       const expected: ReportState = {...initialState, savedReports: savedReportsState};
       expect(state).toEqual(expected);
@@ -98,7 +95,10 @@ describe('reportReducer', () => {
   describe('toggleLine', () => {
 
     it('should add hide legend item id', () => {
-      const nextState: SavedReportsState = reportReducer(savedReportsState, toggleLine(reportSector)(gasMeter.id));
+      const nextState: SavedReportsState = reportReducer(
+        savedReportsState,
+        toggleLine(ReportSector.report)(gasMeter.id)
+      );
 
       const expected: LegendItem[] = [{...gasMeter, isHidden: true}, waterMeter];
       expect(getLegendItems(nextState)).toEqual(expected);
@@ -108,7 +108,7 @@ describe('reportReducer', () => {
       const legendItems: LegendItem[] = [{...waterMeter, isHidden: true}, {...gasMeter, isHidden: true}];
 
       const nextState: SavedReportsState =
-        reportReducer(savedReportsWith(legendItems), toggleLine(reportSector)(gasMeter.id));
+        reportReducer(savedReportsWith(legendItems), toggleLine(ReportSector.report)(gasMeter.id));
 
       const expected: LegendItem[] = [{...waterMeter, isHidden: true}, {...gasMeter, isHidden: false}];
       expect(getLegendItems(nextState)).toEqual(expected);
@@ -119,14 +119,14 @@ describe('reportReducer', () => {
 
     it('does nothing with empty saved meter reports', () => {
       const state: SavedReportsState =
-        reportReducer(emptySavedReportsState, showHideAllByType(reportSector)(Medium.electricity));
+        reportReducer(emptySavedReportsState, showHideAllByType(ReportSector.report)(Medium.electricity));
 
       expect(state).toEqual(initialSavedReportState);
     });
 
     it('hides single item for given type', () => {
       const nextState: SavedReportsState =
-        reportReducer(savedReportsWith([gasMeter]), showHideAllByType(reportSector)(Medium.gas));
+        reportReducer(savedReportsWith([gasMeter]), showHideAllByType(ReportSector.report)(Medium.gas));
 
       const expected: LegendItem[] = [{...gasMeter, isHidden: true}];
       expect(getLegendItems(nextState)).toEqual(expected);
@@ -135,7 +135,7 @@ describe('reportReducer', () => {
     it('hides all lines for given type', () => {
       const state: SavedReportsState = savedReportsWith([gasMeter, {...gasMeter, id: 8}]);
 
-      const nextState: SavedReportsState = reportReducer(state, showHideAllByType(reportSector)(Medium.gas));
+      const nextState: SavedReportsState = reportReducer(state, showHideAllByType(ReportSector.report)(Medium.gas));
 
       const expected: LegendItem[] = [{...gasMeter, isHidden: true}, {...gasMeter, id: 8, isHidden: true}];
       expect(getLegendItems(nextState)).toEqual(expected);
@@ -146,7 +146,7 @@ describe('reportReducer', () => {
 
       const nextState: SavedReportsState = reportReducer(
         state,
-        showHideAllByType(reportSector)(Medium.districtHeating)
+        showHideAllByType(ReportSector.report)(Medium.districtHeating)
       );
 
       const expected: LegendItem[] = [gasMeter];
@@ -156,7 +156,7 @@ describe('reportReducer', () => {
     it('only hides lines for given type', () => {
       const state: SavedReportsState = savedReportsWith([gasMeter, waterMeter]);
 
-      const nextState: SavedReportsState = reportReducer(state, showHideAllByType(reportSector)(Medium.water));
+      const nextState: SavedReportsState = reportReducer(state, showHideAllByType(ReportSector.report)(Medium.water));
 
       const expected: LegendItem[] = [gasMeter, {...waterMeter, isHidden: true}];
       expect(getLegendItems(nextState)).toEqual(expected);
@@ -167,7 +167,7 @@ describe('reportReducer', () => {
       const state: SavedReportsState = savedReportsWith([gasMeter, gasMeter2]);
 
       const medium = Medium.gas;
-      let nextState: SavedReportsState = reportReducer(state, showHideAllByType(reportSector)(medium));
+      let nextState: SavedReportsState = reportReducer(state, showHideAllByType(ReportSector.report)(medium));
 
       let expected: ViewOptions = {isAllLinesHidden: true, quantities};
       const expectedGasItems: LegendItem[] = [{...gasMeter, isHidden: true}, {...gasMeter2, isHidden: true}];
@@ -175,7 +175,7 @@ describe('reportReducer', () => {
       expect(getHiddenLines(nextState)).toEqual([gasMeter.id, gasMeter2.id]);
       expect(getViewOptions(nextState, medium)).toEqual(expected);
 
-      nextState = reportReducer(nextState, showHideAllByType(reportSector)(medium));
+      nextState = reportReducer(nextState, showHideAllByType(ReportSector.report)(medium));
 
       expected = {isAllLinesHidden: false, quantities};
       expect(getHiddenLines(nextState)).toEqual([]);
@@ -186,7 +186,7 @@ describe('reportReducer', () => {
   describe('removeAllByType', () => {
 
     it('can handle empty selected list items', () => {
-      const nextState: ReportState = report(initialState, removeAllByType(reportSector)(Medium.gas));
+      const nextState: ReportState = report(initialState, removeAllByType(ReportSector.report)(Medium.gas));
       expect(nextState).toEqual(initialState);
     });
 
@@ -196,7 +196,7 @@ describe('reportReducer', () => {
         savedReports: savedReportsWith([items[1]])
       };
 
-      const nextState: ReportState = report(state, removeAllByType(reportSector)(Medium.water));
+      const nextState: ReportState = report(state, removeAllByType(ReportSector.report)(Medium.water));
 
       expect(nextState).toEqual(initialState);
     });
@@ -204,7 +204,7 @@ describe('reportReducer', () => {
     it('removes all selected list items', () => {
       const state: ReportState = {...initialState, savedReports: savedReportsState};
 
-      const nextState: ReportState = report(state, removeAllByType(reportSector)(Medium.gas));
+      const nextState: ReportState = report(state, removeAllByType(ReportSector.report)(Medium.gas));
 
       expect(nextState).toEqual({...initialState, savedReports: savedReportsWith([items[1]])});
     });
@@ -212,7 +212,7 @@ describe('reportReducer', () => {
     it('removes all selected and hidden list items', () => {
       const state: ReportState = {...initialState, savedReports: savedReportsState};
 
-      const nextState: ReportState = report(state, removeAllByType(reportSector)(Medium.water));
+      const nextState: ReportState = report(state, removeAllByType(ReportSector.report)(Medium.water));
 
       expect(nextState).toEqual({...initialState, savedReports: savedReportsWith([items[0]])});
     });
@@ -220,8 +220,8 @@ describe('reportReducer', () => {
     it('removes all one for each type', () => {
       const state: ReportState = {...initialState, savedReports: savedReportsState};
 
-      let nextState: ReportState = report(state, removeAllByType(reportSector)(Medium.gas));
-      nextState = report(nextState, removeAllByType(reportSector)(Medium.water));
+      let nextState: ReportState = report(state, removeAllByType(ReportSector.report)(Medium.gas));
+      nextState = report(nextState, removeAllByType(ReportSector.report)(Medium.water));
 
       expect(nextState).toEqual(initialState);
     });
@@ -230,11 +230,11 @@ describe('reportReducer', () => {
       const payload: QuantityLegendType = {type: Medium.gas, quantity: Quantity.volume};
 
       let nextState: SavedReportsState =
-        reportReducer(savedReportsWith([gasMeter]), toggleQuantityByType(reportSector)(payload));
+        reportReducer(savedReportsWith([gasMeter]), toggleQuantityByType(ReportSector.report)(payload));
 
       expect(getViewOptions(nextState, Medium.gas).quantities).toEqual([Quantity.volume]);
 
-      nextState = reportReducer(nextState, removeAllByType(reportSector)(Medium.gas));
+      nextState = reportReducer(nextState, removeAllByType(ReportSector.report)(Medium.gas));
 
       expect(nextState).toEqual(initialSavedReportState);
     });
@@ -245,13 +245,13 @@ describe('reportReducer', () => {
 
       const state = savedReportsWith(items);
 
-      let nextState: SavedReportsState = reportReducer(state, toggleQuantityByType(reportSector)(payload1));
-      nextState = reportReducer(nextState, toggleQuantityByType(reportSector)(payload2));
+      let nextState: SavedReportsState = reportReducer(state, toggleQuantityByType(ReportSector.report)(payload1));
+      nextState = reportReducer(nextState, toggleQuantityByType(ReportSector.report)(payload2));
 
       expect(getViewOptions(nextState, Medium.gas).quantities).toEqual([Quantity.volume]);
       expect(getViewOptions(nextState, Medium.water).quantities).toEqual([Quantity.volume]);
 
-      nextState = reportReducer(nextState, removeAllByType(reportSector)(Medium.gas));
+      nextState = reportReducer(nextState, removeAllByType(ReportSector.report)(Medium.gas));
 
       const expected: SavedReportsState = {
         ...initialSavedReportState,
@@ -273,7 +273,7 @@ describe('reportReducer', () => {
   describe('showHideLegendRows', () => {
 
     it('does nothing with items that are not in the report', () => {
-      const nextState: ReportState = report(initialState, showHideLegendRows(reportSector)(Medium.gas));
+      const nextState: ReportState = report(initialState, showHideLegendRows(ReportSector.report)(Medium.gas));
       expect(nextState).toEqual(initialState);
     });
 
@@ -283,7 +283,7 @@ describe('reportReducer', () => {
         savedReports: savedReportsWith([items[1]])
       };
 
-      const nextState: ReportState = report(state, showHideLegendRows(reportSector)(Medium.water));
+      const nextState: ReportState = report(state, showHideLegendRows(ReportSector.report)(Medium.water));
 
       const legendItem: LegendItem = {...waterMeter, isRowExpanded: true};
       expect(nextState).toEqual({...initialState, savedReports: savedReportsWith([legendItem])});
@@ -297,7 +297,7 @@ describe('reportReducer', () => {
         savedReports: savedReportsWith([...items, gasMeter2])
       };
 
-      const nextState: ReportState = report(state, showHideLegendRows(reportSector)(medium));
+      const nextState: ReportState = report(state, showHideLegendRows(ReportSector.report)(medium));
 
       const item1: LegendItem = {...gasMeter, isRowExpanded: true};
       const item2: LegendItem = {...gasMeter2, isRowExpanded: true};
@@ -310,7 +310,7 @@ describe('reportReducer', () => {
         const payload: QuantityLegendType = {type: Medium.gas, quantity: Quantity.volume};
 
         const nextState: SavedReportsState =
-          reportReducerFor(reportSector)(savedReportsState, toggleQuantityByType(reportSector)(payload));
+          reportReducer(savedReportsState, toggleQuantityByType(ReportSector.report)(payload));
 
         expect(getViewOptions(nextState, Medium.gas).quantities).toEqual([Quantity.volume]);
 
@@ -322,8 +322,11 @@ describe('reportReducer', () => {
         const state: SavedReportsState = savedReportsWith([...items, meter]);
         const payload: QuantityLegendType = {type: Medium.districtHeating, quantity: Quantity.power};
 
-        let nextState: SavedReportsState = reportReducer(state, toggleQuantityByType(reportSector)(payload));
-        nextState = reportReducer(nextState, toggleQuantityByType(reportSector)({...payload, quantity: Quantity.flow}));
+        let nextState: SavedReportsState = reportReducer(state, toggleQuantityByType(ReportSector.report)(payload));
+        nextState = reportReducer(
+          nextState,
+          toggleQuantityByType(ReportSector.report)({...payload, quantity: Quantity.flow})
+        );
 
         const quantities: Quantity[] = [Quantity.power, Quantity.flow];
         const legendItems: LegendItem[] = [...items, {...meter, quantities}];
@@ -336,9 +339,15 @@ describe('reportReducer', () => {
         const state: SavedReportsState = savedReportsWith([...items, meter]);
         const payload: QuantityLegendType = {type: Medium.districtHeating, quantity: Quantity.power};
 
-        let nextState: SavedReportsState = reportReducer(state, toggleQuantityByType(reportSector)(payload));
-        nextState = reportReducer(nextState, toggleQuantityByType(reportSector)({...payload, quantity: Quantity.flow}));
-        nextState = reportReducer(nextState, toggleQuantityByType(reportSector)({...payload, quantity: Quantity.flow}));
+        let nextState: SavedReportsState = reportReducer(state, toggleQuantityByType(ReportSector.report)(payload));
+        nextState = reportReducer(
+          nextState,
+          toggleQuantityByType(ReportSector.report)({...payload, quantity: Quantity.flow})
+        );
+        nextState = reportReducer(
+          nextState,
+          toggleQuantityByType(ReportSector.report)({...payload, quantity: Quantity.flow})
+        );
 
         const quantities: Quantity[] = [Quantity.power];
         const legendItems: LegendItem[] = [...items, {...meter, quantities}];
@@ -356,7 +365,7 @@ describe('reportReducer', () => {
 
         const nextState: SavedReportsState = reportReducer(
           savedReportsState,
-          toggleQuantityById(reportSector)(payload)
+          toggleQuantityById(ReportSector.report)(payload)
         );
 
         const expected: LegendItem[] = [{...gasMeter, quantities: [Quantity.volume]}, waterMeter];
@@ -368,7 +377,7 @@ describe('reportReducer', () => {
         const state: SavedReportsState = savedReportsWith(meters);
         const payload: QuantityId = {id: gasMeter.id, quantity: Quantity.volume};
 
-        const nextState: SavedReportsState = reportReducer(state, toggleQuantityById(reportSector)(payload));
+        const nextState: SavedReportsState = reportReducer(state, toggleQuantityById(ReportSector.report)(payload));
 
         expect(getLegendItems(nextState)).toEqual(items);
       });
@@ -378,7 +387,7 @@ describe('reportReducer', () => {
 
         const nextState: SavedReportsState = reportReducer(
           savedReportsState,
-          toggleQuantityById(reportSector)(payload)
+          toggleQuantityById(ReportSector.report)(payload)
         );
 
         expect(getLegendItems(nextState)).toEqual(items);
@@ -388,7 +397,10 @@ describe('reportReducer', () => {
     describe('toggleShowAverage', () => {
 
       it('toggles on', () => {
-        const state: SavedReportsState = reportReducer(initialSavedReportState, toggleShowAverage(reportSector)());
+        const state: SavedReportsState = reportReducer(
+          initialSavedReportState,
+          toggleShowAverage(ReportSector.report)()
+        );
 
         expect(state.meterPage.shouldShowAverage).toBe(true);
       });
@@ -399,7 +411,7 @@ describe('reportReducer', () => {
           meterPage: {...initialSavedReportState.meterPage, shouldShowAverage: true}
         };
 
-        const state: SavedReportsState = reportReducer(toggledOnState, toggleShowAverage(reportSector)());
+        const state: SavedReportsState = reportReducer(toggledOnState, toggleShowAverage(ReportSector.report)());
 
         expect(state.meterPage.shouldShowAverage).toBe(false);
       });

@@ -10,7 +10,7 @@ import {
   deselectSelection,
   RESET_SELECTION,
   selectSavedSelectionAction,
-  setThresholdAction,
+  setThreshold,
 } from '../user-selection/userSelectionActions';
 import {search as searchAction} from './searchActions';
 import {Query, QueryParameter} from './searchModels';
@@ -36,12 +36,12 @@ export const search = (state: SearchState = initialState, action: Actions): Sear
       return isOnSearchPage((action as Action<Location>).payload)
         ? state
         : {validation: {}};
-    case getType(setThresholdAction):
+    case getType(setThreshold):
     case getType(addParameterToSelection):
     case getType(deselectSelection):
     case getType(selectSavedSelectionAction):
-    case RESET_SELECTION:
     case getType(logoutUser):
+    case RESET_SELECTION:
       return initialState;
     default:
       return state;

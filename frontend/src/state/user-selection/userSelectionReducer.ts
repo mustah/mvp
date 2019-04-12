@@ -15,7 +15,7 @@ import {
   selectPeriod,
   selectSavedSelectionAction,
   setCustomDateRange,
-  setThresholdAction,
+  setThreshold,
 } from './userSelectionActions';
 import {
   initialSelectionId,
@@ -173,7 +173,7 @@ export const userSelection = (
       return updatePeriod(state, action as Action<Period>);
     case getType(setCustomDateRange):
       return updateCustomDateRange(state, action as Action<DateRange>);
-    case getType(setThresholdAction):
+    case getType(setThreshold):
       return applyThreshold(state, (action as Action<ThresholdQuery>).payload);
     case getType(selectSavedSelectionAction):
     case domainModelsPostSuccess(EndPoints.userSelections):

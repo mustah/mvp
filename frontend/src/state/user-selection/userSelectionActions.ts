@@ -37,7 +37,7 @@ export const deselectSelection = createStandardAction('DESELECT_SELECTION')<Sele
 export const resetSelection = createAction(RESET_SELECTION);
 export const selectSavedSelectionAction = createStandardAction('SELECT_SAVED_SELECTION')<UserSelection>();
 
-export const setThresholdAction = createStandardAction('SET_THRESHOLD')<ThresholdQuery>();
+export const setThreshold = createStandardAction('SET_THRESHOLD')<ThresholdQuery>();
 
 export const onChangeThreshold =
   (threshold: ThresholdQuery | undefined) =>
@@ -52,7 +52,7 @@ export const onChangeThreshold =
         (isOldValid && threshold === undefined) ||
         (isOldValid && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
       ) {
-        dispatch(setThresholdAction(threshold!));
+        dispatch(setThreshold(threshold!));
       }
     };
 
