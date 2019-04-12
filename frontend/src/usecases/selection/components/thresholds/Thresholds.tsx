@@ -5,7 +5,7 @@ import {ButtonLinkBlue} from '../../../../components/buttons/ButtonLink';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
-import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
+import {Row, RowBottom, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
@@ -123,9 +123,9 @@ export const Thresholds = ({query, onChange, className}: Props) => {
 
   const clearThresholdButton = thresholdQueryIsModified(currentQuery)
     ? (
-      <RowMiddle>
+      <RowBottom style={{marginLeft: 16, paddingBottom: 12}}>
         <ButtonLinkBlue onClick={clearThreshold}>{translate('clear threshold')}</ButtonLinkBlue>
-      </RowMiddle>
+      </RowBottom>
     )
     : null;
 
