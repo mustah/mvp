@@ -27,7 +27,7 @@ public class MeteringMessageParserTest {
 
   @Test
   public void infrastructureStatus_Valid() {
-    String jsonMessage = parseJsonFile("messages/infrastructure-status.json");
+    String jsonMessage = parseJsonFile("messages/nbiot-status.json");
 
     assertThat(messageParser.parseInfrastructureStatusMessage(jsonMessage))
       .isPresent()
@@ -51,7 +51,7 @@ public class MeteringMessageParserTest {
 
   @Test
   public void infrastructureStatus_MissingPropertyIsLeftOut() {
-    String jsonMessage = parseJsonFile("messages/infrastructure-status.json");
+    String jsonMessage = parseJsonFile("messages/nbiot-status.json");
     var json = (ObjectNode) toJsonNode(jsonMessage);
     json.remove("MF");
 
@@ -65,7 +65,7 @@ public class MeteringMessageParserTest {
 
   @Test
   public void infrastructureStatus_UnknownPropertiesAreLeftIn() {
-    String jsonMessage = parseJsonFile("messages/infrastructure-status.json");
+    String jsonMessage = parseJsonFile("messages/nbiot-status.json");
     var json = (ObjectNode) toJsonNode(jsonMessage);
     json.put("my own key", "my very special value");
 
@@ -75,6 +75,20 @@ public class MeteringMessageParserTest {
       .extracting(dto -> newArrayList(((ObjectNode) dto.properties).fieldNames()))
       .asList()
       .contains("my own key");
+  }
+
+  @Test
+  public void infrastructureMeasurements_M1_areIgnored() {
+    String jsonMessage = parseJsonFile("messages/nbiot-measurements-m1.json");
+    assertThat(messageParser.parse(jsonMessage))
+      .isNotPresent();
+  }
+
+  @Test
+  public void infrastructureMeasurements_S1_areIgnored() {
+    String jsonMessage = parseJsonFile("messages/nbiot-measurements-s1.json");
+    assertThat(messageParser.parse(jsonMessage))
+      .isNotPresent();
   }
 
   @Test
@@ -109,7 +123,7 @@ public class MeteringMessageParserTest {
 
   @Test
   public void parseMessageType_infrastructureStatus() {
-    String jsonMessage = parseJsonFile("messages/infrastructure-status.json");
+    String jsonMessage = parseJsonFile("messages/nbiot-status.json");
     assertThat(messageParser.parse(jsonMessage))
       .isPresent()
       .get()
@@ -119,14 +133,7 @@ public class MeteringMessageParserTest {
 
   @Test
   public void parseMessageType_infrastructureExtendedStatus() {
-    String jsonMessage = parseJsonFile("messages/infrastructure-extended-status.json");
-    assertThat(messageParser.parse(jsonMessage))
-      .isNotPresent();
-  }
-
-  @Test
-  public void parseMessageType_standardMessage() {
-    String jsonMessage = parseJsonFile("messages/nbiot-standard-message.json");
+    String jsonMessage = parseJsonFile("messages/nbiot-extended-status.json");
     assertThat(messageParser.parse(jsonMessage))
       .isNotPresent();
   }

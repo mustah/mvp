@@ -22,6 +22,9 @@ public enum MessageType {
   @SerializedName("EXTSTAT1")
   INFRASTRUCTURE_EXTENDED_STATUS_v_1_0,
 
+  @SerializedName("M1")
+  IGNORED_NBIOT_MEASUREMENT_M1,
+
   @SerializedName("S1")
-  IGNORED_NBIOT_MEASUREMENT;
+  IGNORED_NBIOT_MEASUREMENT_S1;
 }
