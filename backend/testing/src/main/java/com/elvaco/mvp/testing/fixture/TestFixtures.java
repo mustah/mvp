@@ -39,7 +39,6 @@ import com.elvaco.mvp.core.domainmodels.Widget;
 import com.elvaco.mvp.core.domainmodels.Widget.WidgetBuilder;
 import com.elvaco.mvp.core.domainmodels.WidgetType;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
-import com.elvaco.mvp.core.util.Slugify;
 
 import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static java.util.UUID.randomUUID;
@@ -73,28 +72,20 @@ public interface TestFixtures {
 
   default OrganisationBuilder organisation() {
     UUID organisationId = randomUUID();
-    return Organisation.builder()
-      .id(organisationId)
-      .slug(Slugify.slugify(organisationId.toString()))
-      .externalId(organisationId.toString())
-      .name(organisationId.toString());
+    return Organisation.builderFrom(organisationId.toString()).id(organisationId);
   }
 
   default OrganisationBuilder subOrganisation() {
-    UUID organisationId = randomUUID();
-
     try {
+      UUID organisationId = randomUUID();
       UserSelection userSelection = UserSelection.builder()
         .id(randomUUID())
         .selectionParameters(OBJECT_MAPPER.readTree("{\"test\": \"json\"}"))
         .organisationId(organisationId)
         .build();
 
-      return Organisation.builder()
+      return Organisation.builderFrom(organisationId.toString())
         .id(organisationId)
-        .slug(Slugify.slugify(organisationId.toString()))
-        .externalId(organisationId.toString())
-        .name(organisationId.toString())
         .parent(organisation().build())
         .selection(userSelection);
     } catch (IOException e) {

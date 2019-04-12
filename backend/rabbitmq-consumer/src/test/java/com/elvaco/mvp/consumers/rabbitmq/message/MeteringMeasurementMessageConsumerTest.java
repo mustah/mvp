@@ -33,25 +33,14 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.ME
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Arrays.asList;
-import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "OptionalGetWithoutIsPresent"})
 public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest {
 
   private static final String QUANTITY = "Energy";
   private static final String GATEWAY_EXTERNAL_ID = "123";
   private static final String ADDRESS = "1234";
-  private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
-  private static final String ORGANISATION_SLUG = "some-organisation";
-
-  private static final Organisation ORGANISATION = new Organisation(
-    randomUUID(),
-    ORGANISATION_EXTERNAL_ID,
-    ORGANISATION_SLUG,
-    ORGANISATION_EXTERNAL_ID
-  );
-
   private static final String EXTERNAL_ID = "ABC-123";
   private static final LocalDateTime MEASUREMENT_TIMESTAMP = LocalDateTime.parse(
     "2018-03-07T16:13:09");
@@ -63,6 +52,7 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
   private MeasurementMessageConsumer messageConsumer;
   private MockMeasurements measurements;
 
+  @Override
   @Before
   public void setUp() {
     super.setUp();
@@ -384,7 +374,7 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
   public void usesOrganisationExternalIdForMeasurementMessage() {
     saveDefaultOrganisation();
 
-    messageConsumer.accept(newMeasurementMessage(ORGANISATION_EXTERNAL_ID));
+    messageConsumer.accept(newMeasurementMessage());
 
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements.get(0).physicalMeter.organisationId).isEqualTo(ORGANISATION.id);
@@ -632,26 +622,16 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
     return newMeasurementMessage(new ValueDto(MEASUREMENT_TIMESTAMP, value, "kWh", QUANTITY));
   }
 
-  private MeteringMeasurementMessageDto newMeasurementMessage(String organisationExternalId) {
-    return newMeasurementMessage(
-      organisationExternalId,
-      new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY)
-    );
+  private MeteringMeasurementMessageDto newMeasurementMessage() {
+    return newMeasurementMessage(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY));
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(ValueDto... valueDto) {
-    return newMeasurementMessage(ORGANISATION_EXTERNAL_ID, valueDto);
-  }
-
-  private MeteringMeasurementMessageDto newMeasurementMessage(
-    String organisationExternalId,
-    ValueDto... valueDto
-  ) {
     return new MeteringMeasurementMessageDto(
       new GatewayIdDto(GATEWAY_EXTERNAL_ID),
       new MeterIdDto(ADDRESS),
       new FacilityIdDto(EXTERNAL_ID),
-      organisationExternalId,
+      ORGANISATION_EXTERNAL_ID,
       "Elvaco Metering",
       asList(valueDto)
     );

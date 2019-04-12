@@ -20,6 +20,7 @@ public class InfrastructureMessageConsumerTest extends MessageConsumerTest {
   public static final JsonNode JSON_OTHER = toJsonNode("{\"otherKey\":\"otherValue\"}");
   private InfrastructureMessageConsumer consumer;
 
+  @Override
   @Before
   public void setUp() {
     super.setUp();
@@ -99,21 +100,11 @@ public class InfrastructureMessageConsumerTest extends MessageConsumerTest {
   }
 
   private Organisation saveDefaultOrganisation() {
-    return organisations.save(new Organisation(
-      randomUUID(),
-      ORGANISATION_EXTERNAL_ID,
-      ORGANISATION_SLUG,
-      ORGANISATION_EXTERNAL_ID
-    ));
+    return organisations.save(Organisation.of(ORGANISATION_EXTERNAL_ID));
   }
 
   private Organisation saveOtherOrganisation() {
     var uuid = randomUUID();
-    return organisations.save(new Organisation(
-      uuid,
-      uuid.toString(),
-      uuid.toString(),
-      uuid.toString()
-    ));
+    return organisations.save(Organisation.of(uuid.toString(), uuid));
   }
 }

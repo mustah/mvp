@@ -28,7 +28,6 @@ import org.junit.Test;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ELECTRICITY;
 import static java.time.ZonedDateTime.now;
-import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,15 +39,6 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
   private static final String GATEWAY_EXTERNAL_ID = "123";
   private static final String ADDRESS = "1234";
   private static final String SECOND_METER_ADDRESS = "9876";
-  private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
-  private static final String ORGANISATION_SLUG = "some-organisation";
-
-  private static final Organisation ORGANISATION = new Organisation(
-    randomUUID(),
-    ORGANISATION_EXTERNAL_ID,
-    ORGANISATION_SLUG,
-    ORGANISATION_EXTERNAL_ID
-  );
 
   private static final String EXTERNAL_ID = "ABC-123";
   private static final LocalDateTime MEASUREMENT_TIMESTAMP = LocalDateTime.parse(
@@ -60,6 +50,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
 
   private MeasurementMessageConsumer messageConsumer;
 
+  @Override
   @Before
   public void setUp() {
     super.setUp();

@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.Units;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
@@ -142,29 +143,29 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       Units.KILOWATT
     );
 
-    var meterDefintion1 = given(meterDefinition()
+    var meterDefinition1 = given(meterDefinition()
       .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
       .quantities(Set.of(displayQuantity1)));
-    var meterDefintion2 = given(meterDefinition()
+    var meterDefinition2 = given(meterDefinition()
       .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
       .quantities(Set.of(displayQuantity2)));
-    var meter1a = given(logicalMeter().meterDefinition(meterDefintion1));
-    var meter2 = given(logicalMeter().meterDefinition(meterDefintion2));
-    var meter1b = given(logicalMeter().meterDefinition(meterDefintion1));
+    var meter1a = given(logicalMeter().meterDefinition(meterDefinition1));
+    var meter2 = given(logicalMeter().meterDefinition(meterDefinition2));
+    var meter1b = given(logicalMeter().meterDefinition(meterDefinition1));
 
     RequestParameters parameters = idParametersOf(meter1a, meter2, meter1b);
 
     assertThat(logicalMeterJpaRepository.getPreferredQuantityParameters(parameters))
       .hasSize(1)
-      .extracting(qp -> qp.name, qp -> qp.unit, qp -> qp.isConsumption())
+      .extracting(qp -> qp.name, qp -> qp.unit, QuantityParameter::isConsumption)
       .containsExactly(tuple(Quantity.POWER.name, Units.WATT, false));
   }
 
   @Test
   public void getPreferredQuantityParametersForLogicalMeters_withoutDisplayQuantities() {
-    var meterDefintion = given(meterDefinition()
+    var meterDefinition = given(meterDefinition()
       .medium(mediumProvider.getByNameOrThrow(Medium.UNKNOWN_MEDIUM)));
-    var meter = given(logicalMeter().meterDefinition(meterDefintion));
+    var meter = given(logicalMeter().meterDefinition(meterDefinition));
 
     RequestParameters parameters = idParametersOf(meter);
 

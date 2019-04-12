@@ -1161,17 +1161,17 @@
   dependencies:
     tslib "^1.7.0"
 
-"@progress/kendo-theme-default@^3.5.0":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@progress/kendo-theme-default/-/kendo-theme-default-3.5.0.tgz#3d077c09ad6b4983556939d3e66485b8c1d2da1d"
-  integrity sha512-Lq4qMDoXdwW6AmW1mHWOUVnOo6qEDMGW+KbZjRddM23RipaVyQrqa4EzjVH+BLxTPZ3dt9UZBuVr0xoCKUOZiw==
+"@progress/kendo-theme-default@^3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@progress/kendo-theme-default/-/kendo-theme-default-3.5.1.tgz#2f923a33dbfea50b5729fe481c407940f14b2e1a"
+  integrity sha512-S2Jts5/7ns3IU+xCSB2zPKz01BMp/VbiL4Tw+pkb7/eF/aoTbjRoZS4IzvJrqZOLZ6aVybrFCDJZqDRZcQNIuw==
 
-"@progress/kendo-theme-material@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@progress/kendo-theme-material/-/kendo-theme-material-2.4.0.tgz#2f50ccf70cd8eb7b3537e16b42dc334821a6e529"
-  integrity sha512-3MJHW9wOC2dprWGiFwTo/Li1hVp6qW9VSOe65tAs4DGu4+Fjox0NRb6HOM1fPPg1/yq2JK1sYVQT6LUtAdmTKw==
+"@progress/kendo-theme-material@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@progress/kendo-theme-material/-/kendo-theme-material-2.4.1.tgz#22b6e9a361fb64eb2de0e45b957c29bb8a25b577"
+  integrity sha512-gT/cbt3M4L8pxSKBYQqr2ys0Yy3aFIhn1Lj9Ug+hTEg6KuAuMbVlZysaG6Flc/bmo5jfP0HmcxyBEUdTxZhNHA==
   dependencies:
-    "@progress/kendo-theme-default" "^3.5.0"
+    "@progress/kendo-theme-default" "^3.5.1"
 
 "@telerik/kendo-draggable@1.9.0":
   version "1.9.0"
@@ -1330,10 +1330,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.0.4.tgz#130598ee56e9a1210a53f557d64935571f05390d"
   integrity sha512-RisaZmcmCLjRipAY7nVi3fmkIk4Z0JMn8YHdGF6qYMsIDpD0dfzz+3yy2dL5Q5aHWOnqPx51IRxkA44myknJvw==
 
-"@types/node@^11.13.2":
-  version "11.13.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.13.2.tgz#dc85dde46aa8740bb4aed54b8104250f8f849503"
-  integrity sha512-HOtU5KqROKT7qX/itKHuTtt5fV0iXbheQvrgbLNXFJQBY/eh+VS5vmmTAVlo3qIGMsypm0G4N1t2AXjy1ZicaQ==
+"@types/node@^11.13.4":
+  version "11.13.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.13.4.tgz#f83ec3c3e05b174b7241fadeb6688267fe5b22ca"
+  integrity sha512-+rabAZZ3Yn7tF/XPGHupKIL5EcAbrLxnTr/hgQICxbeuAfWtT0UZSfULE+ndusckBItcv4o6ZeOJplQikVcLvQ==
 
 "@types/node@^11.9.6":
   version "11.13.0"

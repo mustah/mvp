@@ -63,6 +63,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   private ReferenceInfoMessageConsumer messageHandler;
 
   @Before
+  @Override
   public void setUp() {
     super.setUp();
     messageHandler = new MeteringReferenceInfoMessageConsumer(
@@ -484,9 +485,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
   @Test
   public void addsSecondPhysicalMeterToExistingLogicalMeter() {
-    Organisation organisation = organisations.save(
-      newOrganisation(ORGANISATION_EXTERNAL_ID, ORGANISATION_SLUG)
-    );
+    Organisation organisation = organisations.save(Organisation.of(ORGANISATION_EXTERNAL_ID));
     UUID logicalMeterId = randomUUID();
     physicalMeters.save(
       physicalMeter()
@@ -515,8 +514,8 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   }
 
   @Test
-  public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
-    Organisation organisation = organisations.save(newOrganisation("", "Organisation code"));
+  public void duplicateIdentityAndExternalIdForOtherOrganisation() {
+    Organisation organisation = organisations.save(Organisation.of("Organisation code"));
     physicalMeters.save(physicalMeter().organisationId(organisation.id).build());
 
     messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
@@ -569,7 +568,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   @Test
   public void messageWithoutFacilityOnly() {
     String externalId = "externalId";
-    MeteringReferenceInfoMessageDto message = new MeteringReferenceInfoMessageDto(
+    var message = new MeteringReferenceInfoMessageDto(
       new MeterDto(null, null, null, null, null, 0, 0),
       new FacilityDto(
         externalId,
@@ -594,7 +593,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
   @Test
   public void nullFacilityIdIsRejected() {
-    MeteringReferenceInfoMessageDto message = new MeteringReferenceInfoMessageDto(
+    var message = new MeteringReferenceInfoMessageDto(
       null,
       new FacilityDto(null, null, null, null, null),
       "Test source system",
@@ -610,7 +609,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
   @Test
   public void physicalMeterRequiresMeterId() {
-    MeteringReferenceInfoMessageDto message = new MeteringReferenceInfoMessageDto(
+    var message = new MeteringReferenceInfoMessageDto(
       new MeterDto(null, null, "ok", null, null, null, null),
       new FacilityDto("valid facility id", null, null, null, null),
       "Test source system",
@@ -974,7 +973,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   }
 
   private Organisation saveDefaultOrganisation() {
-    return organisations.save(newOrganisation(ORGANISATION_EXTERNAL_ID, ORGANISATION_SLUG));
+    return organisations.save(Organisation.of(ORGANISATION_EXTERNAL_ID));
   }
 
   private LogicalMeter findLogicalMeter() {
@@ -985,10 +984,6 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
   private Organisation findOrganisation() {
     return organisations.findBySlug(ORGANISATION_SLUG).get();
-  }
-
-  private Organisation newOrganisation(String name, String code) {
-    return new Organisation(randomUUID(), name, code, name);
   }
 
   private MeteringReferenceInfoMessageDtoBuilder messageBuilder() {

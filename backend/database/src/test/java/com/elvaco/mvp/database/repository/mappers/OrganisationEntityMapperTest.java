@@ -24,67 +24,59 @@ public class OrganisationEntityMapperTest {
   @Test
   public void toEntity_noParent() {
     UUID id = randomUUID();
-    assertThat(toEntity(new Organisation(
-      id,
-      "organisation",
-      "organisation-slug",
-      "organisation-external-id"
-    ))).isEqualToComparingFieldByField(
+    assertThat(toEntity(Organisation.of("organisation slug", id))).isEqualToComparingFieldByField(
       OrganisationEntity.builder()
         .id(id)
-        .name("organisation")
+        .name("organisation slug")
         .slug("organisation-slug")
-        .externalId("organisation-external-id")
+        .externalId("organisation slug")
         .build()
     );
   }
 
   @Test
   public void toEntity_withParent() {
-    UUID id = randomUUID();
-    UUID parentId = randomUUID();
-    UUID selectionId = randomUUID();
-    UUID selectionOwnerId = randomUUID();
-    UUID selectionOwnerOrganisationId = randomUUID();
-    assertThat(toEntity(new Organisation(
-      id,
-      "organisation",
-      "organisation-slug",
-      "organisation-external-id",
-      new Organisation(
-        parentId,
-        "parent",
-        "parent-slug",
-        "parent-external-id"
-      ),
-      UserSelection.builder()
-        .id(selectionId)
-        .ownerUserId(selectionOwnerId)
-        .organisationId(selectionOwnerOrganisationId)
-        .name("selection")
-        .selectionParameters(createJsonNode())
-        .build()
-    ))).isEqualToComparingFieldByField(
-      OrganisationEntity.builder()
-        .id(id)
-        .name("organisation")
-        .slug("organisation-slug")
-        .externalId("organisation-external-id")
-        .parent(OrganisationEntity.builder()
-          .id(parentId)
-          .name("parent")
-          .slug("parent-slug")
-          .externalId("parent-external-id")
-          .build())
-        .selection(new UserSelectionEntity(
-          selectionId,
-          selectionOwnerId,
-          "selection",
-          toJsonField(createJsonNode()),
-          selectionOwnerOrganisationId
-        ))
-        .build()
-    );
+    var id = randomUUID();
+    var parentId = randomUUID();
+    var selectionId = randomUUID();
+    var selectionOwnerId = randomUUID();
+    var selectionOwnerOrganisationId = randomUUID();
+    var parent = Organisation.of("parent slug", parentId);
+    var selection = UserSelection.builder()
+      .id(selectionId)
+      .ownerUserId(selectionOwnerId)
+      .organisationId(selectionOwnerOrganisationId)
+      .name("selection")
+      .selectionParameters(createJsonNode())
+      .build();
+    var subOrganisation = Organisation.subOrganisation("organisation slug", parent, selection)
+      .id(id)
+      .build();
+
+    OrganisationEntity entity = toEntity(subOrganisation);
+
+    assertThat(entity)
+      .isEqualToComparingFieldByField(
+        OrganisationEntity.builder()
+          .id(id)
+          .name("organisation slug")
+          .slug("organisation-slug")
+          .externalId("organisation slug")
+          .parent(OrganisationEntity.builder()
+            .id(parentId)
+            .name("parent slug")
+            .slug("parent-slug")
+            .externalId("parent slug")
+            .build())
+          .selection(new UserSelectionEntity(
+            selectionId,
+            selectionOwnerId,
+            "selection",
+            toJsonField(createJsonNode()),
+            selectionOwnerOrganisationId
+          ))
+          .build()
+      );
   }
 
   @Test
@@ -93,38 +85,46 @@ public class OrganisationEntityMapperTest {
     assertThat(toDomainModel(
       OrganisationEntity.builder()
         .id(id)
-        .name("organisation")
+        .name("organisation slug")
         .slug("organisation-slug")
-        .externalId("organisation-external-id")
+        .externalId("organisation slug")
         .build()
-    )).isEqualTo(
-      new Organisation(
-        id,
-        "organisation",
-        "organisation-slug",
-        "organisation-external-id"
-      )
-    );
+    )).isEqualTo(Organisation.of("organisation slug", id));
   }
 
   @Test
   public void toDomainModel_withParent() {
-    UUID id = randomUUID();
-    UUID parentId = randomUUID();
-    UUID selectionId = randomUUID();
-    UUID selectionOwnerId = randomUUID();
-    UUID selectionOwnerOrganisationId = randomUUID();
+    var id = randomUUID();
+    var parentId = randomUUID();
+    var selectionId = randomUUID();
+    var selectionOwnerId = randomUUID();
+    var selectionOwnerOrganisationId = randomUUID();
+
+    var subOrganisation = Organisation.subOrganisation(
+      "organisation slug",
+      Organisation.of("parent slug", parentId),
+      UserSelection.builder()
+        .id(selectionId)
+        .ownerUserId(selectionOwnerId)
+        .organisationId(selectionOwnerOrganisationId)
+        .name("selection")
+        .selectionParameters(createJsonNode())
+        .build()
+    )
+      .id(id)
+      .build();
+
     assertThat(toDomainModel(
       OrganisationEntity.builder()
         .id(id)
-        .name("organisation")
+        .name("organisation slug")
         .slug("organisation-slug")
-        .externalId("organisation-external-id")
+        .externalId("organisation slug")
         .parent(OrganisationEntity.builder()
           .id(parentId)
-          .name("parent")
+          .name("parent slug")
           .slug("parent-slug")
-          .externalId("parent-external-id")
+          .externalId("parent slug")
           .build())
         .selection(new UserSelectionEntity(
           selectionId,
@@ -134,27 +134,7 @@ public class OrganisationEntityMapperTest {
           selectionOwnerOrganisationId
         ))
         .build()
-    )).isEqualTo(
-      new Organisation(
-        id,
-        "organisation",
-        "organisation-slug",
-        "organisation-external-id",
-        new Organisation(
-          parentId,
-          "parent",
-          "parent-slug",
-          "parent-external-id"
-        ),
-        UserSelection.builder()
-          .id(selectionId)
-          .ownerUserId(selectionOwnerId)
-          .organisationId(selectionOwnerOrganisationId)
-          .name("selection")
-          .selectionParameters(createJsonNode())
-          .build()
-      )
-    );
+    )).isEqualTo(subOrganisation);
   }
 
   private JsonField toJsonField(JsonNode jsonNode) {

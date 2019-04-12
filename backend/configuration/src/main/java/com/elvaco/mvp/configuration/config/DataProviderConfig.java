@@ -1,6 +1,5 @@
 package com.elvaco.mvp.configuration.config;
 
-import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
@@ -186,9 +185,8 @@ class DataProviderConfig {
   Organisations organisations(ProductionDataProvider productionDataProvider) {
     var organisations = new OrganisationRepository(organisationJpaRepository);
 
-    productionDataProvider.organisations()
-      .stream()
-      .filter(organisation -> !organisations.findBySlug(organisation.slug).isPresent())
+    productionDataProvider.organisations().stream()
+      .filter(organisation -> organisations.findBySlug(organisation.slug).isEmpty())
       .forEach(organisations::save);
 
     return organisations;
@@ -214,12 +212,7 @@ class DataProviderConfig {
     MvpProperties.RootOrganisation rootOrg = mvpProperties.getRootOrganisation();
     return rootOrganisationRepository
       .findBySlug(rootOrg.getSlug())
-      .orElseGet(() -> rootOrganisationRepository.save(new Organisation(
-        UUID.randomUUID(),
-        rootOrg.getName(),
-        rootOrg.getSlug(),
-        rootOrg.getName()
-      )));
+      .orElseGet(() -> rootOrganisationRepository.save(Organisation.of(rootOrg.getName())));
   }
 
   @Bean

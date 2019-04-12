@@ -21,29 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class OrganisationControllerTest extends IntegrationTest {
 
-  private Organisation secretService =
-    new Organisation(
-      randomUUID(),
-      "Secret Service",
-      "secret-service",
-      "Secret Service"
-    );
-
-  private Organisation wayneIndustries =
-    new Organisation(
-      randomUUID(),
-      "Wayne Industries",
-      "wayne-industries",
-      "Wayne Industries"
-    );
-
-  private Organisation theBeatles =
-    new Organisation(
-      randomUUID(),
-      "The Beatles",
-      "the-beatles",
-      "The Beatles"
-    );
+  private Organisation secretService = Organisation.of("Secret Service");
+  private Organisation wayneIndustries = Organisation.of("Wayne Industries");
+  private Organisation theBeatles = Organisation.of("The Beatles");
 
   @Before
   public void setUp() {
@@ -60,8 +40,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).isEqualTo(new OrganisationDto(
       secretService.id,
-      "Secret Service",
-      "secret-service"
+      "Secret Service"
     ));
   }
 
@@ -73,8 +52,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).isEqualTo(new OrganisationDto(
       context().defaultOrganisation().id,
-      context().defaultOrganisation().name,
-      context().defaultOrganisation().slug
+      context().defaultOrganisation().name
     ));
   }
 
@@ -86,8 +64,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).isEqualTo(new OrganisationDto(
       context().defaultOrganisation().id,
-      context().defaultOrganisation().name,
-      context().defaultOrganisation().slug
+      context().defaultOrganisation().name
     ));
   }
 
@@ -118,10 +95,9 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminFindsOwnOrganisationAndSubOrganisation() throws IOException {
-
     createUserIfNotPresent(context().admin);
 
-    UserSelection selection = UserSelection.builder()
+    var selection = UserSelection.builder()
       .id(randomUUID())
       .organisationId(context().admin.organisation.id)
       .name("")
@@ -131,17 +107,10 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     userSelections.save(selection);
 
-    Organisation scooter =
-      new Organisation(
-        randomUUID(),
-        "Scooter",
-        "faster-harder",
-        "Scooter",
-        context().admin.organisation,
-        selection
-      );
+    var parent = context().admin.organisation;
+    var subOrganisation = Organisation.subOrganisation("Scooter", parent, selection).build();
 
-    organisations.save(scooter);
+    organisations.save(subOrganisation);
 
     ResponseEntity<List<OrganisationDto>> request = asAdmin()
       .getList("/organisations", OrganisationDto.class);
@@ -149,7 +118,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).containsExactlyInAnyOrder(
       OrganisationDtoMapper.toDto(context().admin.organisation),
-      OrganisationDtoMapper.toDto(scooter)
+      OrganisationDtoMapper.toDto(subOrganisation)
     );
   }
 
@@ -164,7 +133,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto("Something borrowed", "something-blue");
+    OrganisationDto input = new OrganisationDto("Something borrowed");
     ResponseEntity<OrganisationDto> response = asSuperAdmin()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -176,7 +145,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto("ich bin wieder hier", "bei-dir");
+    OrganisationDto input = new OrganisationDto("ich bin wieder hier");
     ResponseEntity<OrganisationDto> created = asAdmin()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -185,7 +154,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserCannotCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto("ich bin wieder hier", "bei-dir");
+    OrganisationDto input = new OrganisationDto("ich bin wieder hier");
     ResponseEntity<OrganisationDto> created = asUser()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -194,7 +163,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanUpdateOrganisation() {
-    OrganisationDto requestModel = new OrganisationDto("OrganisationName", "org-slug");
+    OrganisationDto requestModel = new OrganisationDto("OrganisationName");
 
     ResponseEntity<OrganisationDto> response = asSuperAdmin()
       .post("/organisations", requestModel, OrganisationDto.class);
@@ -218,8 +187,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   public void adminCannotUpdateOrganisation() {
     OrganisationDto organisation = new OrganisationDto(
       wayneIndustries.id,
-      wayneIndustries.name,
-      "batcave"
+      wayneIndustries.name
     );
 
     ResponseEntity<UnauthorizedDto> putResponse = asAdmin()

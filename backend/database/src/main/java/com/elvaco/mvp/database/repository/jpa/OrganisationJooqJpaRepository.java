@@ -112,15 +112,13 @@ class OrganisationJooqJpaRepository
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue());
 
-    var all = select
-      .fetch()
-      .stream()
-      .map(record -> new Organisation(
-        record.value1(),
-        record.value2(),
-        record.value3(),
-        record.value4()
-      ))
+    var all = select.fetch().stream()
+      .map(record -> Organisation.builder()
+        .id(record.value1())
+        .name(record.value2())
+        .slug(record.value3())
+        .externalId(record.value4())
+        .build())
       .collect(toList());
 
     return getPage(all, pageable, () -> dsl.fetchCount(countQuery));

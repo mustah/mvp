@@ -21,12 +21,7 @@ public class OrganisationDtoMapperTest {
 
   @Test
   public void toDomainModel_subOrganisation() {
-    Organisation parent = new Organisation(
-      randomUUID(),
-      "parent",
-      "parent-slug",
-      "parent-external-id"
-    );
+    Organisation parent = Organisation.of("parent slug");
 
     UserSelection selection = UserSelection.builder()
       .id(randomUUID())
@@ -36,7 +31,7 @@ public class OrganisationDtoMapperTest {
       .selectionParameters(createJsonNode())
       .build();
     SubOrganisationRequestDto subOrganisationRequest = new SubOrganisationRequestDto(
-      "sub",
+      "sub slug",
       "sub-slug",
       randomUUID()
     );
@@ -46,9 +41,10 @@ public class OrganisationDtoMapperTest {
       selection,
       subOrganisationRequest
     )).isEqualToIgnoringGivenFields(
-      new Organisation(
-        null, "sub", "sub-slug", "sub", parent, selection
-      ),
+      Organisation.subOrganisation("sub slug", parent, selection)
+        .parent(parent)
+        .selection(selection)
+        .build(),
       "id"
     );
   }
@@ -56,57 +52,35 @@ public class OrganisationDtoMapperTest {
   @Test
   public void toDto_noSubOrganisation() {
     UUID id = randomUUID();
-    Organisation organisation = new Organisation(
-      id,
-      "organisation",
-      "organisation-slug",
-      "organisation-external-id"
-    );
+    Organisation organisation = Organisation.of("organisation slug", id);
 
     assertThat(toDto(organisation)).isEqualTo(
-      new OrganisationDto(
-        id,
-        "organisation",
-        "organisation-slug"
-      )
+      new OrganisationDto(id, "organisation slug")
     );
   }
 
   @Test
   public void toDto_withSubOrganisation_sub() {
-    UUID id = randomUUID();
-    UUID parentId = randomUUID();
-    UserSelection selection = UserSelection.builder()
+    var id = randomUUID();
+    var parentId = randomUUID();
+    var selection = UserSelection.builder()
       .id(randomUUID())
       .ownerUserId(randomUUID())
       .organisationId(randomUUID())
       .name("selection")
       .selectionParameters(createJsonNode())
       .build();
-    Organisation organisation = new Organisation(
-      id,
-      "sub",
-      "sub-slug",
-      "sub-external-id",
-      new Organisation(
-        parentId,
-        "parent",
-        "parent-slug",
-        "parent-external-id"
-      ),
-      selection
-    );
+    var parent = Organisation.of("parent slug", parentId);
+    var organisation = Organisation.subOrganisation("sub slug", parent, selection)
+      .id(id)
+      .build();
 
     assertThat(toDto(organisation)).isEqualTo(
       new OrganisationDto(
         id,
-        "sub",
+        "sub slug",
         "sub-slug",
-        new OrganisationDto(
-          parentId,
-          "parent",
-          "parent-slug"
-        ),
+        new OrganisationDto(parentId, "parent slug"),
         selection.id
       )
     );

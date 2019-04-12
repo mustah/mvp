@@ -28,6 +28,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
   public void create() {
     UserSelectionDto userSelection = createUserSelection(context().superAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
+
     ResponseEntity<OrganisationDto> request = createNew(
       asSuperAdmin(), context().organisationId(), subOrganisation
     );
@@ -109,18 +110,19 @@ public class SubOrganisationControllerTest extends IntegrationTest {
     UserSelectionDto userSelection = createUserSelection(context().superAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asSuperAdmin(), context().organisationId(), subOrganisation
+      asSuperAdmin(),
+      context().organisationId(),
+      subOrganisation
     );
 
     OrganisationDto dto = request.getBody();
 
     OrganisationDto expectedParent = new OrganisationDto(
       context().organisationId(),
-      context().defaultOrganisation().name,
-      context().defaultOrganisation().slug
+      context().defaultOrganisation().name
     );
     assertThat(dto).isEqualToIgnoringGivenFields(
-      new OrganisationDto(null, "sub", "sub-slug", expectedParent, userSelection.id),
+      new OrganisationDto(null, "sub slug", "sub-slug", expectedParent, userSelection.id),
       "id"
     );
   }
@@ -154,7 +156,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
 
   private SubOrganisationRequestDto createSubOrganisationRequest(UUID userSelectionId) {
     return new SubOrganisationRequestDto(
-      "sub",
+      "sub slug",
       "sub-slug",
       userSelectionId
     );
@@ -174,7 +176,9 @@ public class SubOrganisationControllerTest extends IntegrationTest {
   }
 
   private ResponseEntity<OrganisationDto> createNew(
-    RestClient restClient, UUID parentId, SubOrganisationRequestDto subOrganisation
+    RestClient restClient,
+    UUID parentId,
+    SubOrganisationRequestDto subOrganisation
   ) {
     return createNew(restClient, parentId, subOrganisation, OrganisationDto.class);
   }

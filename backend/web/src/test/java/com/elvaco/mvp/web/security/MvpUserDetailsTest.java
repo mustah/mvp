@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.security;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.domainmodels.UserSelection.IdNamedDto;
 import com.elvaco.mvp.core.domainmodels.UserSelection.SelectionParametersDto;
@@ -13,7 +14,6 @@ import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
 import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
 import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.FACILITIES_JSON_STRING;
-import static com.elvaco.mvp.testing.fixture.UserTestData.organisationBuilder;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +25,7 @@ public class MvpUserDetailsTest {
   public void shouldHaveOrganisationIdOfSubOrganisation() {
     var subOrganisationId = randomUUID();
     var userId = randomUUID();
-    var subOrganisation = organisationBuilder()
+    var subOrganisation = Organisation.builderFrom("Org AB")
       .id(subOrganisationId)
       .parent(MARVEL)
       .selection(UserSelection.builder()
@@ -49,7 +49,7 @@ public class MvpUserDetailsTest {
 
   @Test
   public void shouldHaveOrganisationIdWhenUserDoesNotBelongToSubOrganisation() {
-    var organisation = organisationBuilder().build();
+    var organisation = Organisation.builderFrom("Org AB").build();
 
     var authenticatedUser = authenticatedUserFrom(userBuilder().organisation(organisation));
 
@@ -60,7 +60,7 @@ public class MvpUserDetailsTest {
 
   @Test
   public void parentOrganisationDoesNotHaveSelectionParameters() {
-    var organisation = organisationBuilder().build();
+    var organisation = Organisation.builderFrom("Org AB").build();
 
     var authenticatedUser = authenticatedUserFrom(userBuilder().organisation(organisation));
 
@@ -69,7 +69,7 @@ public class MvpUserDetailsTest {
 
   @Test
   public void subOrganisationHasSelectionParametersWithOneFacilityId() {
-    var organisation = organisationBuilder()
+    var organisation = Organisation.builderFrom("Org AB")
       .parent(MARVEL)
       .selection(UserSelection.builder()
         .selectionParameters(toJsonNode(FACILITIES_JSON_STRING))
@@ -87,7 +87,7 @@ public class MvpUserDetailsTest {
 
   @Test
   public void subOrganisationHasSelectionParametersWithTwoCities() {
-    var organisation = organisationBuilder()
+    var organisation = Organisation.builderFrom("Org AB")
       .parent(MARVEL)
       .selection(UserSelection.builder()
         .selectionParameters(toJsonNode(CITIES_JSON_STRING))

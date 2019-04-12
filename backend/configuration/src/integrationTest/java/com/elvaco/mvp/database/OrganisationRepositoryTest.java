@@ -10,6 +10,7 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.elvaco.mvp.core.util.Slugify.slugify;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +26,7 @@ public class OrganisationRepositoryTest extends IntegrationTest {
       OrganisationEntity.builder()
         .id(randomUUID())
         .name("An organisation")
-        .slug("an-organisation")
+        .slug(slugify("An organisation"))
         .externalId("an-organisation")
         .build());
     userJpaRepository.save(new UserEntity(

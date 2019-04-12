@@ -1,8 +1,8 @@
 package com.elvaco.mvp.testdata;
 
-import java.util.UUID;
 import java.util.stream.Stream;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
@@ -17,9 +17,6 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.repository.Widgets;
-import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +28,6 @@ import static java.util.UUID.randomUUID;
 @RequiredArgsConstructor
 class IntegrationTestFixtureContextFactory {
 
-  private final OrganisationJpaRepository organisationJpaRepository;
   private final Organisations organisations;
   private final Users users;
   private final UserSelections userSelections;
@@ -48,21 +44,15 @@ class IntegrationTestFixtureContextFactory {
 
   @Transactional
   public IntegrationTestFixtureContext create(String callSiteIdentifier) {
-    UUID contextId = randomUUID();
-    OrganisationEntity organisation = organisationJpaRepository.save(
-      OrganisationEntity.builder()
-        .id(contextId)
-        .name(callSiteIdentifier + "-organisation")
-        .slug(contextId.toString())
-        .externalId(contextId.toString())
-        .build()
-    );
+    var contextId = randomUUID();
+    var name = callSiteIdentifier + contextId.toString() + "-organisation";
+    var organisation = organisations.save(Organisation.of(name, contextId));
 
     User user = new UserBuilder()
       .name("integration-test-user")
       .email(contextId.toString() + "@test.com")
       .password("password")
-      .organisation(OrganisationEntityMapper.toDomainModel(organisation))
+      .organisation(organisation)
       .asUser()
       .build();
     users.save(user);
@@ -71,7 +61,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-admin")
       .email(contextId.toString() + "-admin@test.com")
       .password("password")
-      .organisation(OrganisationEntityMapper.toDomainModel(organisation))
+      .organisation(organisation)
       .asAdmin()
       .build();
     users.save(admin);
@@ -80,7 +70,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-super-admin")
       .email(contextId.toString() + "-super-admin@test.com")
       .password("password")
-      .organisation(OrganisationEntityMapper.toDomainModel(organisation))
+      .organisation(organisation)
       .asSuperAdmin()
       .build();
     users.save(superAdmin);
@@ -108,10 +98,10 @@ class IntegrationTestFixtureContextFactory {
 
   @Transactional
   public void destroy(IntegrationTestFixtureContext context) {
-    Stream.of(context.organisationEntity.id)
+    Stream.of(context.organisation.id)
       .forEach(id -> {
         try {
-          organisationJpaRepository.deleteById(id);
+          organisations.deleteById(id);
         } catch (EmptyResultDataAccessException ignore) {
           // The test case probably removed it already
         }

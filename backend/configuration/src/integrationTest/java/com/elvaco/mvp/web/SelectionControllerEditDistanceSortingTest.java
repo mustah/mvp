@@ -152,10 +152,8 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
     Page<IdNamedDto> response = asSuperAdmin() //For super admin eyes only
       .getPage(url, IdNamedDto.class);
 
-    assertThat(response.getContent()
-      .stream()
-      .map(organisation -> organisation.name)).containsExactly(
-      "aa", "caa", "aaaa", "abaa"
-    );
+    var organisationNames = response.getContent().stream().map(organisation -> organisation.name);
+
+    assertThat(organisationNames).containsExactly("aa", "caa", "aaaa", "abaa");
   }
 }
