@@ -10,7 +10,7 @@ interface StateToProps {
 
 export interface OwnProps {
   meter: MeterDetails;
-  useCollectionPeriod?: boolean;
+  useCollectionPeriod: boolean;
 }
 
 export type Props = StateToProps & OwnProps;

@@ -2,6 +2,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
+import {addAllToReport, ReportSector} from '../../../state/report/reportActions';
+import {LegendItem} from '../../../state/report/reportModels';
+import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 import {
   exportToExcelSuccess,
   fetchMeasurementsForReport,
@@ -20,9 +23,6 @@ import {getMeterParameters, getUserSelectionId} from '../../../state/user-select
 import {Callback, CallbackWith, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
-import {addAllToReport, ReportSector} from '../../../state/report/reportActions';
-import {LegendItem} from '../../../state/report/reportModels';
-import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 
 export interface StateToProps {
   hiddenLines: uuid[];
@@ -55,7 +55,6 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
   } = rootState;
   return ({
     isSideMenuOpen: isSideMenuOpen(ui),
-
     hasLegendItems: hasLegendItems(savedReports),
     hasContent: hasMeasurementValues(measurement.measurementResponse),
     hiddenLines: getHiddenLines(savedReports),

@@ -48,7 +48,7 @@ interface MapProps {
 interface Props extends MapProps {
   addToReport: OnClickWith<LegendItem>;
   syncWithMetering: OnClickWithId;
-  useCollectionPeriod?: boolean;
+  useCollectionPeriod: boolean;
 }
 
 const renderEvent = ({dataItem: {name, type}}) => {
