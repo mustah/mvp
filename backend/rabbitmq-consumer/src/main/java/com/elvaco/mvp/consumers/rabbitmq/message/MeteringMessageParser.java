@@ -49,7 +49,8 @@ public class MeteringMessageParser implements MessageParser {
       case INFRASTRUCTURE_EXTENDED_STATUS_v_1_0:
         log.info("Ignoring extended status message, not implemented yet {}", message);
         return Optional.empty();
-      case IGNORED_NBIOT_MEASUREMENT:
+      case IGNORED_NBIOT_MEASUREMENT_M1:
+      case IGNORED_NBIOT_MEASUREMENT_S1:
         log.debug("Ignoring NBIOT measurement message {}", message);
         return Optional.empty();
       default:

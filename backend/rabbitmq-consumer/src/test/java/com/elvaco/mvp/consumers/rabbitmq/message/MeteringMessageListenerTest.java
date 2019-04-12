@@ -122,7 +122,7 @@ public class MeteringMessageListenerTest {
 
   @Test
   public void receiveInfrastructureStatusMessage() {
-    String message = parseJsonFile("messages/infrastructure-status.json");
+    String message = parseJsonFile("messages/nbiot-status.json");
 
     messageListener.onMessage(message);
 
