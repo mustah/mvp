@@ -1,6 +1,6 @@
 import {getType} from 'typesafe-actions';
 import {Action, ModelSectors} from '../../../types/Types';
-import {ReportSector} from '../../report/reportActions';
+import {ReportSector} from '../../report/reportModels';
 import {changeCollectionToolbarView, changeMeterMeasurementsToolbarView, changeToolbarView} from './toolbarActions';
 import {ToolbarState, ToolbarView} from './toolbarModels';
 

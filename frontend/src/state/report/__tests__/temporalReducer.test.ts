@@ -2,14 +2,8 @@ import {Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {selectPeriod} from '../../user-selection/userSelectionActions';
 import {SelectionInterval} from '../../user-selection/userSelectionModels';
-import {
-  addLegendItems,
-  ReportSector,
-  selectResolution,
-  setReportTimePeriod,
-  toggleComparePeriod
-} from '../reportActions';
-import {LegendItem, TemporalReportState} from '../reportModels';
+import {addLegendItems, selectResolution, setReportTimePeriod, toggleComparePeriod} from '../reportActions';
+import {LegendItem, ReportSector, TemporalReportState} from '../reportModels';
 import {initialState, temporalReducerFor} from '../temporalReducer';
 
 describe('temporal', () => {

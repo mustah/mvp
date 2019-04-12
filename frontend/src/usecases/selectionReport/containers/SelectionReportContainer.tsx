@@ -1,6 +1,9 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {addAllToReport} from '../../../state/report/reportActions';
+import {ReportSector} from '../../../state/report/reportModels';
+import {getHiddenLines, getSelectionMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 import {
   exportSelectionReportToExcel,
   fetchMeasurementsForSelectionReport,
@@ -12,9 +15,7 @@ import {fetchUserSelections} from '../../../state/user-selection/userSelectionAc
 import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
 import {MeasurementLineChart} from '../../report/components/MeasurementLineChart';
 import {Measurements} from '../../report/components/Measurements';
-import {StateToProps, DispatchToProps} from '../../report/containers/MeasurementsContainer';
-import {addAllToReport, ReportSector} from '../../../state/report/reportActions';
-import {getHiddenLines, getSelectionMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
+import {DispatchToProps, StateToProps} from '../../report/containers/MeasurementsContainer';
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
   const {

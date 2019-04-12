@@ -22,8 +22,8 @@ import {noInternetConnection, requestTimeout} from '../../../../api/apiActions';
 import {NormalizedState} from '../../../../domain-models/domainModels';
 import {initialDomain} from '../../../../domain-models/domainModelsReducer';
 import {User} from '../../../../domain-models/user/userModels';
-import {getDefaultQuantity, ReportSector} from '../../../../report/reportActions';
-import {isAggregate, isMedium, LegendItem, LegendType} from '../../../../report/reportModels';
+import {getDefaultQuantity} from '../../../../report/reportActions';
+import {isAggregate, isMedium, LegendItem, LegendType, ReportSector} from '../../../../report/reportModels';
 import {ParameterName, UserSelection} from '../../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../../user-selection/userSelectionReducer';
 import {

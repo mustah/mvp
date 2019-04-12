@@ -30,7 +30,6 @@ import {getThreshold, getUserSelection} from './userSelectionSelectors';
 export const selectPeriod = createStandardAction('SELECT_PERIOD')<Period>();
 
 export const RESET_SELECTION = 'RESET_SELECTION';
-export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
 export const addParameterToSelection = createStandardAction('ADD_PARAMETER_TO_SELECTION')<SelectionParameter>();
 export const deselectSelection = createStandardAction('DESELECT_SELECTION')<SelectionParameter>();

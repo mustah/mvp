@@ -3,6 +3,7 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {resetReducer} from '../../../../reducers/resetReducer';
 import {Action, ErrorResponse} from '../../../../types/Types';
 import * as reportActions from '../../../report/reportActions';
+import {ReportSector} from '../../../report/reportModels';
 import {search} from '../../../search/searchActions';
 import * as actions from './measurementActions';
 import {MeasurementResponse, MeasurementState} from './measurementModels';
@@ -23,7 +24,7 @@ export const initialState: MeasurementState = {
 };
 
 const measurementReducerFor =
-  (sector: reportActions.ReportSector) =>
+  (sector: ReportSector) =>
     (state: MeasurementState = initialState, action: ActionTypes): MeasurementState => {
       switch (action.type) {
         case getType(actions.measurementRequest(sector)):
@@ -65,6 +66,6 @@ const measurementReducerFor =
       }
     };
 
-export const measurement = measurementReducerFor(reportActions.ReportSector.report);
+export const measurement = measurementReducerFor(ReportSector.report);
 
-export const selectionMeasurement = measurementReducerFor(reportActions.ReportSector.selectionReport);
+export const selectionMeasurement = measurementReducerFor(ReportSector.selectionReport);

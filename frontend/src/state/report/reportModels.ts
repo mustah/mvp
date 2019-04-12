@@ -1,8 +1,8 @@
 import {LegendPayload, LineType} from 'recharts';
 import {TemporalResolution} from '../../components/dates/dateModels';
+import {Identifiable, uuid} from '../../types/Types';
 import {Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../user-selection/userSelectionModels';
-import {Identifiable, uuid} from '../../types/Types';
 import {LegendType} from './reportModels';
 
 export type LegendType = Medium | 'aggregate';
@@ -92,4 +92,10 @@ export interface QuantityLegendType {
 export interface QuantityId {
   id: uuid;
   quantity: Quantity;
+}
+
+export const enum ReportSector {
+  report = 'report',
+  selectionReport = 'selectionReport',
+  meterDetailsReport = 'meterDetailsReport',
 }

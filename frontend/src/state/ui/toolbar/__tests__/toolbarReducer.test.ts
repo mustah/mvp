@@ -1,4 +1,4 @@
-import {ReportSector} from '../../../report/reportActions';
+import {ReportSector} from '../../../report/reportModels';
 import {changeToolbarView} from '../toolbarActions';
 import {ToolbarState, ToolbarView} from '../toolbarModels';
 import {initialState, toolbar} from '../toolbarReducer';

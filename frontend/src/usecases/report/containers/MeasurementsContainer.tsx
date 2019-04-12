@@ -2,8 +2,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
-import {addAllToReport, ReportSector} from '../../../state/report/reportActions';
-import {LegendItem} from '../../../state/report/reportModels';
+import {addAllToReport} from '../../../state/report/reportActions';
+import {LegendItem, ReportSector} from '../../../state/report/reportModels';
 import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 import {
   exportToExcelSuccess,

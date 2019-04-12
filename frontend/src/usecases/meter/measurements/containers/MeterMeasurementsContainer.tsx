@@ -2,7 +2,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../../reducers/rootReducer';
 import {MeterDetails} from '../../../../state/domain-models/meter-details/meterDetailsModels';
-import {addAllToReport, ReportSector} from '../../../../state/report/reportActions';
+import {addAllToReport} from '../../../../state/report/reportActions';
+import {ReportSector} from '../../../../state/report/reportModels';
 import {
   fetchMeasurementsForMeterDetails,
   measurementClearError

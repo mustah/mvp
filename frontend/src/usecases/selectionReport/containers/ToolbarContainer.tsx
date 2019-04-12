@@ -3,12 +3,12 @@ import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {
-  ReportSector,
   selectResolution,
   setReportTimePeriod,
   toggleComparePeriod,
   toggleShowAverage
 } from '../../../state/report/reportActions';
+import {ReportSector} from '../../../state/report/reportModels';
 import {getMeterLegendItems, hasLegendItems} from '../../../state/report/reportSelectors';
 import {exportSelectionReportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';

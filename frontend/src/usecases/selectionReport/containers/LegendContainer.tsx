@@ -3,11 +3,7 @@ import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {withContent} from '../../../components/hoc/withContent';
 import {RootState} from '../../../reducers/rootReducer';
-import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
-import {Legend} from '../../report/components/Legend';
-import {makeColumnQuantities} from '../../report/helpers/legendHelper';
 import {
-  ReportSector,
   showHideAllByType,
   showHideLegendRows,
   toggleLine,
@@ -21,6 +17,7 @@ import {
   LegendViewOptions,
   QuantityId,
   QuantityLegendType,
+  ReportSector,
   SavedReportsState,
   SelectedQuantities
 } from '../../../state/report/reportModels';
@@ -30,6 +27,9 @@ import {
   getSelectedQuantitiesMap,
   hasLegendItems
 } from '../../../state/report/reportSelectors';
+import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
+import {Legend} from '../../report/components/Legend';
+import {makeColumnQuantities} from '../../report/helpers/legendHelper';
 
 export interface StateToProps extends HasContent, ColumnQuantities {
   legendItems: LegendItem[];

@@ -3,13 +3,12 @@ import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {toggle} from '../../helpers/collections';
 import {resetReducer} from '../../reducers/resetReducer';
-import {Medium} from '../ui/graph/measurement/measurementModels';
 import {Action, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
+import {Medium} from '../ui/graph/measurement/measurementModels';
 import {
   addLegendItems,
   removeAllByType,
-  ReportSector,
   showHideAllByType,
   showHideLegendRows,
   toggleLine,
@@ -23,6 +22,7 @@ import {
   LegendViewOptions,
   QuantityId,
   QuantityLegendType,
+  ReportSector,
   ReportState,
   SavedReportsState,
   ViewOptions

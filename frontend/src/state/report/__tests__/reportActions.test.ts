@@ -2,11 +2,11 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {RootState} from '../../../reducers/rootReducer';
+import {toLegendItem} from '../../../usecases/report/helpers/legendHelper';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {getMediumText, Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
-import {toLegendItem} from '../../../usecases/report/helpers/legendHelper';
-import {addAllToReport, addLegendItems, addToReport, deleteItem, ReportSector} from '../reportActions';
-import {LegendItem, SavedReportsState} from '../reportModels';
+import {addAllToReport, addLegendItems, addToReport, deleteItem} from '../reportActions';
+import {LegendItem, ReportSector, SavedReportsState} from '../reportModels';
 import {initialState as report} from '../reportReducer';
 
 describe('reportActions', () => {

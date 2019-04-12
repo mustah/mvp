@@ -3,13 +3,14 @@ import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {DateRange} from '../../../components/dates/dateModels';
 import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {resetReducer} from '../../../reducers/resetReducer';
-import {Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
-import {SELECT_SAVED_SELECTION, setCustomDateRange} from '../../user-selection/userSelectionActions';
 import {logoutUser} from '../../../usecases/auth/authActions';
+import {Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
+import {selectSavedSelectionAction, setCustomDateRange} from '../../user-selection/userSelectionActions';
+import {UserSelection} from '../../user-selection/userSelectionModels';
+import {initialState as initialUserSelection} from '../../user-selection/userSelectionReducer';
 import {
   addLegendItems,
   removeAllByType,
-  ReportSector,
   showHideAllByType,
   showHideLegendRows,
   toggleLine,
@@ -18,7 +19,15 @@ import {
   toggleShowAverage
 } from '../reportActions';
 
-import {LegendItem, QuantityId, QuantityLegendType, ReportState, SavedReportsState, ViewOptions} from '../reportModels';
+import {
+  LegendItem,
+  QuantityId,
+  QuantityLegendType,
+  ReportSector,
+  ReportState,
+  SavedReportsState,
+  ViewOptions
+} from '../reportModels';
 import {initialSavedReportState, initialState, logoutReducer, report, reportReducerFor} from '../reportReducer';
 import {getHiddenLines, getLegendItems, getViewOptions} from '../reportSelectors';
 
@@ -406,7 +415,8 @@ describe('reportReducer', () => {
         meterPage: {...initialSavedReportState.meterPage, shouldShowAverage: true}
       };
 
-      const nextState: SavedReportsState = selectionReportReducer(state, {type: SELECT_SAVED_SELECTION});
+      const payload: UserSelection = initialUserSelection.userSelection;
+      const nextState: SavedReportsState = selectionReportReducer(state, selectSavedSelectionAction(payload));
 
       expect(nextState).toEqual(initialSavedReportState);
     });
@@ -417,7 +427,8 @@ describe('reportReducer', () => {
         meterPage: {...initialSavedReportState.meterPage, shouldShowAverage: true}
       };
 
-      const nextState: SavedReportsState = reportReducer(state, {type: SELECT_SAVED_SELECTION});
+      const payload: UserSelection = initialUserSelection.userSelection;
+      const nextState: SavedReportsState = reportReducer(state, selectSavedSelectionAction(payload));
 
       expect(nextState).toEqual(state);
     });
