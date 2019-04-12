@@ -65,8 +65,8 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
   }
 
   @Override
-  protected Organisation copyWithId(UUID id, Organisation entity) {
-    return new Organisation(id, entity.name, entity.slug, entity.name);
+  protected Organisation copyWithId(UUID id, Organisation organisation) {
+    return organisation.toBuilder().id(id).build();
   }
 
   @Override

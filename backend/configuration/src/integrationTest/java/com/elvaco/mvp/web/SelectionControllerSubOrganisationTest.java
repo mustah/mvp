@@ -129,10 +129,7 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
   }
 
   private Organisation createSubOrganisation(UserSelection userSelection) {
-    return organisations.save(Organisation.builder()
-      .name("sub-org")
-      .slug("sub-org")
-      .externalId("sub-org")
+    return organisations.save(Organisation.builderFrom("sub-org")
       .parent(context().defaultOrganisation())
       .selection(userSelection)
       .build()

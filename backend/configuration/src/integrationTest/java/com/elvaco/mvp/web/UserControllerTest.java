@@ -319,12 +319,9 @@ public class UserControllerTest extends IntegrationTest {
 
     selection = userSelections.save(selection);
 
-    Organisation organisation = Organisation.builder()
-      .externalId("Superman")
-      .name("Sub organisation3")
+    Organisation organisation = Organisation.builderFrom("Sub organisation3")
       .parent(context().defaultOrganisation())
       .selection(selection)
-      .slug("s")
       .build();
 
     organisations.save(organisation);

@@ -64,12 +64,13 @@ import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME_FLOW;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
-public class MessageConsumerTest {
+public abstract class MessageConsumerTest {
 
-  static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
-  static final String ORGANISATION_SLUG = "some-organisation";
+  protected static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
+  protected static final String ORGANISATION_SLUG = "some-organisation";
+  protected static final Organisation ORGANISATION = Organisation.of(ORGANISATION_EXTERNAL_ID);
 
-  private static Map<String, Medium> mediumMap = Map.of(
+  private static final Map<String, Medium> MEDIUM_MAP = Map.of(
     UNKNOWN.medium.name, UNKNOWN.medium,
     DEFAULT_HOT_WATER.medium.name, DEFAULT_HOT_WATER.medium,
     DEFAULT_WATER.medium.name, DEFAULT_WATER.medium,
@@ -77,7 +78,7 @@ public class MessageConsumerTest {
     DEFAULT_ROOM_SENSOR.medium.name, DEFAULT_ROOM_SENSOR.medium
   );
 
-  private static Map<Medium, MeterDefinition> meterDefinitionMap = Map.of(
+  private static final Map<Medium, MeterDefinition> METER_DEFINITION_MAP = Map.of(
     UNKNOWN.medium, UNKNOWN,
     DEFAULT_HOT_WATER.medium, DEFAULT_HOT_WATER,
     DEFAULT_WATER.medium, DEFAULT_WATER,
@@ -85,7 +86,7 @@ public class MessageConsumerTest {
     DEFAULT_ROOM_SENSOR.medium, DEFAULT_ROOM_SENSOR
   );
 
-  private static Map<String, Quantity> quantityMap = List.of(
+  private static final Map<String, Quantity> QUANTITY_MAP = List.of(
     VOLUME,
     VOLUME_FLOW,
     TEMPERATURE,
@@ -116,10 +117,10 @@ public class MessageConsumerTest {
   MockMeterStatusLogs meterStatusLogs;
   MockJobService<MeteringReferenceInfoMessageDto> jobService;
 
-  MediumProvider mediumProvider = name -> Optional.ofNullable(mediumMap.get(name));
+  MediumProvider mediumProvider = name -> Optional.ofNullable(MEDIUM_MAP.get(name));
   SystemMeterDefinitionProvider meterDefinitionProvider = medium -> Optional.ofNullable(
-    meterDefinitionMap.get(medium));
-  QuantityProvider quantityProvider = name -> Optional.ofNullable(quantityMap.get(name));
+    METER_DEFINITION_MAP.get(medium));
+  QuantityProvider quantityProvider = name -> Optional.ofNullable(QUANTITY_MAP.get(name));
 
   UnitConverter unitConverter = new UnitConverter() {
     @Nullable
@@ -143,12 +144,7 @@ public class MessageConsumerTest {
         .name("mock user")
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
-        .organisation(new Organisation(
-          randomUUID(),
-          ORGANISATION_EXTERNAL_ID,
-          ORGANISATION_SLUG,
-          ORGANISATION_EXTERNAL_ID
-        ))
+        .organisation(Organisation.of(ORGANISATION_EXTERNAL_ID))
         .asSuperAdmin()
         .build(),
       randomUUID().toString()

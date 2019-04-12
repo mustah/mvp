@@ -8,8 +8,6 @@ import com.elvaco.mvp.web.dto.SubOrganisationRequestDto;
 
 import lombok.experimental.UtilityClass;
 
-import static java.util.UUID.randomUUID;
-
 @UtilityClass
 public class OrganisationDtoMapper {
 
@@ -28,12 +26,7 @@ public class OrganisationDtoMapper {
   }
 
   public static Organisation toDomainModel(OrganisationDto organisationDto) {
-    return new Organisation(
-      organisationDto.id != null ? organisationDto.id : randomUUID(),
-      organisationDto.name,
-      organisationDto.slug,
-      organisationDto.name
-    );
+    return Organisation.of(organisationDto.name, organisationDto.id);
   }
 
   public static Organisation toDomainModel(
@@ -41,13 +34,6 @@ public class OrganisationDtoMapper {
     UserSelection selection,
     SubOrganisationRequestDto requestDto
   ) {
-    return new Organisation(
-      randomUUID(),
-      requestDto.name,
-      requestDto.slug,
-      requestDto.name,
-      parent,
-      selection
-    );
+    return Organisation.subOrganisation(requestDto.name, parent, selection).build();
   }
 }

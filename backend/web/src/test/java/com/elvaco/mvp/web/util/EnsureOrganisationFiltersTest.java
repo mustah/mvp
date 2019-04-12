@@ -17,7 +17,6 @@ import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
 import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
 import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.FACILITIES_JSON_STRING;
-import static com.elvaco.mvp.testing.fixture.UserTestData.organisationBuilder;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -31,7 +30,7 @@ public class EnsureOrganisationFiltersTest {
 
   @Test
   public void whenUserBelongsToParentOrganisation_DoNotApplyImplicitUserSelection() {
-    var organisation = organisationBuilder().build();
+    var organisation = Organisation.builderFrom("Org AB").build();
 
     var parameters = new RequestParametersAdapter()
       .ensureOrganisationFilters(authenticatedUser(organisation));
@@ -41,7 +40,7 @@ public class EnsureOrganisationFiltersTest {
 
   @Test
   public void shouldNotReplaceParameterValues_WhenNoSelectionParameters() {
-    var organisation = organisationBuilder().build();
+    var organisation = Organisation.builderFrom("Org AB").build();
 
     var parameters = new RequestParametersAdapter()
       .add(FACILITY, "c1")
@@ -164,7 +163,7 @@ public class EnsureOrganisationFiltersTest {
   public void hasNoImplicitParameters() {
     var parameters = new RequestParametersAdapter()
       .add(CITY, "sverige,osby")
-      .ensureOrganisationFilters(authenticatedUser(organisationBuilder().build()))
+      .ensureOrganisationFilters(authenticatedUser(Organisation.builderFrom("Org AB").build()))
       .implicitParameters();
 
     assertThat(parameters).isNotPresent();
@@ -195,7 +194,7 @@ public class EnsureOrganisationFiltersTest {
   }
 
   private static Organisation makeSubOrganisationWith(String jsonString) {
-    return organisationBuilder()
+    return Organisation.builderFrom("Org AB")
       .parent(MARVEL)
       .selection(UserSelection.builder()
         .selectionParameters(toJsonNode(jsonString))

@@ -30,29 +30,45 @@ public class Organisation implements Identifiable<UUID> {
     UUID id,
     String name,
     String slug,
-    String externalId
-  ) {
-    this(id, name, slug, externalId, null, null);
-  }
-
-  public Organisation(
-    UUID id,
-    String name,
-    String slug,
     String externalId,
     @Nullable Organisation parent,
     @Nullable UserSelection selection
   ) {
-    if (parent == null ^ selection == null) {
-      throw new IllegalArgumentException(
-        "Organisation needs either both 'parent' and 'selection', or none");
-    }
+    checkIsValidSubOrganisation(parent, selection);
     this.id = id;
     this.name = name;
-    this.slug = slugify(slug);
+    this.slug = slug;
     this.externalId = externalId;
     this.parent = parent;
     this.selection = selection;
+  }
+
+  public static OrganisationBuilder builderFrom(String name) {
+    return Organisation.builder()
+      .name(name)
+      .externalId(name)
+      .slug(slugify(name));
+  }
+
+  public static Organisation of(String name) {
+    return Organisation.builderFrom(name).build();
+  }
+
+  public static Organisation of(String name, @Nullable UUID id) {
+    return Organisation.builderFrom(name)
+      .id(id != null ? id : randomUUID())
+      .build();
+  }
+
+  public static OrganisationBuilder subOrganisation(
+    String name,
+    @Nullable Organisation parent,
+    @Nullable UserSelection selection
+  ) {
+    checkIsValidSubOrganisation(parent, selection);
+    return Organisation.builderFrom(name)
+      .parent(parent)
+      .selection(selection);
   }
 
   @Override
@@ -67,5 +83,15 @@ public class Organisation implements Identifiable<UUID> {
   Optional<UserSelection.SelectionParametersDto> getSelectionParameters() {
     return Optional.ofNullable(selection)
       .flatMap(UserSelection::toSelectionParametersDto);
+  }
+
+  private static void checkIsValidSubOrganisation(
+    @Nullable Organisation parent,
+    @Nullable UserSelection selection
+  ) {
+    if (parent == null ^ selection == null) {
+      throw new IllegalArgumentException(
+        "Organisation needs either both 'parent' and 'selection', or none");
+    }
   }
 }

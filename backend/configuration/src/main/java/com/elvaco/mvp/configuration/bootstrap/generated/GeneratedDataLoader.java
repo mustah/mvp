@@ -49,13 +49,8 @@ class GeneratedDataLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-    UUID organisationUuid = UUID.randomUUID();
-    Organisation organisation = organisations.save(new Organisation(
-      organisationUuid,
-      organisationUuid.toString(),
-      organisationUuid.toString(),
-      organisationUuid.toString()
-    ));
+    UUID id = UUID.randomUUID();
+    Organisation organisation = organisations.save(Organisation.of(id.toString(), id));
 
     log.info("Generating data for organisation '{}'...", organisation);
     long start = System.nanoTime();

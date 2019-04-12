@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import static com.elvaco.mvp.core.util.Slugify.slugify;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -23,7 +25,7 @@ public class OrganisationDto {
   @NotBlank
   public String name;
 
-  @NotBlank
+  @Nullable
   public String slug;
 
   @Nullable
@@ -33,11 +35,11 @@ public class OrganisationDto {
   @Nullable
   public UUID selectionId;
 
-  public OrganisationDto(String name, String slug) {
-    this(null, name, slug);
+  public OrganisationDto(String name) {
+    this(null, name);
   }
 
-  public OrganisationDto(UUID id, String name, String slug) {
-    this(id, name, slug, null, null);
+  public OrganisationDto(UUID id, String name) {
+    this(id, name, slugify(name), null, null);
   }
 }

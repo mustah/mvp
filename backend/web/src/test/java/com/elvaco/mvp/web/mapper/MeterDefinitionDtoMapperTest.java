@@ -63,7 +63,7 @@ public class MeterDefinitionDtoMapperTest {
         1L,
         "test",
         Set.of(new DisplayQuantityDto(TEST_POWER.name, false, Units.WATT, 2)),
-        new OrganisationDto(ELVACO.id, ELVACO.name, ELVACO.slug),
+        new OrganisationDto(ELVACO.id, ELVACO.name),
         new IdNamedDto("1", "test-medium"),
         true
       ));
@@ -75,7 +75,7 @@ public class MeterDefinitionDtoMapperTest {
       1L,
       "test",
       Set.of(new DisplayQuantityDto(TEST_POWER.name, false, Units.WATT, 2)),
-      new OrganisationDto(ELVACO.id, ELVACO.name, ELVACO.slug),
+      new OrganisationDto(ELVACO.id, ELVACO.name),
       new IdNamedDto("1", "test-medium"),
       true
     );

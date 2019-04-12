@@ -329,7 +329,6 @@ public abstract class IntegrationTest implements ContextDsl {
   private IntegrationTestFixtureContextFactory getIntegrationTestFixtureContextFactory() {
     if (integrationTestFixtureContextFactory == null) {
       integrationTestFixtureContextFactory = new IntegrationTestFixtureContextFactory(
-        organisationJpaRepository,
         organisations,
         users,
         userSelections,

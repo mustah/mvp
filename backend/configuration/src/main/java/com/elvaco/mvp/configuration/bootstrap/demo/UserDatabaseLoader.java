@@ -28,7 +28,6 @@ import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.UUID.randomUUID;
 
 @RequiredArgsConstructor
 @Order(2)
@@ -37,13 +36,8 @@ import static java.util.UUID.randomUUID;
 @Slf4j
 class UserDatabaseLoader implements CommandLineRunner {
 
-  private static final Organisation WAYNE_INDUSTRIES =
-    new Organisation(
-      randomUUID(),
-      "Wayne Industries",
-      "wayne-industries",
-      "Wayne Industries"
-    );
+  private static final Organisation WAYNE_INDUSTRIES = Organisation.of("Wayne Industries");
+
   private static final User OTHER_ADMIN_USER = new User(
     "Elvis Cohan",
     "elvis.cohan@wayne.com",

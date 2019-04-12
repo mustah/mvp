@@ -21,9 +21,7 @@ import static com.elvaco.mvp.core.security.Permission.DELETE;
 import static com.elvaco.mvp.core.security.Permission.READ;
 import static com.elvaco.mvp.core.security.Permission.UPDATE;
 import static com.elvaco.mvp.core.spi.data.EmptyPage.emptyPage;
-import static com.elvaco.mvp.core.util.Slugify.slugify;
 import static java.util.Collections.emptyList;
-import static java.util.UUID.randomUUID;
 
 @AllArgsConstructor
 public class OrganisationUseCases {
@@ -77,12 +75,7 @@ public class OrganisationUseCases {
   public Organisation findOrCreate(String externalId) {
     return organisations.findByExternalId(externalId)
       .filter(this::mayRead)
-      .orElseGet(() -> create(new Organisation(
-        randomUUID(),
-        externalId,
-        slugify(externalId),
-        externalId
-      )));
+      .orElseGet(() -> create(Organisation.of(externalId)));
   }
 
   private boolean mayRead(Organisation organisation) {

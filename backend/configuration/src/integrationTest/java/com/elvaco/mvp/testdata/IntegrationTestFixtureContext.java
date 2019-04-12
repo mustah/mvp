@@ -38,8 +38,6 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.repository.Widgets;
-import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 import com.elvaco.mvp.testing.fixture.TestFixtures;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 
@@ -50,7 +48,7 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class IntegrationTestFixtureContext implements TestFixtures {
 
-  public final OrganisationEntity organisationEntity;
+  public final Organisation organisation;
   public final User user;
   public final User admin;
   public final User superAdmin;
@@ -70,7 +68,7 @@ public class IntegrationTestFixtureContext implements TestFixtures {
 
   @Override
   public Organisation defaultOrganisation() {
-    return OrganisationEntityMapper.toDomainModel(organisationEntity);
+    return organisation;
   }
 
   Organisation given(OrganisationBuilder organisationBuilder) {

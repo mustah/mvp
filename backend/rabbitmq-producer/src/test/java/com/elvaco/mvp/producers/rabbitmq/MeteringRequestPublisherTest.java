@@ -90,12 +90,7 @@ public class MeteringRequestPublisherTest {
   @Test
   public void meterOrganisationIsUsedInRequest_DifferentFromUserNativeOrganisation() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    Organisation otherOrganisation = new Organisation(
-      UUID.randomUUID(),
-      "other-organisation",
-      "other-organisation",
-      "other-organisation"
-    );
+    Organisation otherOrganisation = Organisation.of("other organisation");
     MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
       user,
       new MockOrganisations(asList(user.getOrganisation(), otherOrganisation)),
@@ -234,11 +229,13 @@ public class MeteringRequestPublisherTest {
   }
 
   private MeteringRequestPublisher makeMeteringRequestPublisher(MockAuthenticatedUser user) {
-    return makeMeteringRequestPublisher(user,new MockJobService());
+    return makeMeteringRequestPublisher(user, new MockJobService());
   }
 
-  private MeteringRequestPublisher makeMeteringRequestPublisher(MockAuthenticatedUser user,
-                                                                MockJobService service) {
+  private MeteringRequestPublisher makeMeteringRequestPublisher(
+    MockAuthenticatedUser user,
+    MockJobService service
+  ) {
     return new MeteringRequestPublisher(
       user,
       new MockOrganisations(singletonList(user.getOrganisation())),

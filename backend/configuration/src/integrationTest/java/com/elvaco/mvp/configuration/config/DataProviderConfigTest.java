@@ -71,14 +71,7 @@ public class DataProviderConfigTest extends IntegrationTest {
   @Test
   public void rootOrganisation() {
     assertThat(rootOrganisation)
-      .isEqualToIgnoringGivenFields(
-        Organisation.builder()
-          .name("Elvaco")
-          .externalId("Elvaco")
-          .slug("elvaco")
-          .build(),
-        "id"
-      );
+      .isEqualToIgnoringGivenFields(Organisation.of("Elvaco"), "id");
   }
 
   @Test

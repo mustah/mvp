@@ -80,13 +80,6 @@ public class UserTestData {
       .build();
   }
 
-  public static Organisation.OrganisationBuilder organisationBuilder() {
-    return Organisation.builder()
-      .name("Org AB")
-      .slug("org")
-      .externalId("ext-org");
-  }
-
   public static UserBuilder userBuilder() {
     return new UserBuilder()
       .name("john doh")

@@ -669,14 +669,11 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   private Organisation createSubOrganisation(UserSelection userSelection) {
-    return organisations.save(Organisation.builder()
-      .name("sub-org")
-      .slug("sub-org")
-      .externalId("sub-org")
-      .parent(context().defaultOrganisation())
-      .selection(userSelection)
-      .build()
-    );
+    return organisations.save(Organisation.subOrganisation(
+      "sub-org",
+      context().defaultOrganisation(),
+      userSelection
+    ).build());
   }
 
   private UserSelection.UserSelectionBuilder userSelection() {
