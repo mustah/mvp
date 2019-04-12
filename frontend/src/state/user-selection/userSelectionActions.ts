@@ -40,7 +40,7 @@ export const selectSavedSelectionAction = createStandardAction('SELECT_SAVED_SEL
 
 export const setThresholdAction = createStandardAction('SET_THRESHOLD')<ThresholdQuery>();
 
-export const setThreshold =
+export const onChangeThreshold =
   (threshold: ThresholdQuery | undefined) =>
     (dispatch, getState: GetState) => {
       const state: RootState = getState();

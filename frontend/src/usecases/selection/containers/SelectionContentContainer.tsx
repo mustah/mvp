@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {setThreshold, toggleParameter} from '../../../state/user-selection/userSelectionActions';
+import {onChangeThreshold, toggleParameter} from '../../../state/user-selection/userSelectionActions';
 import {SelectionListItem, SelectionParameter, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {
   getSelectedAddresses,
@@ -56,7 +56,7 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleParameter,
-  onChangeThreshold: setThreshold
+  onChangeThreshold,
 }, dispatch);
 
 export const SelectionContentContainer =
