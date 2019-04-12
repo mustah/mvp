@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
@@ -42,7 +43,6 @@ import static com.elvaco.mvp.core.domainmodels.Units.KELVIN;
 import static com.elvaco.mvp.core.domainmodels.Units.KILOWATT_HOURS;
 import static com.elvaco.mvp.core.domainmodels.Units.MEGAWATT_HOURS;
 import static com.elvaco.mvp.core.domainmodels.Units.PERCENT;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -239,17 +239,19 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(contents)
       .contains(
-        new MeasurementSeriesDto(
-          heatMeter.id.toString(),
-          "Difference temperature",
-          "K",
-          getExpectedLabel(heatMeter),
-          MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
-          asList(
+        MeasurementSeriesDto.builder()
+          .id(heatMeter.id.toString())
+          .quantity("Difference temperature")
+          .unit("K")
+          .label(getExpectedLabel(heatMeter))
+          .name(heatMeter.externalId)
+          .meterId(getMeterId(heatMeter))
+          .medium(MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name)
+          .values(List.of(
             new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
             new MeasurementValueDto(date.plusHours(1).toInstant(), null)
-          )
-        )
+          ))
+          .build()
       );
   }
 
@@ -354,28 +356,32 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "&before=" + date.plusHours(1));
 
     assertThat(contents).containsExactlyInAnyOrder(
-      new MeasurementSeriesDto(
-        heatMeter.id.toString(),
-        "Difference temperature",
-        "K",
-        getExpectedLabel(heatMeter),
-        MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
-        asList(
+      MeasurementSeriesDto.builder()
+        .id(heatMeter.id.toString())
+        .quantity("Difference temperature")
+        .unit("K")
+        .label(getExpectedLabel(heatMeter))
+        .name(heatMeter.externalId)
+        .meterId(getMeterId(heatMeter))
+        .medium(MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name)
+        .values(List.of(
           new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
           new MeasurementValueDto(date.plusHours(1).toInstant(), DIFF_TEMP_VALUE_KELVIN)
-        )
-      ),
-      new MeasurementSeriesDto(
-        heatMeter.id.toString(),
-        "Energy",
-        "kWh",
-        getExpectedLabel(heatMeter),
-        MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
-        asList(
+        ))
+        .build(),
+      MeasurementSeriesDto.builder()
+        .id(heatMeter.id.toString())
+        .quantity("Energy")
+        .unit("kWh")
+        .label(getExpectedLabel(heatMeter))
+        .name(heatMeter.externalId)
+        .meterId(getMeterId(heatMeter))
+        .medium(MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name)
+        .values(List.of(
           new MeasurementValueDto(date.toInstant(), null),
           new MeasurementValueDto(date.plusHours(1).toInstant(), null)
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -402,17 +408,19 @@ public class MeasurementControllerTest extends IntegrationTest {
       ).getBody();
 
     assertThat(contents).containsExactlyInAnyOrder(
-      new MeasurementSeriesDto(
-        meter.id.toString(),
-        "Energy",
-        "kWh",
-        getExpectedLabel(meter),
-        MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
-        asList(
+      MeasurementSeriesDto.builder()
+        .id(meter.id.toString())
+        .quantity(ENERGY.name)
+        .unit(ENERGY.storageUnit)
+        .label(getExpectedLabel(meter))
+        .name(meter.externalId)
+        .meterId(getMeterId(meter))
+        .medium(MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name)
+        .values(List.of(
           new MeasurementValueDto(date.toInstant(), ENERGY_VALUE),
           new MeasurementValueDto(date.plusHours(1).toInstant(), ENERGY_VALUE)
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -439,17 +447,19 @@ public class MeasurementControllerTest extends IntegrationTest {
       ).getBody();
 
     assertThat(contents).containsExactlyInAnyOrder(
-      new MeasurementSeriesDto(
-        meter.id.toString(),
-        "Energy",
-        "kWh",
-        getExpectedLabel(meter),
-        MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name,
-        asList(
+      MeasurementSeriesDto.builder()
+        .id(meter.id.toString())
+        .quantity(ENERGY.name)
+        .unit(ENERGY.storageUnit)
+        .label(getExpectedLabel(meter))
+        .meterId(getMeterId(meter))
+        .name(meter.externalId)
+        .medium(MeterDefinition.DEFAULT_DISTRICT_HEATING.medium.name)
+        .values(List.of(
           new MeasurementValueDto(date.toInstant(), 1.0),
           new MeasurementValueDto(date.plusHours(1).toInstant(), null)
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -646,18 +656,20 @@ public class MeasurementControllerTest extends IntegrationTest {
       ).getBody();
 
     assertThat(list).containsExactly(
-      new MeasurementSeriesDto(
-        consumptionMeter.id.toString(),
-        "Volume",
-        "m³",
-        getExpectedLabel(consumptionMeter),
-        consumptionMeter.meterDefinition.medium.name,
-        asList(
+      MeasurementSeriesDto.builder()
+        .id(consumptionMeter.id.toString())
+        .quantity(VOLUME.name)
+        .unit(VOLUME.storageUnit)
+        .name(consumptionMeter.externalId)
+        .meterId(getMeterId(consumptionMeter))
+        .label(getExpectedLabel(consumptionMeter))
+        .medium(consumptionMeter.meterDefinition.medium.name)
+        .values(List.of(
           new MeasurementValueDto(when.toInstant(), 10.0),
           new MeasurementValueDto(when.plusHours(1).toInstant(), 20.0),
           new MeasurementValueDto(when.plusHours(2).toInstant(), null)
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -682,17 +694,19 @@ public class MeasurementControllerTest extends IntegrationTest {
       ), MeasurementSeriesDto.class).getBody();
 
     assertThat(seriesDto).containsExactly(
-      new MeasurementSeriesDto(
-        consumptionMeter.id.toString(),
-        "Volume",
-        "m³",
-        getExpectedLabel(consumptionMeter),
-        consumptionMeter.meterDefinition.medium.name,
-        asList(
+      MeasurementSeriesDto.builder()
+        .id(consumptionMeter.id.toString())
+        .quantity("Volume")
+        .unit("m³")
+        .label(getExpectedLabel(consumptionMeter))
+        .name(consumptionMeter.externalId)
+        .meterId(getMeterId(consumptionMeter))
+        .medium(consumptionMeter.meterDefinition.medium.name)
+        .values(List.of(
           new MeasurementValueDto(when.plusHours(0).toInstant(), 10.0),
           new MeasurementValueDto(when.plusHours(1).toInstant(), 20.0)
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -802,16 +816,97 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
   }
 
-  private String getExpectedLabel(LogicalMeter meter) {
-    assertThat(meter.physicalMeters.size()).isEqualTo(1);
-    return meter.externalId + "-" + meter.physicalMeters.get(0).address;
+  public LogicalMeter createMeterWithBothReadoutAndConsumtion(ZonedDateTime date) {
+    MeterDefinition customMeterDefinition = new MeterDefinition(
+      666L,
+      context().superAdmin.organisation,
+      "sksksksk",
+      Medium.builder()
+        .id(666L)
+        .name(Medium.DISTRICT_HEATING).build(),
+      true,
+      Set.of(
+        new DisplayQuantity(
+          Quantity.ENERGY,
+          CONSUMPTION,
+          KILOWATT_HOURS
+        ), new DisplayQuantity(
+          Quantity.ENERGY,
+          READOUT,
+          KILOWATT_HOURS
+        ), new DisplayQuantity(
+          Quantity.DIFFERENCE_TEMPERATURE,
+          READOUT,
+          DEGREES_CELSIUS
+        )
+      )
+    );
+
+    customMeterDefinition = meterDefinitions.save(customMeterDefinition);
+
+    LogicalMeter heatMeter = given(logicalMeter()
+      .meterDefinition(customMeterDefinition));
+    given(
+      energyMeasurement(heatMeter, date),
+      energyMeasurement(heatMeter, date.plusHours(1)),
+      diffTempMeasurement(heatMeter, date),
+      diffTempMeasurement(heatMeter, date.plusHours(1))
+    );
+
+    return heatMeter;
+  }
+
+  private Measurement.MeasurementBuilder energyMeasurement(LogicalMeter meter, ZonedDateTime date) {
+    return measurement(meter)
+      .created(date)
+      .unit("J")
+      .quantity(ENERGY.name)
+      .value(ENERGY_VALUE);
+  }
+
+  private Measurement.MeasurementBuilder tempMeasurement(LogicalMeter meter, ZonedDateTime date) {
+    return measurement(meter)
+      .created(date)
+      .unit(DEGREES_CELSIUS)
+      .quantity(EXTERNAL_TEMPERATURE.name)
+      .value(TEMP_VALUE);
+  }
+
+  private Measurement.MeasurementBuilder humidityMeasurement(
+    LogicalMeter meter,
+    ZonedDateTime date
+  ) {
+    return measurement(meter)
+      .created(date)
+      .unit(PERCENT)
+      .quantity(HUMIDITY.name)
+      .value(HUMIDITY_VALUE);
+  }
+
+  private Measurement.MeasurementBuilder diffTempMeasurement(
+    LogicalMeter meter,
+    ZonedDateTime date
+  ) {
+    return measurement(meter).created(date)
+      .unit(DEGREES_CELSIUS)
+      .quantity(DIFFERENCE_TEMPERATURE.name)
+      .value(DIFF_TEMP_VALUE_CELSIUS);
   }
 
   private List<MeasurementSeriesDto> getListAsSuperAdmin(String url) {
     return asSuperAdmin().getList(url, MeasurementSeriesDto.class).getBody();
   }
 
-  private Url.UrlBuilder measurementsUrl() {
+  private static Url.UrlBuilder measurementsUrl() {
     return Url.builder().path("/measurements");
+  }
+
+  private static String getExpectedLabel(LogicalMeter meter) {
+    assertThat(meter.physicalMeters.size()).isEqualTo(1);
+    return meter.externalId + "-" + getMeterId(meter);
+  }
+
+  private static String getMeterId(LogicalMeter logicalMeter) {
+    return logicalMeter.physicalMeters.get(0).address;
   }
 }

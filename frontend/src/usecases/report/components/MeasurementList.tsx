@@ -1,14 +1,19 @@
 import {DataResult, process, State} from '@progress/kendo-data-query';
 import {ExcelExport} from '@progress/kendo-react-excel-export';
 import {Grid, GridColumn} from '@progress/kendo-react-grid';
+import {first} from 'lodash';
 import * as React from 'react';
 import {Column} from '../../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
+import {isDefined} from '../../../helpers/commonHelpers';
+import {Maybe} from '../../../helpers/Maybe';
 import {useExportToExcel} from '../../../hooks/exportToExcelHook';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {MeasurementsApiResponse} from '../../../state/ui/graph/measurement/measurementModels';
 import {Callback} from '../../../types/Types';
 import {cellRender, headerCellRender, renderColumns, rowRender} from '../helpers/measurementGridHelper';
+import WorkbookSheet = kendo.ooxml.WorkbookSheet;
+import WorkbookSheetRow = kendo.ooxml.WorkbookSheetRow;
 import WorkbookSheetRowCell = kendo.ooxml.WorkbookSheetRowCell;
 
 export interface MeasurementListProps {
@@ -27,28 +32,31 @@ const formatDateCell = (cell: WorkbookSheetRowCell) => {
   cell.value = new Date(cell.value!.toString());
 };
 
+const indexType = 3;
+
 const formatCell = (cell: WorkbookSheetRowCell, index: number) => {
-  if (index > 2) {
+  if (index > indexType) {
     formatReadoutValueCell(cell);
-  } else if (index === 2) {
+  } else if (index === indexType) {
     formatDateCell(cell);
   }
 };
+
+const skipHeaderRow = (_, index) => index > 0;
 
 const save = (exporter: React.Ref<{}>) => {
   // TODO[!must!]: Our types for React's hooks are wrong. It is solved in the newest version of react.
   const component = ((exporter as any).current as ExcelExport);
   const options = component.workbookOptions();
 
-  const sheets = options.sheets;
-  if (sheets !== undefined && sheets.length > 0) {
-    const sheet = sheets[0];
-    if (sheet.rows !== undefined) {
-      sheet.rows
-        .filter((_, index) => index > 0) // skip header row
-        .forEach(row => row.cells !== undefined && row.cells.forEach(formatCell));
-    }
-  }
+  Maybe.maybe<WorkbookSheet>(first(options.sheets))
+    .flatMap(sheet => Maybe.maybe<WorkbookSheetRow[]>(sheet.rows))
+    .filter(isDefined)
+    .do(rows => rows.filter(skipHeaderRow)
+      .map(row => row.cells)
+      .filter(isDefined)
+      .forEach(cells => cells!.forEach(formatCell)));
+
   component.save(options);
 };
 
@@ -64,9 +72,18 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
       <GridColumn
         headerClassName="hidden"
         className="hidden"
-        field="label"
-        key="label"
+        field="name"
+        key="name"
         title={firstUpperTranslated('name')}
+      />
+    ),
+    (
+      <GridColumn
+        headerClassName="hidden"
+        className="hidden"
+        field="meterId"
+        key="meterId"
+        title={firstUpperTranslated('meter id')}
       />
     ),
     (

@@ -22,12 +22,12 @@ public interface PhysicalMeterJpaRepository {
   Optional<PhysicalMeterEntity> findByOrganisationIdAndExternalIdAndAddress(
     UUID organisationId,
     String externalId,
-    String addressq
+    String address
   );
 
   List<PhysicalMeterEntity> findAll();
 
   void deleteAll();
 
-  void deleteById(UUID meterId);
+  void deleteById(UUID id);
 }

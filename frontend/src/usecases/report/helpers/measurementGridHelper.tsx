@@ -13,7 +13,8 @@ import {RowMiddle} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {displayDate} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
-import {capitalized, translate} from '../../../services/translationService';
+import {capitalized, firstUpperTranslated, translate} from '../../../services/translationService';
+import {LegendType} from '../../../state/report/reportModels';
 import {
   getGroupHeaderTitle,
   getMediumType,
@@ -21,7 +22,6 @@ import {
   MeasurementsApiResponse
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
-import {LegendType} from '../../../state/report/reportModels';
 
 export const isGroupHeader = (rowType?: GridRowType): boolean => rowType === 'groupHeader';
 
@@ -70,10 +70,12 @@ export const rowRender = (tr: React.ReactElement<HTMLTableRowElement>, {dataItem
 };
 
 interface ListItem {
-  when: string;
   label: string;
-  values: Dictionary<string>;
+  meterId?: string;
+  name?: string;
   type: LegendType;
+  values: Dictionary<string>;
+  when: string;
 }
 
 export const renderColumns =
@@ -81,7 +83,16 @@ export const renderColumns =
     const rows: Dictionary<ListItem> = {};
     const columns: Dictionary<React.ReactElement<GridColumnProps>> = {};
 
-    measurements.forEach(({id, label, medium: type, unit, values, quantity}: MeasurementResponsePart) => {
+    measurements.forEach(({
+      id,
+      name,
+      label,
+      medium,
+      meterId,
+      unit,
+      values,
+      quantity,
+    }: MeasurementResponsePart) => {
       if (columns[quantity] === undefined) {
         const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
         columns[quantity] = (
@@ -96,10 +107,14 @@ export const renderColumns =
 
       values.forEach(({when, value}) => {
         const rowKey = `${when}-${label}`;
-        const legendType = type ? getMediumType(type) : 'aggregate';
+        const legendType = medium ? getMediumType(medium) : 'aggregate';
+        const formattedName = medium ? name : firstUpperTranslated('average');
+        const type = medium ? getGroupHeaderTitle(legendType) : label;
         const listItem: ListItem = rows[rowKey] || {
           label,
-          type: getGroupHeaderTitle(legendType),
+          name: formattedName,
+          meterId,
+          type,
           when: displayDate(when * 1000),
           values: {},
         };
