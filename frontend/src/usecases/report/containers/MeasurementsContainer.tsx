@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {isMetersPageFetching} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {addAllToReport} from '../../../state/report/reportActions';
 import {LegendItem, ReportSector} from '../../../state/report/reportModels';
@@ -25,16 +26,16 @@ import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
 
 export interface StateToProps {
-  hiddenLines: uuid[];
-  parameters: EncodedUriParameters;
-  requestParameters: MeasurementParameters;
-  measurement: MeasurementState;
-  userSelections: NormalizedState<UserSelection>;
-  userSelectionId: uuid;
   hasLegendItems: boolean;
   hasContent: boolean;
-
+  hiddenLines: uuid[];
+  isFetching: boolean;
   isSideMenuOpen: boolean;
+  measurement: MeasurementState;
+  parameters: EncodedUriParameters;
+  requestParameters: MeasurementParameters;
+  userSelections: NormalizedState<UserSelection>;
+  userSelectionId: uuid;
 }
 
 export interface DispatchToProps {
@@ -48,16 +49,18 @@ export interface DispatchToProps {
 const mapStateToProps = (rootState: RootState): StateToProps => {
   const {
     domainModels: {userSelections},
+    paginatedDomainModels: {meters},
     report: {savedReports},
     measurement,
     userSelection: {userSelection},
     ui,
   } = rootState;
   return ({
-    isSideMenuOpen: isSideMenuOpen(ui),
     hasLegendItems: hasLegendItems(savedReports),
     hasContent: hasMeasurementValues(measurement.measurementResponse),
     hiddenLines: getHiddenLines(savedReports),
+    isFetching: measurement.isFetching || isMetersPageFetching(meters, ui.pagination),
+    isSideMenuOpen: isSideMenuOpen(ui),
     measurement,
     parameters: getMeterParameters({userSelection}),
     requestParameters: getMeasurementParameters(rootState),

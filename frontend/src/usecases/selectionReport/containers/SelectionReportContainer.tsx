@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {isMetersPageFetching} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {addAllToReport} from '../../../state/report/reportActions';
 import {ReportSector} from '../../../state/report/reportModels';
 import {getHiddenLines, getSelectionMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
@@ -21,15 +22,17 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
   const {
     selectionReport: {savedReports},
     domainModels: {userSelections},
+    paginatedDomainModels: {meters},
     selectionMeasurement,
     userSelection: {userSelection},
     ui
   } = rootState;
   return ({
-    isSideMenuOpen: isSideMenuOpen(ui),
     hasLegendItems: hasLegendItems(savedReports),
     hasContent: hasMeasurementValues(selectionMeasurement.measurementResponse),
     hiddenLines: getHiddenLines(savedReports),
+    isFetching: selectionMeasurement.isFetching || isMetersPageFetching(meters, ui.pagination),
+    isSideMenuOpen: isSideMenuOpen(ui),
     measurement: selectionMeasurement,
     parameters: getMeterParameters({userSelection}),
     requestParameters: getSelectionMeasurementParameters(rootState),

@@ -36,10 +36,11 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
   const period: SelectionInterval = useCollectionPeriod && isTimePeriodDefault ? collection.timePeriod : timePeriod;
 
   return {
-    isSideMenuOpen: isSideMenuOpen(ui),
     hasLegendItems: true,
     hasContent: hasMeasurementValues(meterDetailMeasurement.measurementResponse),
     hiddenLines,
+    isFetching: meterDetailMeasurement.isFetching,
+    isSideMenuOpen: isSideMenuOpen(ui),
     measurement: meterDetailMeasurement,
     parameters: '',
     requestParameters: {
