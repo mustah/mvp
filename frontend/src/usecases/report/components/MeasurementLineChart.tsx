@@ -17,6 +17,7 @@ export const MeasurementLineChart = (props: Props) => {
     isFetching,
     isSideMenuOpen,
     measurement: {error, measurementResponse},
+    threshold,
   } = props;
   useFetchMeasurements(props);
 
@@ -26,10 +27,11 @@ export const MeasurementLineChart = (props: Props) => {
     <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
       <LineChartComponent
         graphContents={graphContents}
-        outerHiddenKeys={hiddenLines}
         hasContent={hasContent}
         hasMeters={hasLegendItems}
         isSideMenuOpen={isSideMenuOpen}
+        outerHiddenKeys={hiddenLines}
+        threshold={threshold}
       />
     </RetryLoader>
   );

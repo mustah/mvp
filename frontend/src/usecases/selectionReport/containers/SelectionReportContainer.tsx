@@ -13,7 +13,11 @@ import {
 import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
-import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
+import {
+  getMeterParameters,
+  getThreshold,
+  getUserSelectionId
+} from '../../../state/user-selection/userSelectionSelectors';
 import {MeasurementLineChart} from '../../report/components/MeasurementLineChart';
 import {Measurements} from '../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../report/containers/MeasurementsContainer';
@@ -24,7 +28,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     domainModels: {userSelections},
     paginatedDomainModels: {meters},
     selectionMeasurement,
-    userSelection: {userSelection},
+    userSelection,
     ui
   } = rootState;
   return ({
@@ -34,9 +38,10 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     isFetching: selectionMeasurement.isFetching || isMetersPageFetching(meters, ui.pagination),
     isSideMenuOpen: isSideMenuOpen(ui),
     measurement: selectionMeasurement,
-    parameters: getMeterParameters({userSelection}),
+    parameters: getMeterParameters({userSelection: userSelection.userSelection}),
     requestParameters: getSelectionMeasurementParameters(rootState),
-    userSelectionId: getUserSelectionId(rootState.userSelection),
+    threshold: getThreshold(userSelection),
+    userSelectionId: getUserSelectionId(userSelection),
     userSelections,
   });
 };

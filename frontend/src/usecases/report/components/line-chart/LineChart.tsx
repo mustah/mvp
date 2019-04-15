@@ -9,6 +9,8 @@ import {
   LegendPayload,
   Line,
   LineChart as ReChartLineChart,
+  ReferenceLine,
+  ReferenceLineProps,
   ResponsiveContainer,
   Tooltip,
   TooltipProps,
@@ -19,10 +21,10 @@ import {ColumnCenter} from '../../../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../../../components/timestamp-info-message/TimestampInfoMessage';
 import {shortTimestamp} from '../../../../helpers/dateHelpers';
 import {useResizeWindow} from '../../../../hooks/resizeWindowHook';
-import {Children, OnClickEventHandler, uuid} from '../../../../types/Types';
 import {AxesProps, LineProps} from '../../../../state/report/reportModels';
+import {Children, OnClickEventHandler, uuid} from '../../../../types/Types';
 import {ActiveDotReChartProps} from './ActiveDot';
-import {GraphContentProps} from './LineChart';
+import {LineChartProps} from './LineChart';
 
 const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 const domains: [AxisDomain, AxisDomain] = ['dataMin', 'dataMax'];
@@ -36,7 +38,7 @@ interface LinesProps {
   renderActiveDot: (props: ActiveDotReChartProps) => React.ReactNode;
 }
 
-export interface GraphContentProps {
+export interface LineChartProps {
   linesProps: LinesProps;
   renderTooltipContent: ContentRenderer<TooltipProps>;
   data?: object[];
@@ -44,6 +46,7 @@ export interface GraphContentProps {
   legend: LegendPayload[];
   legendClick: OnClickEventHandler;
   setTooltipPayload: OnClickEventHandler;
+  referenceLineProps?: ReferenceLineProps;
 }
 
 const renderLines = ({lines, hiddenKeys, outerHiddenKeys, renderDot, renderActiveDot}: LinesProps): Children[] =>
@@ -73,9 +76,10 @@ export const LineChart =
     legendClick,
     legend,
     linesProps,
+    referenceLineProps,
     renderTooltipContent,
     setTooltipPayload,
-  }: GraphContentProps) => {
+  }: LineChartProps) => {
     const {resized, height} = useResizeWindow();
 
     const {axes: {left, right}} = linesProps;
@@ -105,6 +109,7 @@ export const LineChart =
             {left && <YAxis key="leftYAxis" label={leftLabel} yAxisId="left"/>}
             {right && <YAxis key="rightYAxis" label={rightLabel} yAxisId="right" orientation="right"/>}
             {renderLines(linesProps)}
+            <ReferenceLine {...referenceLineProps}/>
           </ReChartLineChart>
         </ResponsiveContainer>
         <TimestampInfoMessage/>

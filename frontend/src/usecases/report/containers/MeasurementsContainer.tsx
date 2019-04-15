@@ -19,8 +19,12 @@ import {
 import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
-import {UserSelection} from '../../../state/user-selection/userSelectionModels';
-import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
+import {ThresholdQuery, UserSelection} from '../../../state/user-selection/userSelectionModels';
+import {
+  getMeterParameters,
+  getThreshold,
+  getUserSelectionId
+} from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWith, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
@@ -34,6 +38,7 @@ export interface StateToProps {
   measurement: MeasurementState;
   parameters: EncodedUriParameters;
   requestParameters: MeasurementParameters;
+  threshold?: ThresholdQuery;
   userSelections: NormalizedState<UserSelection>;
   userSelectionId: uuid;
 }
@@ -52,7 +57,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     paginatedDomainModels: {meters},
     report: {savedReports},
     measurement,
-    userSelection: {userSelection},
+    userSelection,
     ui,
   } = rootState;
   return ({
@@ -62,9 +67,10 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     isFetching: measurement.isFetching || isMetersPageFetching(meters, ui.pagination),
     isSideMenuOpen: isSideMenuOpen(ui),
     measurement,
-    parameters: getMeterParameters({userSelection}),
+    parameters: getMeterParameters({userSelection: userSelection.userSelection}),
     requestParameters: getMeasurementParameters(rootState),
-    userSelectionId: getUserSelectionId(rootState.userSelection),
+    threshold: getThreshold(userSelection),
+    userSelectionId: getUserSelectionId(userSelection),
     userSelections,
   });
 };
