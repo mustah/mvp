@@ -4,16 +4,12 @@ import {withEmptyContent, WithEmptyContentProps} from '../../../../components/ho
 import {toggle} from '../../../../helpers/collections';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
+import {GraphContents} from '../../../../state/report/reportModels';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {OwnProps} from '../../containers/MeasurementLineChartContainer';
 import {ActiveDot, ActiveDotReChartProps} from './ActiveDot';
 import {CustomizedTooltip} from './CustomizedTooltip';
 import {Dot, KeyedDotProps} from './Dot';
 import {GraphContentProps, LineChart} from './LineChart';
-
-interface GraphComponentState {
-  hiddenKeys: string[];
-}
 
 interface MouseOverProps {
   isTooltipActive: boolean;
@@ -27,7 +23,19 @@ type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
 
 const LineChartWrapper = withEmptyContent<GraphContentWrapperProps>(LineChart);
 
-export class LineChartComponent extends React.Component<OwnProps, GraphComponentState> {
+interface State {
+  hiddenKeys: string[];
+}
+
+interface Props {
+  outerHiddenKeys: uuid[];
+  graphContents: GraphContents;
+  isSideMenuOpen: boolean;
+  hasMeters: boolean;
+  hasContent: boolean;
+}
+
+export class LineChartComponent extends React.Component<Props, State> {
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
