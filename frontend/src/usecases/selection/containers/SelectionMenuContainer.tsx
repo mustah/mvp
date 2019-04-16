@@ -3,27 +3,12 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {
   resetSelection,
+  resetToSavedSelection,
   saveSelection,
-  selectSavedSelection,
-  updateSelection,
+  updateSelection
 } from '../../../state/user-selection/userSelectionActions';
-import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {getUserSelection} from '../../../state/user-selection/userSelectionSelectors';
-import {CallbackWith, OnClick, OnClickWithId} from '../../../types/Types';
-import {SelectionMenu} from '../components/selection-menu/SelectionMenu';
-
-interface StateToProps {
-  selection: UserSelection;
-}
-
-interface DispatchToProps {
-  resetSelection: OnClick;
-  saveSelection: CallbackWith<UserSelection>;
-  selectSavedSelection: OnClickWithId;
-  updateSelection: CallbackWith<UserSelection>;
-}
-
-export type SelectionMenuProps = StateToProps & DispatchToProps;
+import {DispatchToProps, SelectionMenu, StateToProps} from '../components/selection-menu/SelectionMenu';
 
 const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   selection: getUserSelection(userSelection),
@@ -31,8 +16,8 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   resetSelection,
+  resetToSavedSelection,
   saveSelection,
-  selectSavedSelection,
   updateSelection,
 }, dispatch);
 

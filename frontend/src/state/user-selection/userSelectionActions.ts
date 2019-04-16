@@ -11,7 +11,6 @@ import {isMeterPage} from '../../selectors/routerSelectors';
 import {EndPoints} from '../../services/endPoints';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, uuid} from '../../types/Types';
-import {NormalizedState} from '../domain-models/domainModels';
 import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
 import {
@@ -93,16 +92,20 @@ const tryMigrateSelectionParameters =
 
 export const selectSavedSelection = (selectedId: uuid) =>
   (dispatch, getState: GetState) => {
-    const selections: NormalizedState<UserSelection> = getState().domainModels.userSelections;
-    const currentSelection: UserSelection = getState().userSelection.userSelection;
-    const savedSelectionId = selections.result
-      .find((id: uuid) => id === selectedId);
+    const {domainModels: {userSelections}, userSelection: {userSelection: currentSelection}} = getState();
 
-    Maybe.maybe<uuid>(savedSelectionId)
-      .map((id: uuid) => selections.entities[id])
-      .map((userSelection: UserSelection) => tryMigrateSelectionParameters(dispatch, userSelection))
-      .filter((userSelection: UserSelection) => currentSelection.id !== userSelection.id)
-      .map((userSelection: UserSelection) => dispatch(selectSavedSelectionAction(userSelection)));
+    Maybe.maybe<UserSelection>(userSelections.entities[selectedId])
+      .map(userSelection => tryMigrateSelectionParameters(dispatch, userSelection))
+      .filter(userSelection => currentSelection.id !== userSelection.id)
+      .do(userSelection => dispatch(selectSavedSelectionAction(userSelection)));
+  };
+
+export const resetToSavedSelection = (selectedId: uuid) =>
+  (dispatch, getState: GetState) => {
+    const {domainModels: {userSelections}} = getState();
+
+    Maybe.maybe<UserSelection>(userSelections.entities[selectedId])
+      .do(userSelection => dispatch(selectSavedSelectionAction(userSelection)));
   };
 
 export const selectSelection = (selectionId?: uuid) =>
