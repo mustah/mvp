@@ -7,7 +7,8 @@ import {isOnSearchPage} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
-import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {Action, ModelSectors, ErrorResponse, Identifiable, PagedDomainModelsSectors, uuid} from '../../types/Types';
+import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {locationChange} from '../location/locationActions';
@@ -179,8 +180,22 @@ const collectionStatFacilitiesReducer = <T extends Identifiable>(
   action: ActionTypes<T>,
 ): NormalizedPaginatedState<T> => {
   switch (action.type) {
-    case getType(sortTableAction(EndPoints.collectionStatFacility)):
+    case getType(sortTableAction(PagedDomainModelsSectors.collectionStatFacilities)):
       return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
+    default:
+      return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
+  }
+};
+
+const meterCollectionStatFacilitiesReducer = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T>,
+  action: ActionTypes<T>,
+): NormalizedPaginatedState<T> => {
+  switch (action.type) {
+    case getType(sortTableAction(PagedDomainModelsSectors.meterCollectionStatFacilities)):
+      return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
+    case getType(setCollectionTimePeriod(ModelSectors.meterCollection)):
+      return makeInitialState<T>();
     default:
       return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
   }
@@ -205,7 +220,7 @@ const sortTable = <T extends Identifiable = Identifiable>(
 
 const reducerFor = <T extends Identifiable>(
   entity: keyof PaginatedDomainModelsState,
-  endPoint: EndPoints,
+  actionKey: EndPoints | PagedDomainModelsSectors,
   additionalReducers?: Reducer<NormalizedPaginatedState<T>>,
 ) =>
   (
@@ -213,23 +228,23 @@ const reducerFor = <T extends Identifiable>(
     action: ActionTypes<T> | ActionType<typeof locationChange>,
   ): NormalizedPaginatedState<T> => {
     switch (action.type) {
-      case domainModelsPaginatedRequest(endPoint):
+      case domainModelsPaginatedRequest(actionKey):
         return setRequest(state, (action as Action<number>).payload);
-      case domainModelsPaginatedGetSuccess(endPoint):
+      case domainModelsPaginatedGetSuccess(actionKey):
         return setEntities<T>(entity, state, (action as Action<NormalizedPaginated<T>>).payload);
-      case domainModelsPaginatedFailure(endPoint):
+      case domainModelsPaginatedFailure(actionKey):
         return setError<T>(state, (action as Action<ErrorResponse & PageNumbered>).payload);
-      case domainModelPaginatedClearError(endPoint):
+      case domainModelPaginatedClearError(actionKey):
         return clearError(state, (action as Action<PageNumbered>).payload);
-      case domainModelsPaginatedEntityRequest(endPoint):
-      case domainModelsPaginatedDeleteRequest(endPoint):
+      case domainModelsPaginatedEntityRequest(actionKey):
+      case domainModelsPaginatedDeleteRequest(actionKey):
         return entityRequest(state);
-      case domainModelsPaginatedEntitySuccess(endPoint):
+      case domainModelsPaginatedEntitySuccess(actionKey):
         return addEntities(state, (action as Action<T | T[]>).payload);
-      case domainModelsPaginatedDeleteSuccess(endPoint):
+      case domainModelsPaginatedDeleteSuccess(actionKey):
         return removePagedEntity(state, (action as Action<Meter & PageNumbered>).payload);
-      case domainModelsPaginatedEntityFailure(endPoint):
-      case domainModelsPaginatedDeleteFailure(endPoint):
+      case domainModelsPaginatedEntityFailure(actionKey):
+      case domainModelsPaginatedDeleteFailure(actionKey):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
       case getType(locationChange):
         return isOnSearchPage((action as Action<Location>).payload)
@@ -251,12 +266,19 @@ export const meters = reducerFor<Meter>('meters', EndPoints.meters, metersReduce
 export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
 export const collectionStatFacilities = reducerFor<CollectionStat>(
   'collectionStatFacilities',
-  EndPoints.collectionStatFacility,
+  PagedDomainModelsSectors.collectionStatFacilities,
   collectionStatFacilitiesReducer
+);
+
+export const meterCollectionStatFacilities = reducerFor<CollectionStat>(
+  'collectionStatFacilities',
+  PagedDomainModelsSectors.meterCollectionStatFacilities,
+  meterCollectionStatFacilitiesReducer
 );
 
 export const paginatedDomainModels = combineReducers<PaginatedDomainModelsState>({
   meters,
   gateways,
   collectionStatFacilities,
+  meterCollectionStatFacilities,
 });

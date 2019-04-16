@@ -3,6 +3,7 @@ import {Dispatch} from 'react-redux';
 import {action} from 'typesafe-actions';
 import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {Maybe} from '../helpers/Maybe';
+import {EndPoints} from '../services/endPoints';
 import {PageNumbered} from '../state/domain-models-paginated/paginatedDomainModels';
 import {ApiRequestSortingOptions} from '../state/ui/pagination/paginationModels';
 
@@ -153,3 +154,15 @@ export const statusFor = (statusCode: uuid): Status =>
   Maybe.maybe(status[statusCode]).orElse(Status.unknown);
 
 export const toIdNamed = (id: string): IdNamed => ({id, name: id});
+
+export const enum ModelSectors {
+  collection = 'collection',
+  meterCollection = 'meterCollection',
+}
+
+export type ActionKey = EndPoints | ModelSectors | PagedDomainModelsSectors;
+
+export const enum PagedDomainModelsSectors {
+  collectionStatFacilities = 'collectionStatFacilities',
+  meterCollectionStatFacilities = 'meterCollectionStatFacilities',
+}

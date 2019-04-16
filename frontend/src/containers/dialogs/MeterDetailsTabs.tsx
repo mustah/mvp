@@ -27,6 +27,7 @@ import {OnClickWith, OnClickWithId} from '../../types/Types';
 import {Map as MapComponent} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {MeterCollectionContentContainer} from '../../usecases/meter/collection/containers/MeterCollectionContentContainer';
 
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
 import './MeterDetailsTabs.scss';
@@ -164,6 +165,7 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
               <Tab tab={TabName.values} title={translate('measurements')}/>
+              <Tab tab={TabName.collection} title={translate('collection')}/>
               <Tab tab={TabName.log} title={translate('events')}/>
               <Tab tab={TabName.map} title={translate('map')}/>
               <Tab tab={TabName.connectedGateways} title={translate('gateways')}/>
@@ -178,6 +180,9 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
             <MeterMeasurementsContentContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
+          </TabContent>
+          <TabContent tab={TabName.collection} selectedTab={selectedTab}>
+            <MeterCollectionContentContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Grid data={eventLog} scrollable="none">

@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Maybe} from '../../../helpers/Maybe';
+import {encodeRequestParameters, requestParametersFrom} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {
   collectionStatClearError,
@@ -8,15 +9,19 @@ import {
 } from '../../../state/domain-models/collection-stat/collectionStatActions';
 import {
   CollectionStat,
-  CollectionStatParameters,
   FetchCollectionStats
 } from '../../../state/domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
-import {getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
-import {Callback, CallbackWith, ErrorResponse, OnClick, uuid} from '../../../types/Types';
 import {addAllToReport} from '../../../state/report/reportActions';
 import {LegendItem} from '../../../state/report/reportModels';
+import {
+  Callback,
+  CallbackWith, ModelSectors,
+  EncodedUriParameters,
+  ErrorResponse,
+  OnClick,
+} from '../../../types/Types';
 import {exportToExcelSuccess} from '../collectionActions';
 import {getCollectionStatRequestParameters} from '../collectionSelectors';
 import {CollectionStatBarChart} from '../components/CollectionStatBarChart';
@@ -26,8 +31,7 @@ export interface StateToProps {
   error: Maybe<ErrorResponse>;
   isExportingToExcel: boolean;
   isFetching: boolean;
-  requestParameters: CollectionStatParameters;
-  userSelectionId: uuid;
+  parameters: EncodedUriParameters;
 }
 
 export interface DispatchToProps {
@@ -48,15 +52,16 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     error: getError(collectionStats),
     isExportingToExcel,
     isFetching: collectionStats.isFetching,
-    requestParameters: getCollectionStatRequestParameters(rootState),
-    userSelectionId: getUserSelectionId(rootState.userSelection),
+    parameters: encodeRequestParameters(
+      requestParametersFrom(getCollectionStatRequestParameters(rootState).selectionParameters)
+    ),
   });
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addAllToReport,
   clearError: collectionStatClearError,
-  exportToExcelSuccess,
+  exportToExcelSuccess: exportToExcelSuccess(ModelSectors.collection),
   fetchCollectionStats,
 }, dispatch);
 

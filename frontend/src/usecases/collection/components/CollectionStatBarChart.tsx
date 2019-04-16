@@ -11,7 +11,6 @@ import {Bold, Normal} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {diplayDateNoHours, shortDate} from '../../../helpers/dateHelpers';
 import {formatPercentage} from '../../../helpers/formatters';
-import {encodeRequestParameters, requestParametersFrom} from '../../../helpers/urlFactory';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
 import {colorFor} from '../../report/helpers/graphContentsMapper';
@@ -96,11 +95,13 @@ export const CollectionStatBarChart = ({
   collectionStats,
   fetchCollectionStats,
   isFetching,
-  requestParameters,
+  parameters,
 }: Props) => {
   React.useEffect(() => {
-    fetchCollectionStats(encodeRequestParameters(requestParametersFrom(requestParameters.selectionParameters)));
-  }, [requestParameters]);
+    if (parameters) {
+      fetchCollectionStats(parameters);
+    }
+  }, [parameters]);
 
   const data = toArray(collectionStats);
 

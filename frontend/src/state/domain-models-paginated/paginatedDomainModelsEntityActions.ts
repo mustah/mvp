@@ -16,22 +16,22 @@ import {
   SingleEntityFailure
 } from './paginatedDomainModels';
 
-export const domainModelsPaginatedEntityRequest = (endPoint: EndPoints) =>
+export const domainModelsPaginatedEntityRequest = (endPoint: EndPoints | string) =>
   `DOMAIN_MODELS_PAGINATED_ENTITY_REQUEST${endPoint}`;
 
-export const domainModelsPaginatedEntitySuccess = (endPoint: EndPoints) =>
+export const domainModelsPaginatedEntitySuccess = (endPoint: EndPoints | string) =>
   `DOMAIN_MODELS_PAGINATED_ENTITY_SUCCESS${endPoint}`;
 
-export const domainModelsPaginatedEntityFailure = (endPoint: EndPoints) =>
+export const domainModelsPaginatedEntityFailure = (endPoint: EndPoints | string) =>
   `DOMAIN_MODELS_PAGINATED_ENTITY_FAILURE${endPoint}`;
 
-export const domainModelsPaginatedDeleteRequest = (endPoint: EndPoints) =>
+export const domainModelsPaginatedDeleteRequest = (endPoint: EndPoints | string) =>
   `DOMAIN_MODELS_PAGINATED_DELETE_REQUEST${endPoint}`;
 
-export const domainModelsPaginatedDeleteSuccess = (endPoint: EndPoints) =>
+export const domainModelsPaginatedDeleteSuccess = (endPoint: EndPoints | string) =>
   `DOMAIN_MODELS_PAGINATED_DELETE_SUCCESS${endPoint}`;
 
-export const domainModelsPaginatedDeleteFailure = (endPoint: EndPoints) =>
+export const domainModelsPaginatedDeleteFailure = (endPoint: EndPoints | string) =>
   `DOMAIN_MODELS_PAGINATED_DELETE_FAILURE${endPoint}`;
 
 interface PaginatedRequestEntityHandler<T> {

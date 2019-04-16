@@ -1,5 +1,10 @@
 import {ActionType, getType} from 'typesafe-actions';
 import {Period} from '../../components/dates/dateModels';
+import {Maybe} from '../../helpers/Maybe';
+import * as reportActions from '../../state/report/reportActions';
+import {search} from '../../state/search/searchActions';
+import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
+import {Action, ModelSectors, ErrorResponse} from '../../types/Types';
 import {logoutUser} from '../auth/authActions';
 import * as actions from './collectionActions';
 import {CollectionState} from './collectionModels';
@@ -10,19 +15,22 @@ const initialState: CollectionState = {
   timePeriod: {period: Period.latest},
 };
 
-type ActionTypes = ActionType<typeof actions | typeof logoutUser>;
+type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>
+  | Action<Maybe<ErrorResponse> | SelectionInterval>;
 
-export const collection = (state: CollectionState = initialState, action: ActionTypes): CollectionState => {
+export const collectionReducerFor =
+  (sector: ModelSectors) =>
+    (state: CollectionState = initialState, action: ActionTypes): CollectionState => {
   switch (action.type) {
-    case getType(actions.setCollectionTimePeriod):
+    case getType(actions.setCollectionTimePeriod(sector)):
       return {
         ...state,
-        timePeriod: action.payload,
+        timePeriod: (action.payload as SelectionInterval),
         isTimePeriodDefault: false,
       };
-    case getType(actions.exportToExcelAction):
+    case getType(actions.exportToExcelAction(sector)):
       return {...state, isExportingToExcel: true};
-    case getType(actions.exportToExcelSuccess):
+    case getType(actions.exportToExcelSuccess(sector)):
       return {...state, isExportingToExcel: false};
     case getType(logoutUser):
       return initialState;
@@ -30,3 +38,7 @@ export const collection = (state: CollectionState = initialState, action: Action
       return state;
   }
 };
+
+export const collection = collectionReducerFor(ModelSectors.collection);
+
+export const meterCollection = collectionReducerFor(ModelSectors.meterCollection);

@@ -40,6 +40,7 @@ describe('meterApiActions', () => {
       meters: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
       gateways: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
       collectionStatFacilities: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
+      meterCollectionStatFacilities: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
     },
   };
 
@@ -143,6 +144,12 @@ describe('meterApiActions', () => {
             entities: {},
             result: {},
           },
+          meterCollectionStatFacilities: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
+          },
         },
       };
       store = configureMockStore(initialState);
@@ -169,6 +176,12 @@ describe('meterApiActions', () => {
             result: {},
           },
           collectionStatFacilities: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
+          },
+          meterCollectionStatFacilities: {
             isFetchingSingle: false,
             nonExistingSingles: {},
             entities: {},
@@ -206,6 +219,12 @@ describe('meterApiActions', () => {
             result: {},
           },
           collectionStatFacilities: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
+          },
+          meterCollectionStatFacilities: {
             isFetchingSingle: false,
             nonExistingSingles: {},
             entities: {},

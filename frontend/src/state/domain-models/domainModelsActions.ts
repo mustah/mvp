@@ -13,21 +13,21 @@ import {
   Identifiable,
   Omit,
   payloadActionOf,
-  uuid,
+  uuid, ActionKey,
 } from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {DomainModelsState, Normalized, NormalizedState, RequestsHttp, RequestType} from './domainModels';
 
-type ActionTypeFactory = (endPoint: EndPoints) => string;
+type ActionTypeFactory = (endPoint: EndPoints | string) => string;
 
 const domainModelsSuccess =
   (requestType: RequestType) =>
-    (endPoint: EndPoints) =>
-      `DOMAIN_MODELS_${requestType}_SUCCESS${endPoint}`;
+    (actionKey: ActionKey) =>
+      `DOMAIN_MODELS_${requestType}_SUCCESS${actionKey}`;
 
-export const domainModelsRequest = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
-export const domainModelsFailure = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
+export const domainModelsRequest = (actionKey: ActionKey) => `DOMAIN_MODELS_REQUEST${actionKey}`;
+export const domainModelsFailure = (actionKey: ActionKey) => `DOMAIN_MODELS_FAILURE${actionKey}`;
 export const domainModelsGetSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET);
 export const domainModelsGetEntitySuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET_ENTITY);
 export const domainModelsGetEntitiesSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET_ENTITIES);
@@ -35,9 +35,11 @@ export const domainModelsPostSuccess: ActionTypeFactory = domainModelsSuccess(Re
 export const domainModelsPutSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.PUT);
 export const domainModelsDeleteSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.DELETE);
 
-export const domainModelsClearError = (endPoint: EndPoints): string => `DOMAIN_MODELS_CLEAR_ERROR${endPoint}`;
+export const domainModelsClearError = (actionKey: ActionKey): string =>
+  `DOMAIN_MODELS_CLEAR_ERROR${actionKey}`;
 
-export const clearError = (endPoint: EndPoints) => emptyActionOf(domainModelsClearError(endPoint));
+export const clearError = (actionKey: ActionKey) =>
+  emptyActionOf(domainModelsClearError(actionKey));
 
 export interface RequestCallbacks<T> {
   afterSuccess?: (domainModel: T, dispatch: Dispatch<RootState>) => void;
@@ -106,6 +108,31 @@ const shouldFetchEntity = (
   {isSuccessfullyFetched, isFetching, error, entities}: NormalizedState<Identifiable>,
 ): boolean =>
   !isSuccessfullyFetched && !isFetching && !error && !entities[id];
+
+export const fetchIfNeededForSector = <T extends Identifiable>(
+  actionKey: ActionKey,
+  endPoint: EndPoints,
+  entityType: keyof Omit<DomainModelsState, 'meterDetailMeasurement'>,
+  formatData: DataFormatter<Normalized<T>>,
+  requestCallbacks?: RequestCallbacks<Normalized<T>>,
+) =>
+  (requestData?: EncodedUriParameters) =>
+    (dispatch, getState: GetState) => {
+      if (shouldFetch(getState().domainModels[entityType])) {
+        const requestFunc = (requestData: EncodedUriParameters): AxiosPromise<T> =>
+          restClient.get(makeUrl(endPoint, requestData));
+        return asyncRequest<string, Normalized<T>>({
+          ...getRequestOf<Normalized<T>>(actionKey),
+          formatData,
+          requestFunc,
+          requestData,
+          ...requestCallbacks,
+          dispatch,
+        });
+      } else {
+        return null;
+      }
+    };
 
 export const fetchIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
@@ -248,16 +275,16 @@ export const deleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestC
       });
 
 const makeRequestActionsOf = <T>(
-  endPoint: EndPoints,
+  actionKey: ActionKey,
   requestType: RequestType,
 ): RequestHandler<T> => ({
-  request: emptyActionOf(domainModelsRequest(endPoint)),
-  success: payloadActionOf<T>(domainModelsSuccess(requestType)(endPoint)),
-  failure: payloadActionOf<ErrorResponse>(domainModelsFailure(endPoint)),
+  request: emptyActionOf(domainModelsRequest(actionKey)),
+  success: payloadActionOf<T>(domainModelsSuccess(requestType)(actionKey)),
+  failure: payloadActionOf<ErrorResponse>(domainModelsFailure(actionKey)),
 });
 
-export const getRequestOf = <T>(endpoint: EndPoints) =>
-  makeRequestActionsOf<T>(endpoint, RequestType.GET);
+export const getRequestOf = <T>(actionKey: ActionKey) =>
+  makeRequestActionsOf<T>(actionKey, RequestType.GET);
 
 export const getEntityRequestOf = <T>(endpoint: EndPoints) =>
   makeRequestActionsOf<T>(endpoint, RequestType.GET_ENTITY);
