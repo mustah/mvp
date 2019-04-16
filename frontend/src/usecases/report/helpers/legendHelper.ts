@@ -1,6 +1,8 @@
 import {flatMap} from 'lodash';
 import {unique} from '../../../helpers/collections';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import {LegendItem, LegendItemSettings, SavedReportsState} from '../../../state/report/reportModels';
+import {getLegendItems} from '../../../state/report/reportSelectors';
 import {
   allQuantitiesMap,
   getMediumType,
@@ -9,8 +11,6 @@ import {
   Quantity
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {IdNamed} from '../../../types/Types';
-import {LegendItem, LegendItemSettings, SavedReportsState} from '../../../state/report/reportModels';
-import {getLegendItems} from '../../../state/report/reportSelectors';
 
 export const legendViewSettings: LegendItemSettings = {
   isHidden: false,
@@ -18,12 +18,12 @@ export const legendViewSettings: LegendItemSettings = {
 };
 
 export const toLegendItemAllQuantities = ({id, facility, medium}: Meter): LegendItem => {
-  const mediumType: Medium = getMediumType(medium);
+  const type: Medium = getMediumType(medium);
   return ({
     id,
     label: facility as string,
-    type: mediumType,
-    quantities: allQuantitiesMap[mediumType],
+    type,
+    quantities: allQuantitiesMap[type],
     ...legendViewSettings,
   });
 };

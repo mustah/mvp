@@ -12,6 +12,7 @@ import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {
   addParameterToSelection,
   deselectSelection,
+  onChangeThreshold,
   resetSelection,
   selectPeriod,
   selectSavedSelection,
@@ -19,7 +20,6 @@ import {
   selectSelection,
   setCustomDateRange,
   setThreshold,
-  setThresholdAction,
   shouldMigrateSelectionParameters,
   toggleParameter,
 } from '../userSelectionActions';
@@ -365,7 +365,7 @@ describe('userSelectionActions', () => {
     });
   });
 
-  describe('setThreshold', () => {
+  describe('onChangeThreshold', () => {
 
     type IncompleteThresholdQuery =
       Partial<{ [key in keyof ThresholdQuery]: string | undefined | ThresholdQuery[key] }>;
@@ -425,11 +425,11 @@ describe('userSelectionActions', () => {
         const currentState: UserSelectionState = userSelectionStateFromThreshold(currentThresholdQuery);
         store = configureMockStore({...rootStateNoSaved, userSelection: currentState});
 
-        store.dispatch(setThreshold(newThreshold));
+        store.dispatch(onChangeThreshold(newThreshold));
 
         expect(store.getActions()).toEqual(
           shouldTriggerAction
-            ? [setThresholdAction(newThreshold)]
+            ? [setThreshold(newThreshold)]
             : []
         );
       }

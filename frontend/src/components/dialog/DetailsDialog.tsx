@@ -19,7 +19,7 @@ const DetailsDialog = (props: DetailsDialogProps) => (
 
 export const MeterDetailsDialog = (props: DetailsDialogProps) => (
   <DetailsDialog {...props}>
-    <MeterDetailsContainer selectedId={props.selectedId} />
+    <MeterDetailsContainer selectedId={props.selectedId} useCollectionPeriod={false}/>
   </DetailsDialog>
 );
 

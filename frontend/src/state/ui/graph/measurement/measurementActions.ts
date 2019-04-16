@@ -19,8 +19,7 @@ import {
 } from '../../../../usecases/meter/measurements/meterDetailMeasurementActions';
 import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {getDomainModelById} from '../../../domain-models/domainModelsSelectors';
-import {ReportSector} from '../../../report/reportActions';
-import {isAggregate, isMedium, LegendType} from '../../../report/reportModels';
+import {isAggregate, isMedium, LegendType, ReportSector} from '../../../report/reportModels';
 import {SelectionInterval, UserSelection} from '../../../user-selection/userSelectionModels';
 import {
   getGroupHeaderTitle,

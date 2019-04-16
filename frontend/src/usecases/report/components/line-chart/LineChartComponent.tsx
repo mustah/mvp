@@ -4,16 +4,14 @@ import {withEmptyContent, WithEmptyContentProps} from '../../../../components/ho
 import {toggle} from '../../../../helpers/collections';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
+import {GraphContents} from '../../../../state/report/reportModels';
+import {ThresholdQuery} from '../../../../state/user-selection/userSelectionModels';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {OwnProps} from '../../containers/MeasurementLineChartContainer';
+import {toReferenceLineProps} from '../../helpers/lineChartHelper';
 import {ActiveDot, ActiveDotReChartProps} from './ActiveDot';
 import {CustomizedTooltip} from './CustomizedTooltip';
 import {Dot, KeyedDotProps} from './Dot';
-import {GraphContentProps, LineChart} from './LineChart';
-
-interface GraphComponentState {
-  hiddenKeys: string[];
-}
+import {LineChart, LineChartProps} from './LineChart';
 
 interface MouseOverProps {
   isTooltipActive: boolean;
@@ -23,11 +21,24 @@ interface MouseOverProps {
   activePayload: TooltipPayload[];
 }
 
-type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
+type GraphContentWrapperProps = LineChartProps & WithEmptyContentProps;
 
 const LineChartWrapper = withEmptyContent<GraphContentWrapperProps>(LineChart);
 
-export class LineChartComponent extends React.Component<OwnProps, GraphComponentState> {
+interface State {
+  hiddenKeys: string[];
+}
+
+interface Props {
+  outerHiddenKeys: uuid[];
+  graphContents: GraphContents;
+  isSideMenuOpen: boolean;
+  hasMeters: boolean;
+  hasContent: boolean;
+  threshold?: ThresholdQuery;
+}
+
+export class LineChartComponent extends React.Component<Props, State> {
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
@@ -43,10 +54,11 @@ export class LineChartComponent extends React.Component<OwnProps, GraphComponent
   render() {
     const {
       graphContents: {axes, data, lines, legend},
-      isSideMenuOpen,
-      outerHiddenKeys,
       hasMeters,
       hasContent,
+      isSideMenuOpen,
+      outerHiddenKeys,
+      threshold,
     } = this.props;
 
     const wrapperProps: GraphContentWrapperProps = {
@@ -65,6 +77,7 @@ export class LineChartComponent extends React.Component<OwnProps, GraphComponent
         renderActiveDot: this.renderActiveDot,
       },
       noContentText: firstUpperTranslated(hasMeters ? 'no measurements' : 'no meters'),
+      referenceLineProps: toReferenceLineProps(axes, threshold),
       setTooltipPayload: this.setTooltipPayload,
     };
 

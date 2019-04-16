@@ -33,7 +33,7 @@ interface DispatchToProps {
 }
 
 interface OwnProps extends SelectedId {
-  useCollectionPeriod?: boolean;
+  useCollectionPeriod: boolean;
 }
 
 type Props = StateToProps & DispatchToProps & OwnProps;

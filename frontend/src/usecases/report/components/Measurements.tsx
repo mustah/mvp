@@ -13,10 +13,11 @@ const MeasurementListWrapper = withEmptyContent<WrapperProps>(MeasurementList);
 export const Measurements = (props: Props) => {
   const {
     clearError,
-    measurement: {error, isFetching, measurementResponse: {average, measurements}, isExportingToExcel},
     exportToExcelSuccess,
+    hasContent,
     hasLegendItems,
-    hasContent
+    isFetching,
+    measurement: {error, measurementResponse: {average, measurements}, isExportingToExcel}
   } = props;
   useFetchMeasurements(props);
 

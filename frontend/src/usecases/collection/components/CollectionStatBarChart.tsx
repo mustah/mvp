@@ -13,7 +13,7 @@ import {diplayDateNoHours, shortDate} from '../../../helpers/dateHelpers';
 import {formatPercentage} from '../../../helpers/formatters';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
-import {colorFor} from '../../report/helpers/graphContentsMapper';
+import {colorFor} from '../../report/helpers/lineChartHelper';
 import {DispatchToProps, StateToProps} from '../containers/CollectionGraphContainer';
 
 interface CollectionStatData {

@@ -1,6 +1,6 @@
 import {Maybe} from '../../../../../helpers/Maybe';
 import {Action, ErrorResponse} from '../../../../../types/Types';
-import {ReportSector} from '../../../../report/reportActions';
+import {ReportSector} from '../../../../report/reportModels';
 import {exportToExcelAction, exportToExcelSuccess} from '../measurementActions';
 import {MeasurementResponse, MeasurementState} from '../measurementModels';
 import {initialState, measurement} from '../measurementReducer';

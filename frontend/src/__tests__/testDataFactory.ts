@@ -1,8 +1,11 @@
+import {Period} from '../components/dates/dateModels';
 import {EventLog, Meter} from '../state/domain-models-paginated/meter/meterModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
 import {Role, User} from '../state/domain-models/user/userModels';
 import {LegendItem, SavedReportsState} from '../state/report/reportModels';
 import {makeInitialLegendViewOptions} from '../state/report/reportReducer';
+import {Quantity} from '../state/ui/graph/measurement/measurementModels';
+import {RelationalOperator, ThresholdQuery} from '../state/user-selection/userSelectionModels';
 import {Identifiable, uuid} from '../types/Types';
 
 const meters = [
@@ -87,4 +90,12 @@ export const makeUser = (): User => ({
   language: 'en',
   organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
   roles: [Role.USER],
+});
+
+export const makeThreshold = (): ThresholdQuery => ({
+  relationalOperator: '>=' as RelationalOperator,
+  quantity: Quantity.power,
+  dateRange: {period: Period.latest},
+  unit: 'kW',
+  value: '3',
 });

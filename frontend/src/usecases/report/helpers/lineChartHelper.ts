@@ -1,6 +1,7 @@
 import {sortBy, toArray, uniqBy} from 'lodash';
-import {LegendPayload} from 'recharts';
+import {LegendPayload, ReferenceLineProps} from 'recharts';
 import {colors, secondaryBgActive} from '../../../app/themes';
+import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {AxesProps, GraphContents} from '../../../state/report/reportModels';
 import {
@@ -10,6 +11,7 @@ import {
   Quantity,
   TooltipMeta
 } from '../../../state/ui/graph/measurement/measurementModels';
+import {ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {Dictionary} from '../../../types/Types';
 
 const colorize =
@@ -223,3 +225,14 @@ export const toGraphContents =
 
     return graphContents;
   };
+
+export const toReferenceLineProps = ({left}: AxesProps, threshold?: ThresholdQuery): ReferenceLineProps | undefined =>
+  Maybe.maybe(threshold)
+    .map(({unit, value}: ThresholdQuery): ReferenceLineProps => ({
+      label: `${firstUpperTranslated('threshold')} ${value} ${unit}`,
+      stroke: colors.blueGrey300,
+      strokeWidth: 2,
+      y: value,
+      yAxisId: left ? 'left' : 'right',
+    }))
+    .getOrElseUndefined();

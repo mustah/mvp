@@ -655,8 +655,8 @@ msgstr "discard changes"
 msgid "give the selection a name"
 msgstr "give the selection a name"
 
-msgid "thresholds"
-msgstr "thresholds"
+msgid "threshold"
+msgstr "threshold"
 
 msgid "at least once"
 msgstr "at least once"
@@ -687,6 +687,10 @@ msgstr "profile"
 
 msgid "logout"
 msgstr "logout"
+
+msgctxt "°plural"
+msgid "threshold°"
+msgstr "thresholds"
 
 msgctxt "°plural"
 msgid "city°"

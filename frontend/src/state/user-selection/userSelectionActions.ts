@@ -30,7 +30,6 @@ import {getThreshold, getUserSelection} from './userSelectionSelectors';
 export const selectPeriod = createStandardAction('SELECT_PERIOD')<Period>();
 
 export const RESET_SELECTION = 'RESET_SELECTION';
-export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
 export const addParameterToSelection = createStandardAction('ADD_PARAMETER_TO_SELECTION')<SelectionParameter>();
 export const deselectSelection = createStandardAction('DESELECT_SELECTION')<SelectionParameter>();
@@ -38,9 +37,9 @@ export const deselectSelection = createStandardAction('DESELECT_SELECTION')<Sele
 export const resetSelection = createAction(RESET_SELECTION);
 export const selectSavedSelectionAction = createStandardAction('SELECT_SAVED_SELECTION')<UserSelection>();
 
-export const setThresholdAction = createStandardAction('SET_THRESHOLD')<ThresholdQuery>();
+export const setThreshold = createStandardAction('SET_THRESHOLD')<ThresholdQuery>();
 
-export const setThreshold =
+export const onChangeThreshold =
   (threshold: ThresholdQuery | undefined) =>
     (dispatch, getState: GetState) => {
       const state: RootState = getState();
@@ -53,7 +52,7 @@ export const setThreshold =
         (isOldValid && threshold === undefined) ||
         (isOldValid && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
       ) {
-        dispatch(setThresholdAction(threshold!));
+        dispatch(setThreshold(threshold!));
       }
     };
 

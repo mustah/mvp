@@ -1,21 +1,21 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {savedReportsWith} from '../../../__tests__/testDataFactory';
+import {makeThreshold, savedReportsWith} from '../../../__tests__/testDataFactory';
 import {RootState} from '../../../reducers/rootReducer';
+import {toLegendItem} from '../../../usecases/report/helpers/legendHelper';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {getMediumText, Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
-import {toLegendItem} from '../../../usecases/report/helpers/legendHelper';
-import {addAllToReport, addLegendItems, addToReport, deleteItem, ReportSector} from '../reportActions';
-import {LegendItem, SavedReportsState} from '../reportModels';
+import {initialState as userSelection} from '../../user-selection/userSelectionReducer';
+import {addAllToReport, addLegendItems, addToReport, deleteItem, getQuantity} from '../reportActions';
+import {LegendItem, ReportSector, SavedReportsState} from '../reportModels';
 import {initialState as report} from '../reportReducer';
 
 describe('reportActions', () => {
-  type PartialRootState = Pick<RootState, 'report'> ;
 
   const section: ReportSector = ReportSector.report;
-  const configureMockStore: (state: PartialRootState) => any = configureStore([thunk]);
+  const configureMockStore: (state: Partial<RootState>) => any = configureStore([thunk]);
 
-  let initialState: PartialRootState;
+  let initialState: Partial<RootState>;
 
   const isHidden = false;
   const quantities: Quantity[] = [];
@@ -36,13 +36,13 @@ describe('reportActions', () => {
   const savedReports: SavedReportsState = savedReportsWith(items);
 
   beforeEach(() => {
-    initialState = {report};
+    initialState = {report, userSelection};
   });
 
   describe('addToReport', () => {
 
     beforeEach(() => {
-      initialState = {report};
+      initialState = {report, userSelection};
     });
 
     it('adds a meter that is not already selected', () => {
@@ -349,6 +349,19 @@ describe('reportActions', () => {
 
       expect(store.getActions()).toEqual([]);
     });
+  });
+
+  describe('getQuantity', () => {
+
+    it('gets default quantity when there is no threshold', () => {
+      expect(getQuantity(gasMeter)).toEqual(Quantity.volume);
+    });
+
+    it('gets default quantity from the threshold and ignores the legend item quantity', () => {
+      expect(getQuantity(gasMeter, makeThreshold())).toEqual(Quantity.power);
+      expect(getQuantity(gasMeter, {...makeThreshold(), quantity: Quantity.flow})).toEqual(Quantity.flow);
+    });
+
   });
 
 });

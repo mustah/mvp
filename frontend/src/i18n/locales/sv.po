@@ -727,8 +727,8 @@ msgstr "ångra ändringar"
 msgid "give the selection a name"
 msgstr "namnge ditt urval"
 
-msgid "thresholds"
-msgstr "gränsvärden"
+msgid "threshold"
+msgstr "gränsvärde"
 
 msgid "at least once"
 msgstr "ett värde (eller fler)"
@@ -769,6 +769,10 @@ msgstr "logga ut"
 msgctxt "°plural"
 msgid "city°"
 msgstr "städer"
+
+msgctxt "°plural"
+msgid "threshold°"
+msgstr "thresholds"
 
 msgctxt "°plural"
 msgid "address°"

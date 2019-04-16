@@ -147,7 +147,7 @@ export const SelectionContent = ({
       </Foldable>
 
       <Foldable
-        title={translate('thresholds')}
+        title={translate('threshold', {count: 2})}
         containerClassName="Thresholds"
         isVisible={isDefined(threshold)}
       >

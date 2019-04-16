@@ -2,6 +2,8 @@ import {createSelector} from 'reselect';
 import {Maybe} from '../../helpers/Maybe';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
+import {EntityTypes, Pagination, PaginationState} from '../ui/pagination/paginationModels';
+import {getPagination} from '../ui/pagination/paginationSelectors';
 import {NormalizedPaginatedState} from './paginatedDomainModels';
 
 export const getPageResult =
@@ -24,3 +26,11 @@ export const getPaginatedDomainModelById = <T extends Identifiable>(id: uuid) =>
     getPaginatedEntities,
     ((entities: ObjectsById<T>) => Maybe.maybe<T>(entities[id])),
   );
+
+export const isMetersPageFetching =
+  <T extends Identifiable>(meters: NormalizedPaginatedState<T>, pagination: PaginationState): boolean => {
+    const componentId = 'validationMeterList';
+    const entityType: EntityTypes = 'meters';
+    const {page}: Pagination = getPagination({componentId, entityType, pagination});
+    return getPageIsFetching(meters, page);
+  };

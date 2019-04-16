@@ -2,17 +2,19 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../../reducers/rootReducer';
 import {MeterDetails} from '../../../../state/domain-models/meter-details/meterDetailsModels';
+import {addAllToReport} from '../../../../state/report/reportActions';
+import {ReportSector} from '../../../../state/report/reportModels';
 import {
   fetchMeasurementsForMeterDetails,
   measurementClearError
 } from '../../../../state/ui/graph/measurement/measurementActions';
 import {QuantityDisplayMode} from '../../../../state/ui/graph/measurement/measurementModels';
+import {isSideMenuOpen} from '../../../../state/ui/uiSelectors';
 import {fetchUserSelections} from '../../../../state/user-selection/userSelectionActions';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {getUserSelectionId} from '../../../../state/user-selection/userSelectionSelectors';
 import {Measurements} from '../../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../../report/containers/MeasurementsContainer';
-import {addAllToReport, ReportSector} from '../../../../state/report/reportActions';
 import {meterDetailExportToExcelSuccess} from '../meterDetailMeasurementActions';
 import {getMeasurementParameters, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
 
@@ -28,20 +30,22 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     domainModels: {userSelections, meterDetailMeasurement},
     meterDetail: {isTimePeriodDefault, timePeriod},
     collection,
+    ui,
   } = rootState;
   const {useCollectionPeriod, meter} = ownProps;
   const period: SelectionInterval = useCollectionPeriod && isTimePeriodDefault ? collection.timePeriod : timePeriod;
 
   return {
-    isSideMenuOpen: false,
     hasLegendItems: true,
     hasContent: hasMeasurementValues(meterDetailMeasurement.measurementResponse),
     hiddenLines,
+    isFetching: meterDetailMeasurement.isFetching,
+    isSideMenuOpen: isSideMenuOpen(ui),
     measurement: meterDetailMeasurement,
     parameters: '',
     requestParameters: {
-    ...getMeasurementParameters({meter, timePeriod: period}),
-    displayMode: QuantityDisplayMode.readout,
+      ...getMeasurementParameters({meter, timePeriod: period}),
+      displayMode: QuantityDisplayMode.readout,
     },
     userSelectionId: getUserSelectionId(rootState.userSelection),
     userSelections,

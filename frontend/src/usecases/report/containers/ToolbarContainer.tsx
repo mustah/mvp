@@ -2,20 +2,20 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
+import {
+  selectResolution,
+  setReportTimePeriod,
+  toggleComparePeriod,
+  toggleShowAverage
+} from '../../../state/report/reportActions';
+import {ReportSector} from '../../../state/report/reportModels';
+import {getMeterLegendItems, hasLegendItems} from '../../../state/report/reportSelectors';
 import {exportReportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {ReportToolbar} from '../components/ReportToolbar';
-import {
-  ReportSector,
-  selectResolution,
-  setReportTimePeriod,
-  toggleComparePeriod,
-  toggleShowAverage
-} from '../../../state/report/reportActions';
-import {getMeterLegendItems, hasLegendItems} from '../../../state/report/reportSelectors';
 
 interface StateToProps {
   canShowAverage: boolean;

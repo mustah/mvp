@@ -1,7 +1,11 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {isMetersPageFetching} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
+import {addAllToReport} from '../../../state/report/reportActions';
+import {LegendItem, ReportSector} from '../../../state/report/reportModels';
+import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 import {
   exportToExcelSuccess,
   fetchMeasurementsForReport,
@@ -15,26 +19,28 @@ import {
 import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
-import {UserSelection} from '../../../state/user-selection/userSelectionModels';
-import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
+import {ThresholdQuery, UserSelection} from '../../../state/user-selection/userSelectionModels';
+import {
+  getMeterParameters,
+  getThreshold,
+  getUserSelectionId
+} from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWith, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
-import {addAllToReport, ReportSector} from '../../../state/report/reportActions';
-import {LegendItem} from '../../../state/report/reportModels';
-import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 
 export interface StateToProps {
-  hiddenLines: uuid[];
-  parameters: EncodedUriParameters;
-  requestParameters: MeasurementParameters;
-  measurement: MeasurementState;
-  userSelections: NormalizedState<UserSelection>;
-  userSelectionId: uuid;
   hasLegendItems: boolean;
   hasContent: boolean;
-
+  hiddenLines: uuid[];
+  isFetching: boolean;
   isSideMenuOpen: boolean;
+  measurement: MeasurementState;
+  parameters: EncodedUriParameters;
+  requestParameters: MeasurementParameters;
+  threshold?: ThresholdQuery;
+  userSelections: NormalizedState<UserSelection>;
+  userSelectionId: uuid;
 }
 
 export interface DispatchToProps {
@@ -48,21 +54,23 @@ export interface DispatchToProps {
 const mapStateToProps = (rootState: RootState): StateToProps => {
   const {
     domainModels: {userSelections},
+    paginatedDomainModels: {meters},
     report: {savedReports},
     measurement,
-    userSelection: {userSelection},
+    userSelection,
     ui,
   } = rootState;
   return ({
-    isSideMenuOpen: isSideMenuOpen(ui),
-
     hasLegendItems: hasLegendItems(savedReports),
     hasContent: hasMeasurementValues(measurement.measurementResponse),
     hiddenLines: getHiddenLines(savedReports),
+    isFetching: measurement.isFetching || isMetersPageFetching(meters, ui.pagination),
+    isSideMenuOpen: isSideMenuOpen(ui),
     measurement,
-    parameters: getMeterParameters({userSelection}),
+    parameters: getMeterParameters({userSelection: userSelection.userSelection}),
     requestParameters: getMeasurementParameters(rootState),
-    userSelectionId: getUserSelectionId(rootState.userSelection),
+    threshold: getThreshold(userSelection),
+    userSelectionId: getUserSelectionId(userSelection),
     userSelections,
   });
 };

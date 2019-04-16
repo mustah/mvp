@@ -5,7 +5,7 @@ import {ButtonLinkBlue} from '../../../../components/buttons/ButtonLink';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
-import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
+import {Row, RowBottom, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
@@ -48,13 +48,20 @@ const makeMenuItem = (text) => makeMenuItemWithValue(text, text);
 const makeMenuItemWithValue = (text, value) => <MenuItem key={text} primaryText={text} value={value}/>;
 
 const operatorMenuItems = Object.keys(RelationalOperator)
-  .map((key) => RelationalOperator[key])
+  .map(key => RelationalOperator[key])
   .map(makeMenuItem);
 
 const quantityMenuItems = Object.keys(Quantity)
   .sort((a, b) => a.localeCompare(b))
-  .map((key) => Quantity[key])
+  .map(key => Quantity[key])
   .map(makeMenuItem);
+
+const defaultDateRange: SelectionInterval = {period: Period.latest};
+
+const emptyQuery: RenderableThresholdQuery = {
+  value: '',
+  dateRange: defaultDateRange
+};
 
 interface ThresholdProps {
   query?: ThresholdQuery;
@@ -66,8 +73,8 @@ type RenderableThresholdQuery = Partial<ThresholdQuery>;
 type Props = ThresholdProps & ClassNamed & Styled;
 
 const thresholdQueryIsModified = (query: RenderableThresholdQuery) =>
-  query.duration || query.quantity || query.relationalOperator
-  || query.unit || query.value !== '' || query.dateRange !== defaultDateRange;
+  query.duration || query.quantity || query.relationalOperator || query.unit || query.value !== ''
+  || query.dateRange !== defaultDateRange;
 
 const useChangeQuery = (
   initialQuery: RenderableThresholdQuery,
@@ -81,17 +88,11 @@ const useChangeQuery = (
   return [value, onChangeThresholdQuery];
 };
 
-const defaultDateRange: SelectionInterval = {period: Period.latest};
-const emptyQuery: RenderableThresholdQuery = {
-  value: '',
-  dateRange: defaultDateRange
-};
-
 export const Thresholds = ({query, onChange, className}: Props) => {
   const [currentQuery, setQuery] = useChangeQuery(query || emptyQuery, onChange);
   const {quantity, relationalOperator, value, unit, duration, dateRange} = currentQuery;
   const decoratedUnit = unitPerHour(quantity, unit);
-  const durationOrNull = !duration ? null : duration;
+  const durationOrNull: string | null = duration || null;
   const onChangeQuantity = (_, __, newValue: string) => setQuery({
     ...currentQuery,
     quantity: newValue as Quantity,
@@ -123,9 +124,9 @@ export const Thresholds = ({query, onChange, className}: Props) => {
 
   const clearThresholdButton = thresholdQueryIsModified(currentQuery)
     ? (
-      <RowMiddle>
+      <RowBottom style={{marginLeft: 16, paddingBottom: 12}}>
         <ButtonLinkBlue onClick={clearThreshold}>{translate('clear threshold')}</ButtonLinkBlue>
-      </RowMiddle>
+      </RowBottom>
     )
     : null;
 

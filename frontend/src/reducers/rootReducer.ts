@@ -56,7 +56,15 @@ export type AppState = RootState | undefined;
 
 export type GetState = () => RootState;
 
-const whitelist: Array<keyof RootState> = ['auth', 'language', 'ui', 'userSelection', 'report', 'previousSession'];
+const whitelist: Array<keyof RootState> = [
+  'auth',
+  'language',
+  'previousSession',
+  'report',
+  'selectionReport',
+  'ui',
+  'userSelection',
+];
 
 const migrate: MigrationDispatch = createMigrate(migrations, {debug: false});
 
