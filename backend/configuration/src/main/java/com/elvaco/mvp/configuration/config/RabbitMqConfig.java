@@ -137,7 +137,7 @@ class RabbitMqConfig {
 
   @Bean
   Binding nbiotExchangeBinding(Queue incomingQueue, TopicExchange nbiotTopicExchange) {
-    return BindingBuilder.bind(incomingQueue).to(nbiotTopicExchange).with("#");
+    return BindingBuilder.bind(incomingQueue).to(nbiotTopicExchange).with("sm.#");
   }
 
   @Bean
