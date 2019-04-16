@@ -26,6 +26,8 @@ server {
     access_log            /var/log/nginx/{{ fqdn }}.access.log;
     error_log             /var/log/nginx/{{ fqdn }}.error.log;
 
+    error_page 502 /evo-502.html;
+
     location / {
 
       proxy_set_header        Host $host;
