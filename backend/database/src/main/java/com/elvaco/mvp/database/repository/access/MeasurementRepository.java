@@ -40,7 +40,7 @@ import org.jooq.DSLContext;
 import org.jooq.DatePart;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record10;
+import org.jooq.Record11;
 import org.jooq.Record3;
 import org.jooq.ResultQuery;
 import org.jooq.SelectJoinStep;
@@ -227,11 +227,11 @@ public class MeasurementRepository implements Measurements {
           Dates.latest(List.of(
             key.activePeriod.getFirstIncluded().orElse(parameter.getFrom()),
             parameter.getFrom()
-          )).withZoneSameInstant(ZoneId.of("Z")),
+          )).withZoneSameInstant(ZoneId.of(key.utcOffset)),
           Dates.earliest(List.of(
             key.activePeriod.getLastIncluded().orElse(parameter.getTo()),
             parameter.getTo()
-          )).withZoneSameInstant(ZoneId.of("Z")),
+          )).withZoneSameInstant(ZoneId.of(key.utcOffset)),
           parameter.getResolution()
         )
       ));
@@ -252,8 +252,9 @@ public class MeasurementRepository implements Measurements {
       .map(measurementEntityMapper::toDomainModel);
   }
 
-  private ResultQuery<Record10<
-    UUID, String, PeriodRange, String, String, String, String, String, Double, OffsetDateTime
+  private ResultQuery<Record11<
+    UUID, String, String, PeriodRange, String, String,
+    String, String, String, Double, OffsetDateTime
     >> getReadoutSeriesQuery(
     MeasurementParameter parameter
   ) {
@@ -262,6 +263,7 @@ public class MeasurementRepository implements Measurements {
     var query =
       dsl.select(
         LOGICAL_METER.ID,
+        LOGICAL_METER.UTC_OFFSET,
         PHYSICAL_METER.ADDRESS,
         PHYSICAL_METER.ACTIVE_PERIOD,
         QUANTITY.NAME,
@@ -279,8 +281,9 @@ public class MeasurementRepository implements Measurements {
     return withAdditionalJoins(query, parameter);
   }
 
-  private ResultQuery<Record10<
-    UUID, String, PeriodRange, String, String, String, String, String, Double, OffsetDateTime
+  private ResultQuery<Record11<
+    UUID, String, String, PeriodRange, String, String,
+    String, String, String, Double, OffsetDateTime
     >> getConsumptionQuery(
     MeasurementParameter parameter
   ) {
@@ -290,6 +293,7 @@ public class MeasurementRepository implements Measurements {
     Field<PeriodRange> activePeriod = field("active_period", PeriodRange.class);
     Field<String> quantity = field(QUANTITY_FIELD_NAME, String.class);
     Field<UUID> logicalMeterId = field("logicalmeter_id", UUID.class);
+    Field<String> logicalMeterUtcOffset = field("logicalmeter_utc_offset", String.class);
     Field<String> logicalMeterExternalId = field("logicalmeter_external_id", String.class);
     Field<String> city = field("city", String.class);
     Field<String> streetAddress = field("street_address", String.class);
@@ -297,6 +301,7 @@ public class MeasurementRepository implements Measurements {
 
     var measurementSeries = dsl.select(
       LOGICAL_METER.ID.as(logicalMeterId),
+      LOGICAL_METER.UTC_OFFSET.as(logicalMeterUtcOffset),
       PHYSICAL_METER.ADDRESS.as(physicalMeterAddress),
       PHYSICAL_METER.ACTIVE_PERIOD.as(activePeriod),
       QUANTITY.NAME.as(quantity),
@@ -326,6 +331,7 @@ public class MeasurementRepository implements Measurements {
 
     return dsl.select(
       logicalMeterId,
+      logicalMeterUtcOffset,
       physicalMeterAddress,
       activePeriod,
       quantity,
@@ -468,8 +474,9 @@ public class MeasurementRepository implements Measurements {
 
   private Map<MeasurementKey, List<MeasurementValue>> mapSeriesForPeriod(
     MeasurementParameter parameter,
-    ResultQuery<Record10<
-      UUID, String, PeriodRange, String, String, String, String, String, Double, OffsetDateTime
+    ResultQuery<Record11<
+      UUID, String, String, PeriodRange, String, String,
+      String, String, String, Double, OffsetDateTime
       >> r
   ) {
     Map<String, QuantityParameter> quantityMap = getQuantityMap(parameter);
@@ -484,13 +491,14 @@ public class MeasurementRepository implements Measurements {
           k.value5(),
           k.value6(),
           k.value7(),
-          k.value8()
+          k.value8(),
+          k.value9()
         ),
         mapping(
           t -> toMeasurementValueConvertedToUnitFromQuantity(
-            t.get(t.field10()).toInstant(),
-            t.get(t.field9()),
-            quantityMap.get(t.get(t.field4()))
+            t.get(t.field11()).toInstant(),
+            t.get(t.field10()),
+            quantityMap.get(t.get(t.field5()))
           ), toList())
         )
       );

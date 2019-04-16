@@ -797,6 +797,14 @@ public class MeasurementControllerTest extends IntegrationTest {
         )
     );
 
+    given(
+      measurementSeries()
+      .forMeter(physicalMeter)
+      .withQuantity(POWER)
+      .startingAt(activePeriodStart)
+      .withValues(9999.0)
+    );
+
     List<MeasurementSeriesDto> response = asUser()
       .getList(measurementsUrl()
         .period(context().now(), context().now().plusHours(2))
