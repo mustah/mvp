@@ -7,9 +7,9 @@ import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {RowBottom, RowLeft} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
-import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
-import {CallbackWith, Clickable, IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
+import {Clickable, IdNamed, uuid} from '../../../../types/Types';
 import './InlineEditInput.scss';
+import {DispatchToProps, StateToProps} from './SelectionMenu';
 
 const textFieldStyle: React.CSSProperties = {
   margin: 0,
@@ -62,13 +62,8 @@ const ResetIconButton = ({onClick}: Clickable) => (
   </IconButton>
 );
 
-interface Props {
+interface Props extends DispatchToProps, StateToProps {
   isChanged: boolean;
-  selection: UserSelection;
-  saveSelection: CallbackWith<UserSelection>;
-  updateSelection: CallbackWith<UserSelection>;
-  resetSelection: OnClick;
-  selectSavedSelection: OnClickWithId;
 }
 
 interface State extends IdNamed {
@@ -101,8 +96,8 @@ export class InlineEditInput extends React.Component<Props, State> {
   }
 
   renderSelectionResetButton = (): React.ReactNode => {
-    const {selection: {id}, selectSavedSelection} = this.props;
-    const reset = () => selectSavedSelection(id);
+    const {selection: {id}, resetToSavedSelection} = this.props;
+    const reset = () => resetToSavedSelection(id);
     return <ButtonLink onClick={reset} style={buttonLinkStyle}>{translate('discard changes')}</ButtonLink>;
   }
 

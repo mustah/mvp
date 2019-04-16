@@ -14,6 +14,7 @@ import {
   deselectSelection,
   onChangeThreshold,
   resetSelection,
+  resetToSavedSelection,
   selectPeriod,
   selectSavedSelection,
   selectSavedSelectionAction,
@@ -59,6 +60,12 @@ describe('userSelectionActions', () => {
     name: 'old media',
   };
 
+  const userSelection: UserSelection = {
+    ...initialState.userSelection,
+    id: 21,
+    name: 'test 21',
+  };
+
   const rootState = {
     userSelection: {...initialState},
     domainModels: {
@@ -69,11 +76,7 @@ describe('userSelectionActions', () => {
             id: 1,
             name: 'test 1',
           },
-          21: {
-            ...initialState.userSelection,
-            id: 21,
-            name: 'test 21',
-          },
+          21: userSelection,
           33: oldUserSelectionWithGasType,
         },
         result: [1, 21, 33],
@@ -81,6 +84,7 @@ describe('userSelectionActions', () => {
     },
     previousSession: {},
   };
+
   const rootStateNoSaved = {
     ...rootState,
     userSelection: {...rootState.userSelection},
@@ -103,7 +107,7 @@ describe('userSelectionActions', () => {
     });
   });
 
-  describe('selectSavedSelection', () => {
+  describe('resetToSavedSelection', () => {
 
     it('sets new selection', () => {
       store = configureMockStore(rootState);
@@ -156,6 +160,25 @@ describe('userSelectionActions', () => {
 
       store.dispatch(selectSavedSelection(42));
       expect(store.getActions()).toEqual([]);
+    });
+
+    describe('resetToSelectedSelections', () => {
+
+      beforeEach(() => {
+        store = configureMockStore(rootState);
+      });
+
+      it('will reset all changes', () => {
+        store.dispatch(resetToSavedSelection(21));
+
+        expect(store.getActions()).toEqual([selectSavedSelectionAction(userSelection)]);
+      });
+
+      it('will no reset changes if selection cannot be found in domain models', () => {
+        store.dispatch(resetToSavedSelection(-99));
+
+        expect(store.getActions()).toEqual([]);
+      });
     });
 
     describe('selectSelection', () => {

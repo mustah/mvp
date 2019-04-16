@@ -1,25 +1,28 @@
 import * as React from 'react';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
-import {initialSelectionId} from '../../../../state/user-selection/userSelectionModels';
-import {SelectionMenuProps} from '../../containers/SelectionMenuContainer';
+import {initialSelectionId, UserSelection} from '../../../../state/user-selection/userSelectionModels';
+import {CallbackWith, OnClick, OnClickWithId} from '../../../../types/Types';
 import {InlineEditInput} from './InlineEditInput';
 
-export const SelectionMenu = ({
-  selection,
-  saveSelection,
-  updateSelection,
-  resetSelection,
-  selectSavedSelection,
-}: SelectionMenuProps) => (
+export interface StateToProps {
+  selection: UserSelection;
+}
+
+export interface DispatchToProps {
+  resetSelection: OnClick;
+  resetToSavedSelection: OnClickWithId;
+  saveSelection: CallbackWith<UserSelection>;
+  updateSelection: CallbackWith<UserSelection>;
+}
+
+type Props = StateToProps & DispatchToProps;
+
+export const SelectionMenu = (props: Props) => (
   <RowMiddle>
     <InlineEditInput
-      key={`${selection.id}-${selection.id === initialSelectionId ? '' : selection.isChanged}`}
-      isChanged={selection.isChanged}
-      selection={selection}
-      saveSelection={saveSelection}
-      updateSelection={updateSelection}
-      resetSelection={resetSelection}
-      selectSavedSelection={selectSavedSelection}
+      key={`${props.selection.id}-${props.selection.id === initialSelectionId ? '' : props.selection.isChanged}`}
+      isChanged={props.selection.isChanged}
+      {...props}
     />
   </RowMiddle>
 );
