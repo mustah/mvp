@@ -2,6 +2,7 @@ package com.elvaco.mvp.access;
 
 import java.time.Duration;
 import java.time.Period;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -286,6 +287,62 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
       .containsExactly(2.0);
     assertThat(result.get(Quantity.HUMIDITY.name)).extracting(v -> v.value)
       .containsExactly(6.0);
+  }
+
+  @Test
+  public void averageForMetersInDifferentTimezones() {
+    /* This test case exists for documentation purposes. The behaviour it asserts is
+    * not necessarily "correct" from a user's point of view.
+    *
+    * The answer to the question "What should an average series for meters in different
+    * time zones look like?" is unfortunately, "It depends.".
+    *
+    * The current behaviour is to group values on the global time line and average those. Another
+    * approach might be to group the values according to their local time, so that the average for
+    * 00:00 includes the values 00:00+01 (23:00Z) for the first meter and 00:00+02 (22:00Z) for the
+    * second meter. Yet another approach could be to include the offset in the grouping, rendering
+    * one series for each distinct offset. For example:
+    * [00:00+01 (23:00Z), 01:00+01 (00:00Z), 02:00+01 (01:00Z)]
+    * and
+    * [00:00+02 (22:00Z), 01:00+02 (23:00Z), 02:00+02 (00:00Z)]
+    * .
+    *
+    * But, as mentioned above, what the user actually want, depends on what they hope to accomplish,
+    * and we don't know that right now.
+    * */
+    ZonedDateTime start = context().now().withZoneSameLocal(ZoneId.of("Z"));
+    var meterInUtcPlusOne = given(logicalMeter().utcOffset("+01"));
+    var meterInUtcPlusTwo = given(logicalMeter().utcOffset("+02"));
+
+    given(measurementSeries()
+      .forMeter(meterInUtcPlusOne)
+      .startingAt(start.minusHours(1)) // 00:00:00 +01
+      .withQuantity(Quantity.POWER)
+      .withValues(1.0, 2.0));
+
+    given(measurementSeries()
+      .forMeter(meterInUtcPlusTwo)
+      .startingAt(start.minusHours(2)) // 00:00:00 +02
+      .withQuantity(Quantity.POWER)
+      .withValues(1.0, 2.0));
+
+    Map<String, List<MeasurementValue>> result = measurements.findAverageForPeriod(
+      new MeasurementParameter(
+        idParametersOf(meterInUtcPlusOne, meterInUtcPlusTwo),
+        quantityParametersOf(POWER_DISPLAY),
+        start.minusHours(2),
+        start.plusHours(1),
+        TemporalResolution.hour
+      ));
+
+    assertThat(result.get(Quantity.POWER.name))
+      .extracting(v -> v.value)
+      .containsExactly(
+        1.0, // 1.0 / 1 (only meter+01 has a value for this hour)
+        1.5, // (1.0 + 2.0) / 2 (meter+01's second value + meter+02's first value)
+        2.0, // 2.0 / 1 (only meter+02 has a value for this hour)
+        null // no values
+      );
   }
 
   @Test

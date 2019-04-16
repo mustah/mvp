@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 public class MeasurementKey {
 
   public final UUID logicalMeterId;
+  public final String utcOffset;
   public final String physicalMeterAddress;
   public final PeriodRange activePeriod;
   public final String quantity;

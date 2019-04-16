@@ -1,6 +1,7 @@
 package com.elvaco.mvp.access;
 
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -464,6 +465,92 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   }
 
   @Test
+  public void readoutValuesForMetersWithMixedOffsets() {
+    ZonedDateTime start = context().now().withZoneSameLocal(ZoneId.of("Z"));
+    var logicalMeterPlus1 = given(
+      logicalMeter().utcOffset("+01")
+    );
+
+    var logicalMeterPlus2 = given(
+      logicalMeter().utcOffset("+02")
+    );
+
+    var interval = Duration.ofHours(1);
+
+    given(measurementSeries()
+      .forMeter(logicalMeterPlus1)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start.minusHours(1)) // 00:00:00 +01
+      .withInterval(interval)
+      .withValues(DoubleStream.iterate(1, (d) -> d + 1.0).limit(25).toArray()));
+
+    given(measurementSeries()
+      .forMeter(logicalMeterPlus2)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start.minusHours(2)) // 00:00:00 +02
+      .withInterval(interval)
+      .withValues(DoubleStream.iterate(1, (d) -> d + 1.0).limit(25).toArray()));
+
+    Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        idParametersOf(logicalMeterPlus1, logicalMeterPlus2),
+        quantityParametersOf(POWER_DISPLAY),
+        start.minusHours(2),
+        start.plusHours(1).plusDays(1),
+        TemporalResolution.day
+      ));
+
+    assertThat(result.get(getKey(logicalMeterPlus1, Quantity.POWER)))
+      .extracting(l -> l.value)
+      .containsExactly(
+        1.0, // first day's first hourly value (d1 00:00:00 +01:00 / 23:00:00Z)
+        25.0 // second day's first hourly value (d2 00:00:00 +01:00 / 23:00:00Z)
+      );
+
+
+    assertThat(result.get(getKey(logicalMeterPlus2, Quantity.POWER)))
+      .extracting(l -> l.value)
+      .containsExactly(
+        1.0, // first day's first hourly value (d1 00:00:00 +02:00 / 22:00:00Z)
+        25.0 // second day's first hourly value (d2 00:00:00 +02:00 / 22:00:00Z)
+      );
+  }
+
+  @Test
+  public void readoutValuesForMeterWithExoticOffset() {
+    ZonedDateTime start = context().now().withZoneSameLocal(ZoneId.of("Z"));
+    var logicalMeter = given(
+      logicalMeter().utcOffset("+04")
+    );
+
+    var physicalMeter = logicalMeter.physicalMeters.get(0);
+    var interval = Duration.ofHours(1);
+
+    given(measurementSeries()
+      .forMeter(physicalMeter)
+      .withQuantity(Quantity.POWER)
+      .startingAt(start.minusDays(1).minusHours(4))
+      .withInterval(interval)
+      .withValues(DoubleStream.iterate(1, (d) -> d + 1.0).limit(48).toArray()));
+
+    Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        idParametersOf(logicalMeter),
+        quantityParametersOf(POWER_DISPLAY),
+        start.minusDays(2),
+        start,
+        TemporalResolution.day
+      ));
+
+    assertThat(result.get(getKey(logicalMeter, physicalMeter, Quantity.POWER)))
+      .extracting(l -> l.value)
+      .containsExactly(
+        1.0, // first day's first hourly value (d1 00:00:00 +04:00 / 20:00:00Z)
+        25.0 // second day's first hourly value (d2 00:00:00 +04:00 / 20:00:00Z)
+      );
+  }
+
+  @Test
   public void consumptionValuesAreFilteredOnActivePeriod() {
     ZonedDateTime start = context().now();
     var logicalMeter = given(
@@ -645,6 +732,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   ) {
     return new MeasurementKey(
       meter.id,
+      meter.utcOffset,
       physicalMeter.address,
       physicalMeter.activePeriod,
       quantity.name,
