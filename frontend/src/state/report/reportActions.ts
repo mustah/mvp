@@ -7,7 +7,8 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {Dispatcher, uuid} from '../../types/Types';
 import {allQuantitiesMap, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../ui/message/messageActions';
-import {SelectionInterval} from '../user-selection/userSelectionModels';
+import {SelectionInterval, ThresholdQuery} from '../user-selection/userSelectionModels';
+import {getThreshold} from '../user-selection/userSelectionSelectors';
 import {
   LegendItem,
   LegendItemSettings,
@@ -64,7 +65,8 @@ interface LegendTyped {
   type: LegendType;
 }
 
-export const getDefaultQuantity = <T extends LegendTyped>({type}: T): Quantity => allQuantitiesMap[type][0];
+export const getQuantity = <T extends LegendTyped>({type}: T, threshold?: ThresholdQuery): Quantity =>
+  Maybe.maybe(threshold).map(it => it.quantity).orElseGet(() => allQuantitiesMap[type][0]);
 
 const findByType = (legendItems: LegendItem[], {type}: LegendTyped): Maybe<LegendItem> =>
   Maybe.maybe<LegendItem>(find(legendItems, {type}));
@@ -91,7 +93,7 @@ export const addToReport = (legendItem: LegendItem) =>
       const selectedQuantities = getSelectedQuantitiesMap(savedReports)[legendItem.type];
       const quantities = hasSelectedQuantities(savedReports)
         ? selectedQuantities
-        : selectedQuantities.length ? selectedQuantities : [getDefaultQuantity(legendItem)];
+        : selectedQuantities.length ? selectedQuantities : [getQuantity(legendItem)];
       const item = findByType(legendItems, legendItem)
         .map(it => ({...legendItem, ...pickJustSettings(it), quantities}))
         .orElse({...legendItem, quantities});
@@ -110,40 +112,46 @@ export const deleteItem = (id: uuid) =>
 
 export const addAllToSelectionReport = (newLegendItems: LegendItem[]) =>
   (dispatch, getState: GetState) => {
+    const {selectionReport: {savedReports}, userSelection} = getState();
     addAllToReportSector(
       dispatch,
       newLegendItems,
-      getState().selectionReport.savedReports,
-      ReportSector.selectionReport
+      savedReports,
+      ReportSector.selectionReport,
+      getThreshold(userSelection),
     );
   };
 
 export const addAllToReport = (newLegendItems: LegendItem[]) =>
   (dispatch, getState: GetState) => {
+    const {report: {savedReports}, userSelection} = getState();
     addAllToReportSector(
       dispatch,
       newLegendItems,
-      getState().report.savedReports,
-      ReportSector.report
+      savedReports,
+      ReportSector.report,
+      getThreshold(userSelection),
     );
   };
 
-export const addAllToReportSector = (
+const addAllToReportSector = (
   dispatch,
   newLegendItems: LegendItem[],
   savedReports: SavedReportsState,
-  reportSection: ReportSector
+  reportSection: ReportSector,
+  threshold?: ThresholdQuery,
 ) => {
 
   const legendItems = newLegendItems.filter(it => it.type !== Medium.unknown);
-  const quantities = hasSelectedQuantities(savedReports) ? [] : take(legendItems, 1).map(getDefaultQuantity);
+  const quantities = hasSelectedQuantities(savedReports) ? [] : take(legendItems, 1)
+    .map(legendItem => getQuantity(legendItem, threshold));
   const quantity = first(quantities);
 
   const savedLegendItems = getLegendItems(savedReports);
   const items = [
     ...savedLegendItems,
     ...legendItems
-      .map(item => getDefaultQuantity(item) === quantity ? ({...item, quantities}) : item)
+      .map(item => getQuantity(item, threshold) === quantity ? ({...item, quantities}) : item)
       .map(item => findByType(savedLegendItems, item)
         .map(it => ({...item, ...pickJustSettings(it)}))
         .orElse(item))

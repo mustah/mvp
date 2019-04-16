@@ -3,7 +3,6 @@ import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
-import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {LegendItem, LegendType} from '../../../report/reportModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
 import {MeasurementsApiResponse, MeasurementValue} from './measurementModels';
@@ -218,31 +217,3 @@ export const quantitiesToExclude = [
   Quantity.energyReactive,
   Quantity.energyReturn,
 ];
-
-export interface MeterMeasurementsState {
-  isFetching: boolean;
-  page: number;
-  error: Maybe<ErrorResponse>;
-  measurementPages: NormalizedPaginated<Measurement>;
-}
-
-export const initialMeterMeasurementsState: MeterMeasurementsState = {
-  isFetching: false,
-  page: 0,
-  error: Maybe.nothing(),
-  measurementPages: {
-    page: 0,
-    result: {
-      content: [],
-      first: true,
-      last: false,
-      number: 0,
-      numberOfElements: 0,
-      size: 20,
-      totalElements: 0,
-      totalPages: 0,
-      sort: null,
-    },
-    entities: {},
-  },
-};

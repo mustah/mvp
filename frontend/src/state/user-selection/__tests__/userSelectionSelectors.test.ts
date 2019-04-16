@@ -1,18 +1,16 @@
+import {makeThreshold} from '../../../__tests__/testDataFactory';
 import {urlFromParameters} from '../../../__tests__/urlFromParameters';
 import {Period} from '../../../components/dates/dateModels';
 import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {meterParameters, RequestParameter} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
-import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {initialPaginationState, paginationPageSize} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
 import {
   ParameterName,
-  RelationalOperator,
   SelectionParameter,
-  ThresholdQuery,
   UriLookupStatePaginated,
   UserSelection,
   UserSelectionState,
@@ -188,21 +186,13 @@ describe('userSelectionSelectors', () => {
     });
 
     it('includes a threshold query', () => {
-      const threshold: ThresholdQuery = {
-        relationalOperator: '>=' as RelationalOperator,
-        quantity: Quantity.power,
-        dateRange: {period: Period.latest},
-        unit: 'kW',
-        value: '3',
-      };
-
       const state: UserSelectionState = {
         ...initialState,
         userSelection: {
           ...initialState.userSelection,
           selectionParameters: {
             ...initialState.userSelection.selectionParameters,
-            threshold
+            threshold: makeThreshold()
           },
         },
       };
@@ -219,21 +209,13 @@ describe('userSelectionSelectors', () => {
     });
 
     it('excludes threshold query when global meter query parameter is set', () => {
-      const threshold: ThresholdQuery = {
-        relationalOperator: '>=' as RelationalOperator,
-        quantity: Quantity.power,
-        dateRange: {period: Period.latest},
-        unit: 'kW',
-        value: '3',
-      };
-
       const state: UserSelectionState = {
         ...initialState,
         userSelection: {
           ...initialState.userSelection,
           selectionParameters: {
             ...initialState.userSelection.selectionParameters,
-            threshold
+            threshold: makeThreshold()
           },
         },
       };
@@ -254,22 +236,13 @@ describe('userSelectionSelectors', () => {
     });
 
     it('includes a threshold for duration query', () => {
-      const threshold: ThresholdQuery = {
-        relationalOperator: '>=' as RelationalOperator,
-        quantity: Quantity.power,
-        dateRange: {period: Period.latest},
-        unit: 'kW',
-        value: '3',
-        duration: '3'
-      };
-
       const state: UserSelectionState = {
         ...initialState,
         userSelection: {
           ...initialState.userSelection,
           selectionParameters: {
             ...initialState.userSelection.selectionParameters,
-            threshold
+            threshold: {...makeThreshold(), duration: '3'}
           },
         },
       };
@@ -286,22 +259,13 @@ describe('userSelectionSelectors', () => {
     });
 
     it('does not include a duration in threshold query', () => {
-      const threshold: ThresholdQuery = {
-        relationalOperator: '>=' as RelationalOperator,
-        quantity: Quantity.power,
-        dateRange: {period: Period.latest},
-        unit: 'kW',
-        value: '3',
-        duration: null
-      };
-
       const state: UserSelectionState = {
         ...initialState,
         userSelection: {
           ...initialState.userSelection,
           selectionParameters: {
             ...initialState.userSelection.selectionParameters,
-            threshold
+            threshold: makeThreshold()
           },
         },
       };
@@ -489,21 +453,13 @@ describe('userSelectionSelectors', () => {
     });
 
     it('includes a threshold query', () => {
-      const threshold: ThresholdQuery = {
-        relationalOperator: '>=' as RelationalOperator,
-        quantity: Quantity.power,
-        dateRange: {period: Period.latest},
-        unit: 'kW',
-        value: '3',
-      };
-
       const state: UserSelectionState = {
         ...initialState,
         userSelection: {
           ...initialState.userSelection,
           selectionParameters: {
             ...initialState.userSelection.selectionParameters,
-            threshold
+            threshold: makeThreshold()
           },
         },
       };

@@ -5,20 +5,16 @@ import {MeterDetails} from '../../../state/domain-models/meter-details/meterDeta
 import {MeasurementParameters, MeasurementResponse} from '../../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {toLegendItemAllQuantities} from '../../report/helpers/legendHelper';
-import {OwnProps} from './containers/MeterMeasurementsContainer';
-import {MeterDetailState} from './meterDetailModels';
 
-const getMeter = ({meter}: Pick<OwnProps, 'meter'>) => meter;
-const getPeriod = ({timePeriod}: Pick<MeterDetailState, 'timePeriod'>) => timePeriod;
+interface State {
+  meter: MeterDetails;
+  timePeriod: SelectionInterval;
+}
 
 export const getMeasurementParameters =
-  createSelector<Pick<MeterDetailState, 'timePeriod'> & Pick<OwnProps, 'meter'>,
-    MeterDetails, SelectionInterval,
-    MeasurementParameters>
-  (
-    getMeter,
-    getPeriod,
-    (meter: MeterDetails, timePeriod: SelectionInterval) => ({
+  createSelector<State, State, MeasurementParameters>(
+    identity,
+    ({meter, timePeriod}) => ({
       legendItems: [toLegendItemAllQuantities(meter)],
       resolution: readIntervalToTemporal(meter.readIntervalMinutes),
       dateRange: timePeriod,
@@ -29,6 +25,5 @@ export const getMeasurementParameters =
 
 export const hasMeasurementValues = createSelector<MeasurementResponse, MeasurementResponse, boolean>(
   identity,
-  ({measurements}: MeasurementResponse) =>
-    measurements.length > 0
+  ({measurements}) => measurements.length > 0
 );

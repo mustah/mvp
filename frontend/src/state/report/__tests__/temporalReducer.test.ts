@@ -1,12 +1,8 @@
+import {makeThreshold} from '../../../__tests__/testDataFactory';
 import {Period, TemporalResolution} from '../../../components/dates/dateModels';
-import {Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {selectPeriod, selectSavedSelectionAction, setThreshold} from '../../user-selection/userSelectionActions';
-import {
-  RelationalOperator,
-  SelectionInterval,
-  ThresholdQuery,
-  UserSelection
-} from '../../user-selection/userSelectionModels';
+import {SelectionInterval, ThresholdQuery, UserSelection} from '../../user-selection/userSelectionModels';
 import {initialState as userSelecectionState} from '../../user-selection/userSelectionReducer';
 import {addLegendItems, selectResolution, setReportTimePeriod, toggleComparePeriod} from '../reportActions';
 import {LegendItem, ReportSector, TemporalReportState} from '../reportModels';
@@ -89,13 +85,8 @@ describe('temporal', () => {
   describe('set timePeriod', () => {
 
     const thresholdQuery: ThresholdQuery = {
-      value: '2',
-      unit: 'kW',
-      quantity: Quantity.power,
-      relationalOperator: '>=' as RelationalOperator,
-      dateRange: {
-        period: Period.currentWeek,
-      },
+      ...makeThreshold(),
+      dateRange: {period: Period.currentWeek},
     };
 
     const userSelection: UserSelection = userSelecectionState.userSelection;

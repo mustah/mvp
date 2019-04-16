@@ -22,7 +22,7 @@ import {noInternetConnection, requestTimeout} from '../../../../api/apiActions';
 import {NormalizedState} from '../../../../domain-models/domainModels';
 import {initialDomain} from '../../../../domain-models/domainModelsReducer';
 import {User} from '../../../../domain-models/user/userModels';
-import {getDefaultQuantity} from '../../../../report/reportActions';
+import {getQuantity} from '../../../../report/reportActions';
 import {isAggregate, isMedium, LegendItem, LegendType, ReportSector} from '../../../../report/reportModels';
 import {ParameterName, UserSelection} from '../../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../../user-selection/userSelectionReducer';
@@ -70,7 +70,7 @@ describe('measurementActions', () => {
 
     const legendItemOf = (type: LegendType, label: string = 'facility-1'): LegendItem => {
       const id = idGenerator.uuid().toString();
-      const quantities = type !== Medium.unknown ? [getDefaultQuantity({type})] : [];
+      const quantities = type !== Medium.unknown ? [getQuantity({type})] : [];
       return ({id, type, label, isHidden: false, quantities});
     };
 

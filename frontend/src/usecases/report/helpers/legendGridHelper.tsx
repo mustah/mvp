@@ -18,7 +18,7 @@ import {
 import {allQuantitiesMap, getGroupHeaderTitle, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickEventHandler, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
-import {colorFor} from './graphContentsMapper';
+import {colorFor} from './lineChartHelper';
 import {isGroupHeader} from './measurementGridHelper';
 
 interface CurrentLegendType {

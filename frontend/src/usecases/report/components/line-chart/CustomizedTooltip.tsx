@@ -8,7 +8,7 @@ import {Bold, Normal} from '../../../../components/texts/Texts';
 import {displayDate} from '../../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../../helpers/formatters';
 import {TooltipMeta} from '../../../../state/ui/graph/measurement/measurementModels';
-import {makeMetaKey, makeTimestampKey} from '../../helpers/graphContentsMapper';
+import {makeMetaKey, makeTimestampKey} from '../../helpers/lineChartHelper';
 
 const style: React.CSSProperties = {
   padding: 8,

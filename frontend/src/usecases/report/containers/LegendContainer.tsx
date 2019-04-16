@@ -75,8 +75,8 @@ const mapStateToProps = ({report}: RootState): StateToProps => {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem,
-  showHideAllByType: showHideAllByType(ReportSector.report),
   removeAllByType: removeAllByType(ReportSector.report),
+  showHideAllByType: showHideAllByType(ReportSector.report),
   showHideLegendRows: showHideLegendRows(ReportSector.report),
   toggleLine: toggleLine(ReportSector.report),
   toggleQuantityByType: toggleQuantityByType(ReportSector.report),

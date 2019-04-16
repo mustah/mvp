@@ -32,7 +32,7 @@ const palette = {
   blueA700: '#0091ea',
   blueA900: '#01579b',
 
-  deepPurpleA200: '#7C4DFF',
+  blueGrey300: '#90A4AE',
 };
 
 export const colors = {

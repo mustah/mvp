@@ -7,7 +7,7 @@ import {firstUpperTranslated} from '../../../../services/translationService';
 import {GraphContents} from '../../../../state/report/reportModels';
 import {ThresholdQuery} from '../../../../state/user-selection/userSelectionModels';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {toReferenceLineProps} from '../../helpers/referenceLineMapper';
+import {toReferenceLineProps} from '../../helpers/lineChartHelper';
 import {ActiveDot, ActiveDotReChartProps} from './ActiveDot';
 import {CustomizedTooltip} from './CustomizedTooltip';
 import {Dot, KeyedDotProps} from './Dot';
@@ -77,7 +77,7 @@ export class LineChartComponent extends React.Component<Props, State> {
         renderActiveDot: this.renderActiveDot,
       },
       noContentText: firstUpperTranslated(hasMeters ? 'no measurements' : 'no meters'),
-      referenceLineProps: toReferenceLineProps(threshold),
+      referenceLineProps: toReferenceLineProps(axes, threshold),
       setTooltipPayload: this.setTooltipPayload,
     };
 

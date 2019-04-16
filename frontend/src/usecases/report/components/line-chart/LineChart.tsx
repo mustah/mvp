@@ -109,7 +109,7 @@ export const LineChart =
             {left && <YAxis key="leftYAxis" label={leftLabel} yAxisId="left"/>}
             {right && <YAxis key="rightYAxis" label={rightLabel} yAxisId="right" orientation="right"/>}
             {renderLines(linesProps)}
-            <ReferenceLine {...referenceLineProps}/>
+            {referenceLineProps && <ReferenceLine {...referenceLineProps}/>}
           </ReChartLineChart>
         </ResponsiveContainer>
         <TimestampInfoMessage/>
