@@ -5,8 +5,8 @@ import {colors, iconSizeMedium, svgIconProps} from '../../../../app/themes';
 import {ToolbarIconButton} from '../../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
-import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../../components/layouts/row/Row';
-import '../../../../components/toolbar/Toolbar.scss';
+import {RowMiddle} from '../../../../components/layouts/row/Row';
+import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
@@ -30,9 +30,9 @@ export const MeterMeasurementsToolbar = ({
   });
 
   return (
-    <RowSpaceBetween className="Toolbar">
-      <Row>
-        <RowMiddle className="Toolbar-ViewSettings">
+    <Toolbar>
+      <ToolbarLeftPane>
+        <ToolbarViewSettings>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
             isSelected={view === ToolbarView.table}
@@ -41,7 +41,7 @@ export const MeterMeasurementsToolbar = ({
           >
             <EditorFormatListBulleted color={colors.lightBlack}/>
           </ToolbarIconButton>
-        </RowMiddle>
+        </ToolbarViewSettings>
 
         <RowMiddle>
           <ToolbarIconButton
@@ -54,9 +54,9 @@ export const MeterMeasurementsToolbar = ({
             <CloudDownload  {...svgIconProps}/>
           </ToolbarIconButton>
         </RowMiddle>
-      </Row>
+      </ToolbarLeftPane>
 
-      <RowRight className="Toolbar-RightPane">
+      <ToolbarRightPane>
         <PeriodSelection
           customDateRange={Maybe.maybe(timePeriod.customDateRange)}
           period={timePeriod.period}
@@ -64,7 +64,7 @@ export const MeterMeasurementsToolbar = ({
           setCustomDateRange={setCustomDateRange}
           style={{marginBottom: 0, marginLeft: 0}}
         />
-      </RowRight>
-    </RowSpaceBetween>
+      </ToolbarRightPane>
+    </Toolbar>
   );
 };

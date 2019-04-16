@@ -9,9 +9,9 @@ import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
-import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
+import {Row, RowMiddle} from '../../../components/layouts/row/Row';
 import {IconProps} from '../../../components/popover/PopoverMenu';
-import '../../../components/toolbar/Toolbar.scss';
+import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
@@ -59,9 +59,9 @@ export const ReportToolbar = ({
   const customDateRange = Maybe.maybe(timePeriod.customDateRange);
 
   return (
-    <RowSpaceBetween className="Toolbar">
-      <Row>
-        <RowMiddle className="Toolbar-ViewSettings">
+    <Toolbar>
+      <ToolbarLeftPane>
+        <ToolbarViewSettings>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
             isSelected={view === ToolbarView.graph}
@@ -78,7 +78,7 @@ export const ReportToolbar = ({
           >
             <EditorFormatListBulleted color={colors.lightBlack}/>
           </ToolbarIconButton>
-        </RowMiddle>
+        </ToolbarViewSettings>
 
         <RowMiddle>
           <ToolbarIconButton
@@ -91,9 +91,9 @@ export const ReportToolbar = ({
             <CloudDownload {...svgIconProps}/>
           </ToolbarIconButton>
         </RowMiddle>
-      </Row>
+      </ToolbarLeftPane>
 
-      <RowRight className="Toolbar-RightPane">
+      <ToolbarRightPane>
         <Row>
           <Toggle
             disabled={!canShowAverage}
@@ -122,7 +122,7 @@ export const ReportToolbar = ({
           style={{marginBottom: 0, marginLeft: 0}}
         />
         <LegendActionButton onClick={showHideLegend} disabled={!hasLegendItems}/>
-      </RowRight>
-    </RowSpaceBetween>
+      </ToolbarRightPane>
+    </Toolbar>
   );
 };

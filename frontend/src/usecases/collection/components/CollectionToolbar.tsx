@@ -6,8 +6,8 @@ import {colors, iconSizeMedium, svgIconProps} from '../../../app/themes';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
-import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
-import '../../../components/toolbar/Toolbar.scss';
+import {RowMiddle} from '../../../components/layouts/row/Row';
+import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
@@ -36,9 +36,9 @@ export const CollectionToolbar = ({
   const customDateRange = Maybe.maybe(timePeriod.customDateRange);
 
   return (
-    <RowSpaceBetween className="Toolbar">
-      <Row>
-        <RowMiddle className="Toolbar-ViewSettings">
+    <Toolbar>
+      <ToolbarLeftPane>
+        <ToolbarViewSettings>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
             isSelected={view === ToolbarView.graph}
@@ -55,7 +55,7 @@ export const CollectionToolbar = ({
           >
             <EditorFormatListBulleted color={colors.lightBlack}/>
           </ToolbarIconButton>
-        </RowMiddle>
+        </ToolbarViewSettings>
 
         <RowMiddle>
           <ToolbarIconButton
@@ -68,9 +68,9 @@ export const CollectionToolbar = ({
             <CloudDownload {...svgIconProps}/>
           </ToolbarIconButton>
         </RowMiddle>
-      </Row>
+      </ToolbarLeftPane>
 
-      <RowRight className="Toolbar-RightPane">
+      <ToolbarRightPane>
         <PeriodSelection
           customDateRange={customDateRange}
           period={timePeriod.period}
@@ -78,7 +78,7 @@ export const CollectionToolbar = ({
           setCustomDateRange={setCustomDateRange}
           style={{marginBottom: 0, marginLeft: 0}}
         />
-      </RowRight>
-    </RowSpaceBetween>
+      </ToolbarRightPane>
+    </Toolbar>
   );
 };
