@@ -86,6 +86,7 @@
   <include file="xml/create_alarm_description_table.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_gateway_extra_info_json_blob.xml" relativeToChangelogFile="true"/>
   <include file="xml/make_display_quantity_mode_advisory.xml" relativeToChangelogFile="true"/>
+  <include file="xml/create_gateway_serial_lowercase_index.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

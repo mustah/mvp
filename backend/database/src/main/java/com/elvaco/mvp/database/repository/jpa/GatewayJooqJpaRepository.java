@@ -152,7 +152,7 @@ class GatewayJooqJpaRepository
   @Override
   public List<GatewayEntity> findBySerial(String serial) {
     return nativeQuery(dsl.select().from(GATEWAY)
-      .where(GATEWAY.SERIAL.equal(serial)));
+      .where(GATEWAY.SERIAL.lower().equal(serial.toLowerCase())));
   }
 
   @Override
