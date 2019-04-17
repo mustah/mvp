@@ -7,7 +7,7 @@ import {isOnSearchPage} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
-import {Action, ModelSectors, ErrorResponse, Identifiable, PagedDomainModelsSectors, uuid} from '../../types/Types';
+import {Action, ActionKey, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
 import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
@@ -163,44 +163,6 @@ type ActionTypes<T extends Identifiable> = EmptyAction<string> |
     | Location
     | ApiRequestSortingOptions[]>;
 
-const metersReducer = <T extends Identifiable>(
-  state: NormalizedPaginatedState<T> = makeInitialState<T>(),
-  action: ActionTypes<T>,
-): NormalizedPaginatedState<T> => {
-  switch (action.type) {
-    case getType(sortTableAction(EndPoints.meters)):
-      return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
-    default:
-      return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
-  }
-};
-
-const collectionStatFacilitiesReducer = <T extends Identifiable>(
-  state: NormalizedPaginatedState<T>,
-  action: ActionTypes<T>,
-): NormalizedPaginatedState<T> => {
-  switch (action.type) {
-    case getType(sortTableAction(PagedDomainModelsSectors.collectionStatFacilities)):
-      return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
-    default:
-      return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
-  }
-};
-
-const meterCollectionStatFacilitiesReducer = <T extends Identifiable>(
-  state: NormalizedPaginatedState<T>,
-  action: ActionTypes<T>,
-): NormalizedPaginatedState<T> => {
-  switch (action.type) {
-    case getType(sortTableAction(PagedDomainModelsSectors.meterCollectionStatFacilities)):
-      return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
-    case getType(setCollectionTimePeriod(ModelSectors.meterCollection)):
-      return makeInitialState<T>();
-    default:
-      return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
-  }
-};
-
 const sortTable = <T extends Identifiable = Identifiable>(
   state: NormalizedPaginatedState<T>,
   sortingOptions: ApiRequestSortingOptions[] | undefined
@@ -218,9 +180,32 @@ const sortTable = <T extends Identifiable = Identifiable>(
   return newState;
 };
 
+const makeSortableReducer = <T extends Identifiable>(actionKey: ActionKey) =>
+  (
+    state: NormalizedPaginatedState<T> = makeInitialState<T>(),
+    action: ActionTypes<T>,
+  ): NormalizedPaginatedState<T> =>
+    action.type === getType(sortTableAction(actionKey))
+      ? sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload)
+      : resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
+
+const meterCollectionStatFacilitiesReducer = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T>,
+  action: ActionTypes<T>,
+): NormalizedPaginatedState<T> => {
+  switch (action.type) {
+    case getType(sortTableAction(Sectors.meterCollectionStatFacilities)):
+      return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
+    case getType(setCollectionTimePeriod(Sectors.meterCollection)):
+      return makeInitialState<T>();
+    default:
+      return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
+  }
+};
+
 const reducerFor = <T extends Identifiable>(
   entity: keyof PaginatedDomainModelsState,
-  actionKey: EndPoints | PagedDomainModelsSectors,
+  actionKey: EndPoints | Sectors,
   additionalReducers?: Reducer<NormalizedPaginatedState<T>>,
 ) =>
   (
@@ -262,17 +247,23 @@ const reducerFor = <T extends Identifiable>(
     }
   };
 
-export const meters = reducerFor<Meter>('meters', EndPoints.meters, metersReducer);
 export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
+
+export const meters = reducerFor<Meter>(
+  'meters',
+  EndPoints.meters,
+  makeSortableReducer<Meter>(EndPoints.meters)
+);
+
 export const collectionStatFacilities = reducerFor<CollectionStat>(
   'collectionStatFacilities',
-  PagedDomainModelsSectors.collectionStatFacilities,
-  collectionStatFacilitiesReducer
+  Sectors.collectionStatFacilities,
+  makeSortableReducer<CollectionStat>(Sectors.collectionStatFacilities)
 );
 
 export const meterCollectionStatFacilities = reducerFor<CollectionStat>(
   'collectionStatFacilities',
-  PagedDomainModelsSectors.meterCollectionStatFacilities,
+  Sectors.meterCollectionStatFacilities,
   meterCollectionStatFacilitiesReducer
 );
 

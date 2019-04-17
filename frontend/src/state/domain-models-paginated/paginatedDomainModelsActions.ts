@@ -5,13 +5,7 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
-import {
-  Action, ActionKey,
-  ErrorResponse,
-  FetchPaginated,
-  Identifiable,
-  payloadActionOf
-} from '../../types/Types';
+import {Action, ActionKey, ErrorResponse, FetchPaginated, Identifiable, payloadActionOf} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestType} from '../domain-models/domainModels';
@@ -26,12 +20,16 @@ import {
 
 export const domainModelsPaginatedRequest = (actionKey: ActionKey) =>
   `DOMAIN_MODELS_PAGINATED_REQUEST${actionKey}`;
+
 export const domainModelsPaginatedGetSuccess = (actionKey: ActionKey) =>
   `DOMAIN_MODELS_PAGINATED_${RequestType.GET}_SUCCESS${actionKey}`;
+
 export const domainModelsPaginatedFailure = (actionKey: ActionKey) =>
   `DOMAIN_MODELS_PAGINATED_FAILURE${actionKey}`;
+
 export const domainModelPaginatedClearError = (actionKey: ActionKey) =>
   `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${actionKey}`;
+
 export const sortTableAction = (actionKey: ActionKey) =>
   createStandardAction(`SORT_TABLE${actionKey}`)<ApiRequestSortingOptions[] | undefined>();
 

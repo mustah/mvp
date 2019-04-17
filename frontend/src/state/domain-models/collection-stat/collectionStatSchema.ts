@@ -6,5 +6,4 @@ import {CollectionStat} from './collectionStatModels';
 const collectionStatDateSchema = [new schema.Entity('collectionStats')];
 
 export const collectionStatDateDataFormatter: DataFormatter<Normalized<CollectionStat>> =
-  (response) =>
-    normalize(response, collectionStatDateSchema);
+  (response) => normalize(response, collectionStatDateSchema);

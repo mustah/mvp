@@ -14,5 +14,5 @@ interface OwnProps {
 
 const mapStateToProps = ({ui: {toolbar: {meterCollection: {view}}}}: RootState): StateToProps => ({view});
 
-export const MeterCollectionContentContainer =
+export const CollectionContentContainer =
   connect<StateToProps, null, OwnProps>(mapStateToProps)(CollectionContent);

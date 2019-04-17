@@ -9,21 +9,17 @@ import {
 } from '../../../../state/domain-models-paginated/collection-stat/collectionStatActions';
 import {
   getPageError,
-  getPageIsFetching, getPageResult, getPaginatedEntities
+  getPageIsFetching,
+  getPageResult,
+  getPaginatedEntities
 } from '../../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {collectionStatClearError} from '../../../../state/domain-models/collection-stat/collectionStatActions';
 import {CollectionStat} from '../../../../state/domain-models/collection-stat/collectionStatModels';
 import {changePage} from '../../../../state/ui/pagination/paginationActions';
-import {
-  EntityTypes,
-  Pagination
-} from '../../../../state/ui/pagination/paginationModels';
+import {EntityTypes, Pagination} from '../../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../../state/ui/pagination/paginationSelectors';
 import {getPaginatedCollectionStatParameters} from '../../../../state/user-selection/userSelectionSelectors';
-import {
-  ModelSectors,
-  ComponentId, EncodedUriParameters, uuid,
-} from '../../../../types/Types';
+import {ComponentId, EncodedUriParameters, Sectors, uuid} from '../../../../types/Types';
 import {exportToExcelSuccess} from '../../../collection/collectionActions';
 import {CollectionListContent} from '../../../collection/components/CollectionListContent';
 import {DispatchToProps, StateToProps} from '../../../collection/containers/CollectionListContainer';
@@ -55,7 +51,8 @@ const mapStateToProps = (
       userSelection,
       query,
       period: {customDateRange: Maybe.maybe(timePeriod.customDateRange), period: timePeriod.period}
-    })]);
+    })
+  ]);
 
   return ({
     entities: getPaginatedEntities<CollectionStat>(meterCollectionStatFacilities),
@@ -74,7 +71,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changePage,
   clearError: collectionStatClearError,
-  exportToExcelSuccess: exportToExcelSuccess(ModelSectors.meterCollection),
+  exportToExcelSuccess: exportToExcelSuccess(Sectors.meterCollection),
   fetchCollectionStatsFacilityPaged: fetchMeterCollectionStatsFacilityPaged,
   sortTable: sortTableMeterCollectionStats,
 }, dispatch);

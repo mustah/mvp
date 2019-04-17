@@ -1,5 +1,5 @@
 import {EndPoints} from '../../../services/endPoints';
-import {PagedDomainModelsSectors} from '../../../types/Types';
+import {Sectors} from '../../../types/Types';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
 import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
@@ -7,7 +7,7 @@ import {fetchIfNeededForSector, sortTableAction} from '../paginatedDomainModelsA
 import {collectionStatDataFormatter} from './collectionStatSchema';
 
 export const fetchCollectionStatsFacilityPaged = fetchIfNeededForSector<CollectionStat>(
-  PagedDomainModelsSectors.collectionStatFacilities,
+  Sectors.collectionStatFacilities,
   EndPoints.collectionStatFacility,
   collectionStatDataFormatter,
   'collectionStatFacilities',
@@ -18,7 +18,7 @@ export const fetchCollectionStatsFacilityPaged = fetchIfNeededForSector<Collecti
 );
 
 export const fetchMeterCollectionStatsFacilityPaged = fetchIfNeededForSector<CollectionStat>(
-  PagedDomainModelsSectors.meterCollectionStatFacilities,
+  Sectors.meterCollectionStatFacilities,
   EndPoints.collectionStatFacility,
   collectionStatDataFormatter,
   'meterCollectionStatFacilities',
@@ -30,4 +30,4 @@ export const fetchMeterCollectionStatsFacilityPaged = fetchIfNeededForSector<Col
 
 export const sortTableCollectionStats = sortTableAction(EndPoints.collectionStatFacility);
 
-export const sortTableMeterCollectionStats = sortTableAction(PagedDomainModelsSectors.meterCollectionStatFacilities);
+export const sortTableMeterCollectionStats = sortTableAction(Sectors.meterCollectionStatFacilities);
