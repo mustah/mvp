@@ -40,6 +40,7 @@ export interface SelectedId {
 
 export interface MapProps {
   bounds?: Bounds;
+  key?: string;
   lowConfidenceText?: string;
   mapMarkers: DomainModel<MapMarker>;
 }

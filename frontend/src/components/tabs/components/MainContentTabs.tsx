@@ -4,17 +4,17 @@ import {translate} from '../../../services/translationService';
 import {SelectedTab, TabName} from '../../../state/ui/tabs/tabsModels';
 import {
   CallbackWith,
-  Children,
   ClassNamed,
   ClearError,
   EncodedUriParameters,
   ErrorResponse,
   Fetch,
-  OnClick
+  OnClick,
+  WithChildren
 } from '../../../types/Types';
+import {CollectionStatContentContainer} from '../../../usecases/collection/containers/CollectionStatContentContainer';
 import {MapClusters} from '../../../usecases/map/components/MapClusters';
 import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
-import {CollectionStatContentContainer} from '../../../usecases/collection/containers/CollectionStatContentContainer';
 import {SelectionReportContentContainer} from '../../../usecases/selectionReport/containers/SelectionReportContentContainer';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
 import {EmptyContentProps} from '../../error-message/EmptyContent';
@@ -39,36 +39,36 @@ export interface DispatchToProps {
   fetchMapMarkers: Fetch;
 }
 
-export interface MainContentTabsProps extends StateToProps, DispatchToProps, ClassNamed {
-  children?: Children;
+export interface MainContentTabsProps extends StateToProps, DispatchToProps, ClassNamed, WithChildren {
   DetailsDialog: React.ComponentType<DetailsDialogProps>;
 }
 
 const MapClustersWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapClusters);
 
-export const MainContentTabs = (props: MainContentTabsProps) => {
-  const {
-    className,
-    DetailsDialog,
-    bounds,
-    children,
-    selectedTab,
-    changeTab,
-    clearError,
-    error,
-    isFetching,
-    lowConfidenceText,
-    mapMarkers,
-    noContentText,
-    selectedId,
-    close,
-  } = props;
+export const MainContentTabs = ({
+  bounds,
+  className,
+  close,
+  children,
+  changeTab,
+  clearError,
+  isFetching,
+  DetailsDialog,
+  error,
+  key,
+  lowConfidenceText,
+  mapMarkers,
+  noContentText,
+  selectedTab,
+  selectedId,
+}: MainContentTabsProps) => {
   const wrapperProps: MapProps & WithEmptyContentProps = {
     bounds,
+    hasContent: mapMarkers.result.length > 0,
+    key,
     lowConfidenceText,
     mapMarkers,
     noContentText,
-    hasContent: mapMarkers.result.length > 0,
   };
 
   const dialogProps: DetailsDialogProps = {

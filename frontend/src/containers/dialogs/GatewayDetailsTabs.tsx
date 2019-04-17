@@ -20,7 +20,7 @@ import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {uuid} from '../../types/Types';
-import {Map} from '../../usecases/map/components/Map';
+import {ResponsiveMap} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 import './GatewayDetailsTabs.scss';
@@ -77,10 +77,10 @@ const renderManufacturer = ({manufacturer}: Meter) => orUnknown(manufacturer);
 
 const renderMedium = ({medium}: Meter) => medium;
 
-const MapContent = ({gateway, gatewayMapMarker}: OwnProps) => (
-  <Map height={400} viewCenter={gateway.location.position}>
+const MapContent = ({gateway: {location: {position}, id}, gatewayMapMarker}: OwnProps) => (
+  <ResponsiveMap viewCenter={position} key={`gatewayDetails-${id}`}>
     {gatewayMapMarker.isJust() && <ClusterContainer markers={gatewayMapMarker.get()}/>}
-  </Map>
+  </ResponsiveMap>
 );
 
 type MapProps = OwnProps & WithEmptyContentProps;

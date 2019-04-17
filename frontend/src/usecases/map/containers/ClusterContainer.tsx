@@ -89,7 +89,7 @@ const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
     : null;
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   openClusterDialog,
 }, dispatch);
 
