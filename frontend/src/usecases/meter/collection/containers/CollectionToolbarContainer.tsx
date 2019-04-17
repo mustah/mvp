@@ -4,12 +4,10 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {changeCollectionToolbarView} from '../../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
-import {Callback, CallbackWith, ModelSectors} from '../../../../types/Types';
-import {
-  meterCollectionExportToExcel,
-  setCollectionTimePeriod
-} from '../../../collection/collectionActions';
+import {Callback, CallbackWith, Sectors} from '../../../../types/Types';
+import {setCollectionTimePeriod} from '../../../collection/collectionActions';
 import {CollectionToolbar} from '../../../collection/components/CollectionToolbar';
+import {exportToExcel} from '../meterCollectionActions';
 
 export interface StateToProps {
   hasCollectionStats: boolean;
@@ -39,9 +37,9 @@ const mapStateToProps = ({
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  changeToolbarView: changeCollectionToolbarView(ModelSectors.meterCollection),
-  exportToExcel: meterCollectionExportToExcel,
-  setCollectionTimePeriod: setCollectionTimePeriod(ModelSectors.meterCollection),
+  changeToolbarView: changeCollectionToolbarView(Sectors.meterCollection),
+  exportToExcel,
+  setCollectionTimePeriod: setCollectionTimePeriod(Sectors.meterCollection),
 }, dispatch);
 
 export const CollectionToolbarContainer =

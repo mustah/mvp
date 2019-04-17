@@ -3,7 +3,7 @@ import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
-import {Action, ErrorResponse, Identifiable, uuid, ActionKey, ModelSectors} from '../../types/Types';
+import {Action, ActionKey, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
 import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {MapMarker} from '../../usecases/map/mapModels';
@@ -25,7 +25,7 @@ import {
   domainModelsPostSuccess,
   domainModelsPutSuccess,
   domainModelsRequest,
-  } from './domainModelsActions';
+} from './domainModelsActions';
 import {Medium, MeterDefinition, Quantity} from './meter-definitions/meterDefinitionModels';
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
@@ -181,7 +181,7 @@ const resetMeterCollectionReducer = <T extends Identifiable>(
   action: ActionTypes<T>,
 ): NormalizedState<T> => {
   switch (action.type) {
-    case getType(setCollectionTimePeriod(ModelSectors.meterCollection)):
+    case getType(setCollectionTimePeriod(Sectors.meterCollection)):
     case getType(meterDetailMeasurementRequest):
       return initialDomain<T>();
     default:
@@ -245,13 +245,13 @@ export const userSelections = reducerFor<UserSelection>(
 
 export const collectionStats = reducerFor<CollectionStat>(
   'collectionStats',
-  ModelSectors.collection,
+  Sectors.collection,
   resetStateReducer
 );
 
 export const meterCollectionStats = reducerFor<CollectionStat>(
   'collectionStats',
-  ModelSectors.meterCollection,
+  Sectors.meterCollection,
   resetMeterCollectionReducer
 );
 

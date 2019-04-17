@@ -1,5 +1,5 @@
 import {getType} from 'typesafe-actions';
-import {Action, ModelSectors} from '../../../types/Types';
+import {Action, Sectors} from '../../../types/Types';
 import {ReportSector} from '../../report/reportModels';
 import {changeCollectionToolbarView, changeMeterMeasurementsToolbarView, changeToolbarView} from './toolbarActions';
 import {ToolbarState, ToolbarView} from './toolbarModels';
@@ -20,9 +20,9 @@ export const toolbar = (state: ToolbarState = initialState, action: ActionTypes)
       return {...state, measurement: {...state.measurement, view: action.payload}};
     case getType(changeToolbarView(ReportSector.selectionReport)):
       return {...state, selectionReport: {...state.measurement, view: action.payload}};
-    case getType(changeCollectionToolbarView(ModelSectors.collection)):
+    case getType(changeCollectionToolbarView(Sectors.collection)):
       return {...state, collection: {...state.collection, view: action.payload}};
-    case getType(changeCollectionToolbarView(ModelSectors.meterCollection)):
+    case getType(changeCollectionToolbarView(Sectors.meterCollection)):
       return {...state, meterCollection: {...state.meterCollection, view: action.payload}};
     case getType(changeMeterMeasurementsToolbarView):
       return {...state, meterMeasurement: {...state.meterMeasurement, view: action.payload}};

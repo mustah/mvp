@@ -1,7 +1,7 @@
 import {normalize, Schema, schema} from 'normalizr';
-import {NormalizedPaginated} from '../../domain-models-paginated/paginatedDomainModels';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
 import {DataFormatter} from '../../domain-models/domainModelsActions';
+import {NormalizedPaginated} from '../paginatedDomainModels';
 
 const collectionStatSchemaEntity = new schema.Entity('collectionStatFacilities', {});
 const collectionStatSchema: Schema = {content: [collectionStatSchemaEntity]};

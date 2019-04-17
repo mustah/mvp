@@ -7,21 +7,12 @@ import {
   collectionStatClearError,
   fetchCollectionStats
 } from '../../../state/domain-models/collection-stat/collectionStatActions';
-import {
-  CollectionStat,
-  FetchCollectionStats
-} from '../../../state/domain-models/collection-stat/collectionStatModels';
+import {CollectionStat, FetchCollectionStats} from '../../../state/domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {addAllToReport} from '../../../state/report/reportActions';
 import {LegendItem} from '../../../state/report/reportModels';
-import {
-  Callback,
-  CallbackWith, ModelSectors,
-  EncodedUriParameters,
-  ErrorResponse,
-  OnClick,
-} from '../../../types/Types';
+import {Callback, CallbackWith, EncodedUriParameters, ErrorResponse, OnClick, Sectors} from '../../../types/Types';
 import {exportToExcelSuccess} from '../collectionActions';
 import {getCollectionStatRequestParameters} from '../collectionSelectors';
 import {CollectionStatBarChart} from '../components/CollectionStatBarChart';
@@ -61,7 +52,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addAllToReport,
   clearError: collectionStatClearError,
-  exportToExcelSuccess: exportToExcelSuccess(ModelSectors.collection),
+  exportToExcelSuccess: exportToExcelSuccess(Sectors.collection),
   fetchCollectionStats,
 }, dispatch);
 

@@ -28,11 +28,12 @@ import {getPaginatedCollectionStatParameters} from '../../../state/user-selectio
 import {
   Callback,
   CallbackWith,
-  ClearErrorPaginated, ModelSectors,
+  ClearErrorPaginated,
   ComponentId,
   EncodedUriParameters,
   ErrorResponse,
   FetchPaginated,
+  Sectors,
   uuid
 } from '../../../types/Types';
 import {exportToExcelSuccess} from '../collectionActions';
@@ -97,7 +98,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changePage,
   clearError: collectionStatClearError,
-  exportToExcelSuccess: exportToExcelSuccess(ModelSectors.collection),
+  exportToExcelSuccess: exportToExcelSuccess(Sectors.collection),
   fetchCollectionStatsFacilityPaged,
   sortTable: sortTableCollectionStats,
 }, dispatch);

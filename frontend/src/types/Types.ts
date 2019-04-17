@@ -155,14 +155,11 @@ export const statusFor = (statusCode: uuid): Status =>
 
 export const toIdNamed = (id: string): IdNamed => ({id, name: id});
 
-export const enum ModelSectors {
+export const enum Sectors {
   collection = 'collection',
   meterCollection = 'meterCollection',
-}
-
-export type ActionKey = EndPoints | ModelSectors | PagedDomainModelsSectors;
-
-export const enum PagedDomainModelsSectors {
   collectionStatFacilities = 'collectionStatFacilities',
   meterCollectionStatFacilities = 'meterCollectionStatFacilities',
 }
+
+export type ActionKey = EndPoints | Sectors;

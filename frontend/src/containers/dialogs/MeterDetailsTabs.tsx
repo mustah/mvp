@@ -27,7 +27,7 @@ import {OnClickWith, OnClickWithId} from '../../types/Types';
 import {Map as MapComponent} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {MeterCollectionContentContainer} from '../../usecases/meter/collection/containers/MeterCollectionContentContainer';
+import {CollectionContentContainer} from '../../usecases/meter/collection/containers/CollectionContentContainer';
 
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
 import './MeterDetailsTabs.scss';
@@ -182,7 +182,7 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
             <MeterMeasurementsContentContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
           </TabContent>
           <TabContent tab={TabName.collection} selectedTab={selectedTab}>
-            <MeterCollectionContentContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
+            <CollectionContentContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Grid data={eventLog} scrollable="none">
