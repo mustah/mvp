@@ -11,17 +11,12 @@ export interface RetryProps {
   error: Maybe<ErrorResponse>;
 }
 
-export const Retry = ({clearError, error}: RetryProps) => {
-  if (error.isJust()) {
-    return (
-      <ColumnCenter className="Retry">
-        <RowCenter className="Retry-error-message">
-          {error.get().message}
-        </RowCenter>
-        <ButtonRetry onClick={clearError} className="ButtonRetry"/>
-      </ColumnCenter>
-    );
-  } else {
-    return null;
-  }
-};
+export const Retry = ({clearError, error}: RetryProps) =>
+  error.map(_ => (
+    <ColumnCenter className="Retry" key="retry">
+      <RowCenter className="Retry-error-message">
+        {error.get().message}
+      </RowCenter>
+      <ButtonRetry onClick={clearError} className="ButtonRetry"/>
+    </ColumnCenter>
+  )).getOrElseNull();

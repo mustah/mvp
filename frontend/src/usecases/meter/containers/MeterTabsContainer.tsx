@@ -32,6 +32,7 @@ const mapStateToProps =
       parameters: getMeterParameters({userSelection, query}),
       error: getError(meterMapMarkers),
       isFetching: meterMapMarkers.isFetching,
+      key: `meterTabs-${userSelection.id.toString()}`
     });
   };
 

@@ -4,6 +4,7 @@ import {DispatchToProps, StateToProps} from '../../../components/tabs/components
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {selectResolution} from '../../../state/report/reportActions';
 import {changeTabGateway} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
@@ -11,7 +12,6 @@ import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
-import {selectResolution} from '../../../state/report/reportActions';
 import {GatewayTabs} from '../components/GatewayTabs';
 
 const mapStateToProps =
@@ -32,6 +32,7 @@ const mapStateToProps =
       selectedId: getSelectedMapMarker(map),
       isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),
+      key: `gatewayTabs-${userSelection.id.toString()}`
     });
   };
 

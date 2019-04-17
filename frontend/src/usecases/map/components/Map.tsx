@@ -6,21 +6,23 @@ import * as React from 'react';
 import {Map as LeafletMap, MapProps, TileLayer} from 'react-leaflet';
 import {borderRadius} from '../../../app/themes';
 import {Column} from '../../../components/layouts/column/Column';
+import {useResizeWindow} from '../../../hooks/resizeWindowHook';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
-import {Children} from '../../../types/Types';
+import {WithChildren} from '../../../types/Types';
 import {useFallbackTilesUrl} from '../helper/fallbackTilesUrlHook';
 import {maxZoom} from '../helper/mapHelper';
 import {Bounds} from '../mapModels';
 import {LowConfidenceInfo} from './LowConfidenceInfo';
 import './Map.scss';
 
-interface Props {
+interface Props extends WithChildren {
+  bounds?: Bounds;
   height?: number;
   width?: number;
-  viewCenter?: GeoPosition;
-  children?: Children;
+  paddingBottom?: number;
   lowConfidenceText?: string;
-  bounds?: Bounds;
+  viewCenter?: GeoPosition;
+  key?: string;
 }
 
 const toggleScrollWheelZoom = ({target}: LeafletMouseEvent): void => {
@@ -33,6 +35,15 @@ const toggleScrollWheelZoom = ({target}: LeafletMouseEvent): void => {
 
 const defaultCenter: LatLngTuple = [62.3919741, 15.0685715];
 const defaultBoundOptions: FitBoundsOptions = {padding: [100, 100]};
+
+const minHeight = 504;
+
+export const ResponsiveMap = (props: Props) => {
+  const {height: innerHeight} = useResizeWindow();
+  const paddingBottom = props.paddingBottom || minHeight;
+  const height = innerHeight - paddingBottom;
+  return <Map height={height <= minHeight ? minHeight : height} {...props}/>;
+};
 
 export const Map = ({
   height,

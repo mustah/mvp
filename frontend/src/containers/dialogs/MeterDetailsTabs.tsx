@@ -24,7 +24,7 @@ import {MeterDetails} from '../../state/domain-models/meter-details/meterDetails
 import {LegendItem} from '../../state/report/reportModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {OnClickWith, OnClickWithId} from '../../types/Types';
-import {Map as MapComponent} from '../../usecases/map/components/Map';
+import {ResponsiveMap} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {CollectionContentContainer} from '../../usecases/meter/collection/containers/CollectionContentContainer';
@@ -66,10 +66,10 @@ const renderStatus = ({dataItem: {status: {name}}}) => <td><Status label={name}/
 const renderStatusChange = ({dataItem: {statusChanged}}) =>
   <td><WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/></td>;
 
-const MapContent = ({meter, meterMapMarker}: MapProps) => (
-  <MapComponent height={400} viewCenter={meter.location.position}>
+const MapContent = ({meter: {location: {position}, id}, meterMapMarker}: MapProps) => (
+  <ResponsiveMap viewCenter={position} key={`meterDetails-${id}`}>
     {meterMapMarker.isJust() && <ClusterContainer markers={meterMapMarker.get()}/>}
-  </MapComponent>
+  </ResponsiveMap>
 );
 
 const ExtraInfo = ({dataItem: {extraInfo}}: GridDetailRowProps) => {

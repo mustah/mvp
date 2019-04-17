@@ -17,10 +17,9 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import {ColumnCenter} from '../../../../components/layouts/column/Column';
+import {ResponsiveContentHeight} from '../../../../components/resize/ResponsiveContentHeight';
 import {TimestampInfoMessage} from '../../../../components/timestamp-info-message/TimestampInfoMessage';
 import {shortTimestamp} from '../../../../helpers/dateHelpers';
-import {useResizeWindow} from '../../../../hooks/resizeWindowHook';
 import {AxesProps, LineProps} from '../../../../state/report/reportModels';
 import {Children, OnClickEventHandler, uuid} from '../../../../types/Types';
 import {ActiveDotReChartProps} from './ActiveDot';
@@ -80,14 +79,12 @@ export const LineChart =
     renderTooltipContent,
     setTooltipPayload,
   }: LineChartProps) => {
-    const {resized, height} = useResizeWindow();
-
     const {axes: {left, right}} = linesProps;
     const leftLabel: LabelProps = {value: left, position: 'insideLeft', angle: -90, dx: 10};
     const rightLabel: LabelProps = {value: right, position: 'insideRight', angle: 90, dy: -10};
 
     return (
-      <ColumnCenter className="align-items" style={{height: height - 260}} key={`${key}-${resized}`}>
+      <ResponsiveContentHeight className="align-items" key={key}>
         <ResponsiveContainer width="95%" height="99%">
           <ReChartLineChart
             width={10}
@@ -113,6 +110,6 @@ export const LineChart =
           </ReChartLineChart>
         </ResponsiveContainer>
         <TimestampInfoMessage/>
-      </ColumnCenter>
+      </ResponsiveContentHeight>
     );
   };
