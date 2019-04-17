@@ -15,6 +15,7 @@ import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from 
 import {showFailMessage} from '../ui/message/messageActions';
 import {
   initialSelectionId,
+  isEmptyThreshold,
   isValidThreshold,
   OldSelectionParameters,
   ParameterName,
@@ -38,22 +39,22 @@ export const selectSavedSelectionAction = createStandardAction('SELECT_SAVED_SEL
 
 export const setThreshold = createStandardAction('SET_THRESHOLD')<ThresholdQuery>();
 
-export const onChangeThreshold =
-  (threshold: ThresholdQuery | undefined) =>
-    (dispatch, getState: GetState) => {
-      const state: RootState = getState();
-      const oldThreshold = getThreshold(state.userSelection);
+export const onChangeThreshold = (threshold?: ThresholdQuery) =>
+  (dispatch, getState: GetState) => {
+    const {userSelection}: RootState = getState();
+    const oldThreshold = getThreshold(userSelection);
 
-      const isOldValid = isValidThreshold(oldThreshold);
-      const isNewValid = isValidThreshold(threshold);
-      if (
-        (!isOldValid && isNewValid) ||
-        (isOldValid && threshold === undefined) ||
-        (isOldValid && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
-      ) {
-        dispatch(setThreshold(threshold!));
-      }
-    };
+    const isOldValid = isValidThreshold(oldThreshold);
+    const isNewValid = isValidThreshold(threshold);
+    if (
+      (isEmptyThreshold(threshold)) ||
+      (!isOldValid && isNewValid) ||
+      (isOldValid && threshold === undefined) ||
+      (isOldValid && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
+    ) {
+      dispatch(setThreshold(threshold!));
+    }
+  };
 
 export const clearUserSelectionErrors = clearError(EndPoints.userSelections);
 

@@ -25,6 +25,7 @@ import {
   toggleParameter,
 } from '../userSelectionActions';
 import {
+  emptyThreshold,
   initialSelectionId,
   OldSelectionParameters,
   ParameterName,
@@ -440,21 +441,22 @@ describe('userSelectionActions', () => {
       [8, incomplete, ok, triggersChange],
       [9, incomplete, anotherIncomplete, skipsAction],
       [10, incomplete, empty, skipsAction],
+      [11, empty, emptyThreshold, triggersChange],
+      [12, ok, emptyThreshold, triggersChange],
+      [13, incomplete, emptyThreshold, triggersChange],
     ];
 
     test.each(testCases)(
       'test #%i: old state of %p and action of (%p) triggers? %p',
       (_, currentThresholdQuery, newThreshold, shouldTriggerAction) => {
-        const currentState: UserSelectionState = userSelectionStateFromThreshold(currentThresholdQuery);
-        store = configureMockStore({...rootStateNoSaved, userSelection: currentState});
+        store = configureMockStore({
+          ...rootStateNoSaved,
+          userSelection: userSelectionStateFromThreshold(currentThresholdQuery)
+        });
 
         store.dispatch(onChangeThreshold(newThreshold));
 
-        expect(store.getActions()).toEqual(
-          shouldTriggerAction
-            ? [setThreshold(newThreshold)]
-            : []
-        );
+        expect(store.getActions()).toEqual(shouldTriggerAction ? [setThreshold(newThreshold)] : []);
       }
     );
   });

@@ -18,6 +18,12 @@ export const initialState: TemporalReportState = {
   timePeriod: {period: Period.latest},
 };
 
+const fromThreshold = (state: TemporalReportState, threshold?: ThresholdQuery): TemporalReportState =>
+  Maybe.maybe(threshold)
+    .filter(it => it.value !== '')
+    .map(({dateRange: timePeriod}) => ({...state, timePeriod}))
+    .orElse(initialState);
+
 export const temporalReducerFor = (sector: ReportSector) =>
   (state: TemporalReportState = initialState, action: ActionTypes): TemporalReportState => {
     switch (action.type) {
@@ -28,15 +34,9 @@ export const temporalReducerFor = (sector: ReportSector) =>
       case getType(toggleComparePeriod(sector)):
         return {...state, shouldComparePeriod: !state.shouldComparePeriod};
       case getType(selectSavedSelectionAction):
-        const threshold = (action as Action<UserSelection>).payload.selectionParameters.threshold;
-        return Maybe.maybe(threshold)
-          .map(({dateRange: timePeriod}) => ({...state, timePeriod}))
-          .orElse({...state, timePeriod: initialState.timePeriod});
+        return fromThreshold(state, (action as Action<UserSelection>).payload.selectionParameters.threshold);
       case getType(setThreshold):
-        return {
-          ...state,
-          timePeriod: (action as Action<ThresholdQuery>).payload.dateRange
-        };
+        return fromThreshold(state, (action as Action<ThresholdQuery>).payload);
       case getType(logoutUser):
         return initialState;
       default:

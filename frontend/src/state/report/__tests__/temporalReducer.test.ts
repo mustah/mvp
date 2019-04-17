@@ -3,7 +3,7 @@ import {Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {selectPeriod, selectSavedSelectionAction, setThreshold} from '../../user-selection/userSelectionActions';
 import {SelectionInterval, ThresholdQuery, UserSelection} from '../../user-selection/userSelectionModels';
-import {initialState as userSelecectionState} from '../../user-selection/userSelectionReducer';
+import {initialState as userSelectionState} from '../../user-selection/userSelectionReducer';
 import {addLegendItems, selectResolution, setReportTimePeriod, toggleComparePeriod} from '../reportActions';
 import {LegendItem, ReportSector, TemporalReportState} from '../reportModels';
 import {initialState, temporalReducerFor} from '../temporalReducer';
@@ -89,13 +89,19 @@ describe('temporal', () => {
       dateRange: {period: Period.currentWeek},
     };
 
-    const userSelection: UserSelection = userSelecectionState.userSelection;
+    const userSelection: UserSelection = userSelectionState.userSelection;
 
     describe('setThreshold', () => {
 
       it('will set time period from threshold payload', () => {
         const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.currentWeek}};
         expect(temporal(initialState, setThreshold(thresholdQuery))).toEqual(expected);
+      });
+
+      it('will reset to initial state when threshold is cleared', () => {
+        const emptyThresholdQuery: ThresholdQuery = {...thresholdQuery, value: ''};
+
+        expect(temporal(initialState, setThreshold(emptyThresholdQuery))).toEqual(initialState);
       });
     });
 
@@ -120,6 +126,20 @@ describe('temporal', () => {
         const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.latest}};
 
         expect(temporal(state, selectSavedSelectionAction(userSelection))).toEqual(expected);
+      });
+
+      it('will reset to initial state when threshold is cleared', () => {
+        const emptyThresholdQuery: ThresholdQuery = {...thresholdQuery, value: ''};
+
+        const payload: UserSelection = {
+          ...userSelection,
+          selectionParameters: {
+            ...userSelection.selectionParameters,
+            threshold: emptyThresholdQuery
+          }
+        };
+
+        expect(temporal(initialState, selectSavedSelectionAction(payload))).toEqual(initialState);
       });
     });
   });

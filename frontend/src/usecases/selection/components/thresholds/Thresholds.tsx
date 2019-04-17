@@ -16,9 +16,11 @@ import {
   unitPerHour
 } from '../../../../state/ui/graph/measurement/measurementModels';
 import {
+  defaultDateRange,
+  emptyThreshold,
   RelationalOperator,
-  SelectionInterval,
-  ThresholdQuery
+  ThresholdQuery,
+  ThresholdQueryProps
 } from '../../../../state/user-selection/userSelectionModels';
 import {CallbackWith, ClassNamed, Styled} from '../../../../types/Types';
 import {DropDownMenu} from './DropDownMenu';
@@ -56,32 +58,27 @@ const quantityMenuItems = Object.keys(Quantity)
   .map(key => Quantity[key])
   .map(makeMenuItem);
 
-const defaultDateRange: SelectionInterval = {period: Period.latest};
-
-const emptyQuery: RenderableThresholdQuery = {
-  value: '',
-  dateRange: defaultDateRange
-};
-
 interface ThresholdProps {
   query?: ThresholdQuery;
   onChange: CallbackWith<ThresholdQuery>;
 }
 
-type RenderableThresholdQuery = Partial<ThresholdQuery>;
-
 type Props = ThresholdProps & ClassNamed & Styled;
 
-const thresholdQueryIsModified = (query: RenderableThresholdQuery) =>
-  query.duration || query.quantity || query.relationalOperator || query.unit || query.value !== ''
+const thresholdQueryIsModified = (query: ThresholdQueryProps) =>
+  query.duration
+  || query.quantity
+  || query.relationalOperator
+  || query.unit
+  || query.value !== ''
   || query.dateRange !== defaultDateRange;
 
 const useChangeQuery = (
-  initialQuery: RenderableThresholdQuery,
+  initialQuery: ThresholdQueryProps,
   onChange: CallbackWith<ThresholdQuery>
-): [RenderableThresholdQuery, CallbackWith<RenderableThresholdQuery>] => {
-  const [value, updateProperty] = React.useState<RenderableThresholdQuery>(initialQuery);
-  const onChangeThresholdQuery = (query: RenderableThresholdQuery) => {
+): [ThresholdQueryProps, CallbackWith<ThresholdQueryProps>] => {
+  const [value, updateProperty] = React.useState<ThresholdQueryProps>(initialQuery);
+  const onChangeThresholdQuery = (query: ThresholdQueryProps) => {
     onChange(query as ThresholdQuery);
     updateProperty(query);
   };
@@ -89,7 +86,7 @@ const useChangeQuery = (
 };
 
 export const Thresholds = ({query, onChange, className}: Props) => {
-  const [currentQuery, setQuery] = useChangeQuery(query || emptyQuery, onChange);
+  const [currentQuery, setQuery] = useChangeQuery(query || emptyThreshold, onChange);
   const {quantity, relationalOperator, value, unit, duration, dateRange} = currentQuery;
   const decoratedUnit = unitPerHour(quantity, unit);
   const durationOrNull: string | null = duration || null;
@@ -120,7 +117,7 @@ export const Thresholds = ({query, onChange, className}: Props) => {
       )
   ];
 
-  const clearThreshold = () => setQuery({...emptyQuery});
+  const clearThreshold = () => setQuery({...emptyThreshold});
 
   const clearThresholdButton = thresholdQueryIsModified(currentQuery)
     ? (
