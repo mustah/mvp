@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @Transactional
 public class GatewaysTest extends IntegrationTest {
@@ -50,5 +51,27 @@ public class GatewaysTest extends IntegrationTest {
     assertThat(found.statusLogs).hasSize(1);
     assertThat(found.statusLogs).extracting("start").containsOnly(start);
     assertThat(found.statusLogs).extracting("status").containsOnly(StatusType.ERROR);
+  }
+
+  @Test
+  public void findGatewayBySerialIgnoreCase() {
+    var gatewayId = randomUUID();
+    var gatewaySerial = "F612A3";
+    gateways.save(Gateway.builder()
+      .id(gatewayId)
+      .organisationId(context().organisationId())
+      .serial(gatewaySerial)
+      .productModel("")
+      .build());
+
+    assertThat(gateways.findById(gatewayId))
+      .isPresent()
+      .get().extracting(g -> g.id, g -> g.serial)
+      .contains(gatewayId, gatewaySerial);
+
+    assertThat(gateways.findBy(gatewaySerial.toLowerCase()))
+      .hasSize(1)
+      .extracting(g -> g.id, g -> g.serial)
+      .containsExactly(tuple(gatewayId, gatewaySerial));
   }
 }
