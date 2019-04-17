@@ -167,18 +167,22 @@ public interface ContextDsl {
   }
 
   default OrganisationBuilder subOrganisation() {
+    return subOrganisation(context().organisation, context().superAdmin);
+  }
+
+  default OrganisationBuilder subOrganisation(Organisation parent, User owner) {
     UUID orgId = randomUUID();
     OrganisationBuilder organisationBuilder = context().organisation().id(orgId);
 
     UserSelection userSelection = UserSelection.builder()
       .id(randomUUID())
-      .ownerUserId(context().superAdmin.id)
-      .organisationId(context().organisationId())
+      .ownerUserId(owner.id)
+      .organisationId(parent.id)
       .selectionParameters(toJsonNode("{}"))
       .name("user-selection for sub-organisation " + orgId.toString())
       .build();
 
-    return organisationBuilder.parent(context().defaultOrganisation())
+    return organisationBuilder.parent(parent)
       .selection(userSelection);
   }
 

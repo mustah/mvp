@@ -9,7 +9,7 @@ import {makeUrl} from '../../../helpers/urlFactory';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../services/endPoints';
 import {restClient, restClientWith} from '../../../services/restClient';
-import {EncodedUriParameters, ErrorResponse} from '../../../types/Types';
+import {EncodedUriParameters, ErrorResponse, Sectors} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
 import {makeActionsOf, requestTimeout} from '../../api/apiActions';
@@ -31,7 +31,7 @@ describe('summaryApiActions', () => {
   let mockRestClient;
   const configureMockStore = configureStore([thunk]);
 
-  const actions = makeActionsOf<SelectionSummary>(EndPoints.summary);
+  const actions = makeActionsOf<SelectionSummary>(Sectors.summary);
 
   beforeEach(() => {
     restClientWith('someToken');

@@ -37,6 +37,13 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
+  public List<Organisation> findOrganisationAndSubOrganisations(UUID organisationId) {
+    return organisationJpaRepository.findOrganisationAndSubOrganisations(organisationId).stream()
+      .map(OrganisationEntityMapper::toDomainModel)
+      .collect(toList());
+  }
+
+  @Override
   public List<Organisation> findAllSubOrganisations(UUID organisationId) {
     return organisationJpaRepository.findAllSubOrganisations(organisationId).stream()
       .map(OrganisationEntityMapper::toDomainModel)

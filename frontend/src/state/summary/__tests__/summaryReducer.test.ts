@@ -2,6 +2,7 @@ import {Location} from 'history';
 import {getType} from 'typesafe-actions';
 import {routes} from '../../../app/routes';
 import {EndPoints} from '../../../services/endPoints';
+import {Sectors} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
@@ -21,7 +22,7 @@ import {initialState, summary} from '../summaryReducer';
 describe('summaryReducer', () => {
 
   const actions: RequestHandler<SelectionSummary> =
-    makeActionsOf<SelectionSummary>(EndPoints.summary);
+    makeActionsOf<SelectionSummary>(Sectors.summary);
 
   describe('unknown action type', () => {
 

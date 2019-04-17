@@ -72,9 +72,16 @@ class OrganisationJooqJpaRepository
   }
 
   @Override
-  public List<OrganisationEntity> findAllSubOrganisations(UUID organisationId) {
+  public List<OrganisationEntity> findOrganisationAndSubOrganisations(UUID organisationId) {
     return nativeQuery(selectNativeOrganisation().where(
       ORGANISATION.ID.equal(organisationId).or(ORGANISATION.PARENT_ID.equal(organisationId))
+    ));
+  }
+
+  @Override
+  public List<OrganisationEntity> findAllSubOrganisations(UUID organisationId) {
+    return nativeQuery(selectNativeOrganisation().where(
+      ORGANISATION.PARENT_ID.equal(organisationId)
     ));
   }
 

@@ -14,7 +14,7 @@ import {ReportState} from '../state/report/reportModels';
 import {report, selectionReport} from '../state/report/reportReducer';
 import {search, SearchState} from '../state/search/searchReducer';
 import {SummaryState} from '../state/summary/summaryModels';
-import {summary} from '../state/summary/summaryReducer';
+import {organisationSummary, summary} from '../state/summary/summaryReducer';
 import {MeasurementState} from '../state/ui/graph/measurement/measurementModels';
 import {measurement, selectionMeasurement} from '../state/ui/graph/measurement/measurementReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
@@ -45,6 +45,7 @@ export interface RootState {
   selectionMeasurement: MeasurementState;
   search: SearchState;
   summary: SummaryState;
+  organisationSummary: SummaryState;
   report: ReportState;
   routing: RouterState;
   ui: UiState;
@@ -89,6 +90,7 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     language,
     userSelection,
     summary,
+    organisationSummary,
     ui,
     map,
     search,

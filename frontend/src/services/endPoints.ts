@@ -20,6 +20,7 @@ export const enum EndPoints {
   measurements = '/measurements',
   measurementsAverage = '/measurements/average',
   organisations = '/organisations',
+  subOrganisations = '/organisations/sub-organisations',
   dashboard = '/dashboards',
   userSelections = '/user/selections',
   users = '/users',

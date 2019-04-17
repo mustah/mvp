@@ -4,13 +4,20 @@ import {routes} from '../../../app/routes';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {CallbackWithData, CallbackWithDataAndUrlParameters, ErrorResponse, uuid} from '../../../types/Types';
+import {
+  CallbackWithData,
+  CallbackWithDataAndUrlParameters, emptyActionOf,
+  ErrorResponse,
+  Sectors,
+  uuid
+} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {
   clearError,
-  deleteRequest,
+  deleteRequest, domainModelsClear,
   fetchEntityIfNeeded,
   fetchIfNeeded,
+  fetchIfNeededForSector,
   postRequest,
   postRequestToUrl,
   putRequest
@@ -25,6 +32,15 @@ export const fetchOrganisations = fetchIfNeeded<Organisation>(
   'organisations',
   organisationsDataFormatter,
 );
+
+export const fetchSubOrganisations = fetchIfNeededForSector<Organisation>(
+  Sectors.subOrganisations,
+  EndPoints.subOrganisations,
+  'subOrganisations',
+  organisationsDataFormatter,
+);
+
+export const clearSubOrganisations = emptyActionOf(domainModelsClear(Sectors.subOrganisations));
 
 export const fetchOrganisation = fetchEntityIfNeeded(EndPoints.organisations, 'organisations');
 
