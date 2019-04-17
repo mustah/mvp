@@ -1,6 +1,9 @@
 package com.elvaco.mvp.testdata;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
@@ -66,6 +69,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public abstract class IntegrationTest implements ContextDsl {
 
   private static final long MAX_WAIT_TIME = TimeUnit.SECONDS.toNanos(15);
+
+  private static final Map<String, Integer> USED_CONTEXT_NAMES = new HashMap<>();
 
   @Autowired
   protected MvpProperties mvpProperties;
@@ -189,7 +194,7 @@ public abstract class IntegrationTest implements ContextDsl {
   @Override
   public IntegrationTestFixtureContext context() {
     if (context == null) {
-      context = newContext(getCallerClassName());
+      context = newContext(getCallingTestCaseName());
     }
     return context;
   }
@@ -318,8 +323,22 @@ public abstract class IntegrationTest implements ContextDsl {
     userSelectionJpaRepository.deleteAll();
   }
 
-  private String getCallerClassName() {
-    return Thread.currentThread().getStackTrace()[3].getClassName();
+  private String getCallingTestCaseName() {
+    return
+      Arrays.stream(Thread.currentThread().getStackTrace())
+        .filter(ste -> ste.getClassName().endsWith("Test"))
+        .filter(ste -> ste.getClassName().equalsIgnoreCase(this.getClass().getName()))
+        .findFirst()
+        .map(ste -> testCaseToContextName(ste.getClassName(), ste.getMethodName()))
+        .orElse("UnknownTestSuite");
+  }
+
+  private String testCaseToContextName(String className, String methodName) {
+    String contextNamePrefix = className + "-" + methodName;
+    return contextNamePrefix + "-" + USED_CONTEXT_NAMES.compute(
+      contextNamePrefix,
+      (k, v) -> v == null ? 1 : v + 1
+    );
   }
 
   private IntegrationTestFixtureContext newContext(String identifier) {
