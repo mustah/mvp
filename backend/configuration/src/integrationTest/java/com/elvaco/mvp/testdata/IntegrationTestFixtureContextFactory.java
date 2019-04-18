@@ -45,7 +45,7 @@ class IntegrationTestFixtureContextFactory {
   @Transactional
   public IntegrationTestFixtureContext create(String callSiteIdentifier) {
     var contextId = randomUUID();
-    var name = callSiteIdentifier + contextId.toString() + "-organisation";
+    var name = callSiteIdentifier + "-organisation";
     var organisation = organisations.save(Organisation.of(name, contextId));
 
     User user = new UserBuilder()

@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.entity.meter;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -35,9 +36,10 @@ public class MeterDefinitionEntity extends IdentifiableType<Long> {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "organisation_id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "organisation_id")
   @Audited(modifiedColumnName = "organisation_id_mod")
+  @Nullable
   public OrganisationEntity organisation;
 
   @OneToMany(
