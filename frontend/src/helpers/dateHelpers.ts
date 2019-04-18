@@ -137,7 +137,7 @@ export const shortTimestamp = (input: moment.MomentInput): string =>
 export const shortDate = (input: moment.MomentInput): string =>
   displayDate(input, 'MMM D');
 
-export const diplayDateNoHours = (input: moment.MomentInput): string =>
+export const displayDateNoHours = (input: moment.MomentInput): string =>
   displayDate(input, yyyymmdd);
 
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>

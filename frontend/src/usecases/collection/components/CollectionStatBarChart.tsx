@@ -9,7 +9,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Bold, Normal} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
-import {diplayDateNoHours, shortDate} from '../../../helpers/dateHelpers';
+import {displayDateNoHours, shortDate} from '../../../helpers/dateHelpers';
 import {formatPercentage} from '../../../helpers/formatters';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
@@ -40,7 +40,7 @@ const CustomizedTooltip = (props) => {
       <Paper style={{...paperStyle, ...style}}>
         <Column>
           <Row>
-            <Normal style={{marginRight: 4}}>{diplayDateNoHours(id * 1000)}:</Normal>
+            <Normal style={{marginRight: 4}}>{displayDateNoHours(id * 1000)}:</Normal>
             <Bold>{formatPercentage(collectionPercentage)}</Bold>
           </Row>
         </Column>
@@ -50,7 +50,7 @@ const CustomizedTooltip = (props) => {
   return null;
 };
 
-const WrappableCollectionStatBarChart = ({data}: CollectionStatData) =>
+const CollectionStatBarChartComponent = ({data}: CollectionStatData) =>
   (
     <ColumnCenter className="align-items">
       <ResponsiveContainer aspect={2.5} width="95%" height="99%">
@@ -87,7 +87,7 @@ const WrappableCollectionStatBarChart = ({data}: CollectionStatData) =>
   );
 
 const WrappedCollectionStatBarChart =
-  withEmptyContent<CollectionStatData & WithEmptyContentProps>(WrappableCollectionStatBarChart);
+  withEmptyContent<CollectionStatData & WithEmptyContentProps>(CollectionStatBarChartComponent);
 
 type Props = StateToProps & DispatchToProps;
 
