@@ -4,13 +4,11 @@ import {resetReducer} from '../../../reducers/resetReducer';
 import {locationChange} from '../../../state/location/locationActions';
 import {MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
 import {initialState} from '../../../state/ui/graph/measurement/measurementReducer';
-import {openDialog} from '../../map/mapActions';
 import {setMeterDetailsTimePeriod} from './meterDetailActions';
 import * as actions from './meterDetailMeasurementActions';
 
 type ActionTypes = ActionType<typeof actions
   | typeof setMeterDetailsTimePeriod
-  | typeof openDialog
   | typeof locationChange>;
 
 export const meterDetailMeasurement = (
@@ -41,7 +39,6 @@ export const meterDetailMeasurement = (
       return {...state, isExportingToExcel: true};
     case getType(actions.meterDetailExportToExcelSuccess):
       return {...state, isExportingToExcel: false};
-    case getType(openDialog):
     case getType(setMeterDetailsTimePeriod):
       return initialState;
     case getType(locationChange):

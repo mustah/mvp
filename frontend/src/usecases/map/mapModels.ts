@@ -1,9 +1,18 @@
 import {Icon, LatLngTuple, MarkerOptions} from 'leaflet';
 import {Maybe} from '../../helpers/Maybe';
-import {DomainModel} from '../../state/domain-models/domainModels';
 import {GeoPosition} from '../../state/domain-models/location/locationModels';
 import {SelectedTab} from '../../state/ui/tabs/tabsModels';
-import {Dictionary, EncodedUriParameters, Fetch, Identifiable, Status, uuid} from '../../types/Types';
+import {
+  CallbackWith,
+  Dictionary,
+  EncodedUriParameters,
+  Fetch,
+  Id,
+  Identifiable,
+  Status,
+  uuid,
+  WithChildren
+} from '../../types/Types';
 
 export type IdentifiablePosition = Identifiable & GeoPosition;
 
@@ -38,9 +47,28 @@ export interface SelectedId {
   selectedId: Maybe<uuid>;
 }
 
-export interface MapProps {
+export interface MapMarkers {
+  mapMarkers: Dictionary<MapMarker> | MapMarker;
+}
+
+export interface MapZoomSettings {
+  readonly center: GeoPosition;
+  readonly zoom: number;
+}
+
+export type MapZoomSettingsPayload = MapZoomSettings & Id;
+
+export interface OnCenterMapEvent {
+  onCenterMap: CallbackWith<MapZoomSettingsPayload>;
+}
+
+export interface MapComponentProps extends WithChildren, Partial<MapZoomSettings>, Id {
   bounds?: Bounds;
+  height?: number;
   key?: string;
   lowConfidenceText?: string;
-  mapMarkers: DomainModel<MapMarker>;
+  paddingBottom?: number;
+  width?: number;
 }
+
+export type MapProps = MapComponentProps & MapMarkers & OnCenterMapEvent;

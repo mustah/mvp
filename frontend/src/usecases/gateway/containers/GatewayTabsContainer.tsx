@@ -8,44 +8,41 @@ import {selectResolution} from '../../../state/report/reportActions';
 import {changeTabGateway} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
-import {closeClusterDialog} from '../../map/mapActions';
+import {onCenterMap} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
-import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
+import {getBounds, getGatewayLowConfidenceTextInfo, getMapZoomSettings} from '../../map/mapSelectors';
 import {GatewayTabs} from '../components/GatewayTabs';
 
 const mapStateToProps =
   (rootState: RootState): StateToProps => {
     const {
-      ui: {tabs},
-      map,
       domainModels: {gatewayMapMarkers},
+      map,
+      ui: {tabs},
       userSelection: {userSelection},
     }: RootState = rootState;
     return ({
       bounds: getBounds(gatewayMapMarkers),
-      lowConfidenceText: getGatewayLowConfidenceTextInfo(rootState),
-      noContentText: firstUpperTranslated('no gateways'),
-      selectedTab: getSelectedTab(tabs.collection),
-      mapMarkers: getDomainModel(gatewayMapMarkers),
-      parameters: getGatewayParameters({userSelection}),
-      selectedId: getSelectedMapMarker(map),
-      isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),
-      key: `gatewayTabs-${userSelection.id.toString()}`
+      id: userSelection.id,
+      isFetching: gatewayMapMarkers.isFetching,
+      key: `gatewayTabs-${userSelection.id}`,
+      lowConfidenceText: getGatewayLowConfidenceTextInfo(rootState),
+      mapMarkers: getDomainModel(gatewayMapMarkers),
+      noContentText: firstUpperTranslated('no gateways'),
+      parameters: getGatewayParameters({userSelection}),
+      selectedTab: getSelectedTab(tabs.collection),
+      ...getMapZoomSettings(userSelection.id)(map),
     });
   };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabGateway,
   clearError: clearErrorGatewayMapMarkers,
-  close: closeClusterDialog,
   fetchMapMarkers: fetchGatewayMapMarkers,
+  onCenterMap,
   selectResolution,
 }, dispatch);
 
 export const GatewayTabsContainer =
-  connect<StateToProps, DispatchToProps>(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(withMapMarkersFetcher(GatewayTabs));
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(GatewayTabs);

@@ -1,14 +1,9 @@
 import * as React from 'react';
-import {GatewayDetailsDialog} from '../../../components/dialog/DetailsDialog';
-import {
-  MainContentTabs,
-  MainContentTabsProps,
-} from '../../../components/tabs/components/MainContentTabs';
+import {MainContentTabs, MainContentTabsProps} from '../../../components/tabs/components/MainContentTabs';
 import {GatewayListContainer} from '../containers/GatewayListContainer';
 
-export const GatewayTabs = (props: MainContentTabsProps) =>
-  (
-    <MainContentTabs {...props} DetailsDialog={GatewayDetailsDialog}>
-      <GatewayListContainer componentId="collectionGatewayList"/>
-    </MainContentTabs>
-  );
+export const GatewayTabs = (props: MainContentTabsProps) => (
+  <MainContentTabs {...props}>
+    <GatewayListContainer componentId="collectionGatewayList"/>
+  </MainContentTabs>
+);

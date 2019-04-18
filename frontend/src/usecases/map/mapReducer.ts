@@ -1,44 +1,31 @@
-import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
-import {GeoPosition} from '../../state/domain-models/location/locationModels';
-import {Action, uuid} from '../../types/Types';
+import {ActionType, getType} from 'typesafe-actions';
+import {resetSelection, selectSavedSelectionAction} from '../../state/user-selection/userSelectionActions';
+import {Dictionary} from '../../types/Types';
 import {logoutUser} from '../auth/authActions';
-import {centerMap, closeClusterDialog, openDialog} from './mapActions';
+import {onCenterMap} from './mapActions';
+import {MapZoomSettings} from './mapModels';
 
-export interface MapState {
-  isClusterDialogOpen: boolean;
-  selectedMarker?: uuid;
-  viewCenter?: GeoPosition;
-}
+export const defaultZoomLevel = 7;
 
-export const initialState: MapState = {
-  isClusterDialogOpen: false,
-};
+export type MapState = Dictionary<MapZoomSettings>;
 
-type ActionTypes = Action<uuid | GeoPosition> | EmptyAction<string>;
+export const initialState: MapState = {};
+
+type ActionTypes = ActionType<typeof onCenterMap
+  | typeof logoutUser
+  | typeof selectSavedSelectionAction
+  | typeof resetSelection>;
 
 export const map = (
   state: MapState = initialState,
   action: ActionTypes,
 ): MapState => {
   switch (action.type) {
-    case getType(closeClusterDialog):
-      return {
-        ...state,
-        isClusterDialogOpen: false,
-        selectedMarker: undefined,
-      };
-    case getType(openDialog):
-      return {
-        ...state,
-        isClusterDialogOpen: true,
-        selectedMarker: (action as Action<uuid>).payload,
-      };
-    case getType(centerMap):
-      return {
-        ...state,
-        viewCenter: (action as Action<GeoPosition>).payload,
-      };
+    case getType(onCenterMap):
+      const {center, id, zoom} = action.payload;
+      return {...state, [id]: {center, zoom}};
+    case getType(selectSavedSelectionAction):
+    case getType(resetSelection):
     case getType(logoutUser):
       return initialState;
     default:

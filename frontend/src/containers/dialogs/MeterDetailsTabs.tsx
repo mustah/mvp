@@ -25,8 +25,8 @@ import {LegendItem} from '../../state/report/reportModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {OnClickWith, OnClickWithId} from '../../types/Types';
 import {ResponsiveMap} from '../../usecases/map/components/Map';
-import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {MapMarker} from '../../usecases/map/mapModels';
+import {MarkerCluster} from '../../usecases/map/components/MarkerCluster';
+import {MapMarker, OnCenterMapEvent} from '../../usecases/map/mapModels';
 import {CollectionContentContainer} from '../../usecases/meter/collection/containers/CollectionContentContainer';
 
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
@@ -40,7 +40,7 @@ interface MeterGatewayProps {
   gateways: GatewayMandatory[];
 }
 
-interface MapProps {
+interface MapProps extends OnCenterMapEvent {
   meter: MeterDetails;
   meterMapMarker: Maybe<MapMarker>;
 }
@@ -66,9 +66,9 @@ const renderStatus = ({dataItem: {status: {name}}}) => <td><Status label={name}/
 const renderStatusChange = ({dataItem: {statusChanged}}) =>
   <td><WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/></td>;
 
-const MapContent = ({meter: {location: {position}, id}, meterMapMarker}: MapProps) => (
-  <ResponsiveMap viewCenter={position} key={`meterDetails-${id}`}>
-    {meterMapMarker.isJust() && <ClusterContainer markers={meterMapMarker.get()}/>}
+const MapContent = ({meter: {location: {position}, id}, meterMapMarker, onCenterMap}: MapProps) => (
+  <ResponsiveMap center={position} id={'meterDetails'} key={`meterDetails-${id}`} onCenterMap={onCenterMap} zoom={17}>
+    {meterMapMarker.isJust() && <MarkerCluster mapMarkers={meterMapMarker.get()}/>}
   </ResponsiveMap>
 );
 
@@ -138,7 +138,7 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
 
   render() {
     const {selectedTab} = this.state;
-    const {meter, meterMapMarker, addToReport, syncWithMetering, useCollectionPeriod} = this.props;
+    const {meter, meterMapMarker, addToReport, onCenterMap, syncWithMetering, useCollectionPeriod} = this.props;
 
     const gateways: GatewayMandatory[] = meter.gateway ? [meter.gateway] : [];
 
@@ -151,6 +151,7 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
       hasContent: meterMapMarker
         .filter(({status}: MapMarker) => status !== undefined)
         .isJust(),
+      onCenterMap,
     };
 
     const gatewaysWrapperProps: MeterGatewayProps & WithEmptyContentProps = {

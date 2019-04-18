@@ -1,10 +1,8 @@
 import * as Leaflet from 'leaflet';
 import * as React from 'react';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import {history, routes} from '../../../app/routes';
 import {isDefined} from '../../../helpers/commonHelpers';
-import {Dictionary} from '../../../types/Types';
 import {
   isAlarmIconUrl,
   isErrorIconUrl,
@@ -12,8 +10,7 @@ import {
   makeLeafletCompatibleMarkersFrom,
 } from '../helper/clusterHelper';
 import {maxZoom} from '../helper/mapHelper';
-import {openClusterDialog} from '../mapActions';
-import {MapMarker, Marker} from '../mapModels';
+import {MapMarkers, Marker} from '../mapModels';
 
 const getZoomBasedRadius = (zoom: number) => {
   if (zoom < maxZoom) {
@@ -60,16 +57,8 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   return `marker-cluster ${className}`;
 };
 
-interface DispatchToProps {
-  openClusterDialog: (marker: Marker) => void;
-}
-
-interface OwnProps {
-  markers: Dictionary<MapMarker> | MapMarker;
-}
-
-const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
-  const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(markers);
+export const MarkerCluster = ({mapMarkers}: MapMarkers) => {
+  const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarkers);
 
   const markerClusterOptions = {
     iconCreateFunction: handleIconCreate,
@@ -78,20 +67,16 @@ const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
     maxClusterRadius: getZoomBasedRadius,
   };
 
+  const toMeterDetails = ({options: {mapMarkerItem}}: Marker) =>
+    history.push(`${routes.meter}/${mapMarkerItem}`);
+
   return leafletMarkers.length > 0
     ? (
       <MarkerClusterGroup
         markers={leafletMarkers}
-        onMarkerClick={openClusterDialog}
+        onMarkerClick={toMeterDetails}
         options={markerClusterOptions}
       />
     )
     : null;
 };
-
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  openClusterDialog,
-}, dispatch);
-
-export const ClusterContainer =
-  connect<{}, DispatchToProps, OwnProps>(null, mapDispatchToProps)(Cluster);

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {SelectedTab, TabName} from '../../../state/ui/tabs/tabsModels';
 import {
   CallbackWith,
@@ -9,14 +10,13 @@ import {
   EncodedUriParameters,
   ErrorResponse,
   Fetch,
-  OnClick,
   WithChildren
 } from '../../../types/Types';
 import {CollectionStatContentContainer} from '../../../usecases/collection/containers/CollectionStatContentContainer';
-import {MapClusters} from '../../../usecases/map/components/MapClusters';
-import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
+import {ResponsiveMapMarkerClusters} from '../../../usecases/map/components/Map';
+import {useFetchMapMarkers} from '../../../usecases/map/helper/fetchMapMarkersHook';
+import {MapComponentProps, MapMarker, MapProps, OnCenterMapEvent} from '../../../usecases/map/mapModels';
 import {SelectionReportContentContainer} from '../../../usecases/selectionReport/containers/SelectionReportContentContainer';
-import {DetailsDialogProps} from '../../dialog/DetailsDialog';
 import {EmptyContentProps} from '../../error-message/EmptyContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../hoc/withEmptyContent';
 import {RetryLoader} from '../../loading/Loader';
@@ -26,56 +26,56 @@ import {TabHeaders} from './TabHeaders';
 import {Tabs} from './Tabs';
 import {TabTopBar} from './TabTopBar';
 
-export interface StateToProps extends MapProps, SelectedTab, EmptyContentProps, SelectedId {
+export interface StateToProps extends MapComponentProps, SelectedTab, EmptyContentProps {
   error: Maybe<ErrorResponse>;
   isFetching: boolean;
   parameters: EncodedUriParameters;
+  mapMarkers: DomainModel<MapMarker>;
 }
 
-export interface DispatchToProps {
+export interface DispatchToProps extends OnCenterMapEvent {
   changeTab: CallbackWith<TabName>;
-  close: OnClick;
   clearError: ClearError;
   fetchMapMarkers: Fetch;
 }
 
-export interface MainContentTabsProps extends StateToProps, DispatchToProps, ClassNamed, WithChildren {
-  DetailsDialog: React.ComponentType<DetailsDialogProps>;
-}
+export type MainContentTabsProps = StateToProps & DispatchToProps & ClassNamed & WithChildren;
 
-const MapClustersWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapClusters);
+const MapClustersWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(ResponsiveMapMarkerClusters);
 
 export const MainContentTabs = ({
   bounds,
+  center,
   className,
-  close,
   children,
   changeTab,
   clearError,
+  id,
   isFetching,
-  DetailsDialog,
   error,
+  fetchMapMarkers,
   key,
   lowConfidenceText,
   mapMarkers,
   noContentText,
+  onCenterMap,
+  parameters,
   selectedTab,
-  selectedId,
+  zoom,
 }: MainContentTabsProps) => {
+  useFetchMapMarkers({fetchMapMarkers, parameters, selectedTab});
+
   const wrapperProps: MapProps & WithEmptyContentProps = {
     bounds,
+    center,
     hasContent: mapMarkers.result.length > 0,
+    id,
     key,
     lowConfidenceText,
-    mapMarkers,
+    mapMarkers: mapMarkers.entities,
     noContentText,
-  };
-
-  const dialogProps: DetailsDialogProps = {
-    autoScrollBodyContent: true,
-    close,
-    isOpen: true,
-    selectedId,
+    onCenterMap,
+    zoom,
   };
 
   return (
@@ -93,10 +93,7 @@ export const MainContentTabs = ({
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
         <RetryLoader isFetching={isFetching} clearError={clearError} error={error}>
-          <>
-            <MapClustersWrapper {...wrapperProps} />
-            <DetailsDialog {...dialogProps}/>
-          </>
+          <MapClustersWrapper {...wrapperProps}/>
         </RetryLoader>
       </TabContent>
       <TabContent tab={TabName.collection} selectedTab={selectedTab}>

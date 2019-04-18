@@ -7,44 +7,41 @@ import {getDomainModel, getError} from '../../../state/domain-models/domainModel
 import {changeTabMeter} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
-import {closeClusterDialog} from '../../map/mapActions';
+import {onCenterMap} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
-import {getBounds, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
+import {getBounds, getMapZoomSettings, getMeterLowConfidenceTextInfo} from '../../map/mapSelectors';
 import {MeterTabs} from '../components/MeterTabs';
 
 const mapStateToProps =
   (rootState: RootState): StateToProps => {
     const {
-      ui,
-      userSelection: {userSelection},
-      map,
       domainModels: {meterMapMarkers},
-      search: {validation: {query}}
+      map,
+      search: {validation: {query}},
+      ui,
+      userSelection: {userSelection}
     }: RootState = rootState;
     return ({
       bounds: getBounds(meterMapMarkers),
+      error: getError(meterMapMarkers),
+      id: userSelection.id,
+      isFetching: meterMapMarkers.isFetching,
+      key: `meterTabs-${userSelection.id}`,
       lowConfidenceText: getMeterLowConfidenceTextInfo(rootState),
-      selectedTab: getSelectedTab(ui.tabs.validation),
       mapMarkers: getDomainModel(meterMapMarkers),
       noContentText: firstUpperTranslated('no meters'),
-      selectedId: getSelectedMapMarker(map),
       parameters: getMeterParameters({userSelection, query}),
-      error: getError(meterMapMarkers),
-      isFetching: meterMapMarkers.isFetching,
-      key: `meterTabs-${userSelection.id.toString()}`
+      selectedTab: getSelectedTab(ui.tabs.validation),
+      ...getMapZoomSettings(userSelection.id)(map),
     });
   };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabMeter,
-  close: closeClusterDialog,
   clearError: clearErrorMeterMapMarkers,
   fetchMapMarkers: fetchMeterMapMarkers,
+  onCenterMap,
 }, dispatch);
 
 export const MeterTabsContainer =
-  connect<StateToProps, DispatchToProps>(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(withMapMarkersFetcher(MeterTabs));
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MeterTabs);
