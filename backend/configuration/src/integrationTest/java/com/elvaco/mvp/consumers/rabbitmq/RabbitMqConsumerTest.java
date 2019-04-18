@@ -16,12 +16,8 @@ import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 
 import static com.elvaco.mvp.producers.rabbitmq.MessageSerializer.toJson;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,18 +26,9 @@ import static org.junit.Assume.assumeTrue;
 @SuppressWarnings("SameParameterValue")
 public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
-  @Autowired
-  private CacheManager cacheManager;
-
   @Before
   public void setUp() {
     assumeTrue(isRabbitConnected());
-    deleteAllTestData();
-  }
-
-  @After
-  public void tearDown() {
-    deleteAllTestData();
   }
 
   @Test
@@ -146,23 +133,6 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
     assertThat(waitForCondition(() -> physicalMeterStatusLogJpaRepository.findAll().size() == 1))
       .as("Just one status log has been created").isTrue();
-  }
-
-  private void deleteAllTestData() {
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
-    gatewayStatusLogJpaRepository.deleteAll();
-    gatewayJpaRepository.deleteAll();
-    organisationJpaRepository.findBySlug("some-organisation")
-      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
-    organisationJpaRepository.findBySlug("organisation-123")
-      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
-    organisationJpaRepository.findBySlug("organisation-123-456")
-      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
-    cacheManager.getCacheNames().stream()
-      .map(name -> cacheManager.getCache(name))
-      .forEach(Cache::clear);
   }
 
   private MeteringReferenceInfoMessageDto getMeteringReferenceInfoMessageDto() {
