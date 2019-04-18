@@ -41,8 +41,10 @@ abstract class BaseJooqRepository<T, I extends Serializable>
         i++;
       }
     }
+    @SuppressWarnings("unchecked") //Let's hope JPA does the right thing
+    List<E> resultList = nativeQuery.getResultList();
 
-    return nativeQuery.getResultList();
+    return resultList;
   }
 
   private static <T> Object convertToDatabaseType(Param<T> param) {
