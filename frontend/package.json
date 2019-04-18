@@ -11,8 +11,8 @@
   "license": "MIT",
   "scripts": {
     "clean": "node fuse clean",
-    "start": "node fuse start && parcel serve src/index.html --port 4444",
-    "serve": "node fuse serve && parcel serve src/index.html --port 4444",
+    "start": "node fuse start && parcel serve src/index.html --port 4444 --log-level 1",
+    "serve": "node fuse serve && parcel serve src/index.html --port 4444 --log-level 1",
     "dist": "node fuse dist && parcel build src/index.html --no-cache --no-source-maps --log-level 3 && node fuse version",
     "test": "jest",
     "test-coverage": "jest --coverage",
