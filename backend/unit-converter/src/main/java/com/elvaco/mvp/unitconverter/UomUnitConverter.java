@@ -142,19 +142,22 @@ public class UomUnitConverter implements UnitConverter {
       throw new UnitConversionError(iex.getMessage());
     }
 
-    Quantity<?> resultQuantity;
     try {
+      /* FIXME: How do we convert between two unknown types "safely"? */
+      @SuppressWarnings("rawtypes")
       Unit targetUnit = SimpleUnitFormat.getInstance().parse(target);
-      resultQuantity = sourceQuantity.to(targetUnit);
+      @SuppressWarnings("unchecked")
+      Quantity<?> resultQuantity = sourceQuantity.to(targetUnit);
+
+      return new MeasurementUnit(
+        resultQuantity.getUnit().toString(),
+        resultQuantity.getValue().doubleValue()
+      );
     } catch (ParserException ex) {
       throw UnitConversionError.unknownUnit(target);
     } catch (UnconvertibleException ex) {
       throw new UnitConversionError(valueAndUnit, target);
     }
-    return new MeasurementUnit(
-      resultQuantity.getUnit().toString(),
-      resultQuantity.getValue().doubleValue()
-    );
   }
 
   private static String replace(String valueAndUnit) {
