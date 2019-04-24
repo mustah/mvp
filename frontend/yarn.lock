@@ -1284,10 +1284,10 @@
   dependencies:
     "@types/sizzle" "*"
 
-"@types/kendo-ui@^2019.1.1":
-  version "2019.1.1"
-  resolved "https://registry.yarnpkg.com/@types/kendo-ui/-/kendo-ui-2019.1.1.tgz#74fe7e9e9a3e43a19fa5804194e50db1555379e8"
-  integrity sha512-LoLafn0iktlXuN9ZIbHqfwVPtIOtMw8Egx9B2B2hlmrO6VhNJaJHrIlb+dIkQKMU+EN/yy2iYxP5qzVsn4zKjQ==
+"@types/kendo-ui@^2019.1.2":
+  version "2019.1.2"
+  resolved "https://registry.yarnpkg.com/@types/kendo-ui/-/kendo-ui-2019.1.2.tgz#16a272e5cbe3491b34a7197f89239704c07dcbbe"
+  integrity sha512-liMNqSQsVdtA0lW10hm6IfdqbuNLvGMO1DzfeHVZQeqvN6qf4dR4PLdP+gZGrXvOSOgTXVGFzgpvCcIA8C+hAQ==
   dependencies:
     "@types/jquery" "*"
 
@@ -1330,10 +1330,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.0.4.tgz#130598ee56e9a1210a53f557d64935571f05390d"
   integrity sha512-RisaZmcmCLjRipAY7nVi3fmkIk4Z0JMn8YHdGF6qYMsIDpD0dfzz+3yy2dL5Q5aHWOnqPx51IRxkA44myknJvw==
 
-"@types/node@^11.13.5":
-  version "11.13.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.13.5.tgz#266564afa8a6a09dc778dfacc703ed3f09c80516"
-  integrity sha512-/OMMBnjVtDuwX1tg2pkYVSqRIDSmNTnvVvmvP/2xiMAAWf4a5+JozrApCrO4WCAILmXVxfNoQ3E+0HJbNpFVGg==
+"@types/node@^11.13.7":
+  version "11.13.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.13.7.tgz#85dbb71c510442d00c0631f99dae957ce44fd104"
+  integrity sha512-suFHr6hcA9mp8vFrZTgrmqW2ZU3mbWsryQtQlY/QvwTISCw7nw/j+bCQPPohqmskhmqa5wLNuMHTTsc+xf1MQg==
 
 "@types/node@^11.9.6":
   version "11.13.0"
@@ -10530,10 +10530,10 @@ tslib@^1.8.0, tslib@^1.8.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.0.tgz#e37a86fda8cbbaf23a057f473c9f4dc64e5fc2e8"
   integrity sha512-f/qGG2tUkrISBlQZEjEqoZ3B2+npJjIf04H1wuAv9iA8i04Icp+61KRXxFdha22670NJopsZCIjhC3SnjPRKrQ==
 
-tslint-react-hooks@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/tslint-react-hooks/-/tslint-react-hooks-2.0.0.tgz#452d7eed160420023dc1f26ad3b08ad861fb5d05"
-  integrity sha512-SC0BvRVX+SaSrT/kVcD/xzunBzleeX3TPHX010g9EfXPKLQzyg971VU/j1HnfutvPILDI1Qkhjqseb1+WIBiOw==
+tslint-react-hooks@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/tslint-react-hooks/-/tslint-react-hooks-2.1.0.tgz#cc9841da0cef20d3527c8d16412f029c33767898"
+  integrity sha512-ccjyguEHGEU5rXikLDaQ6kT1AVo3C0HV8gi2MIJc7SbYAXjbzJkpbs4IXulgfqdEY1T6RnNSuGhyXg+2jTm5Bg==
 
 tslint-react@^4.0.0:
   version "4.0.0"
