@@ -1,10 +1,13 @@
-import {mockSelectionAction} from '../../../__tests__/testActions';
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {DateRange} from '../../../components/dates/dateModels';
 import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
-import {selectSavedSelectionAction, setCustomDateRange} from '../../user-selection/userSelectionActions';
+import {
+  resetSelection,
+  selectSavedSelectionAction,
+  setCustomDateRange
+} from '../../user-selection/userSelectionActions';
 import {UserSelection} from '../../user-selection/userSelectionModels';
 import {initialState as initialUserSelection} from '../../user-selection/userSelectionReducer';
 import {
@@ -58,7 +61,7 @@ describe('reportReducer', () => {
   it('same state when the main selection is changed', () => {
     const state: ReportState = {...initialState, savedReports: savedReportsState};
 
-    const nextState = report(state, mockSelectionAction);
+    const nextState = report(state, resetSelection());
 
     expect(nextState).toEqual(state);
   });

@@ -1,14 +1,14 @@
-import {mockSelectionAction} from '../../../__tests__/testActions';
 import {getId, groupById} from '../../../helpers/collections';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, Status} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
+import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {search} from '../../search/searchActions';
 import {makeMeterQuery} from '../../search/searchModels';
-import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {initialState as initialMeasurementState} from '../../ui/graph/measurement/measurementReducer';
+import {resetSelection} from '../../user-selection/userSelectionActions';
 import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
 import {
   deleteRequestOf,
@@ -313,7 +313,7 @@ describe('domainModelsReducer', () => {
 
       const expected: DomainModelsState = {...initialState};
 
-      expect(domainModels(isFetchingState, mockSelectionAction)).toEqual(expected);
+      expect(domainModels(isFetchingState, resetSelection())).toEqual(expected);
     });
   });
 

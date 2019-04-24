@@ -1,9 +1,9 @@
-import {mockSelectionAction} from '../../../../__tests__/testActions';
 import {search} from '../../../search/searchActions';
 import {makeMeterQuery} from '../../../search/searchModels';
+import {resetSelection} from '../../../user-selection/userSelectionActions';
 import {changePage, updatePageMetaData} from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
-import {initialPaginationState, pagination, paginationPageSize} from '../paginationReducer';
+import {initialState, pagination, paginationPageSize} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
@@ -36,10 +36,6 @@ describe('paginationReducer', () => {
 
   describe('pagination meta data', () => {
 
-    it('has initial state', () => {
-      expect(pagination(undefined, {type: 'unknown'})).toEqual({...initialPaginationState});
-    });
-
     it('updates pagination meta data for a component', () => {
       const payload: PaginationMetadataPayload = {
         entityType: 'meters',
@@ -55,9 +51,9 @@ describe('paginationReducer', () => {
       };
 
       const expectedState: PaginationState = {
-        ...initialPaginationState,
+        ...initialState,
         meters: {
-          ...initialPaginationState.meters,
+          ...initialState.meters,
           totalPages: payload.totalPages,
           totalElements: payload.totalElements,
           useCases: {},
@@ -105,8 +101,8 @@ describe('paginationReducer', () => {
 
     it('changes requestedPage', () => {
       const expectedState: PaginationState = {
-        ...initialPaginationState,
-        meters: {...initialPaginationState.meters, useCases: {test: {page: 10}}},
+        ...initialState,
+        meters: {...initialState.meters, useCases: {test: {page: 10}}},
       };
 
       expect(pagination(undefined, changePage(payload))).toEqual(expectedState);
@@ -153,12 +149,7 @@ describe('paginationReducer', () => {
         meterCollectionStatFacilities: {size: paginationPageSize, totalPages: 10, totalElements: 10, useCases: {}},
       };
 
-      expect(pagination(
-        paginatedState,
-        mockSelectionAction,
-      )).toEqual({
-        ...initialPaginationState,
-      });
+      expect(pagination(paginatedState, resetSelection())).toEqual(initialState);
     });
   });
 });

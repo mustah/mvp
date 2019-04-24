@@ -1,5 +1,4 @@
 import {Location} from 'history';
-import {mockSelectionAction} from '../../../__tests__/testActions';
 import {makeMeter} from '../../../__tests__/testDataFactory';
 import {RequestParameter} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
@@ -8,6 +7,7 @@ import {logoutUser} from '../../../usecases/auth/authActions';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
 import {locationChange} from '../../location/locationActions';
 import {ApiRequestSortingOptions} from '../../ui/pagination/paginationModels';
+import {resetSelection} from '../../user-selection/userSelectionActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters, sortTableMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
@@ -315,7 +315,7 @@ describe('paginatedDomainModelsReducer', () => {
             ...makeInitialState<CollectionStat>(),
           },
         },
-        mockSelectionAction,
+        resetSelection(),
       )).toEqual(expextedState);
     });
   });
