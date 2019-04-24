@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
@@ -56,6 +57,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -167,6 +170,9 @@ public abstract class IntegrationTest implements ContextDsl {
 
   @Autowired
   private TokenService tokenService;
+
+  @Autowired
+  private CacheManager ehCacheManager;
 
   private IntegrationTestFixtureContextFactory integrationTestFixtureContextFactory;
 
@@ -291,11 +297,16 @@ public abstract class IntegrationTest implements ContextDsl {
   private void removeEntities() {
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
+    gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     dashboardJpaRepository.deleteAll();
     widgetJpaRepository.deleteAll();
     removeNonSystemMeterDefinitions();
+    ehCacheManager.getCacheNames().stream()
+      .map(name -> ehCacheManager.getCache(name))
+      .filter(Objects::nonNull)
+      .forEach(Cache::clear);
   }
 
   private void removeNonSystemMeterDefinitions() {
