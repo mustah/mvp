@@ -10,6 +10,7 @@ import {
   EncodedUriParameters,
   ErrorResponse,
   Fetch,
+  Fetching,
   WithChildren
 } from '../../../types/Types';
 import {CollectionStatContentContainer} from '../../../usecases/collection/containers/CollectionStatContentContainer';
@@ -20,6 +21,7 @@ import {SelectionReportContentContainer} from '../../../usecases/selectionReport
 import {EmptyContentProps} from '../../error-message/EmptyContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../hoc/withEmptyContent';
 import {RetryLoader} from '../../loading/Loader';
+import {RetryProps} from '../../retry/Retry';
 import {Tab} from './Tab';
 import {TabContent} from './TabContent';
 import {TabHeaders} from './TabHeaders';
@@ -78,6 +80,12 @@ export const MainContentTabs = ({
     zoom,
   };
 
+  const retryLoaderProps: RetryProps & Fetching = {
+    clearError,
+    error,
+    isFetching: isFetching || selectedTab !== TabName.map,
+  };
+
   return (
     <Tabs className={className}>
       <TabTopBar>
@@ -92,7 +100,7 @@ export const MainContentTabs = ({
         {children}
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <RetryLoader isFetching={isFetching} clearError={clearError} error={error}>
+        <RetryLoader {...retryLoaderProps}>
           <MapClustersWrapper {...wrapperProps}/>
         </RetryLoader>
       </TabContent>

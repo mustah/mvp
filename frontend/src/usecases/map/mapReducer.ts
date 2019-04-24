@@ -16,10 +16,7 @@ type ActionTypes = ActionType<typeof onCenterMap
   | typeof selectSavedSelectionAction
   | typeof resetSelection>;
 
-export const map = (
-  state: MapState = initialState,
-  action: ActionTypes,
-): MapState => {
+export const map = (state: MapState = initialState, action: ActionTypes): MapState => {
   switch (action.type) {
     case getType(onCenterMap):
       const {center, id, zoom} = action.payload;
