@@ -1,10 +1,8 @@
 import {Dispatch} from 'react-redux';
-import {GetState, RootState} from '../../../reducers/rootReducer';
+import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {ErrorResponse, uuid} from '../../../types/Types';
-import {centerMap} from '../../../usecases/map/mapActions';
-import {MapMarker} from '../../../usecases/map/mapModels';
+import {ErrorResponse} from '../../../types/Types';
 import {showFailMessage} from '../../ui/message/messageActions';
 import {fetchIfNeeded, putRequest} from '../domainModelsActions';
 import {Dashboard} from './dashboardModels';
@@ -24,12 +22,3 @@ export const fetchDashboards = fetchIfNeeded<Dashboard>(
   'dashboards',
   dashboardDataFormatter,
 );
-
-export const centerMapOnMeter = (id: uuid) =>
-  (dispatch, getState: GetState) => {
-    const geoPosition: MapMarker = getState().domainModels.meterMapMarkers.entities[id];
-    if (geoPosition) {
-      const {latitude, longitude} = geoPosition;
-      dispatch(centerMap({latitude, longitude}));
-    }
-  };

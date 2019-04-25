@@ -19,7 +19,8 @@ import {getDomainModelById} from '../../state/domain-models/domainModelsSelector
 import {fetchGatewayMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {CallbackWithId, uuid} from '../../types/Types';
-import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
+import {onCenterMap} from '../../usecases/map/mapActions';
+import {MapMarker, OnCenterMapEvent, SelectedId} from '../../usecases/map/mapModels';
 import {OnFetchGatewayMeterDetails} from './fetchDialogDataHook';
 import './GatewayDetailsContainer.scss';
 import {GatewayDetailsInfoContainer} from './GatewayDetailsInfoContainer';
@@ -33,7 +34,7 @@ interface StateToProps {
   meters: Maybe<ObjectsById<Meter>>;
 }
 
-interface DispatchToProps {
+interface DispatchToProps extends OnCenterMapEvent {
   fetchGateway: CallbackWithId;
   fetchGatewayMeterDetails: OnFetchGatewayMeterDetails;
 }
@@ -91,6 +92,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchGateway,
   fetchGatewayMeterDetails,
+  onCenterMap,
 }, dispatch);
 
 export const GatewayDetailsContainer =

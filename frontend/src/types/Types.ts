@@ -58,6 +58,10 @@ export interface Dictionary<T> {
   [key: string]: T;
 }
 
+export interface Id {
+  readonly id: string | number;
+}
+
 export interface ClassNamed {
   className?: string;
 }

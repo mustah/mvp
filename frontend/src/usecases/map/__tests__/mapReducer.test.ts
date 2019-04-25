@@ -1,36 +1,70 @@
+import {resetSelection, selectSavedSelectionAction} from '../../../state/user-selection/userSelectionActions';
+import {initialState as initialUserSelection} from '../../../state/user-selection/userSelectionReducer';
 import {logoutUser} from '../../auth/authActions';
-import {centerMap, closeClusterDialog, openDialog} from '../mapActions';
+import {onCenterMap} from '../mapActions';
+import {MapZoomSettings, MapZoomSettingsPayload} from '../mapModels';
 import {initialState, map, MapState} from '../mapReducer';
 
 describe('mapReducer', () => {
 
-  it('closes cluster dialog', () => {
-    const state: MapState = map(initialState, closeClusterDialog());
-    expect(state).toEqual({isClusterDialogOpen: false});
-  });
-
-  it('opens cluster dialog for marker with id', () => {
-    const state: MapState = map(initialState, openDialog(1));
-    expect(state).toEqual({isClusterDialogOpen: true, selectedMarker: 1});
-  });
+  const zoomSettings: MapZoomSettings = {center: {latitude: 1, longitude: 2}, zoom: 8};
 
   it('centers on map', () => {
-    expect(initialState.viewCenter).toBeUndefined();
+    const centerPayload: MapZoomSettingsPayload = {id: 1, ...zoomSettings};
 
-    const geoPosition = {latitude: 1, longitude: 2};
-    const state: MapState = map(initialState, centerMap(geoPosition));
+    const state: MapState = map(initialState, onCenterMap(centerPayload));
 
-    expect(state).toEqual({...initialState, viewCenter: geoPosition});
+    const expected: MapState = {1: {...zoomSettings}};
+
+    expect(state).toEqual(expected);
+  });
+
+  it('updates map settings by id', () => {
+    const prevState: MapState = {
+      1: {...zoomSettings},
+      2: {...zoomSettings},
+    };
+
+    const state: MapState = map(prevState, onCenterMap({id: 2, ...zoomSettings, zoom: 13}));
+
+    const expected: MapState = {
+      1: {...zoomSettings},
+      2: {...zoomSettings, zoom: 13},
+    };
+    expect(state).toEqual(expected);
+  });
+
+  describe('selectSavedSelectionAction', () => {
+
+    it('resets zoom settings when saved selection is selected', () => {
+      const prevState: MapState = {
+        1: {...zoomSettings},
+        2: {...zoomSettings},
+      };
+
+      const state: MapState = map(prevState, selectSavedSelectionAction(initialUserSelection.userSelection));
+
+      expect(state).toEqual(initialState);
+    });
+
+    it('resets zoom settings when selection named All is selected', () => {
+      const prevState: MapState = {
+        1: {...zoomSettings},
+        2: {...zoomSettings},
+      };
+
+      const state: MapState = map(prevState, resetSelection());
+
+      expect(state).toEqual(initialState);
+    });
   });
 
   describe('logout user', () => {
 
     it('resets state to initial state', () => {
-      let state: MapState = {isClusterDialogOpen: true, selectedMarker: 1};
+      const state = map({8: {...zoomSettings}}, logoutUser(undefined));
 
-      state = map(state, logoutUser(undefined));
-
-      expect(state).toEqual({isClusterDialogOpen: false});
+      expect(state).toEqual(initialState);
     });
   });
 });

@@ -1,14 +1,16 @@
 import * as React from 'react';
+import {Fetching} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {Retry, RetryProps} from '../retry/Retry';
 import {LoadingLarge} from './Loading';
 
-interface Props {
+interface Props extends Fetching {
   children: React.ReactElement<any>;
-  isFetching: boolean;
 }
 
-export const RetryLoader = ({isFetching, children, error, clearError}: Props & RetryProps) => {
+export type RetryLoaderProps = Props & RetryProps;
+
+export const RetryLoader = ({children, clearError, error, isFetching}: RetryLoaderProps) => {
   if (isFetching) {
     return (<RowCenter><LoadingLarge/></RowCenter>);
   } else if (error.isJust()) {
@@ -18,7 +20,7 @@ export const RetryLoader = ({isFetching, children, error, clearError}: Props & R
   }
 };
 
-export const Loader = ({isFetching, children}: Props) => {
+export const Loader = ({children, isFetching}: Props) => {
   if (isFetching) {
     return (<RowCenter><LoadingLarge/></RowCenter>);
   } else {

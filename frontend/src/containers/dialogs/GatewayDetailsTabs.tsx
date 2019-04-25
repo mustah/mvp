@@ -21,8 +21,8 @@ import {ObjectsById} from '../../state/domain-models/domainModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {uuid} from '../../types/Types';
 import {ResponsiveMap} from '../../usecases/map/components/Map';
-import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {MapMarker} from '../../usecases/map/mapModels';
+import {MarkerCluster} from '../../usecases/map/components/MarkerCluster';
+import {MapMarker, MapZoomSettings, OnCenterMapEvent} from '../../usecases/map/mapModels';
 import './GatewayDetailsTabs.scss';
 import {MeterDetailsContainer} from './MeterDetailsContainer';
 
@@ -30,7 +30,7 @@ interface SuperAdmin {
   isSuperAdmin: boolean;
 }
 
-interface OwnProps {
+interface OwnProps extends OnCenterMapEvent, Partial<MapZoomSettings> {
   gateway: Gateway;
   gatewayMapMarker: Maybe<MapMarker>;
   meters: ObjectsById<Meter>;
@@ -77,13 +77,20 @@ const renderManufacturer = ({manufacturer}: Meter) => orUnknown(manufacturer);
 
 const renderMedium = ({medium}: Meter) => medium;
 
-const MapContent = ({gateway: {location: {position}, id}, gatewayMapMarker}: OwnProps) => (
-  <ResponsiveMap viewCenter={position} key={`gatewayDetails-${id}`}>
-    {gatewayMapMarker.isJust() && <ClusterContainer markers={gatewayMapMarker.get()}/>}
+const MapContent = ({gateway: {location: {position}, id}, gatewayMapMarker, onCenterMap}: OwnProps) => (
+  <ResponsiveMap
+    center={position}
+    id={`gatewayDetails`}
+    key={`gatewayDetails-${id}`}
+    onCenterMap={onCenterMap}
+    zoom={17}
+  >
+    {gatewayMapMarker.isJust() && <MarkerCluster mapMarkers={gatewayMapMarker.get()}/>}
   </ResponsiveMap>
 );
 
 type MapProps = OwnProps & WithEmptyContentProps;
+
 type Props = SuperAdmin & OwnProps;
 
 const MapContentWrapper = withEmptyContent<MapProps>(MapContent);
@@ -94,7 +101,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
   render() {
     const {selectedTab} = this.state;
-    const {gateway, meters, gatewayMapMarker, isSuperAdmin} = this.props;
+    const {gateway, meters, gatewayMapMarker, isSuperAdmin, onCenterMap} = this.props;
 
     const wrapperProps: MapProps = {
       gateway,
@@ -102,6 +109,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
       gatewayMapMarker,
       hasContent: gatewayMapMarker.isJust(),
       noContentText: firstUpperTranslated('no reliable position'),
+      onCenterMap,
     };
 
     const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>

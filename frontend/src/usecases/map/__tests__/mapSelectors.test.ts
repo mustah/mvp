@@ -1,14 +1,12 @@
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
-import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
-import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {DomainModelsState} from '../../../state/domain-models/domainModels';
 import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
-import {initialState} from '../../../state/summary/summaryReducer';
 import {initialState as initialSearchState} from '../../../state/search/searchReducer';
-import {MapMarker} from '../mapModels';
+import {initialState} from '../../../state/summary/summaryReducer';
+import {MapMarker, MapZoomSettings} from '../mapModels';
 import {MapState} from '../mapReducer';
-import {getGatewayLowConfidenceTextInfo, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../mapSelectors';
+import {getGatewayLowConfidenceTextInfo, getMapZoomSettings, getMeterLowConfidenceTextInfo} from '../mapSelectors';
 
 describe('mapSelectors', () => {
 
@@ -17,40 +15,6 @@ describe('mapSelectors', () => {
     translation: {
       test: 'no translations will default to key',
     },
-  });
-
-  type MapStateType<T> = MapState | {selectedMarker?: Partial<T>};
-
-  describe('getSelectedMeterMarkers', () => {
-
-    it('has no selected meter marker', () => {
-      const state: MapState = {isClusterDialogOpen: false};
-
-      expect(getSelectedMapMarker(state).isNothing()).toBe(true);
-    });
-
-    it('has selected meter marker', () => {
-      const meter: Partial<Meter> = {id: 1};
-      const state: MapStateType<Meter> = {isClusterDialogOpen: true, selectedMarker: meter};
-
-      expect(getSelectedMapMarker(state as MapState).get()).toEqual({id: 1});
-    });
-
-  });
-
-  describe('getSelectedGatewayMarkers', () => {
-    it('has no selected gateway marker', () => {
-      const state: MapState = {isClusterDialogOpen: false};
-
-      expect(getSelectedMapMarker(state).isNothing()).toBe(true);
-    });
-
-    it('has selected meter marker', () => {
-      const gateway: Partial<Gateway> = {id: 1};
-      const state: MapStateType<Gateway> = {isClusterDialogOpen: true, selectedMarker: gateway};
-
-      expect(getSelectedMapMarker(state as MapState).get()).toEqual({id: 1});
-    });
   });
 
   describe('getTotalMeterMapMarkers', () => {
@@ -163,4 +127,26 @@ describe('mapSelectors', () => {
 
   });
 
+  describe('getMapZoomSettings', () => {
+
+    it('has no map settings from empty initial state', () => {
+      const mapState: MapState = {};
+
+      expect(getMapZoomSettings(-99)(mapState)).toEqual({});
+    });
+
+    it('has can get map state from existing state', () => {
+      const zoomSettings: MapZoomSettings = {zoom: 2, center: {longitude: 12, latitude: 34}};
+      const mapState: MapState = {1: zoomSettings};
+
+      expect(getMapZoomSettings(1)(mapState)).toEqual(zoomSettings);
+    });
+
+    it('has no map settings when id is not found', () => {
+      const zoomSettings: MapZoomSettings = {zoom: 2, center: {longitude: 12, latitude: 34}};
+      const mapState: MapState = {1: zoomSettings};
+
+      expect(getMapZoomSettings(-11)(mapState)).toEqual({});
+    });
+  });
 });

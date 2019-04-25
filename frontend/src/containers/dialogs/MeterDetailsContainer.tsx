@@ -12,8 +12,9 @@ import {MeterDetails} from '../../state/domain-models/meter-details/meterDetails
 import {addToReport} from '../../state/report/reportActions';
 import {LegendItem} from '../../state/report/reportModels';
 import {CallbackWithId, OnClickWith, uuid} from '../../types/Types';
+import {onCenterMap} from '../../usecases/map/mapActions';
 import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
-import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
+import {MapMarker, OnCenterMapEvent, SelectedId} from '../../usecases/map/mapModels';
 import {syncWithMetering} from '../../usecases/meter/meterActions';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfoContainer';
@@ -25,7 +26,7 @@ interface StateToProps {
   meterMapMarker: Maybe<MapMarker>;
 }
 
-interface DispatchToProps {
+interface DispatchToProps extends OnCenterMapEvent {
   fetchMeter: CallbackWithId;
   fetchMapMarker: CallbackWithId;
   addToReport: OnClickWith<LegendItem>;
@@ -86,10 +87,11 @@ const mapStateToProps = (
       .flatMap((id: uuid) => getDomainModelById<MapMarker>(id)(meterMapMarkers)),
   });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addToReport,
   fetchMeter,
   fetchMapMarker: fetchMeterMapMarker,
+  onCenterMap,
   syncWithMetering,
 }, dispatch);
 
