@@ -10,6 +10,7 @@ export const clearErrorGateways = clearError(EndPoints.gateways);
 
 export const fetchGateways = fetchIfNeeded<Gateway>(
   EndPoints.gateways,
+  EndPoints.gateways,
   gatewayDataFormatter,
   'gateways',
   {

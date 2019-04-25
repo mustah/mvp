@@ -3,10 +3,10 @@ import {Sectors} from '../../../types/Types';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
 import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
-import {fetchIfNeededForSector, sortTableAction} from '../paginatedDomainModelsActions';
+import {fetchIfNeeded, sortTableAction} from '../paginatedDomainModelsActions';
 import {collectionStatDataFormatter} from './collectionStatSchema';
 
-export const fetchCollectionStatsFacilityPaged = fetchIfNeededForSector<CollectionStat>(
+export const fetchCollectionStatsFacilityPaged = fetchIfNeeded<CollectionStat>(
   Sectors.collectionStatFacilities,
   EndPoints.collectionStatFacility,
   collectionStatDataFormatter,
@@ -17,7 +17,7 @@ export const fetchCollectionStatsFacilityPaged = fetchIfNeededForSector<Collecti
   },
 );
 
-export const fetchMeterCollectionStatsFacilityPaged = fetchIfNeededForSector<CollectionStat>(
+export const fetchMeterCollectionStatsFacilityPaged = fetchIfNeeded<CollectionStat>(
   Sectors.meterCollectionStatFacilities,
   EndPoints.collectionStatFacility,
   collectionStatDataFormatter,
