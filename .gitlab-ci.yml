@@ -211,6 +211,28 @@ pre-test:docker-geoservice-app:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
     - docker push ${DOCKER_IMAGE_NAME}
 
+test:karate:
+  image: $DOCKER_REGISTRY_URL/acceptance-test:latest
+  stage: test
+  services:
+    - name: docker:dind
+      alias: docker-host
+  dependencies:
+    - build
+  after_script:
+    - docker-compose down -v
+  before_script:
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_TAG="${CI_COMMIT_SHA}"
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+  script:
+    - docker-compose up -d application postgresql
+    - source ./scripts/docker-check-startup && check_application_startup application
+    - ./gradlew -Dkarate.api.endpoint=http://docker-host:8080 karate
+  artifacts:
+    paths:
+      - backend/karate_tests/target/karate.log
+    expire_in: 3 days
+
 test:acceptance:
   image: $DOCKER_REGISTRY_URL/acceptance-test:latest
   stage: test
