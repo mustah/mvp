@@ -4,8 +4,8 @@ import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {isOnSearchPage} from '../../app/routes';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
-import {Action, ErrorResponse} from '../../types/Types';
-import {failureAction, requestAction, successAction} from '../api/apiActions';
+import {Action, ErrorResponse, Sectors} from '../../types/Types';
+import {clearAction, failureAction, requestAction, successAction} from '../api/apiActions';
 import {
   domainModelsPaginatedDeleteFailure,
   domainModelsPaginatedDeleteRequest,
@@ -26,21 +26,23 @@ type ActionTypes =
   | Action<SelectionSummary | ErrorResponse>
   | ActionType<typeof locationChange | typeof search>;
 
-export const summary = (state: SummaryState = initialState, action: ActionTypes): SummaryState => {
+export const summaryFor =
+  (sector: Sectors) =>
+  (state: SummaryState = initialState, action: ActionTypes): SummaryState => {
   switch (action.type) {
-    case requestAction(EndPoints.summary):
+    case requestAction(sector):
       return {
         ...state,
         isFetching: true,
       };
-    case successAction(EndPoints.summary):
+    case successAction(sector):
       return {
         ...state,
         isFetching: false,
         isSuccessfullyFetched: true,
         payload: (action as Action<SelectionSummary>).payload,
       };
-    case failureAction(EndPoints.summary):
+    case failureAction(sector):
       return {
         ...state,
         isFetching: false,
@@ -68,8 +70,13 @@ export const summary = (state: SummaryState = initialState, action: ActionTypes)
     case getType(locationChange):
       return isOnSearchPage((action as Action<Location>).payload) ? state : initialState;
     case getType(search):
+    case clearAction(sector):
       return initialState;
     default:
       return resetReducer(state, action, initialState);
   }
 };
+
+export const summary = summaryFor(Sectors.summary);
+
+export const organisationSummary = summaryFor(Sectors.organisationSummary);

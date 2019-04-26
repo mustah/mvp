@@ -144,6 +144,15 @@ msgstr "lyckades uppdatera mätardefinitionen '{{name}}'"
 msgid "failed to update meter definition: {{error}}"
 msgstr "misslyckades med att uppdatera mätardefinitionen: {{error}}"
 
+msgid "are you sure you want to delete the organisation {{organisation}}"
+msgstr "Vill du ta bort organisationen '{{organisation}}'?"
+
+msgid "delete organisation {{meters}} {{subOrganisations}}"
+msgstr "Om du tar bort den raderas även all dess data:
+- Alla mätvärden
+- {{meters}} mätare
+- {{subOrganisations}} underorganisation"
+
 msgid "delete meter"
 msgstr "ta bort mätare"
 

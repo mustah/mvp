@@ -3,7 +3,7 @@ import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
-import {Action, ActionKey, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
+import {Action, ErrorResponse, Identifiable, uuid, ActionKey, Sectors} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
 import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {MapMarker} from '../../usecases/map/mapModels';
@@ -16,6 +16,7 @@ import {CollectionStat} from './collection-stat/collectionStatModels';
 import {Dashboard} from './dashboard/dashboardModels';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById} from './domainModels';
 import {
+  domainModelsClear,
   domainModelsClearError,
   domainModelsDeleteSuccess,
   domainModelsFailure,
@@ -155,6 +156,7 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsFailure(actionKey):
         return setError(state, action as Action<ErrorResponse>);
       case domainModelsClearError(actionKey):
+      case domainModelsClear(actionKey):
       case getType(search):
         return initialDomain<T>();
       default:
@@ -219,6 +221,12 @@ export const organisations = reducerFor<Organisation>(
   resetStateReducer,
 );
 
+export const subOrganisations = reducerFor<Organisation>(
+  'organisations',
+  Sectors.subOrganisations,
+  resetStateReducer,
+);
+
 export const meterDefinitions = reducerFor<MeterDefinition>(
   'meterDefinitions',
   EndPoints.meterDefinitions,
@@ -278,6 +286,7 @@ export const domainModels = combineReducers<DomainModelsState>({
   meterMapMarkers,
   meterDefinitions,
   organisations,
+  subOrganisations,
   quantities,
   userSelections,
   users,

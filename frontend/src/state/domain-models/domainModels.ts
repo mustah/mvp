@@ -41,6 +41,7 @@ export interface DomainModelsState {
   meterMapMarkers: NormalizedState<MapMarker>;
   meters: NormalizedState<MeterDetails>;
   organisations: NormalizedState<Organisation>;
+  subOrganisations: NormalizedState<Organisation>;
   userSelections: NormalizedState<UserSelection>;
   users: UserState;
   meterDefinitions: NormalizedState<MeterDefinition>;

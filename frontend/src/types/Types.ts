@@ -25,6 +25,7 @@ export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) =
 export type CallbackWithData = (requestData: any) => Dispatch<any>;
 export type CallbackWithDataAndUrlParameters = (requestData: any, urlParameters: any) => any;
 export type RenderFunction<T> = (props: T) => Children;
+export type CallbackWithReturn<T> = (arg: T) => T;
 
 export type Fetch = (parameters?: EncodedUriParameters) => void;
 export type ClearError = () => void;
@@ -164,6 +165,9 @@ export const enum Sectors {
   meterCollection = 'meterCollection',
   collectionStatFacilities = 'collectionStatFacilities',
   meterCollectionStatFacilities = 'meterCollectionStatFacilities',
+  summary = 'summary',
+  organisationSummary = 'organisationSummary',
+  subOrganisations = 'subOrganisations',
 }
 
 export type ActionKey = EndPoints | Sectors;

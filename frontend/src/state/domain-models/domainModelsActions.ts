@@ -41,6 +41,9 @@ export const domainModelsClearError = (actionKey: ActionKey): string =>
 export const clearError = (actionKey: ActionKey) =>
   emptyActionOf(domainModelsClearError(actionKey));
 
+export const domainModelsClear = (actionKey: ActionKey): string =>
+  `DOMAIN_MODELS_CLEAR_${actionKey}`;
+
 export interface RequestCallbacks<T> {
   afterSuccess?: (domainModel: T, dispatch: Dispatch<RootState>) => void;
   afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;

@@ -7,7 +7,7 @@ import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
-  Action,
+  Action, ActionKey,
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
@@ -74,24 +74,30 @@ const makeAsyncRequest = async <P>({
 
 export type FetchIfNeeded = (getState: GetState) => boolean;
 
-export const requestAction = (endPoint: EndPoints): string => `REQUEST${endPoint}`;
-export const successAction = (endPoint: EndPoints): string => `SUCCESS${endPoint}`;
-export const failureAction = (endPoint: EndPoints): string => `FAILURE${endPoint}`;
+export const requestAction = (actionKey: ActionKey): string => `REQUEST_${actionKey}`;
+export const successAction = (actionKey: ActionKey): string => `SUCCESS_${actionKey}`;
+export const failureAction = (actionKey: ActionKey): string => `FAILURE_${actionKey}`;
+export const clearAction = (actionKey: ActionKey): string => `CLEAR_${actionKey}`;
 
-export const makeActionsOf = <P>(endPoint: EndPoints): RequestHandler<P> => ({
-  request: emptyActionOf(requestAction(endPoint)),
-  success: payloadActionOf<P>(successAction(endPoint)),
-  failure: payloadActionOf<ErrorResponse>(failureAction(endPoint)),
+export const makeActionsOf = <P>(actionKey: ActionKey): RequestHandler<P> => ({
+  request: emptyActionOf(requestAction(actionKey)),
+  success: payloadActionOf<P>(successAction(actionKey)),
+  failure: payloadActionOf<ErrorResponse>(failureAction(actionKey)),
 });
 
-export const fetchIfNeeded = <P>(endPoint: EndPoints, fetchIfNeeded: FetchIfNeeded, formatData?: DataFormatter<P>) =>
+export const fetchIfNeeded = <P>(
+  actionKey: ActionKey,
+  endPoint: EndPoints,
+  fetchIfNeeded: FetchIfNeeded,
+  formatData?: DataFormatter<P>
+) =>
   (parameters?: EncodedUriParameters) =>
     (dispatch, getState: GetState) => {
       if (fetchIfNeeded(getState)) {
         const onRequest = (parameters?: EncodedUriParameters): AxiosPromise<P> =>
           restClient.get(makeUrl(endPoint, parameters));
         return makeAsyncRequest<P>({
-          ...makeActionsOf<P>(endPoint),
+          ...makeActionsOf<P>(actionKey),
           onRequest,
           formatData,
           parameters,

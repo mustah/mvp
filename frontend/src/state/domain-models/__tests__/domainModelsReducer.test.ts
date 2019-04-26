@@ -274,7 +274,7 @@ describe('domainModelsReducer', () => {
 
   describe('clear domainModels', () => {
 
-    it('resets all domain models except the ones related to selection drop downs and dasboard', () => {
+    it('resets all domain models except the ones related to selection drop downs and dashboard', () => {
       const initialState: DomainModelsState = {
         gatewayMapMarkers: initialDomain(),
         meters: initialDomain(),
@@ -290,6 +290,7 @@ describe('domainModelsReducer', () => {
         meterDetailMeasurement: initialMeasurementState,
         dashboards: initialDomain(),
         widgets: initialDomain(),
+        subOrganisations: initialDomain(),
       };
 
       const isFetchingState: DomainModelsState = {
@@ -307,6 +308,7 @@ describe('domainModelsReducer', () => {
         meterDetailMeasurement: {...initialMeasurementState, isFetching: true},
         dashboards: {...initialState.dashboards, isFetching: false},
         widgets: {...initialState.widgets, isFetching: false},
+        subOrganisations: {...initialState.subOrganisations, isFetching: true},
       };
 
       const expected: DomainModelsState = {...initialState};

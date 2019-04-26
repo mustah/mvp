@@ -17,6 +17,15 @@ msgstr "what's new"
 msgid "switch to"
 msgstr "switch to"
 
+msgid "are you sure you want to delete the organisation {{organisation}}"
+msgstr "are you sure you want to delete the organisation '{{organisation}}'"
+
+msgid "delete organisation {{meters}} {{subOrganisations}}"
+msgstr "If you delete it, all related data will be erased:
+- All measurements
+- {{meters}} meters
+- {{subOrganisations}} sub-organisations"
+
 msgid "notifications"
 msgstr "notifications"
 

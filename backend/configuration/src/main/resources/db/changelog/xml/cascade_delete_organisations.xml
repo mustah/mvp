@@ -1,0 +1,101 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet author="Daniel Svensson" id="cascade_delete_organisation">
+    <dropUniqueConstraint
+      constraintName="organisation_parent_id_fkey"
+      tableName="organisation"
+    />
+    <addForeignKeyConstraint
+      constraintName="organisation_parent_id_fkey"
+      baseTableName="organisation"
+      baseColumnNames="parent_id"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+    />
+
+    <dropUniqueConstraint
+      constraintName="meter_definition_organisation_id_fkey"
+      tableName="meter_definition"
+    />
+    <addForeignKeyConstraint
+      constraintName="meter_definition_organisation_id_fkey"
+      baseTableName="meter_definition"
+      baseColumnNames="organisation_id"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+    />
+
+    <dropUniqueConstraint
+      constraintName="logical_meter_meter_definition_id_fkey"
+      tableName="logical_meter"
+    />
+    <addForeignKeyConstraint
+      constraintName="logical_meter_meter_definition_id_fkey"
+      baseTableName="logical_meter"
+      baseColumnNames="organisation_id"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+    />
+
+    <dropUniqueConstraint
+      constraintName="gateway_organisation_id_fkey"
+      tableName="gateway"
+    />
+    <addForeignKeyConstraint
+      constraintName="gateway_organisation_id_fkey"
+      baseTableName="gateway"
+      baseColumnNames="organisation_id"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+    />
+
+    <dropUniqueConstraint
+      constraintName="logical_meter_organisation_id_fkey"
+      tableName="logical_meter"
+    />
+    <addForeignKeyConstraint
+      constraintName="logical_meter_organisation_id_fkey"
+      baseTableName="logical_meter"
+      baseColumnNames="organisation_id"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+    />
+
+    <dropUniqueConstraint
+      constraintName="physical_meter_organisation_id_fkey"
+      tableName="physical_meter"
+    />
+    <addForeignKeyConstraint
+      constraintName="physical_meter_organisation_id_fkey"
+      baseTableName="physical_meter"
+      baseColumnNames="organisation_id"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+    />
+  </changeSet>
+</databaseChangeLog>

@@ -3,8 +3,11 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
@@ -16,12 +19,14 @@ import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.web.mapper.OrganisationDtoMapper.toDomainModel;
 import static com.elvaco.mvp.web.mapper.OrganisationDtoMapper.toDto;
@@ -37,6 +42,17 @@ public class OrganisationController {
   @GetMapping
   public List<OrganisationDto> allOrganisations() {
     return organisationUseCases.findAll().stream()
+      .map(OrganisationDtoMapper::toDto)
+      .collect(toList());
+  }
+
+  @GetMapping("/sub-organisations")
+  public List<OrganisationDto> subOrganisations(
+    @RequestParam MultiValueMap<String, String> requestParams
+  ) {
+    RequestParameters params = RequestParametersAdapter.of(requestParams);
+    return organisationUseCases.findAllSubOrganisations(
+      UUID.fromString(params.getFirst(RequestParameter.ORGANISATION))).stream()
       .map(OrganisationDtoMapper::toDto)
       .collect(toList());
   }
@@ -65,7 +81,6 @@ public class OrganisationController {
   public OrganisationDto deleteOrganisation(@PathVariable UUID id) {
     Organisation organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
-    // TODO delete should actually not remove the entity, just mark it as deleted.
     organisationUseCases.delete(organisation);
     return toDto(organisation);
   }

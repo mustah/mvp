@@ -2,8 +2,11 @@ package com.elvaco.mvp.web;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.OrganisationDto;
@@ -225,19 +228,44 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanDeleteOrganisation() {
-    ResponseEntity<OrganisationDto> exists = asSuperAdmin()
-      .get("/organisations/" + theBeatles.id, OrganisationDto.class);
+    superAdminCanDelete(theBeatles.id);
+  }
 
-    assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
+  @Test
+  public void superAdminCanDeleteOrganisationWithGateways() {
+    given(gateway().organisationId(theBeatles.id));
 
-    ResponseEntity<OrganisationDto> deleted = asSuperAdmin()
-      .delete("/organisations/" + theBeatles.id, OrganisationDto.class);
+    superAdminCanDelete(theBeatles.id);
+  }
 
-    assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.OK);
+  @Test
+  public void superAdminCanDeleteOrganisationWithMeters() {
+    given(logicalMeter().organisationId(theBeatles.id));
 
-    ResponseEntity<OrganisationDto> shouldBeDeleted = asSuperAdmin()
-      .get("/organisations/" + theBeatles.id, OrganisationDto.class);
-    assertThat(shouldBeDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    superAdminCanDelete(theBeatles.id);
+  }
+
+  @Test
+  public void superAdminCanDeleteOrganisationWithSubOrganisations() {
+    given(subOrganisation().parent(theBeatles));
+
+    superAdminCanDelete(theBeatles.id);
+  }
+
+  @Test
+  public void superAdminCanDeleteOrganisationWithUsers() {
+    given(user().organisation(theBeatles));
+    superAdminCanDelete(theBeatles.id);
+  }
+
+  @Test
+  public void superAdminCanDeleteOrganisationWithMeterDefinitions() {
+    given(meterDefinition()
+      .organisation(theBeatles)
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+    );
+
+    superAdminCanDelete(theBeatles.id);
   }
 
   @Test
@@ -268,5 +296,69 @@ public class OrganisationControllerTest extends IntegrationTest {
     ResponseEntity<OrganisationDto> shouldStillExist = asSuperAdmin()
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(shouldStillExist.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test
+  public void superAdminFindsSubOrganisations() {
+    given(subOrganisation());
+    given(subOrganisation());
+
+    ResponseEntity<List<OrganisationDto>> request = asSuperAdmin()
+      .getList(
+        "/organisations/sub-organisations?organisation=" + context().superAdmin.organisation.id,
+        OrganisationDto.class
+      );
+
+    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(request.getBody().size()).isEqualTo(2);
+  }
+
+  @Test
+  public void adminFindsSubOrganisationsOfOwnOrganisation() {
+    given(subOrganisation());
+    given(subOrganisation());
+
+    User adminOfOtherOrganisation = given(user().asAdmin().organisation(theBeatles));
+    given(subOrganisation(theBeatles, adminOfOtherOrganisation));
+
+    ResponseEntity<List<OrganisationDto>> request = asAdmin()
+      .getList(
+        "/organisations/sub-organisations?organisation=" + context().admin.organisation.id,
+        OrganisationDto.class
+      );
+
+    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(request.getBody().size()).isEqualTo(2);
+  }
+
+  @Test
+  public void userCanNotFindSubOrganisations() {
+    given(subOrganisation());
+    given(subOrganisation());
+
+    ResponseEntity<List<OrganisationDto>> request = asUser()
+      .getList(
+        "/organisations/sub-organisations?organisation=" + context().user.organisation.id,
+        OrganisationDto.class
+      );
+
+    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(request.getBody().size()).isEqualTo(0);
+  }
+
+  private void superAdminCanDelete(UUID organisationId) {
+    ResponseEntity<OrganisationDto> exists = asSuperAdmin()
+      .get("/organisations/" + organisationId, OrganisationDto.class);
+
+    assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    ResponseEntity<OrganisationDto> deleted = asSuperAdmin()
+      .delete("/organisations/" + organisationId, OrganisationDto.class);
+
+    assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    ResponseEntity<OrganisationDto> shouldBeDeleted = asSuperAdmin()
+      .get("/organisations/" + organisationId, OrganisationDto.class);
+    assertThat(shouldBeDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 }
