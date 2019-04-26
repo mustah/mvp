@@ -1,11 +1,6 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {
-  CHANGE_PAGE,
-  UPDATE_PAGE_METADATA,
-  changePage,
-  updatePageMetaData,
-} from '../paginationActions';
+import {changePage, updatePageMetaData} from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload} from '../paginationModels';
 
 const configureMockStore = configureStore([thunk]);
@@ -22,9 +17,7 @@ describe('paginationActions', () => {
 
       store.dispatch(changePage(payload));
 
-      expect(store.getActions()).toEqual([
-        {type: CHANGE_PAGE, payload},
-      ]);
+      expect(store.getActions()).toEqual([changePage(payload)]);
     });
 
     it('dispatches a update metadata request', () => {
@@ -46,9 +39,7 @@ describe('paginationActions', () => {
 
       store.dispatch(updatePageMetaData(payload));
 
-      expect(store.getActions()).toEqual([
-        {type: UPDATE_PAGE_METADATA, payload},
-      ]);
+      expect(store.getActions()).toEqual([updatePageMetaData(payload)]);
     });
   });
 });

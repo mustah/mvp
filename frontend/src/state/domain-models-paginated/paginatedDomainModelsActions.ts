@@ -19,19 +19,19 @@ import {
 } from './paginatedDomainModels';
 
 export const domainModelsPaginatedRequest = (actionKey: ActionKey) =>
-  `DOMAIN_MODELS_PAGINATED_REQUEST${actionKey}`;
+  `DOMAIN_MODELS_PAGINATED_REQUEST_${actionKey}`;
 
 export const domainModelsPaginatedGetSuccess = (actionKey: ActionKey) =>
-  `DOMAIN_MODELS_PAGINATED_${RequestType.GET}_SUCCESS${actionKey}`;
+  `DOMAIN_MODELS_PAGINATED_${RequestType.GET}_SUCCESS_${actionKey}`;
 
 export const domainModelsPaginatedFailure = (actionKey: ActionKey) =>
-  `DOMAIN_MODELS_PAGINATED_FAILURE${actionKey}`;
+  `DOMAIN_MODELS_PAGINATED_FAILURE_${actionKey}`;
 
 export const domainModelPaginatedClearError = (actionKey: ActionKey) =>
-  `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${actionKey}`;
+  `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR_${actionKey}`;
 
 export const sortTableAction = (actionKey: ActionKey) =>
-  createStandardAction(`SORT_TABLE${actionKey}`)<ApiRequestSortingOptions[] | undefined>();
+  createStandardAction(`SORT_TABLE_${actionKey}`)<ApiRequestSortingOptions[] | undefined>();
 
 export const clearError = (endPoint: EndPoints) =>
   payloadActionOf<PageNumbered>(domainModelPaginatedClearError(endPoint));
@@ -102,31 +102,6 @@ export const makeRequestActionsOf =
   });
 
 export const fetchIfNeeded = <T extends Identifiable>(
-  endPoint: EndPoints,
-  formatData: DataFormatter<NormalizedPaginated<T>>,
-  entityType: keyof PaginatedDomainModelsState,
-  requestCallbacks?: RequestCallbacks<NormalizedPaginated<T>>,
-): FetchPaginated =>
-  (page: number, requestData?: string) =>
-    (dispatch: Dispatch<RootState>, getState: GetState) => {
-      const {paginatedDomainModels} = getState();
-      if (needAnotherPage(page, paginatedDomainModels[entityType])) {
-        const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
-        return asyncRequest<string, NormalizedPaginated<T>>({
-          ...makeRequestActionsOf<NormalizedPaginated<T>>(endPoint),
-          formatData: (data) => ({...formatData(data), page}),
-          requestFunc,
-          requestData,
-          page,
-          ...requestCallbacks,
-          dispatch,
-        });
-      } else {
-        return null;
-      }
-    };
-
-export const fetchIfNeededForSector = <T extends Identifiable>(
   actionKey: ActionKey,
   endPoint: EndPoints,
   formatData: DataFormatter<NormalizedPaginated<T>>,

@@ -5,7 +5,7 @@ import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {meterParameters, RequestParameter} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
-import {initialPaginationState, paginationPageSize} from '../../ui/pagination/paginationReducer';
+import {initialState as initialPaginationState, paginationPageSize} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
 import {

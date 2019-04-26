@@ -13,6 +13,7 @@ import {meterDataFormatter} from './meterSchema';
 
 export const fetchMeters = fetchIfNeeded<Meter>(
   EndPoints.meters,
+  EndPoints.meters,
   meterDataFormatter,
   'meters',
   {

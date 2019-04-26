@@ -1,12 +1,12 @@
-import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
+import {ActionType, getType} from 'typesafe-actions';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {Maybe} from '../../../helpers/Maybe';
-import {Action, UseCases} from '../../../types/Types';
+import {resetReducer} from '../../../reducers/resetReducer';
+import {UseCases} from '../../../types/Types';
 import {search} from '../../search/searchActions';
 import {Query, QueryParameter} from '../../search/searchModels';
-import {resetReducer} from '../../../reducers/resetReducer';
-import {CHANGE_PAGE, UPDATE_PAGE_METADATA} from './paginationActions';
+import {resetSelection} from '../../user-selection/userSelectionActions';
+import {changePage, updatePageMetaData} from './paginationActions';
 import {
   PaginationChangePayload,
   PaginationMetadataPayload,
@@ -23,20 +23,14 @@ export const initialPaginationModel: PaginationModel = {
   size: paginationPageSize,
 };
 
-export const initialPaginationState: PaginationState = {
+export const initialState: PaginationState = {
   meters: {...initialPaginationModel},
   gateways: {...initialPaginationModel},
   collectionStatFacilities: {...initialPaginationModel},
   meterCollectionStatFacilities: {...initialPaginationModel},
 };
 
-type ActionTypes =
-  | Action<PaginationMetadataPayload>
-  | Action<PaginationChangePayload>
-  | Action<QueryParameter>
-  | EmptyAction<string>;
-
-const changePage = (
+const onChangePage = (
   state: PaginationState,
   {entityType, componentId, page}: PaginationChangePayload,
 ): PaginationState => ({
@@ -49,7 +43,7 @@ const changePage = (
 
 const updateMetaData = (
   state: PaginationState,
-  {payload: {entityType, totalElements, totalPages}}: Action<PaginationMetadataPayload>,
+  {entityType, totalElements, totalPages}: PaginationMetadataPayload,
 ): PaginationState => ({
   ...state,
   [entityType]: {useCases: {}, size: paginationPageSize, ...state[entityType], totalElements, totalPages},
@@ -75,18 +69,20 @@ const toPaginationChangePayload = (payload: QueryParameter): PaginationChangePay
     .map(() => resetSearchResultPage)
     .orElse(resetMetersPage);
 
+type ActionTypes = ActionType<typeof changePage | typeof updatePageMetaData | typeof search | typeof resetSelection>;
+
 export const pagination = (
-  state: PaginationState = initialPaginationState,
+  state: PaginationState = initialState,
   action: ActionTypes,
-) => {
+): PaginationState => {
   switch (action.type) {
-    case CHANGE_PAGE:
-      return changePage(state, (action as Action<PaginationChangePayload>).payload);
-    case UPDATE_PAGE_METADATA:
-      return updateMetaData(state, action as Action<PaginationMetadataPayload>);
+    case getType(changePage):
+      return onChangePage(state, action.payload);
+    case getType(updatePageMetaData):
+      return updateMetaData(state, action.payload);
     case getType(search):
-      return changePage(state, toPaginationChangePayload((action as Action<QueryParameter>).payload));
+      return onChangePage(state, toPaginationChangePayload(action.payload));
     default:
-      return resetReducer<PaginationState>(state, action, {...initialPaginationState});
+      return resetReducer<PaginationState>(state, action, initialState);
   }
 };
