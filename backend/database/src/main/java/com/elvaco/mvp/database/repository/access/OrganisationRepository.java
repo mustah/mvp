@@ -96,14 +96,20 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
-  @Cacheable(cacheNames = "organisation.slug")
+  @Cacheable(
+    cacheNames = "organisation.slug",
+    sync = true
+  )
   public Optional<Organisation> findBySlug(String slug) {
     return organisationJpaRepository.findBySlug(slug)
       .map(OrganisationEntityMapper::toDomainModel);
   }
 
   @Override
-  @Cacheable(cacheNames = "organisation.externalId")
+  @Cacheable(
+    cacheNames = "organisation.externalId",
+    sync = true
+  )
   public Optional<Organisation> findByExternalId(String externalId) {
     return organisationJpaRepository.findByExternalId(externalId)
       .map(OrganisationEntityMapper::toDomainModel);
