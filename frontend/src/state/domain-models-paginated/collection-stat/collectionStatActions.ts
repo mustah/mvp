@@ -28,6 +28,6 @@ export const fetchMeterCollectionStatsFacilityPaged = fetchIfNeeded<CollectionSt
   },
 );
 
-export const sortTableCollectionStats = sortTableAction(EndPoints.collectionStatFacility);
+export const sortTableCollectionStats = sortTableAction(Sectors.collectionStatFacilities);
 
 export const sortTableMeterCollectionStats = sortTableAction(Sectors.meterCollectionStatFacilities);
