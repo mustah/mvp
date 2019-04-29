@@ -28,6 +28,9 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -345,6 +348,67 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   }
 
   @Test
+  public void fiftyPercentWithThresholdFilter() {
+    ZonedDateTime now = context().now();
+    var meterMatchingThreshold = given(logicalMeter()
+      .meterDefinition(DEFAULT_DISTRICT_HEATING)
+      .physicalMeter(physicalMeter().readIntervalMinutes(60).build())
+    );
+
+    given(measurementSeries()
+      .forMeter(meterMatchingThreshold)
+      .startingAt(now)
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(24).toArray()));
+
+    var otherMeter = given(logicalMeter()
+      .meterDefinition(DEFAULT_DISTRICT_HEATING)
+      .physicalMeter(physicalMeter().build())
+    );
+
+    given(measurementSeries()
+      .forMeter(otherMeter)
+      .startingAt(now)
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(0, d -> d - 1.0).limit(12).toArray()));
+
+    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        Url.builder()
+          .path("/meters/stats/facility")
+          .parameter(AFTER, now)
+          .parameter(BEFORE, now.plusDays(1))
+          .parameter(THRESHOLD, "Return temperature > 10 °C")
+          .parameter(COLLECTION_AFTER, now)
+          .parameter(COLLECTION_BEFORE, now.plusDays(2))
+          .build(),
+        CollectionStatsDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getContent())
+      .extracting(m -> m.collectionPercentage)
+      .contains(50.0);
+
+    var listedPercentage = asUser()
+      .getList(
+        Url.builder()
+          .path("/meters/stats/date")
+          .parameter(AFTER, now)
+          .parameter(BEFORE, now.plusDays(1))
+          .parameter(THRESHOLD, "Return temperature > 10 °C")
+          .parameter(COLLECTION_AFTER, now)
+          .parameter(COLLECTION_BEFORE, now.plusDays(2))
+          .build(),
+        CollectionStatsPerDateDto.class
+      );
+
+    assertThat(listedPercentage.getBody())
+      .extracting(e -> e.collectionPercentage).containsOnly(100.0, 0.0);
+  }
+
+  @Test
   public void collectionPercentageWithMeterReplacement_100percent() {
     var meterId = randomUUID();
 
@@ -439,6 +503,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .startingAt(context().yesterday().plusHours(6))
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(1.0, 1, 1, 1));
+
     testSorting(
       "collectionPercentage,asc",
       meter -> meter.facility,
@@ -549,7 +614,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   ) {
     Url url = Url.builder()
       .path("/meters/stats/facility")
-      .period(context().yesterday(), context().yesterday().plusDays(1))
+      .collectionPeriod(context().yesterday(), context().yesterday().plusDays(1))
       .size(expectedProperties.size())
       .page(0)
       .sortBy(sort)
@@ -568,16 +633,16 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   private static UrlTemplate statsFacilityUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
       .path("/meters/stats/facility")
-      .parameter(AFTER, after)
-      .parameter(BEFORE, before)
+      .parameter(COLLECTION_AFTER, after)
+      .parameter(COLLECTION_BEFORE, before)
       .build();
   }
 
   private static UrlTemplate statsDateUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
       .path("/meters/stats/date")
-      .parameter(AFTER, after)
-      .parameter(BEFORE, before)
+      .parameter(COLLECTION_AFTER, after)
+      .parameter(COLLECTION_BEFORE, before)
       .build();
   }
 }

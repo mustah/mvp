@@ -16,8 +16,8 @@ export const getCollectionStatRequestParameters =
     }) => ({
       selectionParameters: {
         ...selectionParameters,
-        dateRange: timePeriod,
         w: query ? [toIdNamed(query)] : [],
+        collectionDateRange: timePeriod,
       },
     })
   );

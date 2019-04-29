@@ -4,9 +4,9 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
+import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.jooq.tables.records.MeasurementStatDataRecord;
 
 import lombok.experimental.UtilityClass;
@@ -67,7 +67,7 @@ public class JooqUtils {
     }
   }
 
-  static Condition measurementStatsConditionFor(SelectionPeriod period) {
+  static Condition measurementStatsConditionFor(FilterPeriod period) {
     LocalDate startDate = period.start.toLocalDate();
     LocalDate stopDate = period.stop.toLocalDate();
 

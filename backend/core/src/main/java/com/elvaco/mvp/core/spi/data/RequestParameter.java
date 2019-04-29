@@ -12,6 +12,8 @@ public enum RequestParameter {
   ALARM("alarm"),
   BEFORE("before"),
   CITY("city"),
+  COLLECTION_AFTER("collectionAfter"),
+  COLLECTION_BEFORE("collectionBefore"),
   FACILITY("facility"),
   GATEWAY_ID("gatewayId"),
   GATEWAY_SERIAL("gatewaySerial"),

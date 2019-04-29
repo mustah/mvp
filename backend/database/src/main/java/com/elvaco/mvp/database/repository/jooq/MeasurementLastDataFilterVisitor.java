@@ -1,7 +1,5 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import com.elvaco.mvp.core.filter.PeriodFilter;
-
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -17,9 +15,6 @@ import static org.jooq.impl.DSL.trueCondition;
 @RequiredArgsConstructor
 public class MeasurementLastDataFilterVisitor extends EmptyFilterVisitor {
   private final DSLContext dsl;
-
-  @Override
-  public void visit(PeriodFilter filter) { }
 
   @Override
   protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {

@@ -11,11 +11,13 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 
 public interface RequestParameters {
@@ -59,11 +61,19 @@ public interface RequestParameters {
     return add(AFTER, start.toString()).add(BEFORE, stop.toString());
   }
 
-  default Optional<SelectionPeriod> getPeriod() {
-    Optional<ZonedDateTime> start = getAsZonedDateTime(AFTER);
-    Optional<ZonedDateTime> stop = getAsZonedDateTime(BEFORE);
+  default Optional<FilterPeriod> getCollectionPeriod() {
+    return getPeriod(COLLECTION_AFTER, COLLECTION_BEFORE);
+  }
+
+  default Optional<FilterPeriod> getPeriod() {
+    return getPeriod(AFTER, BEFORE);
+  }
+
+  default Optional<FilterPeriod> getPeriod(RequestParameter after, RequestParameter before) {
+    Optional<ZonedDateTime> start = getAsZonedDateTime(after);
+    Optional<ZonedDateTime> stop = getAsZonedDateTime(before);
     if (start.isPresent() && stop.isPresent()) {
-      return Optional.of(new SelectionPeriod(start.get(), stop.get()));
+      return Optional.of(new FilterPeriod(start.get(), stop.get()));
     }
     return Optional.empty();
   }

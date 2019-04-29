@@ -5,6 +5,7 @@ import java.util.List;
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
+import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
 import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.GatewayIdFilter;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
@@ -46,6 +47,9 @@ abstract class EmptyFilterVisitor extends JooqFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {}
+
+  @Override
+  public void visit(CollectionPeriodFilter filter) { }
 
   @Override
   public void visit(SerialFilter filter) {}

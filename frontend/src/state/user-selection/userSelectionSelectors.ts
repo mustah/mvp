@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {DateRange, Period} from '../../components/dates/dateModels';
+import {Period} from '../../components/dates/dateModels';
 import {byNameAsc} from '../../helpers/comparators';
 import {CurrentPeriod, toPeriodApiParameters} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
@@ -20,7 +20,6 @@ import {ApiRequestSortingOptions, Pagination} from '../ui/pagination/paginationM
 import {
   ParameterName,
   SelectedParameters,
-  SelectionInterval,
   SelectionItem,
   SelectionListItem,
   ThresholdQuery,
@@ -75,8 +74,13 @@ export const getUserSelectionId = (state: UserSelectionState): uuid => state.use
 
 const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
   const {start} = state;
-  const {dateRange: {period, customDateRange}} = getSelectionParameters(state);
-  return ({start, period, customDateRange: Maybe.maybe(customDateRange)});
+  const {dateRange} = getSelectionParameters(state);
+  if (dateRange) {
+    const {period, customDateRange} = dateRange;
+    return ({start, period, customDateRange: Maybe.maybe(customDateRange)});
+  } else {
+    return ({period: Period.now, customDateRange: Maybe.nothing()});
+  }
 };
 
 const toSortParameters = (sort: ApiRequestSortingOptions[] | undefined): EncodedUriParameters[] =>
@@ -215,14 +219,5 @@ export const allCurrentMeterParameters = encodedUriParametersFrom(toPeriodApiPar
 export const getGatewayParameters = getParameters(entityApiParametersGatewaysFactory);
 
 export const getCollectionStatParameters = getParameters(entityApiParametersCollectionStatFactory);
-
-export const getSelectedPeriod =
-  createSelector<UserSelection, SelectionInterval, {period: Period, customDateRange: Maybe<DateRange>}>(
-    ({selectionParameters: {dateRange}}: UserSelection) => dateRange,
-    ({period, customDateRange}: SelectionInterval) => ({
-      period,
-      customDateRange: Maybe.maybe(customDateRange),
-    }),
-  );
 
 export const getUserSelection = (state: UserSelectionState): UserSelection => state.userSelection;

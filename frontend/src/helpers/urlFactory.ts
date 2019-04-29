@@ -30,6 +30,8 @@ export enum RequestParameter {
   alarm = 'alarm',
   before = 'before',
   city = 'city',
+  collectionAfter = 'collectionAfter',
+  collectionBefore = 'collectionBefore',
   facility = 'facility',
   gatewayId = 'gatewayId',
   gatewaySerial = 'gatewaySerial',
@@ -86,13 +88,21 @@ const mapRequestParameters =
       return isValidThreshold(value)
         ? {
           [RequestParameter.threshold]: thresholdAsString(threshold),
-          ...queryParametersOfDateRange(threshold.dateRange),
+          ...queryParametersOfDateRange(threshold.dateRange, RequestParameter.after, RequestParameter.before),
         }
         : {};
     }
 
     if (selectedParameter === 'dateRange') {
-      return queryParametersOfDateRange(value as SelectionInterval);
+      return queryParametersOfDateRange(value as SelectionInterval, RequestParameter.after, RequestParameter.before);
+    }
+
+    if (selectedParameter === 'collectionDateRange') {
+      return queryParametersOfDateRange(
+        value as SelectionInterval,
+        RequestParameter.collectionAfter,
+        RequestParameter.collectionBefore
+      );
     }
 
     const apiParameter = requestParametersBySelectionParameters[selectedParameter];
