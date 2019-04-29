@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Column} from '../../../components/layouts/column/Column';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
-import {CollectionGraphContainer} from '../containers/CollectionGraphContainer';
 import {Props} from '../../report/containers/MeasurementContentContainer';
+import {CollectionGraphContainer} from '../containers/CollectionGraphContainer';
 import {CollectionListContainer} from '../containers/CollectionListContainer';
 import {CollectionToolbarContainer} from '../containers/CollectionToolbarContainer';
 
@@ -15,7 +15,7 @@ export const CollectionContent = ({view}: Props) => (
       <CollectionGraphContainer/>
     </Column>
     <Column style={{display: isVisible(view === ToolbarView.table)}}>
-      <CollectionListContainer componentId="collectionStatList"/>
+      <CollectionListContainer/>
     </Column>
   </Column>
 );

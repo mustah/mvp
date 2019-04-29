@@ -108,7 +108,7 @@ export const MainContentTabs = ({
         {selectedTab === TabName.collection && <CollectionStatContentContainer/>}
       </TabContent>
       <TabContent tab={TabName.selectionReport} selectedTab={selectedTab}>
-        {selectedTab === TabName.selectionReport && <SelectionReportContentContainer componentId="SelectionReport"/>}
+        {selectedTab === TabName.selectionReport && <SelectionReportContentContainer/>}
       </TabContent>
     </Tabs>
   );

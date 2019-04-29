@@ -16,13 +16,12 @@ import {
   getPaginatedEntities,
 } from '../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {isSuperAdmin} from '../state/domain-models/user/userSelectors';
+import {addAllToReport, addAllToSelectionReport, addToReport} from '../state/report/reportActions';
 import {changePage} from '../state/ui/pagination/paginationActions';
 import {EntityTypes, Pagination} from '../state/ui/pagination/paginationModels';
 import {getPagination} from '../state/ui/pagination/paginationSelectors';
 import {getPaginatedMeterParameters} from '../state/user-selection/userSelectionSelectors';
-import {ComponentId} from '../types/Types';
 import {syncMeters, syncWithMetering} from '../usecases/meter/meterActions';
-import {addAllToReport, addAllToSelectionReport, addToReport} from '../state/report/reportActions';
 
 const mapStateToProps = (
   {
@@ -32,10 +31,9 @@ const mapStateToProps = (
     ui: {pagination: paginationModel},
     search: {validation: {query}},
   }: RootState,
-  {componentId}: ComponentId,
 ): MeterListStateToProps => {
   const entityType: EntityTypes = 'meters';
-  const pagination: Pagination = getPagination({componentId, entityType, pagination: paginationModel});
+  const pagination: Pagination = getPagination({entityType, pagination: paginationModel});
   const {page} = pagination;
   const {sort} = meters;
 
@@ -44,7 +42,6 @@ const mapStateToProps = (
     entities: getPaginatedEntities<Meter>(meters),
     error: getPageError<Meter>(meters, page),
     result: getPageResult<Meter>(meters, page),
-
     parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),
     isFetching: getPageIsFetching(meters, page),
     isSuperAdmin: isSuperAdmin(user!),
@@ -67,7 +64,7 @@ const mapDispatchToProps = (dispatch): MeterListDispatchToProps => bindActionCre
 }, dispatch);
 
 export const MeterListContainer =
-  connect<MeterListStateToProps, MeterListDispatchToProps, ComponentId>(
+  connect<MeterListStateToProps, MeterListDispatchToProps>(
     mapStateToProps,
     mapDispatchToProps,
   )(MeterListContent);

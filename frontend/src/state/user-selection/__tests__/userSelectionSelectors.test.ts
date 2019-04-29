@@ -36,7 +36,6 @@ describe('userSelectionSelectors', () => {
     ...initialUserSelectionState,
     pagination: getPagination({
       entityType: 'meters',
-      componentId: 'test',
       pagination: initialPaginationState,
     }),
     start,
@@ -70,7 +69,6 @@ describe('userSelectionSelectors', () => {
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'meters',
-          componentId: 'test',
           pagination: initialPaginationState,
         }),
         start,
@@ -91,7 +89,6 @@ describe('userSelectionSelectors', () => {
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'meters',
-          componentId: 'test',
           pagination: initialPaginationState,
         }),
         query,
@@ -123,7 +120,6 @@ describe('userSelectionSelectors', () => {
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'meters',
-          componentId: 'test',
           pagination: initialPaginationState,
         }),
         start,
@@ -144,7 +140,6 @@ describe('userSelectionSelectors', () => {
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'meters',
-          componentId: 'test',
           pagination: initialPaginationState,
         }),
         start,
@@ -311,7 +306,6 @@ describe('userSelectionSelectors', () => {
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'gateways',
-          componentId: 'test',
           pagination: initialPaginationState,
         }),
         start,
@@ -331,7 +325,6 @@ describe('userSelectionSelectors', () => {
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'gateways',
-          componentId: 'test',
           pagination: initialPaginationState,
         }),
         start,
@@ -354,7 +347,6 @@ describe('userSelectionSelectors', () => {
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'gateways',
-          componentId: 'test',
           pagination: initialPaginationState,
         }),
         start,

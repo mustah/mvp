@@ -1,7 +1,7 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {changePage, updatePageMetaData} from '../paginationActions';
-import {PaginationChangePayload, PaginationMetadataPayload} from '../paginationModels';
+import {ChangePagePayload, PaginationMetadataPayload} from '../paginationModels';
 
 const configureMockStore = configureStore([thunk]);
 let store;
@@ -13,7 +13,7 @@ describe('paginationActions', () => {
 
   describe('changePage', () => {
     it('dispatches a requestPage action', () => {
-      const payload: PaginationChangePayload = {entityType: 'meters', componentId: 'test', page: 2};
+      const payload: ChangePagePayload = {entityType: 'meters', page: 2};
 
       store.dispatch(changePage(payload));
 

@@ -5,6 +5,7 @@ import {useFetchMeters} from '../../state/domain-models-paginated/meter/fetchMet
 import {OnDeleteMeter} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
+import {LegendItem} from '../../state/report/reportModels';
 import {
   ApiRequestSortingOptions,
   EntityTypes,
@@ -15,7 +16,6 @@ import {
   CallbackWith,
   CallbackWithIds,
   ClearErrorPaginated,
-  ComponentId,
   EncodedUriParameters,
   ErrorResponse,
   FetchPaginated,
@@ -27,7 +27,6 @@ import {
 } from '../../types/Types';
 import {MeterList} from '../../usecases/meter/components/MeterList';
 import {toLegendItem} from '../../usecases/report/helpers/legendHelper';
-import {LegendItem} from '../../state/report/reportModels';
 import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
@@ -58,7 +57,7 @@ export interface MeterListDispatchToProps {
   sortTable: CallbackWith<ApiRequestSortingOptions[]>;
 }
 
-export type MeterListProps = MeterListStateToProps & MeterListDispatchToProps & ComponentId;
+export type MeterListProps = MeterListStateToProps & MeterListDispatchToProps;
 
 export interface MeterListActionDropdownProps {
   syncMeters: OnClick;

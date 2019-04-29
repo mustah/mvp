@@ -11,7 +11,6 @@ import {GatewayListItem} from './GatewayListItem';
 
 export const GatewayList = ({
   changePage,
-  componentId,
   result,
   entities,
   pagination,
@@ -24,7 +23,7 @@ export const GatewayList = ({
   const renderAddress = ({location: {address}}: Gateway) => orUnknown(address);
   const renderProductModel = ({productModel}: Gateway) => productModel;
 
-  const onChangePage = (page: number) => changePage({entityType, componentId, page});
+  const onChangePage = (page: number) => changePage({entityType, page});
 
   return (
     <div>

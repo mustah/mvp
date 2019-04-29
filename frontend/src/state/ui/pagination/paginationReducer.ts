@@ -4,41 +4,33 @@ import {Maybe} from '../../../helpers/Maybe';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {UseCases} from '../../../types/Types';
 import {search} from '../../search/searchActions';
-import {Query, QueryParameter} from '../../search/searchModels';
+import {Query} from '../../search/searchModels';
 import {resetSelection} from '../../user-selection/userSelectionActions';
 import {changePage, updatePageMetaData} from './paginationActions';
-import {
-  PaginationChangePayload,
-  PaginationMetadataPayload,
-  PaginationModel,
-  PaginationState,
-} from './paginationModels';
+import {ChangePagePayload, Pagination, PaginationMetadataPayload, PaginationState} from './paginationModels';
 
 export const paginationPageSize = 20;
 
-export const initialPaginationModel: PaginationModel = {
-  useCases: {},
+const initialPagination: Pagination = {
+  page: 0,
+  size: paginationPageSize,
   totalElements: -1,
   totalPages: -1,
-  size: paginationPageSize,
 };
 
 export const initialState: PaginationState = {
-  meters: {...initialPaginationModel},
-  gateways: {...initialPaginationModel},
-  collectionStatFacilities: {...initialPaginationModel},
-  meterCollectionStatFacilities: {...initialPaginationModel},
+  meters: {...initialPagination},
+  gateways: {...initialPagination},
+  collectionStatFacilities: {...initialPagination},
+  meterCollectionStatFacilities: {...initialPagination},
 };
 
 const onChangePage = (
   state: PaginationState,
-  {entityType, componentId, page}: PaginationChangePayload,
+  {entityType, page}: ChangePagePayload,
 ): PaginationState => ({
   ...state,
-  [entityType]: {
-    ...state[entityType],
-    useCases: {...state[entityType]!.useCases, [componentId]: {page}},
-  },
+  [entityType]: {...state[entityType], page},
 });
 
 const updateMetaData = (
@@ -46,28 +38,15 @@ const updateMetaData = (
   {entityType, totalElements, totalPages}: PaginationMetadataPayload,
 ): PaginationState => ({
   ...state,
-  [entityType]: {useCases: {}, size: paginationPageSize, ...state[entityType], totalElements, totalPages},
+  [entityType]: {...state[entityType], size: paginationPageSize, totalElements, totalPages},
 });
 
 const hasQuery = ({query}: Query) => isDefined(query);
 
-const resetSearchResultPage: PaginationChangePayload = {
+const resetSearchResultPage: ChangePagePayload = {
   entityType: 'meters',
-  componentId: 'searchResultList',
   page: 0,
 };
-
-const resetMetersPage: PaginationChangePayload = {
-  entityType: 'meters',
-  componentId: 'validationMeterList',
-  page: 0,
-};
-
-const toPaginationChangePayload = (payload: QueryParameter): PaginationChangePayload =>
-  Maybe.maybe(payload[UseCases.collection])
-    .filter(hasQuery)
-    .map(() => resetSearchResultPage)
-    .orElse(resetMetersPage);
 
 type ActionTypes = ActionType<typeof changePage | typeof updatePageMetaData | typeof search | typeof resetSelection>;
 
@@ -81,7 +60,10 @@ export const pagination = (
     case getType(updatePageMetaData):
       return updateMetaData(state, action.payload);
     case getType(search):
-      return onChangePage(state, toPaginationChangePayload(action.payload));
+      return Maybe.maybe(action.payload[UseCases.collection])
+        .filter(hasQuery)
+        .map(_ => onChangePage(state, resetSearchResultPage))
+        .orElse(state);
     default:
       return resetReducer<PaginationState>(state, action, initialState);
   }

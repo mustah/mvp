@@ -29,7 +29,6 @@ import {
   Callback,
   CallbackWith,
   ClearErrorPaginated,
-  ComponentId,
   EncodedUriParameters,
   ErrorResponse,
   FetchPaginated,
@@ -68,15 +67,14 @@ const mapStateToProps = (
     search: {validation: {query}},
     collection: {isExportingToExcel, timePeriod}
   }: RootState,
-  {componentId}: ComponentId,
 ): StateToProps => {
   const entityType: EntityTypes = 'collectionStatFacilities';
-  const pagination: Pagination = getPagination({componentId, entityType, pagination: paginationModel});
+  const pagination: Pagination = getPagination({entityType, pagination: paginationModel});
   const {page} = pagination;
   const {sort} = collectionStatFacilities;
 
   return ({
-    entities: getPaginatedEntities<CollectionStat>(collectionStatFacilities),
+    entities: getPaginatedEntities(collectionStatFacilities),
     result: getPageResult(collectionStatFacilities, page),
     parameters: getPaginatedCollectionStatParameters({
       sort,

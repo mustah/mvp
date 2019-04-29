@@ -4,6 +4,6 @@ import {GatewayListContainer} from '../containers/GatewayListContainer';
 
 export const GatewayTabs = (props: MainContentTabsProps) => (
   <MainContentTabs {...props}>
-    <GatewayListContainer componentId="collectionGatewayList"/>
+    <GatewayListContainer/>
   </MainContentTabs>
 );
