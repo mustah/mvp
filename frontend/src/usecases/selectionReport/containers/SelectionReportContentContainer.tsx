@@ -7,12 +7,12 @@ import {
   getPaginatedEntities
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
+import {addAllToSelectionReport} from '../../../state/report/reportActions';
+import {LegendItem} from '../../../state/report/reportModels';
 import {EntityTypes, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
-import {CallbackWith, ComponentId, uuid} from '../../../types/Types';
-import {addAllToSelectionReport} from '../../../state/report/reportActions';
-import {LegendItem} from '../../../state/report/reportModels';
+import {CallbackWith, uuid} from '../../../types/Types';
 import {SelectionReport} from '../components/SelectionReport';
 
 interface StateToProps {
@@ -28,7 +28,7 @@ interface DispatchToProps {
 
 export type Props = StateToProps & DispatchToProps;
 
-const mapStateToProps = (rootState: RootState, {componentId}: ComponentId): StateToProps => {
+const mapStateToProps = (rootState: RootState): StateToProps => {
   const {
     ui: {toolbar: {selectionReport: {view}}, pagination: paginationModel},
     paginatedDomainModels: {meters},
@@ -36,7 +36,7 @@ const mapStateToProps = (rootState: RootState, {componentId}: ComponentId): Stat
   } = rootState;
 
   const entityType: EntityTypes = 'meters';
-  const pagination: Pagination = getPagination({componentId, entityType, pagination: paginationModel});
+  const pagination: Pagination = getPagination({entityType, pagination: paginationModel});
   const {page} = pagination;
 
   return ({
@@ -51,7 +51,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addAllToSelectionReport
 }, dispatch);
 
-export const SelectionReportContentContainer = connect<StateToProps, DispatchToProps, ComponentId>(
+export const SelectionReportContentContainer = connect<StateToProps, DispatchToProps>(
   mapStateToProps,
   mapDispatchToProps
 )(SelectionReport);

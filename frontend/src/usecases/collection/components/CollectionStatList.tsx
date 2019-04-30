@@ -42,7 +42,6 @@ const renderCollectionPercentage = ({dataItem: {collectionPercentage, readInterv
   <td>{formatCollectionPercentage(collectionPercentage, readInterval)}</td>;
 
 export const CollectionStatList = ({
-  componentId,
   changePage,
   exportToExcelSuccess,
   isExportingToExcel,
@@ -60,11 +59,7 @@ export const CollectionStatList = ({
   });
 
   const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
-    changePage({
-      entityType,
-      componentId,
-      page: skip / paginationPageSize
-    });
+    changePage({entityType, page: skip / paginationPageSize});
 
   const handleSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
 
@@ -96,12 +91,12 @@ export const CollectionStatList = ({
           cell={renderMeterListItem}
           headerClassName="left-most"
           className="left-most"
+
         />
         <GridColumn
           field="readInterval"
           title={translate('resolution')}
           cell={renderReadInterval}
-          sortable={false}
         />
         <GridColumn
           field="collectionPercentage"

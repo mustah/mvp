@@ -19,6 +19,13 @@ const toolbarState: Omit<ToolbarState, 'meterMeasurement'> = {
   selectionReport: {view: ToolbarView.graph},
 };
 
+const paginationState = {
+  page: 0,
+  size: 20,
+  totalElements: -1,
+  totalPages: -1,
+};
+
 export const oldParameterNames: Array<keyof OldSelectionParameters> = [
   'facilities',
   'gatewaySerials',
@@ -182,7 +189,22 @@ export const migrations = {
         }
       }
     };
+  },
+  11: (state: PersistedState | any) => {
+    const {ui} = state;
+    return {
+      ...state,
+      ui: {
+        ...ui,
+        pagination: {
+          meters: {...paginationState},
+          gateways: {...paginationState},
+          collectionStatFacilities: {...paginationState},
+          meterCollectionStatFacilities: {...paginationState},
+        }
+      }
+    };
   }
 };
 
-export const currentVersion: number = 10;
+export const currentVersion: number = 11;

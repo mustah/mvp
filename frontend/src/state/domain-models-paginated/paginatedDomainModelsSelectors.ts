@@ -29,8 +29,7 @@ export const getPaginatedDomainModelById = <T extends Identifiable>(id: uuid) =>
 
 export const isMetersPageFetching =
   <T extends Identifiable>(meters: NormalizedPaginatedState<T>, pagination: PaginationState): boolean => {
-    const componentId = 'validationMeterList';
     const entityType: EntityTypes = 'meters';
-    const {page}: Pagination = getPagination({componentId, entityType, pagination});
+    const {page}: Pagination = getPagination({entityType, pagination});
     return getPageIsFetching(meters, page);
   };

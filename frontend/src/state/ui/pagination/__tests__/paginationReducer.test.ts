@@ -2,35 +2,35 @@ import {search} from '../../../search/searchActions';
 import {makeMeterQuery} from '../../../search/searchModels';
 import {resetSelection} from '../../../user-selection/userSelectionActions';
 import {changePage, updatePageMetaData} from '../paginationActions';
-import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
+import {ChangePagePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
 import {initialState, pagination, paginationPageSize} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
   const paginatedState: Readonly<PaginationState> = {
     meters: {
+      page: 0,
       size: paginationPageSize,
       totalPages: 10,
       totalElements: 100,
-      useCases: {component1: {page: 0}, component2: {page: 0}},
     },
     gateways: {
+      page: 0,
       size: paginationPageSize,
       totalPages: 10,
       totalElements: 100,
-      useCases: {component1: {page: 0}, component2: {page: 0}},
     },
     collectionStatFacilities: {
+      page: 0,
       size: paginationPageSize,
       totalPages: 10,
       totalElements: 100,
-      useCases: {component1: {page: 0}, component2: {page: 0}},
     },
     meterCollectionStatFacilities: {
+      page: 0,
       size: paginationPageSize,
       totalPages: 10,
       totalElements: 100,
-      useCases: {component1: {page: 0}, component2: {page: 0}},
     },
   };
 
@@ -56,18 +56,16 @@ describe('paginationReducer', () => {
           ...initialState.meters,
           totalPages: payload.totalPages,
           totalElements: payload.totalElements,
-          useCases: {},
         },
       };
       expect(pagination(undefined, updatePageMetaData(payload))).toEqual(expectedState);
     });
   });
+
   it('updates pagination but leaves useCases intact', () => {
     const paginatedState: PaginationState = {
-      meters: {size: paginationPageSize, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
-      gateways: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
-      collectionStatFacilities: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
-      meterCollectionStatFacilities: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
+      ...initialState,
+      meters: {...initialState.meters, page: 1},
     };
     const payload: PaginationMetadataPayload = {
       entityType: 'meters',
@@ -77,15 +75,13 @@ describe('paginationReducer', () => {
     };
 
     const expectedPaginatedState: PaginationState = {
+      ...initialState,
       meters: {
+        page: 1,
         size: paginationPageSize,
         totalPages: 200,
         totalElements: 2000,
-        useCases: {validationList: {page: 1}},
       },
-      gateways: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
-      collectionStatFacilities: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
-      meterCollectionStatFacilities: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
     };
 
     expect(pagination(paginatedState, updatePageMetaData(payload))).toEqual(expectedPaginatedState);
@@ -93,16 +89,12 @@ describe('paginationReducer', () => {
   });
 
   describe('pagination change page', () => {
-    const payload: PaginationChangePayload = {
-      componentId: 'test',
-      entityType: 'meters',
-      page: 10,
-    };
+    const payload: ChangePagePayload = {entityType: 'meters', page: 10};
 
     it('changes requestedPage', () => {
       const expectedState: PaginationState = {
         ...initialState,
-        meters: {...initialState.meters, useCases: {test: {page: 10}}},
+        meters: {...initialState.meters, page: 10},
       };
 
       expect(pagination(undefined, changePage(payload))).toEqual(expectedState);
@@ -113,7 +105,7 @@ describe('paginationReducer', () => {
         ...paginatedState,
         meters: {
           ...paginatedState.meters,
-          useCases: {...paginatedState.meters.useCases, test: {page: 10}},
+          page: 10,
         },
       };
 
@@ -125,10 +117,7 @@ describe('paginationReducer', () => {
         ...paginatedState,
         meters: {
           ...paginatedState.meters,
-          useCases: {
-            ...paginatedState.meters.useCases,
-            validationMeterList: {page: 0},
-          },
+          page: 0,
         },
       };
       expect(pagination(paginatedState, search(makeMeterQuery('ok')))).toEqual(expectedState);
@@ -138,15 +127,13 @@ describe('paginationReducer', () => {
   describe('reset pagination', () => {
     it('sets pagination to initialState when getting the reset action', () => {
       const paginatedState: PaginationState = {
+        ...initialState,
         meters: {
           size: paginationPageSize,
           totalPages: 1,
           totalElements: 1,
-          useCases: {validationList: {page: 1}},
+          page: 1,
         },
-        gateways: {size: paginationPageSize, totalPages: 10, totalElements: 10, useCases: {}},
-        collectionStatFacilities: {size: paginationPageSize, totalPages: 10, totalElements: 10, useCases: {}},
-        meterCollectionStatFacilities: {size: paginationPageSize, totalPages: 10, totalElements: 10, useCases: {}},
       };
 
       expect(pagination(paginatedState, resetSelection())).toEqual(initialState);

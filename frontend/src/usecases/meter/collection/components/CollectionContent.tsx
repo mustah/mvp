@@ -12,10 +12,10 @@ export const CollectionContent = ({view, meter}: Props) => (
   <Column>
     <CollectionToolbarContainer/>
     <Column style={{display: isVisible(view === ToolbarView.graph)}}>
-      <CollectionGraphContainer meterId={meter.id} />
+      <CollectionGraphContainer meterId={meter.id}/>
     </Column>
     <Column style={{display: isVisible(view === ToolbarView.table)}}>
-      <CollectionListContainer meterId={meter.id} componentId="meterCollectionStatList"/>
+      <CollectionListContainer meterId={meter.id}/>
     </Column>
   </Column>
 );

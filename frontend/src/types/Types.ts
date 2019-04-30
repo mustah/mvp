@@ -25,7 +25,6 @@ export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) =
 export type CallbackWithData = (requestData: any) => Dispatch<any>;
 export type CallbackWithDataAndUrlParameters = (requestData: any, urlParameters: any) => any;
 export type RenderFunction<T> = (props: T) => Children;
-export type CallbackWithReturn<T> = (arg: T) => T;
 
 export type Fetch = (parameters?: EncodedUriParameters) => void;
 export type ClearError = () => void;
@@ -119,10 +118,6 @@ export interface IdNamed extends Identifiable {
   readonly name: string;
 }
 
-export interface ComponentId {
-  componentId: string;
-}
-
 export interface PathNamed {
   pathName: string;
 }
@@ -141,11 +136,11 @@ export const enum Status {
 }
 
 export const enum UseCases {
-  dashboard = 'dashboard',
   collection = 'collection',
-  validation = 'validation',
-  selection = 'selection',
+  dashboard = 'dashboard',
   report = 'report',
+  selection = 'selection',
+  validation = 'validation',
 }
 
 const status = {

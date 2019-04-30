@@ -42,7 +42,6 @@ const sortable: GridSortSettings = {
 };
 
 export const MeterList = ({
-  componentId,
   changePage,
   deleteMeter,
   result,
@@ -100,11 +99,7 @@ export const MeterList = ({
   };
 
   const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
-    changePage({
-      entityType,
-      componentId,
-      page: skip / paginationPageSize
-    });
+    changePage({entityType, page: skip / paginationPageSize});
 
   const handleSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
 

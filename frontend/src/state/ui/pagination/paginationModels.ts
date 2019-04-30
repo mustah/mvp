@@ -1,5 +1,5 @@
+import {SortDescriptor} from '@progress/kendo-data-query';
 import {RequestParameter} from '../../../helpers/urlFactory';
-import {uuid} from '../../../types/Types';
 import {
   NormalizedPaginatedResult,
   PageNumbered,
@@ -7,46 +7,32 @@ import {
 } from '../../domain-models-paginated/paginatedDomainModels';
 import {DomainModelsState} from '../../domain-models/domainModels';
 
-export interface PaginationMetadata {
+interface PaginationMetaData {
   size: number;
   totalElements: number;
   totalPages: number;
 }
 
-export interface HasComponentId {
-  componentId: uuid;
-}
+export type Pagination = PageNumbered & PaginationMetaData;
 
 export type EntityTypes = keyof (PaginatedDomainModelsState & DomainModelsState);
 
-export type PaginationChangePayload =
-  HasComponentId
-  & PageNumbered
-  & {entityType: EntityTypes};
-
-export type PaginationMetadataPayload =
-  NormalizedPaginatedResult
-  & {entityType: EntityTypes};
-
-export type OnChangePage = (payload: PaginationChangePayload) => void;
-
-export interface PaginationModel extends PaginationMetadata {
-  useCases: {[component: string]: PageNumbered};
+export interface EntityTyped {
+  entityType: EntityTypes;
 }
 
-export type PaginationState = Paginated & Pageable;
+export type ChangePagePayload = PageNumbered & EntityTyped;
 
-type Paginated = {
-  [entityType in keyof PaginatedDomainModelsState]: PaginationModel;
-};
-type Pageable = {
-  [entityType in keyof DomainModelsState]?: PaginationModel;
+export type PaginationMetadataPayload = NormalizedPaginatedResult & {entityType: EntityTypes};
+
+export type OnChangePage = (payload: ChangePagePayload) => void;
+
+export type PaginationState = {
+  [entityType in keyof PaginatedDomainModelsState]: PaginationMetaData & PageNumbered;
 };
 
-// This interface must match Kendo's SortDescriptor (which wants the field as 'string', we add a validating layer)
-export interface ApiRequestSortingOptions {
+export interface ApiRequestSortingOptions extends SortDescriptor {
   field: RequestParameter;
-  dir?: 'asc' | 'desc';
 }
 
 export interface ApiResultSortingOptions {
@@ -58,9 +44,7 @@ export interface ApiResultSortingOptions {
   descending: boolean;
 }
 
-export type Pagination = PageNumbered & PaginationMetadata;
-
-export interface PaginationLookupState<T> extends HasComponentId {
-  entityType: keyof T;
+export interface PaginationLookupState {
+  entityType: keyof PaginatedDomainModelsState;
   pagination: PaginationState;
 }

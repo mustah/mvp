@@ -5,6 +5,6 @@ import './MeterTabs.scss';
 
 export const MeterTabs = (props: MainContentTabsProps) => (
   <MainContentTabs {...props} className="MeterTabs">
-    <MeterListContainer componentId="validationMeterList"/>
+    <MeterListContainer/>
   </MainContentTabs>
 );

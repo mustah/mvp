@@ -159,7 +159,7 @@ export const SelectionContent = ({
         />
       </Foldable>
 
-      <MeterListContainer componentId="selectionMeterList"/>
+      <MeterListContainer/>
     </Column>
   );
 };
