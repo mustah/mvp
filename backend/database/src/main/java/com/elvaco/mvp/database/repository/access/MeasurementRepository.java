@@ -65,9 +65,11 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jooq.impl.DSL.avg;
+import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.lead;
+import static org.jooq.impl.DSL.noCondition;
 
 public class MeasurementRepository implements Measurements {
 
@@ -235,6 +237,50 @@ public class MeasurementRepository implements Measurements {
           parameter.getResolution()
         )
       ));
+  }
+
+  @Override
+  public Map<MeasurementKey, List<MeasurementValue>> findAllForPeriod(
+    MeasurementParameter parameter
+  ) {
+    Map<MeasurementKey, List<MeasurementValue>> result = new HashMap<>();
+
+    MeasurementParameter readoutParameter = getReadoutParameter(parameter);
+    if (!readoutParameter.getQuantities().isEmpty()) {
+      var r = getReadoutSeriesQuery(readoutParameter);
+      result.putAll(mapSeriesForPeriod(readoutParameter, r));
+    }
+
+    MeasurementParameter consumptionParameter = getConsumptionParameter(parameter);
+    if (!consumptionParameter.getQuantities().isEmpty()) {
+      var r = getConsumptionQuery(consumptionParameter);
+      result.putAll(mapSeriesForPeriod(consumptionParameter, r));
+    }
+
+    return result;
+  }
+
+  @Override
+  public Map<String, List<MeasurementValue>> findAverageAllForPeriod(
+    MeasurementParameter parameter
+  ) {
+    Map<String, List<MeasurementValue>> result = parameter.getQuantities()
+      .stream()
+      .collect(toMap(q -> q.name, q -> new ArrayList<>()));
+
+    var consumptionParameter = getConsumptionParameter(parameter);
+    if (!consumptionParameter.getQuantities().isEmpty()) {
+      var r = getConsumptionAverageQuery(consumptionParameter);
+      result.putAll(mapAverageForPeriod(consumptionParameter, r));
+    }
+
+    var readoutParameter = getReadoutParameter(parameter);
+    if (!readoutParameter.getQuantities().isEmpty()) {
+      var r = getReadoutAverageQuery(readoutParameter);
+      result.putAll(mapAverageForPeriod(readoutParameter, r));
+    }
+
+    return result;
   }
 
   @Override
@@ -407,9 +453,20 @@ public class MeasurementRepository implements Measurements {
 
     OffsetDateTime stop = parameter.getTo().toOffsetDateTime();
 
-    if (parameter.getQuantities().get(0).isConsumption()) {
+    boolean resolutionAll = TemporalResolution.all.equals(parameter.getResolution());
+
+    if (parameter.getQuantities().get(0).isConsumption() && !resolutionAll) {
       stop = stop.plus(1, parameter.getResolution());
     }
+
+    Condition resolutionCondition = resolutionAll ? noCondition() :
+      MEASUREMENT.CREATED.eq(atTimeZone(
+        iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
+        DSL.trunc(
+          atTimeZone(iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET), MEASUREMENT.CREATED),
+          toDatePart(parameter.getResolution())
+        )
+      ));
 
     return query
       .innerJoin(DISPLAY_QUANTITY)
@@ -419,15 +476,7 @@ public class MeasurementRepository implements Measurements {
       .innerJoin(MEASUREMENT)
       .on(MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
         .and(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, MEASUREMENT.CREATED))
-        .and(
-          MEASUREMENT.CREATED.eq(atTimeZone(
-            iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
-            DSL.trunc(
-              atTimeZone(iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET), MEASUREMENT.CREATED),
-              toDatePart(parameter.getResolution())
-            )
-          ))
-        ).and(MEASUREMENT.CREATED.lessOrEqual(stop))
+        .and(resolutionCondition).and(MEASUREMENT.CREATED.lessOrEqual(stop))
         .and(MEASUREMENT.CREATED.greaterOrEqual(parameter.getFrom().toOffsetDateTime()))
         .and(MEASUREMENT.QUANTITY.equal(QUANTITY.ID)));
   }

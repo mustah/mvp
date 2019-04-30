@@ -1,10 +1,12 @@
 package com.elvaco.mvp.web;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -15,6 +17,7 @@ import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
+import com.elvaco.mvp.core.domainmodels.Units;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -23,7 +26,9 @@ import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 
 import org.assertj.core.data.Offset;
+import org.assertj.core.util.DoubleComparator;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -568,6 +573,225 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(dto.label).isEqualTo(getExpectedLabel(logicalMeter));
   }
 
+  // Hoho fix MVP-1289
+  @Ignore
+  @Test
+  public void fetchMeasurementsOverMeterReplacement() {
+    ZonedDateTime date = context().now();
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(date.minusDays(2), date)),
+      physicalMeter().activePeriod(PeriodRange.from(date))
+    );
+
+    var physicalMeterOne = logicalMeter.activePhysicalMeter(date.minusDays(1)).get();
+    var physicalMeterTwo = logicalMeter.activePhysicalMeter(date).get();
+    var interval = Duration.ofDays(1);
+
+    given(measurementSeries()
+      .forMeter(physicalMeterOne)
+      .withQuantity(POWER)
+      .startingAt(date.minusDays(2))
+      .withInterval(interval)
+      .withValues(2.0, 4.0, 6.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterTwo)
+      .withQuantity(POWER)
+      .startingAt(date)
+      .withInterval(interval)
+      .withValues(8.0, 12.0));
+
+    List<MeasurementSeriesDto> contents = getListAsSuperAdmin(
+      "/measurements?quantity=Power"
+        + "&logicalMeterId=" + logicalMeter.id.toString()
+        + "&resolution=day"
+        + "&after=" + date.minusDays(2)
+        + "&before=" + date.plusDays(1));
+
+    String labelForSerieOne = getExpectedLabel(logicalMeter, physicalMeterOne);
+    String labelForSerieTwo = getExpectedLabel(logicalMeter, physicalMeterTwo);
+
+    assertThat(contents)
+      .extracting(
+        dto -> dto.id,
+        dto -> dto.label,
+        dto -> dto.name,
+        dto -> dto.meterId,
+        dto -> dto.values
+      )
+      .containsExactlyInAnyOrder(
+        tuple(
+          logicalMeter.id.toString(),
+          labelForSerieOne,
+          logicalMeter.externalId,
+          physicalMeterOne.address,
+          List.of(
+            new MeasurementValueDto(date.minusDays(2).toInstant(), 2.0),
+            new MeasurementValueDto(date.minusDays(1).toInstant(), 4.0)
+          )
+        ),
+        tuple(
+          logicalMeter.id.toString(),
+          labelForSerieTwo,
+          logicalMeter.externalId,
+          physicalMeterTwo.address,
+          List.of(
+            new MeasurementValueDto(date.toInstant(), 8.0),
+            new MeasurementValueDto(date.plusDays(1).toInstant(), 12.0)
+          )
+        )
+      );
+  }
+
+  @Test
+  public void fetchMeasurementOutsideSchedule_limitNrOfMeters() {
+    ZonedDateTime date = context().now();
+
+    ResponseEntity<ErrorMessageDto> response = asUser()
+      .get(
+        "/measurements?quantity=Power"
+          + logicalMeterIdRequestString(11)
+          + "&resolution=all"
+          + "&after=" + date
+          + "&before=" + date.plusDays(1),
+        ErrorMessageDto.class
+      );
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message)
+      .isEqualTo("Scope of period length and meters is too large for this resolution");
+  }
+
+  @Test
+  public void fetchMeasurementOutsideSchedule_limitNrOfDays() {
+    ZonedDateTime date = context().now();
+
+    ResponseEntity<ErrorMessageDto> response = asUser()
+      .get(
+        "/measurements?quantity=Power"
+          + logicalMeterIdRequestString(1)
+          + "&resolution=all"
+          + "&after=" + date
+          + "&before=" + date.plusDays(12),
+        ErrorMessageDto.class
+      );
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message)
+      .isEqualTo("Scope of period length and meters is too large for this resolution");
+  }
+
+  @Test
+  public void fetchMeasurementOutsideSchedule() {
+    ZonedDateTime date = context().now();
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter()
+        .readIntervalMinutes(60)
+        .activePeriod(PeriodRange.from(date))
+    );
+
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .startingAt(date)
+      .withInterval(Duration.ofSeconds(7))
+      .withValues(1.0, 2.0, 3.0));
+
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(POWER)
+      .startingAt(date.plusHours(1))
+      .withInterval(Duration.ofHours(1))
+      .withValues(10.0, 11.0));
+
+    given(measurement(logicalMeter)
+      .quantity(POWER.name)
+      .unit(Units.WATT)
+      .created(date.plusNanos(370000000))
+      .value(370.0));
+
+    List<MeasurementSeriesDto> contents = getListAsSuperAdmin(
+      "/measurements?quantity=Power"
+        + "&logicalMeterId=" + logicalMeter.id.toString()
+        + "&resolution=all"
+        + "&after=" + date
+        + "&before=" + date.plusHours(2));
+
+    assertThat(contents)
+      .flatExtracting(dto -> dto.values)
+      .extracting(v -> v.when, v -> v.value)
+      .containsExactly(
+        tuple(date.toInstant(), 1.0),
+        tuple(date.plusNanos(370000000).toInstant(), 370.0),
+        tuple(date.plusSeconds(7).toInstant(), 2.0),
+        tuple(date.plusSeconds(14).toInstant(), 3.0),
+        tuple(date.plusHours(1).toInstant(), 10.0),
+        tuple(date.plusHours(2).toInstant(), 11.0)
+      );
+  }
+
+  @Test
+  public void fetchConsumptionOutsideSchedule() {
+    ZonedDateTime date = context().now();
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter()
+        .readIntervalMinutes(60)
+        .activePeriod(PeriodRange.from(date))
+    );
+
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(ENERGY)
+      .startingAt(date)
+      .withInterval(Duration.ofSeconds(7))
+      .withValues(1.0, 2.0, 3.0));
+
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(ENERGY)
+      .startingAt(date.plusHours(1))
+      .withInterval(Duration.ofHours(1))
+      .withValues(10.0, 15.0));
+
+    given(measurement(logicalMeter)
+      .quantity(ENERGY.name)
+      .unit(Units.KILOWATT_HOURS)
+      .created(date.plusNanos(370000000))
+      .value(1.7));
+
+    List<MeasurementSeriesDto> contents = getListAsSuperAdmin(
+      "/measurements?quantity=Energy"
+        + "&logicalMeterId=" + logicalMeter.id.toString()
+        + "&resolution=all"
+        + "&after=" + date
+        + "&before=" + date.plusHours(2));
+
+    assertThat(contents)
+      .flatExtracting(dto -> dto.values)
+      .extracting(v -> v.value)
+      .usingComparatorForType(new DoubleComparator(0.02), Double.class)
+      .containsExactly(
+        0.7,
+        0.3,
+        1.0,
+        7.0,
+        5.0,
+        null
+      );
+
+    assertThat(contents)
+      .flatExtracting(dto -> dto.values)
+      .extracting(v -> v.when)
+      .containsExactly(
+        date.toInstant(),
+        date.plusNanos(370000000).toInstant(),
+        date.plusSeconds(7).toInstant(),
+        date.plusSeconds(14).toInstant(),
+        date.plusHours(1).toInstant(),
+        date.plusHours(2).toInstant()
+      );
+  }
+
   @Test
   public void unknownUnitSuppliedForScaling() {
     ZonedDateTime date = context().now();
@@ -799,10 +1023,10 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     given(
       measurementSeries()
-      .forMeter(physicalMeter)
-      .withQuantity(POWER)
-      .startingAt(activePeriodStart)
-      .withValues(9999.0)
+        .forMeter(physicalMeter)
+        .withQuantity(POWER)
+        .startingAt(activePeriodStart)
+        .withValues(9999.0)
     );
 
     List<MeasurementSeriesDto> response = asUser()
@@ -864,31 +1088,21 @@ public class MeasurementControllerTest extends IntegrationTest {
     return heatMeter;
   }
 
+  private String logicalMeterIdRequestString(int numberOfMeters) {
+    StringBuffer sb = new StringBuffer();
+    IntStream.rangeClosed(1, numberOfMeters)
+      .boxed()
+      .map(i -> given(logicalMeter()))
+      .forEach(lm -> sb.append("&logicalMeterId=").append(lm.id.toString()));
+    return sb.toString();
+  }
+
   private Measurement.MeasurementBuilder energyMeasurement(LogicalMeter meter, ZonedDateTime date) {
     return measurement(meter)
       .created(date)
       .unit("J")
       .quantity(ENERGY.name)
       .value(ENERGY_VALUE);
-  }
-
-  private Measurement.MeasurementBuilder tempMeasurement(LogicalMeter meter, ZonedDateTime date) {
-    return measurement(meter)
-      .created(date)
-      .unit(DEGREES_CELSIUS)
-      .quantity(EXTERNAL_TEMPERATURE.name)
-      .value(TEMP_VALUE);
-  }
-
-  private Measurement.MeasurementBuilder humidityMeasurement(
-    LogicalMeter meter,
-    ZonedDateTime date
-  ) {
-    return measurement(meter)
-      .created(date)
-      .unit(PERCENT)
-      .quantity(HUMIDITY.name)
-      .value(HUMIDITY_VALUE);
   }
 
   private Measurement.MeasurementBuilder diffTempMeasurement(
@@ -912,6 +1126,10 @@ public class MeasurementControllerTest extends IntegrationTest {
   private static String getExpectedLabel(LogicalMeter meter) {
     assertThat(meter.physicalMeters.size()).isEqualTo(1);
     return meter.externalId + "-" + getMeterId(meter);
+  }
+
+  private static String getExpectedLabel(LogicalMeter logicalMeter, PhysicalMeter physicalMeter) {
+    return logicalMeter.externalId + "-" + physicalMeter.address;
   }
 
   private static String getMeterId(LogicalMeter logicalMeter) {

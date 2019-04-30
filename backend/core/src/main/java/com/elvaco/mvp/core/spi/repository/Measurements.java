@@ -18,11 +18,13 @@ public interface Measurements {
 
   void createOrUpdate(Measurement measurement);
 
-  Map<String, List<MeasurementValue>> findAverageForPeriod(
-    MeasurementParameter parameter
-  );
+  Map<String, List<MeasurementValue>> findAverageForPeriod(MeasurementParameter parameter);
 
   Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(MeasurementParameter parameter);
+
+  Map<MeasurementKey, List<MeasurementValue>> findAllForPeriod(MeasurementParameter parameter);
+
+  Map<String, List<MeasurementValue>> findAverageAllForPeriod(MeasurementParameter parameter);
 
   List<Measurement> findAll(RequestParameters parameters);
 

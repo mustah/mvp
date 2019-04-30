@@ -162,6 +162,105 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
+  public void twoMeters_TwoHours_ResolutionAll() {
+    var date = context().now();
+    var logicalMeter1 = given(logicalMeter());
+    var logicalMeter2 = given(logicalMeter());
+
+    given(measurementSeries()
+      .forMeter(logicalMeter1)
+      .withQuantity(POWER)
+      .startingAt(date)
+      .withInterval(Duration.ofSeconds(5))
+      .withValues(1.0, 2.0, 3.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter2)
+      .withQuantity(POWER)
+      .startingAt(date)
+      .withInterval(Duration.ofSeconds(10))
+      .withValues(10.0, 11.0, 12.0));
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+      String.format(
+        "/measurements/average"
+          + "?after=" + date
+          + "&before=" + date.plusMinutes(1)
+          + "&quantity=" + POWER.name
+          + "&logicalMeterId=%s"
+          + "&logicalMeterId=%s"
+          + "&resolution=all",
+        logicalMeter1.id.toString(),
+        logicalMeter2.id.toString()
+      ), MeasurementSeriesDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(
+      List.of(
+        MeasurementSeriesDto.builder()
+          .id(SERIES_ID_AVERAGE_POWER)
+          .quantity(POWER.name)
+          .unit(POWER.storageUnit)
+          .label(AVERAGE)
+          .values(List.of(
+            new MeasurementValueDto(date.toInstant(), 5.5),
+            new MeasurementValueDto(date.plusSeconds(5).toInstant(), 2.0),
+            new MeasurementValueDto(date.plusSeconds(10).toInstant(), 7.0),
+            new MeasurementValueDto(date.plusSeconds(20).toInstant(), 12.0)
+          ))
+          .build()));
+  }
+
+  @Test
+  public void twoMeters_TwoHours_ResolutionAll_Consumption() {
+    var date = context().now();
+    var logicalMeter1 = given(logicalMeter());
+    var logicalMeter2 = given(logicalMeter());
+
+    given(measurementSeries()
+      .forMeter(logicalMeter1)
+      .withQuantity(ENERGY)
+      .startingAt(date)
+      .withInterval(Duration.ofSeconds(5))
+      .withValues(1.0, 2.0, 4.0, 8.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter2)
+      .withQuantity(ENERGY)
+      .startingAt(date)
+      .withInterval(Duration.ofSeconds(10))
+      .withValues(10.0, 15.0, 27.0));
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+      String.format(
+        "/measurements/average"
+          + "?after=" + date
+          + "&before=" + date.plusMinutes(1)
+          + "&quantity=" + ENERGY.name
+          + "&logicalMeterId=%s"
+          + "&logicalMeterId=%s"
+          + "&resolution=all",
+        logicalMeter1.id.toString(),
+        logicalMeter2.id.toString()
+      ), MeasurementSeriesDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(
+      List.of(
+        MeasurementSeriesDto.builder()
+          .id(SERIES_ID_AVERAGE_ENERGY)
+          .quantity(ENERGY.name)
+          .unit(ENERGY.storageUnit)
+          .label(AVERAGE)
+          .values(List.of(
+            new MeasurementValueDto(date.toInstant(), 3.0),
+            new MeasurementValueDto(date.plusSeconds(5).toInstant(), 2.0),
+            new MeasurementValueDto(date.plusSeconds(10).toInstant(), 8.0),
+            new MeasurementValueDto(date.plusSeconds(15).toInstant(), null),
+            new MeasurementValueDto(date.plusSeconds(20).toInstant(), null)
+          ))
+          .build()));
+  }
+
+  @Test
   public void consumptionSeries() {
     var date = context().now();
 

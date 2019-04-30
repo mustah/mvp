@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import com.elvaco.mvp.core.exception.EmailAddressAlreadyExists;
 import com.elvaco.mvp.core.exception.InvalidDisplayQuantity;
 import com.elvaco.mvp.core.exception.InvalidId;
+import com.elvaco.mvp.core.exception.InvalidMeasumentRequestScope;
 import com.elvaco.mvp.core.exception.InvalidMeterDefinition;
 import com.elvaco.mvp.core.exception.InvalidUserSelection;
 import com.elvaco.mvp.core.exception.NoPhysicalMeters;
@@ -183,6 +184,11 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler(MissingParameter.class)
   public ResponseEntity<ErrorMessageDto> handle(MissingParameter exception) {
+    return badRequest(exception);
+  }
+
+  @ExceptionHandler(InvalidMeasumentRequestScope.class)
+  public ResponseEntity<ErrorMessageDto> handle(InvalidMeasumentRequestScope exception) {
     return badRequest(exception);
   }
 
