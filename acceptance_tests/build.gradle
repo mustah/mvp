@@ -48,12 +48,13 @@ task cucumber(type: Test, dependsOn: 'test', group: 'verification') {
 }
 
 dependencies {
-  testCompile 'io.cucumber:cucumber-core:2.4.0'
-  testCompile 'io.cucumber:cucumber-java:2.4.0'
-  testCompile 'io.cucumber:cucumber-junit:2.4.0'
   testCompile 'junit:junit:4.12'
   testCompile 'org.assertj:assertj-core:3.11.1'
-  testCompile 'org.seleniumhq.selenium:selenium-java:3.141.59'
-  testCompile 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
-  testCompile 'com.mashape.unirest:unirest-java:1.4.9'
+
+  acceptanceTestCompile 'io.cucumber:cucumber-core:2.4.0'
+  acceptanceTestCompile 'io.cucumber:cucumber-java:2.4.0'
+  acceptanceTestCompile 'io.cucumber:cucumber-junit:2.4.0'
+  acceptanceTestCompile 'org.seleniumhq.selenium:selenium-java:3.141.59'
+  acceptanceTestCompile 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
+  acceptanceTestCompile 'com.mashape.unirest:unirest-java:1.4.9'
 }

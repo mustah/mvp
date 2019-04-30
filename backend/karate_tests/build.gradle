@@ -1,0 +1,30 @@
+apply plugin: 'java'
+
+idea {
+  module {
+    testSourceDirs += file('src/karateTest/java')
+  }
+}
+
+sourceSets {
+  karateTest {
+
+    java {
+      srcDir file('src/karateTest/java')
+    }
+    resources {
+      srcDir file('src/karateTest/resources')
+    }
+  }
+}
+
+task karate(type: Test, dependsOn: [test, assemble,compileKarateTestJava], group: 'verification') {
+  systemProperty "karate.api.endpoint",System.getProperty("karate.api.endpoint")
+  testClassesDirs = sourceSets.karateTest.output.classesDirs
+  classpath = sourceSets.karateTest.runtimeClasspath
+}
+
+dependencies {
+  karateTestCompile 'com.intuit.karate:karate-junit4:0.9.2'
+  karateTestCompile 'com.intuit.karate:karate-apache:0.9.2'
+}
