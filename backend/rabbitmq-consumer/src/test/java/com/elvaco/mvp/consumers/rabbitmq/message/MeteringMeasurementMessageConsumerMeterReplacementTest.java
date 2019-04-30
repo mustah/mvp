@@ -12,7 +12,6 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -70,7 +69,10 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
 
   @Test
   public void periodIsSetForNewMeter() {
-    message(measurement());
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
 
     assertThat(physicalMeters.findAll()).hasSize(1);
     assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
@@ -90,7 +92,10 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
   public void periodIsSetForExistingMeter() {
     givenLogicalAndPhysical();
 
-    message(measurement());
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
 
     assertThat(physicalMeters.findAll()).hasSize(1);
     assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
@@ -108,10 +113,14 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
 
   @Test
   public void activeMeterIsReplacedWithNewMeterOfSameFacility() {
-    ZonedDateTime firstMeterPeriodStart = ZONED_MEASUREMENT_TIMESTAMP.minusDays(5);
-    var logicalMeter = givenLogicalAndPhysicalAndMeasurement(firstMeterPeriodStart);
-
-    message(measurement().meterId(SECOND_METER_ADDRESS));
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.minusDays(5))
+    );
+    message(measurement()
+      .meterId(SECOND_METER_ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
 
     assertThat(physicalMeters.findAll()).hasSize(2);
     assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
@@ -119,20 +128,21 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> !p.isActive(now()))
       .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
+      .extracting(p -> p.externalId, p -> p.address, p -> p.activePeriod)
       .contains(tuple(
-        logicalMeter.id,
         EXTERNAL_ID,
         ADDRESS,
-        PeriodRange.halfOpenFrom(firstMeterPeriodStart, ZONED_MEASUREMENT_TIMESTAMP)
+        PeriodRange.halfOpenFrom(
+          ZONED_MEASUREMENT_TIMESTAMP.minusDays(5),
+          ZONED_MEASUREMENT_TIMESTAMP
+        )
       ));
 
     assertThat(physicalMeters.findAll())
       .filteredOn(p -> p.isActive(now()))
       .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
+      .extracting(p -> p.externalId, p -> p.address, p -> p.activePeriod)
       .contains(tuple(
-        logicalMeter.id,
         EXTERNAL_ID,
         SECOND_METER_ADDRESS,
         PeriodRange.halfOpenFrom(ZONED_MEASUREMENT_TIMESTAMP, null)
@@ -140,170 +150,130 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
   }
 
   @Test
-  public void periodIsNotUpdatedForActiveMeterWhenMeasurementForSameMeterIsOlder() {
-    var logicalMeter = givenLogicalAndPhysicalAndMeasurement(ZONED_MEASUREMENT_TIMESTAMP);
-
-    message(measurement().meterId(SECOND_METER_ADDRESS)
-      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(2)));
-    message(measurement().meterId(SECOND_METER_ADDRESS)
-      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(1)));
-
-    assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
-
-    assertThat(physicalMeters.findAll())
-      .filteredOn(p -> p.isActive(now()))
-      .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        SECOND_METER_ADDRESS,
-        PeriodRange.halfOpenFrom(ZONED_MEASUREMENT_TIMESTAMP.plusDays(2), null)
-      ));
-
-    assertThat(physicalMeters.findAll())
-      .filteredOn(p -> !p.isActive(now()))
-      .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        ADDRESS,
-        PeriodRange.halfOpenFrom(
-          ZONED_MEASUREMENT_TIMESTAMP,
-          ZONED_MEASUREMENT_TIMESTAMP.plusDays(2)
-        )
-      ));
-  }
-
-  @Test
-  public void periodIsNotUpdatedForPassiveMeterWhenMeasurementForSameMeterIsOlder() {
-    var logicalMeter = givenLogicalAndPhysicalAndMeasurement(ZONED_MEASUREMENT_TIMESTAMP);
-
-    message(measurement().meterId(SECOND_METER_ADDRESS)
-      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(1)));
-
-    message(measurement().valuesAtTimestamps(MEASUREMENT_TIMESTAMP.minusDays(1)));
-
-    assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
-
-    assertThat(physicalMeters.findAll())
-      .filteredOn(p -> p.isActive(now()))
-      .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        SECOND_METER_ADDRESS,
-        PeriodRange.halfOpenFrom(ZONED_MEASUREMENT_TIMESTAMP.plusDays(1), null)
-      ));
-
-    assertThat(physicalMeters.findAll())
-      .filteredOn(p -> !p.isActive(now()))
-      .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        ADDRESS,
-        PeriodRange.halfOpenFrom(
-          ZONED_MEASUREMENT_TIMESTAMP,
-          ZONED_MEASUREMENT_TIMESTAMP.plusDays(1)
-        )
-      ));
-  }
-
-  @Test
-  public void periodIsNotUpdatedForPassiveMeterWhenMeasurementWithinPeriod() {
-    var logicalMeter = givenLogicalAndPhysicalAndMeasurement(ZONED_MEASUREMENT_TIMESTAMP);
-
-    message(measurement().meterId(SECOND_METER_ADDRESS)
-      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(2)));
-
-    message(measurement().valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(1)));
-
-    assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
-
-    assertThat(physicalMeters.findAll())
-      .filteredOn(p -> p.isActive(now()))
-      .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        SECOND_METER_ADDRESS,
-        PeriodRange.halfOpenFrom(ZONED_MEASUREMENT_TIMESTAMP.plusDays(2), null)
-      ));
-
-    assertThat(physicalMeters.findAll())
-      .filteredOn(p -> !p.isActive(now()))
-      .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        ADDRESS,
-        PeriodRange.halfOpenFrom(
-          ZONED_MEASUREMENT_TIMESTAMP,
-          ZONED_MEASUREMENT_TIMESTAMP.plusDays(2)
-        )
-      ));
-  }
-
-  @Test
-  public void periodIsNotUpdatedWhenMeasurementForActiveMeterIsWithinPassiveMeterPeriod() {
-    var logicalMeter = givenLogicalAndPhysicalAndMeasurement(ZONED_MEASUREMENT_TIMESTAMP);
-
+  public void activePeriodRemainsForLaterMeasurementWithinPeriod() {
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
     message(measurement()
       .meterId(SECOND_METER_ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(2))
+    );
+    message(measurement()
+      .meterId(ADDRESS)
       .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(1))
     );
 
+    assertThat(physicalMeters.findAll()).hasSize(2);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> p.isActive(now()))
+      .hasSize(1)
+      .extracting(p -> p.externalId, p -> p.address, p -> p.activePeriod)
+      .contains(tuple(
+        EXTERNAL_ID,
+        SECOND_METER_ADDRESS,
+        PeriodRange.halfOpenFrom(ZONED_MEASUREMENT_TIMESTAMP.plusDays(2), null)
+      ));
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> !p.isActive(now()))
+      .hasSize(1)
+      .extracting(p -> p.externalId, p -> p.address, p -> p.activePeriod)
+      .contains(tuple(
+        EXTERNAL_ID,
+        ADDRESS,
+        PeriodRange.halfOpenFrom(
+          ZONED_MEASUREMENT_TIMESTAMP,
+          ZONED_MEASUREMENT_TIMESTAMP.plusDays(2)
+        )
+      ));
+  }
+
+  @Test
+  public void updateActivePeriodForEarlierMeasurement() {
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.minusDays(2))
+    );
+    message(measurement()
+      .meterId(SECOND_METER_ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
     message(measurement()
       .meterId(SECOND_METER_ADDRESS)
       .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.minusDays(1))
     );
 
-    assertThat(physicalMeters.findAll()).hasSize(2);
-    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
-
     assertThat(physicalMeters.findAll())
-      .filteredOn(p -> p.isActive(now()))
+      .hasSize(2)
+      .filteredOn(p -> p.address.equals(ADDRESS))
       .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        SECOND_METER_ADDRESS,
-        PeriodRange.halfOpenFrom(ZONED_MEASUREMENT_TIMESTAMP.plusDays(1), null)
-      ));
-
-    assertThat(physicalMeters.findAll())
-      .filteredOn(p -> !p.isActive(now()))
-      .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        ADDRESS,
+      .extracting(p -> p.activePeriod)
+      .containsExactlyInAnyOrder(
         PeriodRange.halfOpenFrom(
-          ZONED_MEASUREMENT_TIMESTAMP,
-          ZONED_MEASUREMENT_TIMESTAMP.plusDays(1)
+          ZONED_MEASUREMENT_TIMESTAMP.minusDays(2),
+          ZONED_MEASUREMENT_TIMESTAMP.minusDays(1)
         )
-      ));
+      );
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> p.address.equals(SECOND_METER_ADDRESS))
+      .hasSize(1)
+      .extracting(p -> p.activePeriod)
+      .containsExactlyInAnyOrder(
+        PeriodRange.from(ZONED_MEASUREMENT_TIMESTAMP.minusDays(1))
+      );
   }
 
   @Test
-  public void periodIsNotUpdatedWhenMeasurementForPassiveMeterIsWithinActiveMeterPeriod() {
-    var logicalMeter = givenLogicalAndPhysicalAndMeasurement(ZONED_MEASUREMENT_TIMESTAMP);
+  public void updateActivePeriodForEarlierMeasurement_ignorePreviousMetersMeasurement() {
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.minusDays(2), MEASUREMENT_TIMESTAMP.minusDays(1))
+    );
+    message(measurement()
+      .meterId(SECOND_METER_ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
+    message(measurement()
+      .meterId(SECOND_METER_ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.minusDays(1))
+    );
+
+    // Measurement atminusDays(1) for this meter will now be outside active period
+    assertThat(physicalMeters.findAll())
+      .hasSize(2)
+      .filteredOn(p -> p.address.equals(ADDRESS))
+      .hasSize(1)
+      .extracting(p -> p.activePeriod)
+      .containsExactlyInAnyOrder(
+        PeriodRange.halfOpenFrom(
+          ZONED_MEASUREMENT_TIMESTAMP.minusDays(2),
+          ZONED_MEASUREMENT_TIMESTAMP.minusDays(1)
+        )
+      );
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> p.address.equals(SECOND_METER_ADDRESS))
+      .hasSize(1)
+      .extracting(p -> p.activePeriod)
+      .containsExactlyInAnyOrder(
+        PeriodRange.from(ZONED_MEASUREMENT_TIMESTAMP.minusDays(1))
+      );
+  }
+
+  @Test
+  public void activePeriodRemainsForLaterMeasurementOutsidePeriod() {
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
     message(measurement()
       .meterId(SECOND_METER_ADDRESS)
       .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(1))
     );
-
     message(measurement()
       .meterId(ADDRESS)
       .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(2))
@@ -313,29 +283,24 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
     assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())
-      .filteredOn(p -> p.isActive(now()))
+      .hasSize(2)
+      .filteredOn(p -> p.address.equals(ADDRESS))
       .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        SECOND_METER_ADDRESS,
-        PeriodRange.halfOpenFrom(ZONED_MEASUREMENT_TIMESTAMP.plusDays(1), null)
-      ));
-
-    assertThat(physicalMeters.findAll())
-      .filteredOn(p -> !p.isActive(now()))
-      .hasSize(1)
-      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.activePeriod)
-      .contains(tuple(
-        logicalMeter.id,
-        EXTERNAL_ID,
-        ADDRESS,
+      .extracting(p -> p.activePeriod)
+      .containsExactlyInAnyOrder(
         PeriodRange.halfOpenFrom(
           ZONED_MEASUREMENT_TIMESTAMP,
           ZONED_MEASUREMENT_TIMESTAMP.plusDays(1)
         )
-      ));
+      );
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> p.address.equals(SECOND_METER_ADDRESS))
+      .hasSize(1)
+      .extracting(p -> p.activePeriod)
+      .containsExactlyInAnyOrder(
+        PeriodRange.from(ZONED_MEASUREMENT_TIMESTAMP.plusDays(1))
+      );
   }
 
   @Test
@@ -386,31 +351,6 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
         .logicalMeterId(logicalMeter.id)
         .activePeriod(PeriodRange.empty())
         .build());
-  }
-
-  private LogicalMeter givenLogicalAndPhysicalAndMeasurement(ZonedDateTime activePeriodStart) {
-    var organisation = saveDefaultOrganisation();
-    gateways.save(newGateway(organisation.id));
-    var logicalMeter = logicalMeters.save(
-      LogicalMeter.builder()
-        .externalId(EXTERNAL_ID)
-        .organisationId(organisation.id)
-        .meterDefinition(DEFAULT_ELECTRICITY)
-        .build());
-    physicalMeters.save(
-      PhysicalMeter.builder()
-        .address(ADDRESS)
-        .externalId(EXTERNAL_ID)
-        .manufacturer("ELV")
-        .medium(Medium.UNKNOWN_MEDIUM)
-        .readIntervalMinutes(15)
-        .organisationId(organisation.id)
-        .medium(DEFAULT_ELECTRICITY.medium.name)
-        .logicalMeterId(logicalMeter.id)
-        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(activePeriodStart)))
-        .build());
-    message(measurement().valuesAtTimestamps(activePeriodStart.toLocalDateTime()));
-    return logicalMeter;
   }
 
   private Organisation saveDefaultOrganisation() {

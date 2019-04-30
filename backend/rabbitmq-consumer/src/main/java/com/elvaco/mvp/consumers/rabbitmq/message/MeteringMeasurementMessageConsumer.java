@@ -119,6 +119,23 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       })
       .orElse(logicalMeter);
 
+    physicalMeter.activePeriod.getStartDateTime()
+      .filter(start -> zonedMeasurementTimestamp.isBefore(start))
+      .ifPresent(start -> {
+        physicalMeterUseCases.getActiveMeterAtTimestamp(physicalMeter, zonedMeasurementTimestamp)
+          .ifPresent(otherActive -> {
+            otherActive.activePeriod = otherActive.activePeriod.toBuilder()
+              .stop(PeriodBound.exclusiveOf(zonedMeasurementTimestamp))
+              .build();
+            physicalMeterUseCases.save(otherActive);
+          });
+
+        physicalMeter.activePeriod = physicalMeter.activePeriod.toBuilder()
+          .start(PeriodBound.inclusiveOf(zonedMeasurementTimestamp))
+          .build();
+        existing.setPhysicalMeterUpdated(physicalMeter);
+      });
+
     existing.shouldSaveLogicalMeter(() -> logicalMeterUseCases.save(connectedLogicalMeter));
     existing.shouldSavePhysicalMeter(() -> {
       if (physicalMeter.activePeriod.isEmpty()) {
@@ -196,6 +213,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     private LogicalMeter logicalMeter;
     private PhysicalMeter physicalMeter;
+    private boolean physicalMeterUpdate = false;
 
     private LogicalMeter setLogicalMeter(LogicalMeter logicalMeter) {
       this.logicalMeter = logicalMeter;
@@ -207,6 +225,12 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       return physicalMeter;
     }
 
+    private PhysicalMeter setPhysicalMeterUpdated(PhysicalMeter physicalMeter) {
+      this.physicalMeter = physicalMeter;
+      this.physicalMeterUpdate = true;
+      return physicalMeter;
+    }
+
     private void shouldSaveLogicalMeter(Supplier<LogicalMeter> supplier) {
       if (logicalMeter == null || logicalMeter.gateways.isEmpty()) {
         supplier.get();
@@ -214,7 +238,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     }
 
     private void shouldSavePhysicalMeter(Supplier<PhysicalMeter> supplier) {
-      if (physicalMeter == null || physicalMeter.activePeriod.isEmpty()) {
+      if (physicalMeter == null || physicalMeterUpdate || physicalMeter.activePeriod.isEmpty()) {
         supplier.get();
       }
     }

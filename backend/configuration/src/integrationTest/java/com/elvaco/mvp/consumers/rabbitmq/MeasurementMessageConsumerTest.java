@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -130,6 +131,42 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     assertThat(measurementJpaRepository.findAll())
       .extracting(m -> m.getId().physicalMeter.address, m -> m.value)
       .containsExactlyInAnyOrder(tuple("meterId-1", 1.0), tuple("meterId-2", 2.0));
+  }
+
+  @Test
+  @Transactional
+  public void meterReplacement_testOverlappingPeriodConstraint() {
+    LocalDateTime when = CREATED.toLocalDateTime();
+
+    measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
+      null,
+      new MeterIdDto("meterId-1"),
+      new FacilityIdDto("facility"),
+      "organisationId",
+      "sourceSystemId",
+      asList(newValueDto(when, 1.0))
+    ));
+
+    measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
+      null,
+      new MeterIdDto("meterId-2"),
+      new FacilityIdDto("facility"),
+      "organisationId",
+      "sourceSystemId",
+      asList(newValueDto(when.plusDays(1), 2.0))
+    ));
+
+    assertThatThrownBy(() ->
+      measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
+        null,
+        new MeterIdDto("meterId-2"),
+        new FacilityIdDto("facility"),
+        "organisationId",
+        "sourceSystemId",
+        asList(newValueDto(when.minusDays(1), 3.0))
+      )))
+      .isInstanceOf(DataIntegrityViolationException.class)
+      .hasStackTraceContaining("non_overlapping_active_periods");
   }
 
   @Transactional
