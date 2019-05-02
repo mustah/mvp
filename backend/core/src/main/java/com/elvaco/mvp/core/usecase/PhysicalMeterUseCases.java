@@ -77,6 +77,19 @@ public class PhysicalMeterUseCases {
         .forEach(this::saveAndFlush));
   }
 
+  public Optional<PhysicalMeter> getActiveMeterAtTimestamp(
+    PhysicalMeter physicalMeter,
+    ZonedDateTime newStartTime
+  ) {
+    return Optional.of(physicalMeter.organisationId)
+      .filter(this::hasTenantAccess)
+      .flatMap(orgId ->
+        physicalMeters.findBy(orgId, physicalMeter.externalId)
+          .stream()
+          .filter(p -> p.activePeriod.contains(newStartTime))
+          .findFirst());
+  }
+
   private Unauthorized userIsUnauthorized(UUID id) {
     return new Unauthorized(String.format(
       "User '%s' is not allowed to update physical meter with ID %s",
