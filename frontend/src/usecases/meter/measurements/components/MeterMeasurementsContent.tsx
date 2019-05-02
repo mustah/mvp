@@ -10,7 +10,7 @@ const isVisible = (show: boolean): string => show ? 'flex' : 'none';
 export const MeterMeasurementsContent = ({view, meter, useCollectionPeriod}: Props) =>
   (
     <Column>
-      <MeterMeasurementsToolbarContainer useCollectionPeriod={useCollectionPeriod}/>
+      <MeterMeasurementsToolbarContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
       <Column style={{display: isVisible(view === ToolbarView.table)}}>
         <MeterMeasurementsContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
       </Column>

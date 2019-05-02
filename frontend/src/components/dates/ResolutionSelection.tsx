@@ -21,6 +21,12 @@ export const ResolutionSelection = ({disabled, resolution, selectResolution}: Re
 
   const resolutions: MenuItemProps[] = [
     {
+      value: TemporalResolution.all,
+      label: firstUpperTranslated('all'),
+      primaryText: firstUpperTranslated('all'),
+      onClick: () => selectResolution(TemporalResolution.all),
+    },
+    {
       value: TemporalResolution.hour,
       label: firstUpperTranslated('hour'),
       primaryText: firstUpperTranslated('hour'),

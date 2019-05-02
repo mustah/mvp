@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "scope of period length and meters is too large for this resolution"
+msgstr "periodens längd och antal mätare utgör för många datapunkter för denna upplösning"
+
 msgid "what's new"
 msgstr "vad är nytt"
 

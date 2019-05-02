@@ -83,7 +83,7 @@ describe('summaryApiActions', () => {
 
       expect(store.getActions()).toEqual([
         actions.request(),
-        actions.failure({message: 'request failed'}),
+        actions.failure({message: 'Request failed'}),
       ]);
     });
 

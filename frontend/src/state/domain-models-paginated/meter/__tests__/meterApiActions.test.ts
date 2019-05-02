@@ -112,7 +112,7 @@ describe('meterApiActions', () => {
     });
 
     it('get an error message back on a bad request and response from backend', async () => {
-      const errorResponse: ErrorResponse = {message: 'an error'};
+      const errorResponse: ErrorResponse = {message: 'An error'};
 
       await getMetersWithBadRequest(page, errorResponse);
 
@@ -307,7 +307,7 @@ describe('meterApiActions', () => {
     });
 
     it('has error response when deleting meter', async () => {
-      const payload = {message: 'my bad', id: 1};
+      const payload = {message: 'My bad', id: 1};
 
       const deleteMeterWithTimeout = async (id: number) => {
         mockRestClient.onDelete(`${EndPoints.meters}/${id}`).reply(401, payload);
@@ -322,7 +322,7 @@ describe('meterApiActions', () => {
           type: domainModelsPaginatedDeleteFailure(EndPoints.meters),
           payload
         },
-        showFailMessage('Failed to delete the meter: my bad')
+        showFailMessage('Failed to delete the meter: My bad')
       ]);
     });
 

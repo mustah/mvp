@@ -67,7 +67,7 @@ describe('syncWithMetering', () => {
   describe('valid token', () => {
 
     it('dispatches a failure error message when request fails', async () => {
-      const message = 'some unknown error';
+      const message = 'Some unknown error';
       const error: Partial<ErrorResponse> = {message};
 
       await makeRequest(() => mockRestClient.onPost(url).reply(401, error));

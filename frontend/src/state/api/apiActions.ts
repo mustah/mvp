@@ -7,7 +7,8 @@ import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
-  Action, ActionKey,
+  Action,
+  ActionKey,
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
@@ -31,9 +32,17 @@ interface AsyncRequest<P> extends RequestHandler<P> {
   parameters?: EncodedUriParameters;
 }
 
-export const responseMessageOrFallback = (response?: any): ErrorResponse =>
-  (response && response.data)
-  || {message: firstUpperTranslated('an unexpected error occurred')};
+export const responseMessageOrFallback = (response?: any): ErrorResponse => {
+  if (response && response.data) {
+    const {data} = response;
+    if (data.message) {
+      return {...data, message: firstUpperTranslated(data.message.toLowerCase())};
+    } else {
+      return data;
+    }
+  }
+  return {message: firstUpperTranslated('an unexpected error occurred')};
+};
 
 export const noInternetConnection = (): ErrorResponse => ({
   message: firstUpperTranslated('the internet connection appears to be offline'),

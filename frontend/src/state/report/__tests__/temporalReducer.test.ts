@@ -62,6 +62,15 @@ describe('temporal', () => {
       expected = {...initialState, resolution: TemporalResolution.month};
       expect(state).toEqual(expected);
     });
+
+    it('can select all as resolution', () => {
+      const payload = TemporalResolution.all;
+
+      const state: TemporalReportState = temporal(initialState, selectResolution(ReportSector.report)(payload));
+
+      const expected: TemporalReportState = {...initialState, resolution: payload};
+      expect(state).toEqual(expected);
+    });
   });
 
   describe('toggleComparePeriod', () => {

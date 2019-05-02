@@ -1,6 +1,8 @@
+import {TemporalResolution} from '../../../components/dates/dateModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 
 export interface MeterDetailState {
-  isTimePeriodDefault: boolean;
+  isDirty: boolean;
+  resolution: TemporalResolution;
   timePeriod: SelectionInterval;
 }
