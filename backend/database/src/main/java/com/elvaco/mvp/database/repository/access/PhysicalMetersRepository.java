@@ -57,6 +57,12 @@ public class PhysicalMetersRepository implements PhysicalMeters {
         "logicalMeter.organisationIdExternalId"
       },
       key = "#physicalMeter.organisationId + #physicalMeter.externalId"
+    ),
+    @CacheEvict(
+      cacheNames = {
+        "gateway.organisationIdSerial"
+      },
+      allEntries = true
     )
   })
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
@@ -82,6 +88,12 @@ public class PhysicalMetersRepository implements PhysicalMeters {
         "logicalMeter.organisationIdExternalId"
       },
       key = "#physicalMeter.organisationId + #physicalMeter.externalId"
+    ),
+    @CacheEvict(
+      cacheNames = {
+        "gateway.organisationIdSerial"
+      },
+      allEntries = true
     )
   })
   public PhysicalMeter saveAndFlush(PhysicalMeter physicalMeter) {

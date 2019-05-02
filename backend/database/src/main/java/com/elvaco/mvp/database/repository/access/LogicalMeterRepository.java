@@ -137,10 +137,16 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  @CacheEvict(
-    cacheNames = "logicalMeter.organisationIdExternalId",
-    key = "#logicalMeter.organisationId + #logicalMeter.externalId"
-  )
+  @Caching(evict = {
+    @CacheEvict(
+      cacheNames = "logicalMeter.organisationIdExternalId",
+      key = "#logicalMeter.organisationId + #logicalMeter.externalId"
+    ),
+    @CacheEvict(
+      cacheNames = {"gateway.organisationIdSerial"},
+      allEntries = true
+    )
+  })
   public LogicalMeter save(LogicalMeter logicalMeter) {
     return logicalMeterEntityMapper.toDomainModelWithoutStatuses(
       logicalMeterJpaRepository.save(logicalMeterEntityMapper.toEntity(logicalMeter))
@@ -188,7 +194,11 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  @CacheEvict(cacheNames = "logicalMeter.organisationIdExternalId")
+  @CacheEvict(
+    cacheNames = {"logicalMeter.organisationIdExternalId",
+                  "gateway.organisationIdSerial"},
+    allEntries = true
+  )
   @Transactional
   public void changeMeterDefinition(
     UUID organisationId,
