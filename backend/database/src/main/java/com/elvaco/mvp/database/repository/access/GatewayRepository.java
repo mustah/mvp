@@ -19,6 +19,7 @@ import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrUnsorted;
@@ -56,10 +57,16 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
-  @CacheEvict(
-    cacheNames = "gateway.organisationIdSerial",
-    key = "#gateway.organisationId + #gateway.serial"
-  )
+  @Caching(evict = {
+    @CacheEvict(
+      cacheNames = "gateway.organisationIdSerial",
+      key = "#gateway.organisationId + #gateway.serial"
+    ),
+    @CacheEvict(
+      value = {"logicalMeter.organisationIdExternalId"},
+      allEntries = true
+    )
+  })
   public Gateway save(Gateway gateway) {
     GatewayEntity entity = gatewayJpaRepository.save(GatewayEntityMapper.toEntity(gateway));
     return GatewayEntityMapper.toDomainModelWithoutStatusLogs(entity);

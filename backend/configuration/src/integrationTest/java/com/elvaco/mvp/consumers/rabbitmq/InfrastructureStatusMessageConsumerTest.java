@@ -4,6 +4,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.InfrastructureStatusMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.InfrastructureMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.InfrastructureStatusMessageConsumer;
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.tuple;
 public class InfrastructureStatusMessageConsumerTest extends IntegrationTest {
 
   private static final JsonNode JSON = toJsonNode("{\"testkey\":\"testvalue\"}");
+  private static final JsonNode JSON2 = toJsonNode("{\"testkey\":\"testvalue2\"}");
 
   @Autowired
   private GatewayUseCases gatewayUseCases;
@@ -42,6 +44,32 @@ public class InfrastructureStatusMessageConsumerTest extends IntegrationTest {
 
     assertThat(gatewayJpaRepository.findBySerial(dto.eui))
       .extracting(g -> g.serial, g -> g.extraInfo.getJson())
+      .containsExactly(tuple(dto.eui, dto.properties));
+  }
+
+  @Transactional
+  @Test
+  public void acceptNewExtraInfoViaLogicalMeter() {
+    Gateway gateway = given(gateway());
+    LogicalMeter logicalMeter = given(logicalMeter().gateway(gateway));
+
+    var dto = new InfrastructureStatusMessageDto(gateway.serial, JSON);
+    consumer.accept(dto);
+    //This is saving result to cache (logicalMeter.organisationIdExternalId)
+    logicalMeter =  logicalMeters.findByOrganisationIdAndExternalId(logicalMeter.organisationId,
+      logicalMeter.externalId).get();
+    assertThat(logicalMeter.gateways)
+      .extracting(g -> tuple(g.serial, g.extraInfo))
+      .containsExactly(tuple(dto.eui, dto.properties));
+
+    dto = new InfrastructureStatusMessageDto(gateway.serial, JSON2);
+    consumer.accept(dto);
+
+    //here we pray for the cache being evicted so we get the latest extraInfo
+    logicalMeter =  logicalMeters.findByOrganisationIdAndExternalId(logicalMeter.organisationId,
+      logicalMeter.externalId).get();
+    assertThat(logicalMeter.gateways)
+      .extracting(g -> g.serial, g -> g.extraInfo)
       .containsExactly(tuple(dto.eui, dto.properties));
   }
 
