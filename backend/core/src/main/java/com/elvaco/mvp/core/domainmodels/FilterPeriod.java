@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class SelectionPeriod {
+public class FilterPeriod {
   public final ZonedDateTime start;
   public final ZonedDateTime stop;
 

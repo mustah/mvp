@@ -2,8 +2,8 @@ package com.elvaco.mvp.database.repository.jooq;
 
 import java.time.temporal.ChronoUnit;
 
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
-import com.elvaco.mvp.core.filter.PeriodFilter;
+import com.elvaco.mvp.core.domainmodels.FilterPeriod;
+import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
@@ -33,22 +33,22 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
 
   private final DSLContext dsl;
 
-  private SelectionPeriod period;
+  private FilterPeriod collectionPeriod;
 
   @Override
-  public void visit(PeriodFilter filter) {
-    period = filter.getPeriod();
+  public void visit(CollectionPeriodFilter filter) {
+    collectionPeriod = filter.getPeriod();
   }
 
   @Override
   protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
     Condition condition;
     Field<Double> collectionPercentageField;
-    if (period == null) {
+    if (collectionPeriod == null) {
       condition = falseCondition();
       collectionPercentageField = inline(0.0);
     } else {
-      condition = measurementStatsConditionFor(period)
+      condition = measurementStatsConditionFor(collectionPeriod)
         .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
         .and(MEASUREMENT_STAT_DATA.QUANTITY.equal(
           dsl.select(MEASUREMENT_STAT_DATA.QUANTITY)
@@ -59,7 +59,9 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
             .limit(1)
           )
         )
-        .and(JooqUtils.periodOverlaps(PHYSICAL_METER.ACTIVE_PERIOD, period.toPeriodRange()))
+        .and(
+          JooqUtils.periodOverlaps(PHYSICAL_METER.ACTIVE_PERIOD, collectionPeriod.toPeriodRange())
+        )
         .and(PHYSICAL_METER.LOGICAL_METER_ID.eq(LOGICAL_METER.ID));
 
       collectionPercentageField = when(
@@ -67,7 +69,7 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
         coalesce(
           sum(coalesce(MEASUREMENT_STAT_DATA.RECEIVED_COUNT, 0))
             .divide(inline(60, Double.class)
-              .times(ChronoUnit.HOURS.between(period.start, period.stop))
+              .times(ChronoUnit.HOURS.between(collectionPeriod.start, collectionPeriod.stop))
               .divide(min(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)))
             ).times(100.0).cast(Double.class),
           0.0

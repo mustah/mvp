@@ -14,6 +14,8 @@ public interface FilterVisitor {
 
   void visit(PeriodFilter filter);
 
+  void visit(CollectionPeriodFilter filter);
+
   void visit(SerialFilter filter);
 
   void visit(WildcardFilter filter);

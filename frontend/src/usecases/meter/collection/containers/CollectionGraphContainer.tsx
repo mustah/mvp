@@ -25,7 +25,7 @@ const mapStateToProps = (
   {meterId}: OwnProps
 ): StateToProps => {
 
-  const parameters = {...requestParametersFrom({dateRange: timePeriod}), logicalMeterId: meterId.toString()};
+  const parameters = {...requestParametersFrom({collectionDateRange: timePeriod}), logicalMeterId: meterId.toString()};
 
   return ({
     collectionStats: meterCollectionStats.entities,

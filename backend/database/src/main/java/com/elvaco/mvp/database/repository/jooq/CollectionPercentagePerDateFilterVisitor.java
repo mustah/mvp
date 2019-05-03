@@ -2,8 +2,8 @@ package com.elvaco.mvp.database.repository.jooq;
 
 import java.time.LocalDate;
 
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
-import com.elvaco.mvp.core.filter.PeriodFilter;
+import com.elvaco.mvp.core.domainmodels.FilterPeriod;
+import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
@@ -32,10 +32,10 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
 
   private final DSLContext dsl;
 
-  private SelectionPeriod period;
+  private FilterPeriod period;
 
   @Override
-  public void visit(PeriodFilter filter) {
+  public void visit(CollectionPeriodFilter filter) {
     period = filter.getPeriod();
   }
 

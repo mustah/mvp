@@ -2,7 +2,8 @@ package com.elvaco.mvp.database.repository.jooq;
 
 import java.util.Collection;
 
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+import com.elvaco.mvp.core.domainmodels.FilterPeriod;
+import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
@@ -36,10 +37,20 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    SelectionPeriod period = filter.getPeriod();
+    FilterPeriod period = filter.getPeriod();
 
     physicalMeterCondition =
       periodContains(PHYSICAL_METER.ACTIVE_PERIOD, period.stop.toOffsetDateTime());
+  }
+
+  @Override
+  public void visit(CollectionPeriodFilter filter) {
+    FilterPeriod period = filter.getPeriod();
+
+    if (physicalMeterCondition.equals(noCondition())) {
+      physicalMeterCondition =
+        periodContains(PHYSICAL_METER.ACTIVE_PERIOD, period.stop.toOffsetDateTime());
+    }
   }
 
   @Override
@@ -77,8 +88,8 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
       .on(MEDIUM.ID.equal(METER_DEFINITION.MEDIUM_ID))
 
       /*This inner join is fine - a meter always has a location entry, although it might be NULL.
-      * While a left join would be more "semantically" correct, this allows us to perform quick
-      * sorting on location columns */
+       * While a left join would be more "semantically" correct, this allows us to perform quick
+       * sorting on location columns */
       .innerJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
         .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)));

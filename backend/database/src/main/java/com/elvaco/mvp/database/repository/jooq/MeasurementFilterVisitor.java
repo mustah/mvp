@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
@@ -32,7 +32,7 @@ class MeasurementFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    SelectionPeriod period = filter.getPeriod();
+    FilterPeriod period = filter.getPeriod();
 
     addCondition(MEASUREMENT.CREATED
       .greaterOrEqual(period.start.toOffsetDateTime())

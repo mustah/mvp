@@ -1,13 +1,11 @@
 import {makeThreshold} from '../../../__tests__/testDataFactory';
 import {urlFromParameters} from '../../../__tests__/urlFromParameters';
-import {Period} from '../../../components/dates/dateModels';
 import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
-import {Maybe} from '../../../helpers/Maybe';
 import {meterParameters, RequestParameter} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {initialState as initialPaginationState, paginationPageSize} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
-import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
+import {addParameterToSelection} from '../userSelectionActions';
 import {
   ParameterName,
   SelectionParameter,
@@ -21,7 +19,6 @@ import {
   getMeterParameters,
   getPaginatedGatewayParameters,
   getPaginatedMeterParameters,
-  getSelectedPeriod,
   getUserSelection,
 } from '../userSelectionSelectors';
 
@@ -520,23 +517,4 @@ describe('userSelectionSelectors', () => {
     });
 
   });
-
-  describe('getSelectedPeriod', () => {
-
-    it('there is a default period', () => {
-      expect(initialState.userSelection.selectionParameters.dateRange)
-        .toEqual({period: Period.now});
-    });
-
-    it('get selected period', () => {
-      const state: UserSelectionState = userSelection(
-        initialState,
-        selectPeriod(Period.currentWeek),
-      );
-
-      expect(getSelectedPeriod(state.userSelection))
-        .toEqual({period: Period.currentWeek, customDateRange: Maybe.nothing()});
-    });
-  });
-
 });

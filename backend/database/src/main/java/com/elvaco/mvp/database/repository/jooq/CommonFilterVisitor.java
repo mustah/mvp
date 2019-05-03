@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.jooq;
 
 import java.util.Collection;
 
+import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
 import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
 import com.elvaco.mvp.core.filter.OrganisationParentFilter;
 
@@ -23,4 +24,7 @@ abstract class CommonFilterVisitor
   @Override
   public void visit(OrganisationParentFilter filter) {
   }
+
+  @Override
+  public void visit(CollectionPeriodFilter filter) { }
 }

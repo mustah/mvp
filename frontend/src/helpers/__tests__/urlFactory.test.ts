@@ -29,6 +29,8 @@ describe('urlFactory', () => {
   describe('requestParametersFrom', () => {
 
     it('transforms selected parameters url parameters', () => {
+      const start: Date = momentAtUtcPlusOneFrom('2018-12-24').toDate();
+      const end: Date = momentAtUtcPlusOneFrom('2018-12-24').toDate();
       const facilityId: string = idGenerator.uuid().toString();
       const selectedParameters: SelectedParameters = {
         dateRange: {
@@ -43,7 +45,8 @@ describe('urlFactory', () => {
         },
         media: [toIdNamed('District heating')],
         facilities: [toIdNamed(facilityId)],
-        w: [toIdNamed('hej')]
+        w: [toIdNamed('hej')],
+        collectionDateRange: { period: Period.custom, customDateRange: { start, end} }
       };
 
       const actualUrlParameters: RequestParameters = requestParametersFrom(selectedParameters);
@@ -52,6 +55,8 @@ describe('urlFactory', () => {
       expect(actualUrlParameters).toHaveProperty('medium', ['District heating']);
       expect(actualUrlParameters).toHaveProperty('facility', [facilityId]);
       expect(actualUrlParameters).toHaveProperty('w',  ['hej']);
+      expect(actualUrlParameters).toHaveProperty('collectionAfter',  '2018-12-24T00:00:00.000+01:00');
+      expect(actualUrlParameters).toHaveProperty('collectionBefore',  '2018-12-25T00:00:00.000+01:00');
     });
 
     it('does not include parameters that does not have values', () => {

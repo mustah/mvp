@@ -4,12 +4,11 @@ import java.util.Collection;
 
 import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 
-// TODO replace with ThresholdPeriodFilter & ReportPeriodFilter
-public class PeriodFilter extends Filter<FilterPeriod> {
+public class CollectionPeriodFilter extends Filter<FilterPeriod> {
 
   private final FilterPeriod period;
 
-  PeriodFilter(
+  CollectionPeriodFilter(
     Collection<FilterPeriod> values,
     FilterPeriod period
   ) {

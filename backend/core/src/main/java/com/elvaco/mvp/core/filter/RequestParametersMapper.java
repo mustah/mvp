@@ -20,6 +20,8 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
@@ -50,6 +52,8 @@ public final class RequestParametersMapper {
   private static final List<RequestParameter> IGNORED_PARAMETERS = List.of(
     BEFORE,
     AFTER,
+    COLLECTION_AFTER,
+    COLLECTION_BEFORE,
     SORT,
     QUANTITY,
     RESOLUTION
@@ -109,6 +113,13 @@ public final class RequestParametersMapper {
     Collection<VisitableFilter> visitableFilters = new ArrayList<>();
     requestParameters.getPeriod()
       .ifPresent(period -> visitableFilters.add(new PeriodFilter(List.of(period), period)));
+    requestParameters.getCollectionPeriod()
+      .ifPresent(period -> visitableFilters.add(
+        new CollectionPeriodFilter(
+
+          List.of(period),
+          period
+        )));
     visitableFilters.addAll(
       requestParameters.entrySet().stream()
         .filter(param -> !param.getValue().isEmpty() && !isIgnored(param.getKey()))

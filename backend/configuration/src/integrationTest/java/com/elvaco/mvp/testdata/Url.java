@@ -18,6 +18,8 @@ import lombok.Builder;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
@@ -98,6 +100,10 @@ public class Url implements UrlTemplate {
 
     public UrlBuilder period(ZonedDateTime start, ZonedDateTime stop) {
       return parameter(BEFORE, stop).parameter(AFTER, start);
+    }
+
+    public UrlBuilder collectionPeriod(ZonedDateTime start, ZonedDateTime stop) {
+      return parameter(COLLECTION_BEFORE, stop).parameter(COLLECTION_AFTER, start);
     }
 
     public UrlBuilder city(String city) {

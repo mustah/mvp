@@ -117,11 +117,13 @@ export const toPeriodApiParameters = ({
 export const queryParametersOfDateRange = ({
   period,
   customDateRange,
-}: SelectionInterval): RequestParameters => {
+}: SelectionInterval,
+                                           after: RequestParameter,
+                                           before: RequestParameter): RequestParameters => {
   const {start, end}: DateRange = newDateRange(period, Maybe.maybe(customDateRange));
   return {
-    [RequestParameter.after]: momentAtUtcPlusOneFrom(start).format(apiFormat),
-    [RequestParameter.before]: momentAtUtcPlusOneFrom(end).format(apiFormat),
+    [after]: momentAtUtcPlusOneFrom(start).format(apiFormat),
+    [before]: momentAtUtcPlusOneFrom(end).format(apiFormat),
   };
 };
 
