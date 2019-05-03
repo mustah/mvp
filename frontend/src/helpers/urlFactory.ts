@@ -208,6 +208,16 @@ export const makeApiParametersOf =
   ({period, customDateRange}: SelectionInterval): EncodedUriParameters =>
     toPeriodApiParameters({period, customDateRange: Maybe.maybe(customDateRange)}).join('&');
 
+export const makeCollectionPeriodParametersOf =
+  (interval: SelectionInterval): EncodedUriParameters =>
+    encodeRequestParameters(
+      queryParametersOfDateRange(
+        interval,
+        RequestParameter.collectionAfter,
+        RequestParameter.collectionBefore
+      )
+    );
+
 export const makeUrl =
   (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters =>
     parameters && parameters.length

@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {makeApiParametersOf} from '../../../helpers/urlFactory';
+import {makeCollectionPeriodParametersOf} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {collectionStatClearError} from '../../../state/domain-models/collection-stat/collectionStatActions';
@@ -19,7 +19,7 @@ const mapStateToProps = (
   // TODO: fix
   const parameters =
     userSelection
-      ? makeApiParametersOf(selectionInterval) + '&' + getCollectionStatParameters({
+      ? makeCollectionPeriodParametersOf(selectionInterval) + '&' + getCollectionStatParameters({
       userSelection: {
         ...userSelection,
         selectionParameters: {
@@ -27,7 +27,7 @@ const mapStateToProps = (
         },
       },
     })
-      : makeApiParametersOf(selectionInterval);
+      : makeCollectionPeriodParametersOf(selectionInterval);
 
   const title = userSelection
     ? userSelection.name
