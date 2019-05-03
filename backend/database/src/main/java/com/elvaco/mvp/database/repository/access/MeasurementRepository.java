@@ -65,7 +65,6 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jooq.impl.DSL.avg;
-import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.lead;
@@ -446,25 +445,25 @@ public class MeasurementRepository implements Measurements {
   ) {
     Condition quantityCondition = parameter.getQuantities().isEmpty()
       ? falseCondition()
-      : QUANTITY.NAME.in(parameter.getQuantities()
-        .stream()
+      : QUANTITY.NAME.in(parameter.getQuantities().stream()
         .map(q -> q.name)
         .collect(toList()));
 
     OffsetDateTime stop = parameter.getTo().toOffsetDateTime();
 
-    boolean resolutionAll = TemporalResolution.all.equals(parameter.getResolution());
+    TemporalResolution resolution = parameter.getResolution();
 
-    if (parameter.getQuantities().get(0).isConsumption() && !resolutionAll) {
-      stop = stop.plus(1, parameter.getResolution());
+    if (parameter.getQuantities().get(0).isConsumption() && TemporalResolution.all != resolution) {
+      stop = stop.plus(1, resolution);
     }
 
-    Condition resolutionCondition = resolutionAll ? noCondition() :
-      MEASUREMENT.CREATED.eq(atTimeZone(
+    Condition resolutionCondition = TemporalResolution.all == resolution
+      ? noCondition()
+      : MEASUREMENT.CREATED.eq(atTimeZone(
         iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
         DSL.trunc(
           atTimeZone(iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET), MEASUREMENT.CREATED),
-          toDatePart(parameter.getResolution())
+          toDatePart(resolution)
         )
       ));
 
