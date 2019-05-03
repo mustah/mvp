@@ -9,11 +9,19 @@ import lombok.ToString;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.HOURS;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.time.temporal.ChronoUnit.MONTHS;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 
 @ToString
 public enum TemporalResolution implements StartInterval, TemporalUnit {
+
+  all(MILLIS) {
+    @Override
+    public ZonedDateTime getStart(ZonedDateTime zonedDateTime) {
+      return zonedDateTime;
+    }
+  },
 
   hour(HOURS) {
     @Override

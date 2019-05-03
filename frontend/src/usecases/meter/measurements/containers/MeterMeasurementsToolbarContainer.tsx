@@ -1,54 +1,62 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {RootState} from '../../../../reducers/rootReducer';
+import {MeterDetails} from '../../../../state/domain-models/meter-details/meterDetailsModels';
 import {changeMeterMeasurementsToolbarView} from '../../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith} from '../../../../types/Types';
 import {MeterMeasurementsToolbar} from '../components/MeterMeasurementsToolbar';
-import {setMeterDetailsTimePeriod} from '../meterDetailActions';
+import {selectResolution, setTimePeriod} from '../meterDetailActions';
 import {exportToExcel} from '../meterDetailMeasurementActions';
+import {getResolution} from '../meterDetailMeasurementsSelectors';
 
 interface StateToProps {
   hasMeasurements: boolean;
-  view: ToolbarView;
   isExportingToExcel: boolean;
   isFetching: boolean;
+  resolution: TemporalResolution;
   timePeriod: SelectionInterval;
+  view: ToolbarView;
 }
 
 interface DispatchToProps {
   changeToolbarView: OnChangeToolbarView;
   exportToExcel: Callback;
-  setMeterDetailsTimePeriod: CallbackWith<SelectionInterval>;
+  selectResolution: CallbackWith<TemporalResolution>;
+  setTimePeriod: CallbackWith<SelectionInterval>;
 }
 
 interface OwnProps {
-  useCollectionPeriod?: boolean;
+  meter: MeterDetails;
+  useCollectionPeriod: boolean;
 }
 
 export type Props = StateToProps & DispatchToProps;
 
 const mapStateToProps = (
   {
-    meterDetail: {isTimePeriodDefault, timePeriod},
+    meterDetail,
     ui: {toolbar: {meterMeasurement: {view}}},
     domainModels: {meterDetailMeasurement: {isFetching, isExportingToExcel, measurementResponse: {measurements}}},
     collection
   }: RootState,
-  {useCollectionPeriod}: OwnProps
+  {meter, useCollectionPeriod}: OwnProps
 ): StateToProps => ({
+  hasMeasurements: measurements.length > 0,
   isExportingToExcel,
   isFetching,
-  hasMeasurements: measurements.length > 0,
-  timePeriod: (useCollectionPeriod && isTimePeriodDefault) ? collection.timePeriod : timePeriod,
+  resolution: getResolution({meterDetail, meter}),
+  timePeriod: (useCollectionPeriod && !meterDetail.isDirty) ? collection.timePeriod : meterDetail.timePeriod,
   view,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView: changeMeterMeasurementsToolbarView,
   exportToExcel,
-  setMeterDetailsTimePeriod,
+  selectResolution,
+  setTimePeriod,
 }, dispatch);
 
 export const MeterMeasurementsToolbarContainer =

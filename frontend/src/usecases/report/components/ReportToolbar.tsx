@@ -6,7 +6,7 @@ import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
 import {colors, iconSizeMedium, svgIconProps} from '../../../app/themes';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
-import {DateRange, Period} from '../../../components/dates/dateModels';
+import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {Row, RowMiddle} from '../../../components/layouts/row/Row';
@@ -105,7 +105,7 @@ export const ReportToolbar = ({
         </Row>
         <Row>
           <Toggle
-            disabled={!hasLegendItems}
+            disabled={!hasLegendItems || resolution === TemporalResolution.all}
             label={firstUpperTranslated('compare period')}
             defaultToggled={shouldComparePeriod}
             onToggle={toggleComparePeriod}

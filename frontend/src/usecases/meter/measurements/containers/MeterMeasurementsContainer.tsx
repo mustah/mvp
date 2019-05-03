@@ -1,11 +1,12 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {RootState} from '../../../../reducers/rootReducer';
 import {MeterDetails} from '../../../../state/domain-models/meter-details/meterDetailsModels';
 import {addAllToReport} from '../../../../state/report/reportActions';
 import {ReportSector} from '../../../../state/report/reportModels';
 import {
-  fetchMeasurementsForMeterDetails,
+  fetchMeasurementsForMeterDetails as fetchMeasurements,
   measurementClearError
 } from '../../../../state/ui/graph/measurement/measurementActions';
 import {QuantityDisplayMode} from '../../../../state/ui/graph/measurement/measurementModels';
@@ -15,8 +16,8 @@ import {SelectionInterval} from '../../../../state/user-selection/userSelectionM
 import {getUserSelectionId} from '../../../../state/user-selection/userSelectionSelectors';
 import {Measurements} from '../../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../../report/containers/MeasurementsContainer';
-import {meterDetailExportToExcelSuccess} from '../meterDetailMeasurementActions';
-import {getMeasurementParameters, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
+import {meterDetailExportToExcelSuccess as exportToExcelSuccess} from '../meterDetailMeasurementActions';
+import {getMeasurementParameters, getResolution, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
 
 export interface OwnProps {
   meter: MeterDetails;
@@ -28,12 +29,16 @@ const hiddenLines = [];
 const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps => {
   const {
     domainModels: {userSelections, meterDetailMeasurement},
-    meterDetail: {isTimePeriodDefault, timePeriod},
+    meterDetail,
     collection,
     ui,
   } = rootState;
   const {useCollectionPeriod, meter} = ownProps;
-  const period: SelectionInterval = useCollectionPeriod && isTimePeriodDefault ? collection.timePeriod : timePeriod;
+  const timePeriod: SelectionInterval = useCollectionPeriod && !meterDetail.isDirty
+    ? collection.timePeriod
+    : meterDetail.timePeriod;
+
+  const resolution: TemporalResolution = getResolution({meterDetail, meter});
 
   return {
     hasLegendItems: true,
@@ -44,7 +49,7 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     measurement: meterDetailMeasurement,
     parameters: '',
     requestParameters: {
-      ...getMeasurementParameters({meter, timePeriod: period}),
+      ...getMeasurementParameters({meter, resolution, timePeriod}),
       displayMode: QuantityDisplayMode.readout,
     },
     userSelectionId: getUserSelectionId(rootState.userSelection),
@@ -55,8 +60,8 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addAllToReport,
   clearError: measurementClearError(ReportSector.meterDetailsReport),
-  exportToExcelSuccess: meterDetailExportToExcelSuccess,
-  fetchMeasurements: fetchMeasurementsForMeterDetails,
+  exportToExcelSuccess,
+  fetchMeasurements,
   fetchUserSelections,
 }, dispatch);
 

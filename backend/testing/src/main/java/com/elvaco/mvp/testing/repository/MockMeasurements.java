@@ -45,6 +45,20 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
+  public Map<MeasurementKey, List<MeasurementValue>> findAllForPeriod(
+    MeasurementParameter parameter
+  ) {
+    return null;
+  }
+
+  @Override
+  public Map<String, List<MeasurementValue>> findAverageAllForPeriod(
+    MeasurementParameter parameter
+  ) {
+    return emptyMap();
+  }
+
+  @Override
   public List<Measurement> findAll(RequestParameters parameters) {
     throw new NotImplementedYet();
   }

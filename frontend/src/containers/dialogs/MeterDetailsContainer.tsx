@@ -13,7 +13,7 @@ import {addToReport} from '../../state/report/reportActions';
 import {LegendItem} from '../../state/report/reportModels';
 import {CallbackWithId, OnClickWith, uuid} from '../../types/Types';
 import {onCenterMap} from '../../usecases/map/mapActions';
-import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
+import {fetchMeterMapMarker as fetchMapMarker} from '../../usecases/map/mapMarkerActions';
 import {MapMarker, OnCenterMapEvent, SelectedId} from '../../usecases/map/mapModels';
 import {syncWithMetering} from '../../usecases/meter/meterActions';
 import './MeterDetailsContainer.scss';
@@ -27,9 +27,9 @@ interface StateToProps {
 }
 
 interface DispatchToProps extends OnCenterMapEvent {
+  addToReport: OnClickWith<LegendItem>;
   fetchMeter: CallbackWithId;
   fetchMapMarker: CallbackWithId;
-  addToReport: OnClickWith<LegendItem>;
   syncWithMetering: CallbackWithId;
 }
 
@@ -90,7 +90,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addToReport,
   fetchMeter,
-  fetchMapMarker: fetchMeterMapMarker,
+  fetchMapMarker,
   onCenterMap,
   syncWithMetering,
 }, dispatch);

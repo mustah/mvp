@@ -1,23 +1,30 @@
 import {ActionType, getType} from 'typesafe-actions';
-import {Period} from '../../../components/dates/dateModels';
+import {Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {logoutUser} from '../../auth/authActions';
-import {setMeterDetailsTimePeriod} from './meterDetailActions';
+import * as actions from './meterDetailActions';
 import {MeterDetailState} from './meterDetailModels';
 
 const initialState: MeterDetailState = {
   timePeriod: {period: Period.latest},
-  isTimePeriodDefault: true,
+  resolution: TemporalResolution.hour,
+  isDirty: false,
 };
 
-type ActionTypes = ActionType<typeof setMeterDetailsTimePeriod | typeof logoutUser>;
+type ActionTypes = ActionType<typeof actions | typeof logoutUser>;
 
 export const meterDetail = (state: MeterDetailState = initialState, action: ActionTypes): MeterDetailState => {
   switch (action.type) {
-    case getType(setMeterDetailsTimePeriod):
+    case getType(actions.setTimePeriod):
       return {
         ...state,
+        isDirty: true,
         timePeriod: action.payload,
-        isTimePeriodDefault: false,
+      };
+    case getType(actions.selectResolution):
+      return {
+        ...state,
+        isDirty: true,
+        resolution: action.payload,
       };
     case getType(logoutUser):
       return initialState;

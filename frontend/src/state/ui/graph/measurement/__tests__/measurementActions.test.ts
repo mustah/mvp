@@ -432,7 +432,7 @@ describe('measurementActions', () => {
       });
 
       it('handles custom error messages', async () => {
-        const response = {message: 'error'};
+        const response = {message: 'Error'};
         (() => errorMockRestClient.onGet().reply(() => [500, response]))();
 
         await onFetchMeasurements();

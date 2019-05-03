@@ -10,7 +10,6 @@ import * as actions from './collectionActions';
 import {CollectionState} from './collectionModels';
 
 const initialState: CollectionState = {
-  isTimePeriodDefault: true,
   isExportingToExcel: false,
   timePeriod: {period: Period.latest},
 };
@@ -25,7 +24,6 @@ const collectionReducer = (sector: Sectors) =>
         return {
           ...state,
           timePeriod: (action.payload as SelectionInterval),
-          isTimePeriodDefault: false,
         };
       case getType(actions.exportToExcelAction(sector)):
         return {...state, isExportingToExcel: true};

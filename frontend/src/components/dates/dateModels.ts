@@ -9,6 +9,7 @@ export const enum Period {
 }
 
 export const enum TemporalResolution {
+  all = 'all',
   hour = 'hour',
   day = 'day',
   month = 'month',

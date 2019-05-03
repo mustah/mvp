@@ -5,6 +5,7 @@ import {colors, iconSizeMedium, svgIconProps} from '../../../../app/themes';
 import {ToolbarIconButton} from '../../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
+import {ResolutionSelection} from '../../../../components/dates/ResolutionSelection';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../../helpers/Maybe';
@@ -14,17 +15,19 @@ import {Props} from '../containers/MeterMeasurementsToolbarContainer';
 
 export const MeterMeasurementsToolbar = ({
   changeToolbarView,
-  hasMeasurements,
   exportToExcel,
+  hasMeasurements,
   isExportingToExcel,
   isFetching,
-  view,
-  setMeterDetailsTimePeriod,
+  resolution,
+  selectResolution,
+  setTimePeriod,
   timePeriod,
+  view,
 }: Props) => {
   const selectTable = () => changeToolbarView(ToolbarView.table);
-  const selectPeriod = (period: Period) => setMeterDetailsTimePeriod({period});
-  const setCustomDateRange = (customDateRange: DateRange) => setMeterDetailsTimePeriod({
+  const selectPeriod = (period: Period) => setTimePeriod({period});
+  const setCustomDateRange = (customDateRange: DateRange) => setTimePeriod({
     period: Period.custom,
     customDateRange
   });
@@ -57,6 +60,7 @@ export const MeterMeasurementsToolbar = ({
       </ToolbarLeftPane>
 
       <ToolbarRightPane>
+        <ResolutionSelection resolution={resolution} selectResolution={selectResolution}/>
         <PeriodSelection
           customDateRange={Maybe.maybe(timePeriod.customDateRange)}
           period={timePeriod.period}
