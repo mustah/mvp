@@ -15,7 +15,7 @@ export const SelectionReport = ({view, legendItems, entities, result, addAllToSe
     if (result.length !== 0 && legendItems.length === 0) {
       addAllToSelectionReport(result.map(id => entities[id]).map(toLegendItem));
     }
-  });
+  }, [result]);
   const {isVisible, showHide} = useToggleVisibility(false);
   return (
     <Column>

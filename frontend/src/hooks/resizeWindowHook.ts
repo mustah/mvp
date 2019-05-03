@@ -17,7 +17,7 @@ export const useResizeWindow = (): Props => {
     return () => {
       window.removeEventListener('resize', updateDimensions);
     };
-  });
+  }, [height]);
 
   return {resized, height};
 };
