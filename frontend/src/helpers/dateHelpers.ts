@@ -114,12 +114,14 @@ export const toPeriodApiParameters = ({
 }: CurrentPeriod): EncodedUriParameters[] =>
   toApiParameters(newDateRange(period, customDateRange, start));
 
-export const queryParametersOfDateRange = ({
-  period,
-  customDateRange,
-}: SelectionInterval,
-                                           after: RequestParameter,
-                                           before: RequestParameter): RequestParameters => {
+export const queryParametersOfDateRange = (
+  {
+    period,
+    customDateRange,
+  }: SelectionInterval,
+  after: RequestParameter,
+  before: RequestParameter
+): RequestParameters => {
   const {start, end}: DateRange = newDateRange(period, Maybe.maybe(customDateRange));
   return {
     [after]: momentAtUtcPlusOneFrom(start).format(apiFormat),
