@@ -123,7 +123,7 @@ export interface UriLookupStatePaginated extends UriLookupState {
 }
 
 export interface UriLookupStatePaginatedWithPeriod extends UriLookupStatePaginated {
-  period: CurrentPeriod;
+  period?: CurrentPeriod;
 }
 
 export type SelectionListItem = SelectionItem & Selected;

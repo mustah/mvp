@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Maybe} from '../../../helpers/Maybe';
+import {makeCollectionPeriodParametersOf} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {
   fetchCollectionStatsFacilityPaged,
@@ -76,13 +77,12 @@ const mapStateToProps = (
   return ({
     entities: getPaginatedEntities(collectionStatFacilities),
     result: getPageResult(collectionStatFacilities, page),
-    parameters: getPaginatedCollectionStatParameters({
+    parameters: `${makeCollectionPeriodParametersOf(timePeriod)}&${getPaginatedCollectionStatParameters({
       sort,
       pagination,
       userSelection,
       query,
-      period: {customDateRange: Maybe.maybe(timePeriod.customDateRange), period: timePeriod.period}
-    }),
+    })}`,
     sort,
     isExportingToExcel,
     isFetching: getPageIsFetching(collectionStatFacilities, page),

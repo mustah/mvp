@@ -1,7 +1,10 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Maybe} from '../../../../helpers/Maybe';
-import {encodedUriParametersFrom, RequestParameter} from '../../../../helpers/urlFactory';
+import {
+  encodedUriParametersFrom,
+  makeCollectionPeriodParametersOf,
+  RequestParameter
+} from '../../../../helpers/urlFactory';
 import {RootState} from '../../../../reducers/rootReducer';
 import {
   fetchMeterCollectionStatsFacilityPaged,
@@ -45,12 +48,12 @@ const mapStateToProps = (
 
   const parameters: EncodedUriParameters = encodedUriParametersFrom([
     `${RequestParameter.logicalMeterId}=${meterId}`,
+    makeCollectionPeriodParametersOf(timePeriod),
     getPaginatedCollectionStatParameters({
       sort,
       pagination,
       userSelection,
       query,
-      period: {customDateRange: Maybe.maybe(timePeriod.customDateRange), period: timePeriod.period}
     })
   ]);
 
