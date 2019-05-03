@@ -30,6 +30,7 @@ import {MapMarker, OnCenterMapEvent} from '../../usecases/map/mapModels';
 import {CollectionContentContainer} from '../../usecases/meter/collection/containers/CollectionContentContainer';
 
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
+import {OwnProps} from '../../usecases/meter/measurements/meterDetailModels';
 import './MeterDetailsTabs.scss';
 
 export interface MeterDetailsState {
@@ -160,6 +161,8 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
       hasContent: gateways.length > 0,
     };
 
+    const meterDetailProps: OwnProps = {meter, useCollectionPeriod};
+
     return (
       <Row>
         <Tabs className="MeterDetailsTabs full-width first-letter">
@@ -180,10 +183,10 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
             </TabSettings>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
-            <MeterMeasurementsContentContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
+            {selectedTab === TabName.values && <MeterMeasurementsContentContainer {...meterDetailProps}/>}
           </TabContent>
           <TabContent tab={TabName.collection} selectedTab={selectedTab}>
-            <CollectionContentContainer meter={meter} useCollectionPeriod={useCollectionPeriod}/>
+            {selectedTab === TabName.collection && <CollectionContentContainer {...meterDetailProps}/>}
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Grid data={eventLog} scrollable="none">

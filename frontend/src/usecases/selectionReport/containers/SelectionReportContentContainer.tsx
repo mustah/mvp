@@ -11,12 +11,11 @@ import {addAllToSelectionReport} from '../../../state/report/reportActions';
 import {LegendItem} from '../../../state/report/reportModels';
 import {EntityTypes, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
-import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
+import {ToolbarViewSettings} from '../../../state/ui/toolbar/toolbarModels';
 import {CallbackWith, uuid} from '../../../types/Types';
 import {SelectionReport} from '../components/SelectionReport';
 
-interface StateToProps {
-  view: ToolbarView;
+interface StateToProps extends ToolbarViewSettings {
   legendItems: LegendItem[];
   result: uuid[];
   entities: ObjectsById<Meter>;

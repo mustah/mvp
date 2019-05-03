@@ -1,15 +1,14 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
+import {OnChangeToolbarView, ToolbarViewSettings} from '../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith, Sectors} from '../../../types/Types';
 import {changeToolbarView, exportToExcel, setCollectionTimePeriod} from '../collectionActions';
 import {CollectionToolbar} from '../components/CollectionToolbar';
 
-export interface StateToProps {
+export interface StateToProps extends ToolbarViewSettings {
   hasCollectionStats: boolean;
-  view: ToolbarView;
   isFetching: boolean;
   isExportingToExcel: boolean;
   timePeriod: SelectionInterval;

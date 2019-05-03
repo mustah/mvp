@@ -12,17 +12,16 @@ import {ReportSector} from '../../../state/report/reportModels';
 import {getMeterLegendItems, hasLegendItems} from '../../../state/report/reportSelectors';
 import {exportReportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
-import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
+import {OnChangeToolbarView, ToolbarViewSettings} from '../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {ReportToolbar} from '../components/ReportToolbar';
 
-interface StateToProps {
+interface StateToProps extends ToolbarViewSettings {
   canShowAverage: boolean;
   hasLegendItems: boolean;
   hasMeasurements: boolean;
   resolution: TemporalResolution;
-  view: ToolbarView;
   isFetching: boolean;
   isExportingToExcel: boolean;
   timePeriod: SelectionInterval;

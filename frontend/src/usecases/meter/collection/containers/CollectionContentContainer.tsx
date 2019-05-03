@@ -1,18 +1,10 @@
 import {connect} from 'react-redux';
 import {RootState} from '../../../../reducers/rootReducer';
-import {MeterDetails} from '../../../../state/domain-models/meter-details/meterDetailsModels';
-import {ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
+import {ToolbarViewSettings} from '../../../../state/ui/toolbar/toolbarModels';
+import {OwnProps} from '../../measurements/meterDetailModels';
 import {CollectionContent} from '../components/CollectionContent';
 
-interface StateToProps {
-  view: ToolbarView;
-}
-
-interface OwnProps {
-  meter: MeterDetails;
-}
-
-const mapStateToProps = ({ui: {toolbar: {meterCollection: {view}}}}: RootState): StateToProps => ({view});
+const mapStateToProps = ({ui: {toolbar: {meterCollection: {view}}}}: RootState): ToolbarViewSettings => ({view});
 
 export const CollectionContentContainer =
-  connect<StateToProps, null, OwnProps>(mapStateToProps)(CollectionContent);
+  connect<ToolbarViewSettings, null, OwnProps>(mapStateToProps)(CollectionContent);
