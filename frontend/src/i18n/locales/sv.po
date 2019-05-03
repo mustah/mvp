@@ -784,7 +784,7 @@ msgstr "städer"
 
 msgctxt "°plural"
 msgid "threshold°"
-msgstr "thresholds"
+msgstr "gränsvärden"
 
 msgctxt "°plural"
 msgid "address°"

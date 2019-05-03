@@ -5,9 +5,9 @@ import * as actions from './meterDetailActions';
 import {MeterDetailState} from './meterDetailModels';
 
 const initialState: MeterDetailState = {
-  timePeriod: {period: Period.latest},
-  resolution: TemporalResolution.hour,
   isDirty: false,
+  resolution: TemporalResolution.hour,
+  timePeriod: {period: Period.latest},
 };
 
 type ActionTypes = ActionType<typeof actions | typeof logoutUser>;

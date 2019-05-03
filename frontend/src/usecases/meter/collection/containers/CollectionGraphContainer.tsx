@@ -24,15 +24,17 @@ const mapStateToProps = (
   }: RootState,
   {meterId}: OwnProps
 ): StateToProps => {
-
-  const parameters = {...requestParametersFrom({collectionDateRange: timePeriod}), logicalMeterId: meterId.toString()};
+  const parameters = encodeRequestParameters({
+    ...requestParametersFrom({collectionDateRange: timePeriod}),
+    logicalMeterId: meterId.toString()
+  });
 
   return ({
     collectionStats: meterCollectionStats.entities,
     error: getError(meterCollectionStats),
     isExportingToExcel,
     isFetching: meterCollectionStats.isFetching,
-    parameters: encodeRequestParameters(parameters),
+    parameters,
   });
 };
 
