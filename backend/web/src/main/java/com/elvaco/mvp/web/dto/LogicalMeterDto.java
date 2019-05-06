@@ -24,8 +24,6 @@ public class LogicalMeterDto {
   public String created;
   public boolean isReported;
   public List<AlarmDto> alarms;
-  @Nullable
-  public Double collectionPercentage;
   public Long readIntervalMinutes;
   public UUID organisationId;
   @Nullable

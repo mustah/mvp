@@ -31,7 +31,6 @@ public class MockLogicalMetersWithCascading extends MockLogicalMeters {
       .created(logicalMeter.created)
       .physicalMeters(savedPhysicalMeters)
       .location(logicalMeter.location)
-      .collectionPercentage(logicalMeter.collectionPercentage)
       .alarms(logicalMeter.alarms)
       .build());
   }

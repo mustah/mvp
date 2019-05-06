@@ -24,7 +24,6 @@ export type MetersState = NormalizedPaginatedState<Meter>;
 export interface Meter extends Identifiable, LocationHolder {
   alarms?: Alarm[];
   address?: string;
-  collectionPercentage?: number;
   readIntervalMinutes?: number;
   facility: uuid;
   isReported?: boolean;

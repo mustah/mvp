@@ -29,8 +29,6 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final List<PhysicalMeter> physicalMeters;
   @Singular
   public final List<Gateway> gateways;
-  @Nullable
-  public final Double collectionPercentage;
   @Singular
   public final List<AlarmLogEntry> alarms;
   @Nullable

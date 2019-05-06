@@ -107,8 +107,6 @@ public class LogicalMeterDtoMapper {
       .map(m -> m.revision)
       .orElse(null);
 
-    meterDto.collectionPercentage = logicalMeter.collectionPercentage;
-
     meterDto.gateway = logicalMeter.gateways.stream()
       .findFirst()
       .map(GatewayDtoMapper::toGatewayMandatory)

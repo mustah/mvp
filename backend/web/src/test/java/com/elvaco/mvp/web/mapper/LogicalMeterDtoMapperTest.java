@@ -109,7 +109,6 @@ public class LogicalMeterDtoMapperTest {
       .statusChanged(formatUtc(statusChanged))
       .extraInfo(extraInfo)
       .build();
-    expected.collectionPercentage = 75.0;
     expected.readIntervalMinutes = 15L;
 
     expected.organisationId = ELVACO.id;
@@ -161,7 +160,6 @@ public class LogicalMeterDtoMapperTest {
             .longitude(56.123)
             .confidence(1.0)
             .build())
-          .collectionPercentage(75.0)
           .build()
       ))
       .isEqualTo(expected);
@@ -195,15 +193,6 @@ public class LogicalMeterDtoMapperTest {
     LogicalMeterDto logicalMeterDto = toDto(logicalMeter);
 
     assertThat(logicalMeterDto.isReported).isTrue();
-  }
-
-  @Test
-  public void nullCollectionStatusIsMappedToNull() {
-    LogicalMeter logicalMeter = logicalMeter().build();
-
-    LogicalMeterDto logicalMeterDto = toDto(logicalMeter);
-
-    assertThat(logicalMeterDto.collectionPercentage).isNull();
   }
 
   @Test
