@@ -58,7 +58,7 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
 };
 
 export const MarkerCluster = ({mapMarkers}: MapMarkers) => {
-  const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarkers);
+  const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarkers || {});
 
   const markerClusterOptions = {
     iconCreateFunction: handleIconCreate,

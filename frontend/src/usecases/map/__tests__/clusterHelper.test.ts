@@ -24,24 +24,34 @@ describe('clusterHelper', () => {
   };
 
   describe('makeLeafletCompatibleMarkersFrom', () => {
+
     it('should handle single marker', () => {
       const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarker1);
 
-      expect(leafletMarkers).toEqual([{
-        position: [57.505402, 12.069364],
-        options: {
-          icon: {
-            options: {
-              iconAnchor: {x: 13, y: 41},
-              iconSize: [25, 41],
-              iconUrl: {}
+      expect(leafletMarkers).toEqual([
+        {
+          position: [57.505402, 12.069364],
+          options: {
+            icon: {
+              options: {
+                iconAnchor: {x: 13, y: 41},
+                iconSize: [25, 41],
+                iconUrl: {}
+              },
+              _initHooksCalled: true,
             },
-            _initHooksCalled: true,
+            mapMarkerItem: 1,
+            status: Status.ok,
           },
-          mapMarkerItem: 1,
-          status: Status.ok,
-        },
-      }]);
+        }
+      ]);
+    });
+
+    it('can have no map markers', () => {
+      const mapMarkers = undefined;
+      const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarkers || {});
+
+      expect(leafletMarkers).toEqual([]);
     });
 
     it('should handle array of markers', () => {
