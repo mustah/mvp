@@ -49,7 +49,10 @@ export const isMapMarker = (markers: Dictionary<MapMarker> | MapMarker): markers
   (markers as MapMarker).latitude !== undefined;
 
 export const makeLeafletCompatibleMarkersFrom = (markers: Dictionary<MapMarker> | MapMarker): Marker[] => {
-  const mapMarkers = isMapMarker(markers) ? {markers} : markers;
+  const mapMarkers =
+    markers === undefined ? [] :
+    isMapMarker(markers) ? {markers} : markers;
+
   return Object.keys(mapMarkers)
     .map((key: string) => mapMarkers[key])
     .filter((marker) => isMapMarker(marker))
