@@ -48,7 +48,7 @@ export interface SelectedId {
 }
 
 export interface MapMarkers {
-  mapMarkers: Dictionary<MapMarker> | MapMarker;
+  mapMarkers?: Dictionary<MapMarker> | MapMarker;
 }
 
 export interface MapZoomSettings {

@@ -41,7 +41,7 @@ public class MeasurementUseCases {
   public Map<String, List<MeasurementValue>> findAverageForPeriod(
     MeasurementParameter parameter
   ) {
-    if (parameter.getResolution().equals(TemporalResolution.all)) {
+    if (TemporalResolution.all == parameter.getResolution()) {
       if (limitMeasurementsForAll(parameter)) {
         throw new InvalidMeasumentRequestScope(
           "Scope of period length and meters is too large for this resolution");
@@ -60,7 +60,7 @@ public class MeasurementUseCases {
   public Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(
     MeasurementParameter parameter
   ) {
-    if (parameter.getResolution().equals(TemporalResolution.all)) {
+    if (TemporalResolution.all == parameter.getResolution()) {
       if (limitMeasurementsForAll(parameter)) {
         throw new InvalidMeasumentRequestScope(
           "Scope of period length and meters is too large for this resolution");
