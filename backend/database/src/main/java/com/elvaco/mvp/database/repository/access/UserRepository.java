@@ -85,7 +85,10 @@ public class UserRepository implements Users {
 
   @Override
   public List<User> findByOrganisationId(UUID organisationId) {
-    return userJpaRepository.findByOrganisationId(organisationId).stream()
+    return userJpaRepository.findByOrganisationIdOrOrganisation_ParentId(
+      organisationId,
+      organisationId
+    ).stream()
       .map(UserEntityMapper::toDomainModel)
       .collect(toList());
   }
