@@ -112,8 +112,8 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
       onCenterMap,
     };
 
-    const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
-      formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
+    const renderCollectionStatus = ({readIntervalMinutes}: Meter) =>
+      formatCollectionPercentage(0, readIntervalMinutes, isSuperAdmin);
 
     return (
       <Row>
