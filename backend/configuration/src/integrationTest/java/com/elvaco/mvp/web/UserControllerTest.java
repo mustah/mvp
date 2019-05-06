@@ -306,6 +306,45 @@ public class UserControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void adminCanFindAllUsersInOrganisationAndSubOrganisation() {
+    Organisation parentOrganisation = given(organisation().name("parent"));
+    User admin = given(user().roles(ADMIN).organisation(parentOrganisation).email("admin@test.se"));
+    Organisation subOrganisation = given(subOrganisation(parentOrganisation, admin).name("sub"));
+    given(user().organisation(subOrganisation).email("userInSub@test.se"));
+    given(user().organisation(subOrganisation).email("userInSub2@test.se"));
+
+    ResponseEntity<List<UserDto>> response = as(admin)
+      .getList("/users", UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).extracting(userDto -> userDto.email).containsExactlyInAnyOrder(
+      "admin@test.se",
+      "userInSub@test.se",
+      "userInSub2@test.se"
+    );
+  }
+
+  @Test
+  public void adminCannotFindAllUsersInParentOrganisation() {
+    Organisation parentOrganisation = given(organisation().name("parent"));
+    User admin = given(user().roles(ADMIN).organisation(parentOrganisation).email("admin@test.se"));
+    Organisation subOrganisation = given(subOrganisation(parentOrganisation, admin).name("sub"));
+    User subAdmin = given(user().roles(ADMIN)
+      .organisation(subOrganisation)
+      .email("userInSub@test.se"));
+    given(user().organisation(subOrganisation).email("userInSub2@test.se"));
+
+    ResponseEntity<List<UserDto>> response = as(subAdmin)
+      .getList("/users", UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).extracting(userDto -> userDto.email).containsExactlyInAnyOrder(
+      "userInSub@test.se",
+      "userInSub2@test.se"
+    );
+  }
+
+  @Test
   public void adminCanCreateUserInSubOrganisation() throws IOException {
     createUserIfNotPresent(context().admin);
 
@@ -534,6 +573,43 @@ public class UserControllerTest extends IntegrationTest {
     updatedUser = users.findById(userDto.id).get();
 
     assertThat(passwordEncoder.matches(oldPassword, updatedUser.password)).isTrue();
+  }
+
+  @Test
+  public void userCanFindAllUsersInOrganisationAndSubOrganisation() {
+    Organisation parentOrganisation = given(organisation().name("parent"));
+    User admin = given(user().roles(ADMIN).organisation(parentOrganisation).email("admin@test.se"));
+    Organisation subOrganisation = given(subOrganisation(parentOrganisation, admin).name("sub"));
+    User user = given(user().organisation(parentOrganisation).email("userInSub@test.se"));
+    given(user().organisation(subOrganisation).email("userInSub2@test.se"));
+
+    ResponseEntity<List<UserDto>> response = as(user)
+      .getList("/users", UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).extracting(userDto -> userDto.email).containsExactlyInAnyOrder(
+      "admin@test.se",
+      "userInSub@test.se",
+      "userInSub2@test.se"
+    );
+  }
+
+  @Test
+  public void userCannotFindAllUsersInParentOrganisation() {
+    Organisation parentOrganisation = given(organisation().name("parent"));
+    User admin = given(user().roles(ADMIN).organisation(parentOrganisation).email("admin@test.se"));
+    Organisation subOrganisation = given(subOrganisation(parentOrganisation, admin).name("sub"));
+    User user = given(user().organisation(subOrganisation).email("userInSub@test.se"));
+    given(user().organisation(subOrganisation).email("userInSub2@test.se"));
+
+    ResponseEntity<List<UserDto>> response = as(user)
+      .getList("/users", UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).extracting(userDto -> userDto.email).containsExactlyInAnyOrder(
+      "userInSub@test.se",
+      "userInSub2@test.se"
+    );
   }
 
   @Test

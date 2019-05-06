@@ -19,5 +19,7 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, UUID> {
 
   List<UserEntity> findByOrganisationId(UUID organisationId);
 
+  List<UserEntity> findByOrganisationIdOrOrganisation_ParentId(UUID organisationId, UUID parentId);
+
   List<UserEntity> findAllByOrderByOrganisationNameAscNameAsc();
 }
