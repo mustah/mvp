@@ -1,6 +1,16 @@
 include:
   - web.nginx
 
+Install evo-502-error-page:
+  file.managed:
+    - name: /usr/share/nginx/html/evo-502.html
+    - source: salt://mvp/app/files/mvp/evo-502.html
+
+Install evo-502-error-page-image:
+  file.managed:
+    - name: /usr/share/nginx/html/evo_maintenance.jpg
+    - source: salt://mvp/app/files/mvp/evo_maintenance.jpg
+
 Install ssl cert:
   file.managed:
     - name: /etc/nginx/cert.crt
