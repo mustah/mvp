@@ -42,6 +42,8 @@ export enum RequestParameter {
   organisation = 'organisation',
   productModel = 'productModel',
   reported = 'reported',
+  reportAfter = 'reportAfter',
+  reportBefore = 'reportBefore',
   quantity = 'quantity',
   secondaryAddress = 'secondaryAddress',
   sort = 'sort',
@@ -102,6 +104,14 @@ const mapRequestParameters =
         value as SelectionInterval,
         RequestParameter.collectionAfter,
         RequestParameter.collectionBefore
+      );
+    }
+
+    if (selectedParameter === 'reportDateRange') {
+      return queryParametersOfDateRange(
+        value as SelectionInterval,
+        RequestParameter.reportAfter,
+        RequestParameter.reportBefore
       );
     }
 
@@ -215,6 +225,16 @@ export const makeCollectionPeriodParametersOf =
         interval,
         RequestParameter.collectionAfter,
         RequestParameter.collectionBefore
+      )
+    );
+
+export const makeReportPeriodParametersOf =
+  (interval: SelectionInterval): EncodedUriParameters =>
+    encodeRequestParameters(
+      queryParametersOfDateRange(
+        interval,
+        RequestParameter.reportAfter,
+        RequestParameter.reportBefore
       )
     );
 

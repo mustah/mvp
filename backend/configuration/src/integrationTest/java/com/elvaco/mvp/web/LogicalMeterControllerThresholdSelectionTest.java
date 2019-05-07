@@ -15,9 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTest {
@@ -39,8 +39,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power >= 0 W")
       .build();
 
@@ -62,8 +62,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power < 0 W")
       .build();
 
@@ -85,8 +85,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     ZonedDateTime now = context().now();
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power < 0 W")
       .build();
 
@@ -108,8 +108,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power < 0 W")
       .build();
 
@@ -131,8 +131,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power <= 0 W")
       .build();
 
@@ -154,8 +154,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power >= 9 W")
       .build();
 
@@ -177,8 +177,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power > 9000 W")
       .build();
 
@@ -200,8 +200,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power < 9 kW")
       .build();
 
@@ -223,8 +223,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Url url = Url.builder()
       .path("/meters")
-      .parameter(AFTER, now)
-      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD_AFTER, now)
+      .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power < 9 m^3")
       .build();
 
@@ -248,7 +248,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume < 1 m^3")
       .build(), PagedLogicalMeterDto.class);
 
@@ -256,7 +256,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume <= 1 m^3")
       .build(), PagedLogicalMeterDto.class);
 
@@ -275,7 +275,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume < 4 m^3")
       .build(), PagedLogicalMeterDto.class);
 
@@ -283,7 +283,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume <= 4 m^3")
       .build(), PagedLogicalMeterDto.class);
 
@@ -312,7 +312,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
         .path("/meters")
-        .period(now, now.plusDays(2))
+        .thresholdPeriod(now, now.plusDays(2))
         .parameter(THRESHOLD, "Volume > 0 m^3 for 1 days")
         .build(), PagedLogicalMeterDto.class);
 
@@ -321,7 +321,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     result = asUser()
       .getPage(Url.builder()
         .path("/meters")
-        .period(now.plusDays(1), now.plusDays(2))
+        .thresholdPeriod(now.plusDays(1), now.plusDays(2))
         .parameter(THRESHOLD, "Volume > 0 m^3 for 1 days")
         .build(), PagedLogicalMeterDto.class);
 
@@ -351,7 +351,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
         .path("/meters")
-        .period(now, now.plusDays(8))
+        .thresholdPeriod(now, now.plusDays(8))
         .parameter(THRESHOLD, "Energy <= 0 kWh for 7 days")
         .build(), PagedLogicalMeterDto.class);
 
@@ -360,7 +360,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     result = asUser()
       .getPage(Url.builder()
         .path("/meters")
-        .period(now, now.plusDays(7))
+        .thresholdPeriod(now, now.plusDays(7))
         .parameter(THRESHOLD, "Volume <= 0 m^3 for 7 days")
         .build(), PagedLogicalMeterDto.class);
 
@@ -389,7 +389,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
         .path("/meters")
-        .period(now, now.plusDays(6))
+        .thresholdPeriod(now, now.plusDays(6))
         .parameter(THRESHOLD, "External temperature <= 20°C for 3 days")
         .build(), PagedLogicalMeterDto.class);
 
@@ -398,7 +398,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     result = asUser()
       .getPage(Url.builder()
         .path("/meters")
-        .period(now.plusDays(3), now.plusDays(6))
+        .thresholdPeriod(now.plusDays(3), now.plusDays(6))
         .parameter(THRESHOLD, "External temperature <= 20°C for 3 days")
         .build(), PagedLogicalMeterDto.class);
 
@@ -411,7 +411,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     ResponseEntity<ErrorMessageDto> response = asUser()
       .get(Url.builder()
         .path("/meters")
-        .period(now, now.plusDays(1))
+        .thresholdPeriod(now, now.plusDays(1))
         .parameter(THRESHOLD, "External temperature <= 20°C for 3 days")
         .build(), ErrorMessageDto.class);
 
@@ -434,7 +434,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     ResponseEntity<PagedLogicalMeterDto> response = asUser()
       .get(Url.builder()
         .path("/meters")
-        .period(now.plusDays(1), now.plusDays(2))
+        .thresholdPeriod(now.plusDays(1), now.plusDays(2))
         .parameter(THRESHOLD, "Volume < 0 m^3 for 1 days")
         .build(), PagedLogicalMeterDto.class);
 
@@ -453,7 +453,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume < 4 m^3 for 1 days")
       .build(), PagedLogicalMeterDto.class);
 
@@ -461,7 +461,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume <= 4 m^3 for 1 days")
       .build(), PagedLogicalMeterDto.class);
 
@@ -480,7 +480,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume < 1 m^3 for 1 days")
       .build(), PagedLogicalMeterDto.class);
 
@@ -488,7 +488,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume <= 1 m^3 for 1 days")
       .build(), PagedLogicalMeterDto.class);
 
@@ -507,7 +507,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Return temperature < 24 °C for 1 days")
       .build(), PagedLogicalMeterDto.class);
 
@@ -515,7 +515,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     page = asUser().getPage(Url.builder()
       .path("/meters")
-      .period(now.plusDays(1), now.plusDays(2))
+      .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Return temperature <= 24 °C for 1 days")
       .build(), PagedLogicalMeterDto.class);
 

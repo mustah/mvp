@@ -85,8 +85,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements?resolution=hour"
           + "&logicalMeterId=" + meter.id
           + "&quantity=Difference+temperature"
-          + "&after=" + date
-          + "&before=" + date.plusHours(1),
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1),
         MeasurementDto.class
       )
       .getBody();
@@ -114,8 +114,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements?quantity=Difference+temperature:K"
           + "&logicalMeterId=" + meter.id
           + "&resolution=hour"
-          + "&after=" + date
-          + "&before=" + date.plusHours(1),
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1),
         MeasurementSeriesDto.class
       )
       .getBody();
@@ -139,8 +139,8 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementDto> measurements = asUser()
       .getList(
         "/measurements?logicalMeterId=" + meter.id
-          + "&after=" + date
-          + "&before=" + date,
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date,
         MeasurementDto.class
       )
       .getBody();
@@ -173,8 +173,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         + "&logicalMeterId=" + secondOrganisationsMeter.id
         + "&quantity=Difference+temperature"
         + "&resolution=hour"
-        + "&after=" + date
-        + "&before=" + date.plusHours(1)
+        + "&reportAfter=" + date
+        + "&reportBefore=" + date.plusHours(1)
       )
     ).hasSize(2);
   }
@@ -205,8 +205,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       getListAsSuperAdmin("/measurements?"
         + "quantity=Difference+temperature"
         + "&logicalMeterId=" + heatMeter.id
-        + "&after=" + date
-        + "&before=" + date.plusHours(1)
+        + "&reportAfter=" + date
+        + "&reportBefore=" + date.plusHours(1)
         + "&resolution=hour");
 
     assertThat(contents).hasSize(1);
@@ -238,8 +238,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       getListAsSuperAdmin("/measurements?"
         + "logicalMeterId=" + heatMeter.id
         + "&quantity=Difference+temperature,Energy"
-        + "&after=" + date
-        + "&before=" + date.plusHours(1)
+        + "&reportAfter=" + date
+        + "&reportBefore=" + date.plusHours(1)
         + "&resolution=hour");
 
     assertThat(contents)
@@ -279,8 +279,8 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?quantity=Difference+temperature:K"
-        + "&after=" + date
-        + "&before=" + date.plusHours(1)
+        + "&reportAfter=" + date
+        + "&reportBefore=" + date.plusHours(1)
         + "&logicalMeterId=" + heatMeter.id.toString()
         + "&resolution=hour");
 
@@ -314,8 +314,8 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
-        + "after=" + date
-        + "&before=" + date
+        + "reportAfter=" + date
+        + "&reportBefore=" + date
         + "&logicalMeterId=" + roomSensorMeter.id.toString()
         + "&resolution=hour");
 
@@ -357,8 +357,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements?quantity=Difference+temperature:K,Energy:kWh"
           + "&logicalMeterId=" + heatMeter.id
           + "&resolution=hour"
-          + "&after=" + date
-          + "&before=" + date.plusHours(1));
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1));
 
     assertThat(contents).containsExactlyInAnyOrder(
       MeasurementSeriesDto.builder()
@@ -408,7 +408,7 @@ public class MeasurementControllerTest extends IntegrationTest {
           .quantity(ENERGY.name + ":kWh:readout")
           .logicalMeterId(meter.id)
           .resolution(TemporalResolution.hour)
-          .period(date, date.plusHours(1)).build(),
+          .reportPeriod(date, date.plusHours(1)).build(),
         MeasurementSeriesDto.class
       ).getBody();
 
@@ -447,7 +447,7 @@ public class MeasurementControllerTest extends IntegrationTest {
           .quantity(ENERGY.name + ":kWh:consumption")
           .logicalMeterId(meter.id)
           .resolution(TemporalResolution.hour)
-          .period(date, date.plusHours(1)).build(),
+          .reportPeriod(date, date.plusHours(1)).build(),
         MeasurementSeriesDto.class
       ).getBody();
 
@@ -533,8 +533,8 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "&logicalMeterId=" + meter12.id
           + "&logicalMeterId=" + meter2.id
           + "&resolution=hour"
-          + "&after=" + date
-          + "&before=" + date.plusHours(1));
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1));
 
     assertThat(contents)
       .extracting(dto -> dto.id, dto -> dto.quantity, dto -> dto.unit)
@@ -565,8 +565,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "/measurements?quantity=Difference+temperature"
         + "&logicalMeterId=" + logicalMeter.id.toString()
         + "&resolution=hour"
-        + "&after=" + date
-        + "&before=" + date.plusHours(1));
+        + "&reportAfter=" + date
+        + "&reportBefore=" + date.plusHours(1));
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);
@@ -605,8 +605,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "/measurements?quantity=Power"
         + "&logicalMeterId=" + logicalMeter.id.toString()
         + "&resolution=day"
-        + "&after=" + date.minusDays(2)
-        + "&before=" + date.plusDays(1));
+        + "&reportAfter=" + date.minusDays(2)
+        + "&reportBefore=" + date.plusDays(1));
 
     String labelForSerieOne = getExpectedLabel(logicalMeter, physicalMeterOne);
     String labelForSerieTwo = getExpectedLabel(logicalMeter, physicalMeterTwo);
@@ -652,8 +652,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements?quantity=Power"
           + logicalMeterIdRequestString(11)
           + "&resolution=all"
-          + "&after=" + date
-          + "&before=" + date.plusDays(1),
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date.plusDays(1),
         ErrorMessageDto.class
       );
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -670,8 +670,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements?quantity=Power"
           + logicalMeterIdRequestString(1)
           + "&resolution=all"
-          + "&after=" + date
-          + "&before=" + date.plusDays(12),
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date.plusDays(12),
         ErrorMessageDto.class
       );
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -713,8 +713,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "/measurements?quantity=Power"
         + "&logicalMeterId=" + logicalMeter.id.toString()
         + "&resolution=all"
-        + "&after=" + date
-        + "&before=" + date.plusHours(2));
+        + "&reportAfter=" + date
+        + "&reportBefore=" + date.plusHours(2));
 
     assertThat(contents)
       .flatExtracting(dto -> dto.values)
@@ -763,8 +763,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "/measurements?quantity=Energy"
         + "&logicalMeterId=" + logicalMeter.id.toString()
         + "&resolution=all"
-        + "&after=" + date
-        + "&before=" + date.plusHours(2));
+        + "&reportAfter=" + date
+        + "&reportBefore=" + date.plusHours(2));
 
     assertThat(contents)
       .flatExtracting(dto -> dto.values)
@@ -809,8 +809,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements?quantity=Difference+temperature:unknownUnit"
           + "&logicalMeterId=" + heatMeter.id.toString()
           + "&resolution=hour"
-          + "&after=" + date
-          + "&before=" + date.plusHours(1),
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1),
         ErrorMessageDto.class
       );
 
@@ -835,8 +835,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       .get(
         "/measurements?quantity=Difference+temperature:kWh"
           + "&logicalMeterId=" + heatMeter.id
-          + "&after=" + date
-          + "&before=" + date.plusHours(1)
+          + "&reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1)
           + "&resolution=hour",
         ErrorMessageDto.class
       );
@@ -854,7 +854,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getBody().message).isEqualTo("Missing 'after' parameter.");
+    assertThat(response.getBody().message).isEqualTo("Missing 'reportAfter' parameter.");
   }
 
   @Test
@@ -874,8 +874,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       .getList(
         "/measurements?resolution=hour&quantity=Volume"
           + "&logicalMeterId=" + consumptionMeter.id
-          + "&after=" + when
-          + "&before=" + when.plusHours(2),
+          + "&reportAfter=" + when
+          + "&reportBefore=" + when.plusHours(2),
         MeasurementSeriesDto.class
       ).getBody();
 
@@ -911,7 +911,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> seriesDto = asUser()
       .getList(String.format(
         "/measurements?resolution=hour&quantity=Volume&logicalMeterId=%s"
-          + "&after=%s&before=%s",
+          + "&reportAfter=%s&reportBefore=%s",
         consumptionMeter.id,
         when,
         when.plusHours(1)
@@ -950,8 +950,8 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> response = asUser()
       .getList(String.format(
         "/measurements"
-          + "?after=" + when
-          + "&before=" + when.plusHours(2)
+          + "?reportAfter=" + when
+          + "&reportBefore=" + when.plusHours(2)
           + "&quantity=" + Quantity.VOLUME.name
           + "&logicalMeterId=%s",
         logicalMeter.id
@@ -986,8 +986,8 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> response = asUser()
       .getList(
         "/measurements"
-          + "?after=" + after
-          + "&before=" + before
+          + "?reportAfter=" + after
+          + "&reportBefore=" + before
           + "&quantity=Floop"
           + "&logicalMeterId=" + logicalMeter.id, MeasurementSeriesDto.class).getBody();
 
@@ -1031,7 +1031,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     List<MeasurementSeriesDto> response = asUser()
       .getList(measurementsUrl()
-        .period(context().now(), context().now().plusHours(2))
+        .reportPeriod(context().now(), context().now().plusHours(2))
         .quantity(POWER)
         .resolution(TemporalResolution.hour)
         .logicalMeterId(meter.id), MeasurementSeriesDto.class).getBody();

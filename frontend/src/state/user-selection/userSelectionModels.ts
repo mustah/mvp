@@ -82,6 +82,7 @@ export interface SelectedParameters {
   media?: IdNamed[];
   organisations?: IdNamed[];
   reported?: IdNamed[];
+  reportDateRange?: SelectionInterval;
   secondaryAddresses?: IdNamed[];
   threshold?: ThresholdQuery;
   w?: IdNamed[];

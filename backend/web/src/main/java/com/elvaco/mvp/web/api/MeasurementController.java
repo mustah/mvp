@@ -43,8 +43,11 @@ public class MeasurementController {
   public List<MeasurementSeriesDto> average(
     @RequestParam MultiValueMap<String, String> requestParams,
     @RequestParam(name = "quantity") Set<QuantityParameter> optionalQuantityParameters,
-    @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
-    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
+    @RequestParam(name = "reportAfter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportStart,
+
+    @RequestParam(required = false,name = "reportBefore")
+    @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
+
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
   ) {
@@ -55,14 +58,18 @@ public class MeasurementController {
       parameters
     );
 
-    ZonedDateTime stop = beforeOrNow(before);
-    TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
+    ZonedDateTime reportStop = beforeOrNow(before);
+    TemporalResolution temporalResolution = resolutionOrDefault(
+      reportStart,
+      reportStop,
+      resolution
+    );
 
     var parameter = new MeasurementParameter(
-      parameters.setPeriod(start, stop),
+      parameters.setReportPeriod(reportStart, reportStop),
       new ArrayList<>(quantityMap.values()),
-      start,
-      stop,
+      reportStart,
+      reportStop,
       temporalResolution
     );
 
@@ -83,8 +90,11 @@ public class MeasurementController {
   public List<MeasurementSeriesDto> measurements(
     @RequestParam MultiValueMap<String, String> requestParams,
     @RequestParam(name = "quantity") Optional<Set<QuantityParameter>> optionalQuantityParameters,
-    @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
-    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
+    @RequestParam(name = "reportAfter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportStart,
+
+    @RequestParam(required = false,name = "reportBefore")
+    @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
+
     @RequestParam(required = false) TemporalResolution resolution
   ) {
     // TODO: We need to limit the amount of measurements here. Even if we're only fetching
@@ -97,14 +107,18 @@ public class MeasurementController {
       parameters
     );
 
-    ZonedDateTime stop = beforeOrNow(before);
-    TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
+    ZonedDateTime reportStop = beforeOrNow(before);
+    TemporalResolution temporalResolution = resolutionOrDefault(
+      reportStart,
+      reportStop,
+      resolution
+    );
 
     MeasurementParameter parameter = new MeasurementParameter(
-      parameters.setPeriod(start, stop),
+      parameters.setReportPeriod(reportStart, reportStop),
       new ArrayList<>(quantityMap.values()),
-      start,
-      stop,
+      reportStart,
+      reportStop,
       temporalResolution
     );
 

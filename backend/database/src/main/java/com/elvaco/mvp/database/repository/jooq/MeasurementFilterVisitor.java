@@ -4,7 +4,7 @@ import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
-import com.elvaco.mvp.core.filter.PeriodFilter;
+import com.elvaco.mvp.core.filter.ReportPeriodFilter;
 
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
@@ -21,6 +21,15 @@ class MeasurementFilterVisitor extends EmptyFilterVisitor {
   }
 
   @Override
+  public void visit(ReportPeriodFilter filter) {
+    FilterPeriod period = filter.getPeriod();
+
+    addCondition(MEASUREMENT.CREATED
+      .greaterOrEqual(period.start.toOffsetDateTime())
+      .and(MEASUREMENT.CREATED.lessThan(period.stop.toOffsetDateTime())));
+  }
+
+  @Override
   public void visit(FacilityFilter filter) {
     addCondition(LOGICAL_METER.EXTERNAL_ID.in(filter.values()));
   }
@@ -28,15 +37,6 @@ class MeasurementFilterVisitor extends EmptyFilterVisitor {
   @Override
   public void visit(LogicalMeterIdFilter filter) {
     addCondition(LOGICAL_METER.ID.in(filter.values()));
-  }
-
-  @Override
-  public void visit(PeriodFilter filter) {
-    FilterPeriod period = filter.getPeriod();
-
-    addCondition(MEASUREMENT.CREATED
-      .greaterOrEqual(period.start.toOffsetDateTime())
-      .and(MEASUREMENT.CREATED.lessThan(period.stop.toOffsetDateTime())));
   }
 
   @Override

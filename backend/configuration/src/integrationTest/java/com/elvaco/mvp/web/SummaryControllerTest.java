@@ -1,7 +1,5 @@
 package com.elvaco.mvp.web;
 
-import java.time.ZonedDateTime;
-
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -64,7 +62,6 @@ public class SummaryControllerTest extends IntegrationTest {
     given(alarm(logicalMeter).start(start));
 
     var url = summaryUrl()
-      .period(start, start.plusDays(2))
       .parameter(ALARM, "yes")
       .build();
 
@@ -80,13 +77,10 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter().location(stockholm().build()));
     given(logicalMeter().location(kungsbacka().address("gatan med G").build()));
 
-    ZonedDateTime start = ZonedDateTime.parse("2018-01-01T00:00:00Z");
-    ZonedDateTime stop = ZonedDateTime.parse("2019-01-01T00:00:00Z");
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get(
         summaryUrl()
           .parameter(REPORTED, "ok")
-          .period(start, stop)
           .build(),
         MeterSummaryDto.class
       );

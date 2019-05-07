@@ -73,7 +73,7 @@ export const getMeasurementParameters =
     ({
       report: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
     }) => ({
-      dateRange: timePeriod,
+      reportDateRange: timePeriod,
       resolution,
       legendItems: getLegendItems(savedReports),
       shouldComparePeriod,
@@ -87,7 +87,7 @@ export const getSelectionMeasurementParameters =
     ({
       selectionReport: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
     }) => ({
-      dateRange: timePeriod,
+      reportDateRange: timePeriod,
       resolution,
       legendItems: getLegendItems(savedReports),
       shouldComparePeriod,

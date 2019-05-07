@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -26,6 +27,7 @@ import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.EXTERNAL_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.POWER;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static java.util.UUID.randomUUID;
@@ -59,8 +61,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(1)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1)
           + "&quantity=" + POWER.name
           + "&logicalMeterId=%s"
           + "&resolution=hour",
@@ -94,8 +96,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(1)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1)
           + "&quantity=" + POWER.name
           + "&logicalMeterId=%s"
           + "&resolution=hour",
@@ -136,8 +138,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(1)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1)
           + "&quantity=" + POWER.name
           + "&logicalMeterId=%s"
           + "&logicalMeterId=%s"
@@ -183,8 +185,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusMinutes(1)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusMinutes(1)
           + "&quantity=" + POWER.name
           + "&logicalMeterId=%s"
           + "&logicalMeterId=%s"
@@ -232,8 +234,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusMinutes(1)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusMinutes(1)
           + "&quantity=" + ENERGY.name
           + "&logicalMeterId=%s"
           + "&logicalMeterId=%s"
@@ -281,8 +283,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(1)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1)
           + "&quantity=" + Quantity.ENERGY.name + ":kWh"
           + "&logicalMeterId=%s"
           + "&logicalMeterId=%s"
@@ -321,8 +323,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date
           + "&quantity=" + POWER.name
           + "&logicalMeterId=%s"
           + "&resolution=hour",
@@ -347,8 +349,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       "/measurements/average"
-        + "?after=2018-03-06T05:00:00.000Z"
-        + "&before=2018-03-06T06:00:00.000Z"
+        + "?reportAfter=2018-03-06T05:00:00.000Z"
+        + "&reportBefore=2018-03-06T06:00:00.000Z"
         + "&quantity={quantiy}"
         + "&logicalMeterId={meterId}"
         + "&resolution=hour",
@@ -360,8 +362,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> responseForNonZuluRequest =
       asUser().getList(
         "/measurements/average"
-          + "?after={after}"
-          + "&before={before}"
+          + "?reportAfter={after}"
+          + "&reportBefore={before}"
           + "&quantity={quantiy}"
           + "&logicalMeterId={meterId}"
           + "&resolution=hour",
@@ -402,8 +404,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(1)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1)
           + "&quantity=" + POWER.name
           + "&logicalMeterId=%s"
           + "&resolution=hour",
@@ -422,8 +424,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date
           + "&quantity=" + POWER.name
           + "&logicalMeterId=%s"
           + "&resolution=hour",
@@ -455,8 +457,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date
           + "&quantity=" + POWER.name + ":kW"
           + "&logicalMeterId=%s"
           + "&resolution=hour",
@@ -492,8 +494,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=" + date.minusDays(1)
-          + "&before=" + date.plusDays(2).minusNanos(1)
+          + "?reportAfter=" + date.minusDays(1)
+          + "&reportBefore=" + date.plusDays(2).minusNanos(1)
           + "&quantity=" + POWER.name + ":W"
           + "&logicalMeterId=%s"
           + "&resolution=day",
@@ -534,8 +536,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=" + date.plusHours(5)
-          + "&before=" + date.plusMonths(2)
+          + "?reportAfter=" + date.plusHours(5)
+          + "&reportBefore=" + date.plusMonths(2)
           + "&quantity=" + POWER.name + ":W"
           + "&logicalMeterId=%s"
           + "&resolution=month",
@@ -564,8 +566,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .get(String.format(
         "/measurements/average"
-          + "?after=thisIsNotAValidTimestamp"
-          + "&before=2018-03-07T12:32:05.999Z"
+          + "?reportAfter=thisIsNotAValidTimestamp"
+          + "&reportBefore=2018-03-07T12:32:05.999Z"
           + "&quantity=" + POWER.name + ":W"
           + "&logicalMeterId=%s"
           + "&resolution=month",
@@ -574,7 +576,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
-      "Invalid 'after' timestamp: 'thisIsNotAValidTimestamp'.");
+      "Invalid 'reportAfter' timestamp: 'thisIsNotAValidTimestamp'.");
   }
 
   @Test
@@ -582,8 +584,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-07T12:32:05.999Z"
-          + "&before=thisIsNotAValidTimestamp"
+          + "?reportAfter=2018-03-07T12:32:05.999Z"
+          + "&reportBefore=thisIsNotAValidTimestamp"
           + "&quantity=" + POWER.name + ":W"
           + "&logicalMeterId=%s"
           + "&resolution=month",
@@ -592,7 +594,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
-      "Invalid 'before' timestamp: 'thisIsNotAValidTimestamp'.");
+      "Invalid 'reportBefore' timestamp: 'thisIsNotAValidTimestamp'.");
   }
 
   @Test
@@ -600,8 +602,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-07T12:32:05.999Z"
-          + "&before=2018-03-07T12:32:05.999Z"
+          + "?reportAfter=2018-03-07T12:32:05.999Z"
+          + "&reportBefore=2018-03-07T12:32:05.999Z"
           + "&quantity=" + POWER.name + ":W"
           + "&logicalMeterId=%s"
           + "&resolution=NotAValidResolution",
@@ -618,8 +620,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-07T12:32:05.999Z"
-          + "&before=2018-03-07T12:32:05.999Z"
+          + "?reportAfter=2018-03-07T12:32:05.999Z"
+          + "&reportBefore=2018-03-07T12:32:05.999Z"
           + "&quantity=" + POWER.name + ":W"
           + "&logicalMeterId=%s"
           + "&resolution=month",
@@ -638,8 +640,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(1)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1)
           + "&quantity=SomeUnknownQuantity"
           + "&logicalMeterId=%s"
           + "&resolution=hour",
@@ -664,7 +666,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
-      "Missing 'after' parameter.");
+      "Missing 'reportAfter' parameter.");
   }
 
   @Test
@@ -672,8 +674,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-07T12:32:05.999Z"
-          + "&before=2018-03-07T12:32:05.999Z"
+          + "?reportAfter=2018-03-07T12:32:05.999Z"
+          + "&reportBefore=2018-03-07T12:32:05.999Z"
           + "&logicalMeterId=%s"
           + "&resolution=hour",
         randomUUID().toString()
@@ -697,7 +699,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     List<MeasurementSeriesDto> response = asUser()
       .getList(
         "/measurements/average"
-          + "?after={now}"
+          + "?reportAfter={now}"
           + "&quantity={powerQuantity}:W"
           + "&logicalMeterId={meterId}"
           + "&resolution=hour",
@@ -723,8 +725,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     MeasurementSeriesDto response = asUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=" + after
-          + "&before=" + before
+          + "?reportAfter=" + after
+          + "&reportBefore=" + before
           + "&quantity=" + POWER.name + ":W"
           + "&logicalMeterId=%s",
         logicalMeter.id
@@ -745,8 +747,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .getList(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(3)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(3)
           + "&quantity=" + Quantity.VOLUME.name
           + "&logicalMeterId=" + logicalMeter.id,
         MeasurementSeriesDto.class
@@ -789,7 +791,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .getList(
         Url.builder()
           .path("/measurements/average")
-          .period(date, date)
+          .reportPeriod(date, date)
           .quantity(Quantity.EXTERNAL_TEMPERATURE)
           .city(kungsbacka)
           .build(),
@@ -801,6 +803,62 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response)
       .flatExtracting("values")
       .containsExactly(new MeasurementValueDto(periodStartHour.toInstant(), 1.0));
+  }
+
+  @Test
+  public void findsAverage_ByThreshold() {
+    var reportStop = context().now().minusSeconds(1);
+    var reportStart = context().now().minusWeeks(1).truncatedTo(ChronoUnit.DAYS);
+
+    var meterWithinThreshold = given(
+      logicalMeter()
+        .meterDefinition(DEFAULT_ROOM_SENSOR)
+        .physicalMeter(physicalMeter().readIntervalMinutes(1440).build())
+    );
+
+    given(measurementSeries()
+      .forMeter(meterWithinThreshold)
+      .withQuantity(EXTERNAL_TEMPERATURE)
+      .startingAt(reportStart)
+      .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(7).toArray()));
+
+    var otherMeter = given(
+      logicalMeter()
+        .meterDefinition(DEFAULT_ROOM_SENSOR)
+        .physicalMeter(physicalMeter().readIntervalMinutes(1440).build())
+    );
+    given(measurementSeries()
+      .forMeter(otherMeter)
+      .withQuantity(EXTERNAL_TEMPERATURE)
+      .startingAt(reportStart)
+      .withValues(DoubleStream.iterate(7, d -> d - 1.0).limit(7).toArray()));
+
+    var response = asUser()
+      .getList(
+        Url.builder()
+          .path("/measurements/average")
+          .reportPeriod(reportStart, reportStop)
+          .quantity(Quantity.EXTERNAL_TEMPERATURE)
+          .parameter(THRESHOLD, "External temperature > 5 °C")
+          .thresholdPeriod(
+            context().now().minusDays(1).truncatedTo(ChronoUnit.DAYS),
+            context().now().truncatedTo(ChronoUnit.DAYS)
+          )
+          .build(),
+        MeasurementSeriesDto.class
+      ).getBody();
+
+    assertThat(response)
+      .flatExtracting("values")
+      .containsExactly(
+        new MeasurementValueDto(reportStart.toInstant(), 1.0),
+        new MeasurementValueDto(reportStart.plusDays(1).toInstant(), 2.0),
+        new MeasurementValueDto(reportStart.plusDays(2).toInstant(), 3.0),
+        new MeasurementValueDto(reportStart.plusDays(3).toInstant(), 4.0),
+        new MeasurementValueDto(reportStart.plusDays(4).toInstant(), 5.0),
+        new MeasurementValueDto(reportStart.plusDays(5).toInstant(), 6.0),
+        new MeasurementValueDto(reportStart.plusDays(6).toInstant(), 7.0)
+      );
   }
 
   @Test
@@ -817,8 +875,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var response = asUser()
       .getList(
         "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(3)
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(3)
           + "&quantity=" + Quantity.VOLUME.name
           + "&medium=Gas",
         MeasurementSeriesDto.class

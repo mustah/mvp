@@ -11,6 +11,7 @@ import {Period, TemporalResolution} from '../../../../../components/dates/dateMo
 import {InvalidToken} from '../../../../../exceptions/InvalidToken';
 import {idGenerator} from '../../../../../helpers/idGenerator';
 import {Maybe} from '../../../../../helpers/Maybe';
+import {RequestParameter} from '../../../../../helpers/urlFactory';
 import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../../services/endPoints';
 import {authenticate} from '../../../../../services/restClient';
@@ -99,7 +100,7 @@ describe('measurementActions', () => {
 
     const parameters: MeasurementParameters = {
       legendItems: [],
-      dateRange: {period: Period.currentMonth},
+      reportDateRange: {period: Period.currentMonth},
       resolution: TemporalResolution.day,
       shouldComparePeriod: false,
       shouldShowAverage: false,
@@ -193,20 +194,20 @@ describe('measurementActions', () => {
         const volumeAttr = quantityAttributes[Quantity.volume];
 
         expect(externalTemperature.pathname).toEqual('/measurements');
-        expect(externalTemperature.searchParams.get('quantity'))
+        expect(externalTemperature.searchParams.get(RequestParameter.quantity))
           .toEqual(Quantity.volume + ':' + volumeAttr.unit + ':' + volumeAttr.displayMode);
-        expect(externalTemperature.searchParams.get('logicalMeterId')).toEqual(gasMeter.id);
-        expect(externalTemperature.searchParams.get('before')).toBeTruthy();
-        expect(externalTemperature.searchParams.get('after')).toBeTruthy();
+        expect(externalTemperature.searchParams.get(RequestParameter.logicalMeterId)).toEqual(gasMeter.id);
+        expect(externalTemperature.searchParams.get(RequestParameter.reportBefore)).toBeTruthy();
+        expect(externalTemperature.searchParams.get(RequestParameter.reportAfter)).toBeTruthy();
 
         const externalTempAttr = quantityAttributes[Quantity.externalTemperature];
 
         expect(volume.pathname).toEqual('/measurements');
-        expect(volume.searchParams.get('quantity'))
+        expect(volume.searchParams.get(RequestParameter.quantity))
           .toEqual(Quantity.externalTemperature + ':' + externalTempAttr.unit + ':' + externalTempAttr.displayMode);
-        expect(volume.searchParams.get('logicalMeterId')).toEqual(roomSensorMeter.id);
-        expect(volume.searchParams.get('before')).toBeTruthy();
-        expect(volume.searchParams.get('after')).toBeTruthy();
+        expect(volume.searchParams.get(RequestParameter.logicalMeterId)).toEqual(roomSensorMeter.id);
+        expect(volume.searchParams.get(RequestParameter.reportBefore)).toBeTruthy();
+        expect(volume.searchParams.get(RequestParameter.reportAfter)).toBeTruthy();
 
         expect(store.getActions()).toEqual([
           measurementRequest(ReportSector.report)(),

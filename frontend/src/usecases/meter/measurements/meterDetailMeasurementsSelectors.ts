@@ -31,7 +31,7 @@ export const getMeasurementParameters =
     ({meter, resolution, timePeriod}) => ({
       legendItems: [toLegendItemAllQuantities(meter)],
       resolution,
-      dateRange: timePeriod,
+      reportDateRange: timePeriod,
       shouldComparePeriod: false,
       shouldShowAverage: false,
     })

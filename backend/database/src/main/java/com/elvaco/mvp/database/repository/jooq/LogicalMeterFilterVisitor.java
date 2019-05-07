@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
-import com.elvaco.mvp.core.filter.PeriodFilter;
+import com.elvaco.mvp.core.filter.ReportPeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 
 import org.jooq.Condition;
@@ -36,9 +36,9 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
   }
 
   @Override
-  public void visit(PeriodFilter filter) {
+  public void visit(ReportPeriodFilter filter) {
     FilterPeriod period = filter.getPeriod();
-
+    // TODO should there be a equivalent filter for threshold period
     physicalMeterCondition =
       periodContains(PHYSICAL_METER.ACTIVE_PERIOD, period.stop.toOffsetDateTime());
   }

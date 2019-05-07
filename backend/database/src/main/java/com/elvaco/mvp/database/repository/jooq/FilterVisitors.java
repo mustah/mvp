@@ -32,16 +32,6 @@ public class FilterVisitors {
     return new LogicalMeterFilterVisitor(filterDecorators(dsl, parser));
   }
 
-  public static FilterAcceptor logicalMeterWithCollectionPercentage(
-    DSLContext dsl,
-    MeasurementThresholdParser parser
-  ) {
-    return new LogicalMeterFilterVisitor(Stream.concat(
-      filterDecorators(dsl, parser).stream(),
-      Stream.of(new CollectionPercentageFilterVisitor(dsl))
-    ).collect(Collectors.toList()));
-  }
-
   public static FilterAcceptor logicalMeterWithCollectionPercentageAndLastData(
     DSLContext dsl,
     MeasurementThresholdParser parser

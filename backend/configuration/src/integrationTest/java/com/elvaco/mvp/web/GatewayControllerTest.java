@@ -571,8 +571,9 @@ public class GatewayControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/gateways")
-          .parameter(RequestParameter.BEFORE, time)
-          .parameter(RequestParameter.AFTER, time.minusDays(2))
+          //TODO this should not use report period or threshold period
+          .parameter(RequestParameter.REPORT_BEFORE, time)
+          .parameter(RequestParameter.REPORT_AFTER, time.minusDays(2))
           .parameter(RequestParameter.REPORTED, ERROR)
           .build(),
         GatewayDto.class

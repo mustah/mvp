@@ -84,7 +84,7 @@ public class MeasurementUseCases {
   }
 
   private boolean limitMeasurementsForAll(MeasurementParameter parameter) {
-    long days = parameter.getParameters().getPeriod()
+    long days = parameter.getParameters().getReportPeriod()
       .map(p -> ChronoUnit.DAYS.between(p.start, p.stop))
       .orElse(MAX_METERS_DAYS_FOR_ALL);
     long meters = parameter.getParameters().getValues(LOGICAL_METER_ID).size();

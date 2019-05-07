@@ -3,10 +3,8 @@ package com.elvaco.mvp.database.repository.jooq;
 import java.util.Collection;
 
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
-import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 
-import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
@@ -19,14 +17,11 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWAY_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
-import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.max;
 
 class GatewayFilterVisitor extends CommonFilterVisitor {
 
   private final DSLContext dsl;
-
-  private Condition gatewayStatusLogCondition = falseCondition();
 
   GatewayFilterVisitor(DSLContext dsl, Collection<FilterAcceptor> decorators) {
     super(decorators);
@@ -49,11 +44,6 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
   }
 
   @Override
-  public void visit(PeriodFilter filter) {
-    gatewayStatusLogCondition = GATEWAY_STATUS_LOG.STOP.isNull();
-  }
-
-  @Override
   protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
     return query.leftJoin(GATEWAY_STATUS_LOG)
       .on(GATEWAY_STATUS_LOG.GATEWAY_ID.equal(GATEWAY.ID)
@@ -63,7 +53,7 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
           .from(GATEWAY_STATUS_LOG)
           .where(GATEWAY_STATUS_LOG.GATEWAY_ID.equal(GATEWAY.ID)
             .and(GATEWAY_STATUS_LOG.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)
-              .and(gatewayStatusLogCondition))))))
+              .and(GATEWAY_STATUS_LOG.STOP.isNull()))))))
 
       .leftJoin(GATEWAYS_METERS)
       .on(GATEWAYS_METERS.GATEWAY_ID.equal(GATEWAY.ID)

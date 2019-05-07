@@ -26,11 +26,11 @@ import org.springframework.data.domain.Page;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -414,8 +414,8 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .getPage(
         Url.builder()
           .path("/meters/stats/facility")
-          .parameter(AFTER, now)
-          .parameter(BEFORE, now.plusDays(1))
+          .parameter(THRESHOLD_AFTER, now)
+          .parameter(THRESHOLD_BEFORE, now.plusDays(1))
           .parameter(THRESHOLD, "Return temperature > 10 °C")
           .parameter(COLLECTION_AFTER, now)
           .parameter(COLLECTION_BEFORE, now.plusDays(2))
@@ -433,8 +433,8 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .getList(
         Url.builder()
           .path("/meters/stats/date")
-          .parameter(AFTER, now)
-          .parameter(BEFORE, now.plusDays(1))
+          .parameter(THRESHOLD_AFTER, now)
+          .parameter(THRESHOLD_BEFORE, now.plusDays(1))
           .parameter(THRESHOLD, "Return temperature > 10 °C")
           .parameter(COLLECTION_AFTER, now)
           .parameter(COLLECTION_BEFORE, now.plusDays(2))
