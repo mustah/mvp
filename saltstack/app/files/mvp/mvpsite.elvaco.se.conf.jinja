@@ -28,6 +28,14 @@ server {
 
     error_page 502 /evo-502.html;
 
+    location /evo-502.html {
+      root /usr/share/nginx/html;
+    }
+
+    location /evo_maintenance.jpg {
+      root /usr/share/nginx/html;
+    }
+
     location / {
 
       proxy_set_header        Host $host;
