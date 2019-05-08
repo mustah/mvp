@@ -8,7 +8,13 @@ interface Styles {
   [key: string]: React.CSSProperties;
 }
 
-export const fontSize = {
+interface FontSize {
+  small: number;
+  normal: number;
+  medium: number;
+}
+
+export const fontSize: FontSize = {
   small: 12,
   normal: 14,
   medium: 16,
