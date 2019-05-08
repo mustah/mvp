@@ -40,7 +40,7 @@ Install nginx config:
       - pkg: nginx
   cmd.run:
     - name: systemctl restart nginx.service
-    - onchange:
+    - onchanges:
       - file: /etc/nginx/sites-available/default
       - file: /etc/nginx/cert.crt
       - file: /etc/nginx/cert.key
