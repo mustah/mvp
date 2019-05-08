@@ -2,7 +2,7 @@
 
 .k-grid .col {
   padding-right: 16px !important;
-  padding-left: 0px !important;
+  padding-left: 0 !important;
 }
 
 .k-grid .col:first-child {
@@ -16,7 +16,7 @@
 
 .k-grid .k-numerictextbox, .k-grid .k-textbox, .k-grid .k-textbox:focus {
   padding-left: 8px;
-  border: 1px solid #cccccc;
+  border: 1px solid $darkest-grey;
   border-radius: 4px;
   line-height: 24px;
 

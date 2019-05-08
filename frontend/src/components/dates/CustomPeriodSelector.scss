@@ -20,8 +20,8 @@
     }
 
     .CalendarDay__hovered_offset {
-      background: #f4f5f5 !important;
-      border: 1px double #e4e7e7 !important;
+      background: $secondary-bg !important;
+      border: 1px double $border-color !important;
       color: inherit !important;
     }
 
@@ -107,7 +107,7 @@
   }
 
   .DateRangePickerInput__withBorder {
-    border: 1px solid #cacccd !important;
+    border: 1px solid $darkest-grey !important;
     border-radius: $border-radius !important;
 
     .DateInput {
