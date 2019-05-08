@@ -1,5 +1,5 @@
 import {makeThreshold} from '../../../__tests__/testDataFactory';
-import {colors} from '../../../app/themes';
+import {colors} from '../../../app/colors';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {toReferenceLineProps} from '../helpers/lineChartHelper';
 

@@ -1,6 +1,6 @@
 import {sortBy, toArray, uniqBy} from 'lodash';
 import {LegendPayload, ReferenceLineProps} from 'recharts';
-import {colors, secondaryBgActive} from '../../../app/themes';
+import {colors, secondaryBgActive} from '../../../app/colors';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {AxesProps, GraphContents} from '../../../state/report/reportModels';

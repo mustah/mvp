@@ -1,6 +1,6 @@
 import CircularProgress from 'material-ui/CircularProgress';
 import * as React from 'react';
-import {colors} from '../../app/themes';
+import {colors} from '../../app/colors';
 
 const loadingStyle: React.CSSProperties = {
   marginTop: 100,

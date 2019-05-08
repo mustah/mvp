@@ -1,7 +1,7 @@
 import {default as classNames} from 'classnames';
 import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
-import {bgHoverColor} from '../../app/themes';
+import {bgHoverColor} from '../../app/colors';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
 
 const labelStyle: React.CSSProperties = {

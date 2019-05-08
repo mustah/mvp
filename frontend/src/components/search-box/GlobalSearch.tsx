@@ -1,7 +1,7 @@
 import {default as classNames} from 'classnames';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import * as React from 'react';
-import {colors} from '../../app/themes';
+import {colors} from '../../app/colors';
 import {GlobalSearchProps} from '../../containers/GlobalSearchContainer';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Row, RowMiddle} from '../layouts/row/Row';

@@ -1,7 +1,8 @@
 import FlatButton from 'material-ui/FlatButton';
 import Add from 'material-ui/svg-icons/content/add';
 import * as React from 'react';
-import {bgHoverColor, border, colors, svgIconProps} from '../../../app/themes';
+import {bgHoverColor, colors} from '../../../app/colors';
+import {border, svgIconProps} from '../../../app/themes';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {IconProps} from '../../../components/popover/PopoverMenu';
 import {translate} from '../../../services/translationService';

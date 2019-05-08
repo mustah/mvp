@@ -1,7 +1,8 @@
 import {default as classNames} from 'classnames';
 import {DropDownMenu, MenuItem} from 'material-ui';
 import * as React from 'react';
-import {borderRadius, colors, fontSize, menuItemStyle} from '../../app/themes';
+import {colors} from '../../app/colors';
+import {borderRadius, fontSize, menuItemStyle} from '../../app/themes';
 import {ClassNamed, OnClick, Styled, WithChildren} from '../../types/Types';
 import {Period} from '../dates/dateModels';
 import {IconCalendar} from '../icons/IconCalendar';

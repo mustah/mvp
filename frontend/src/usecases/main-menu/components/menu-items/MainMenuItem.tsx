@@ -1,6 +1,7 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
-import {colors, iconStyle} from '../../../../app/themes';
+import {colors} from '../../../../app/colors';
+import {iconStyle} from '../../../../app/themes';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
 import {Selectable, WithChildren} from '../../../../types/Types';

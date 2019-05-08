@@ -1,8 +1,9 @@
 import {default as classNames} from 'classnames';
 import SocialNotifications from 'material-ui/svg-icons/social/notifications';
 import * as React from 'react';
+import {colors} from '../../../app/colors';
 import {linkToReleaseNotes} from '../../../app/routes';
-import {colors, iconStyle} from '../../../app/themes';
+import {iconStyle} from '../../../app/themes';
 import {withContent} from '../../../components/hoc/withContent';
 import {IconDuck} from '../../../components/icons/IconDuck';
 import {RowCenter} from '../../../components/layouts/row/Row';
