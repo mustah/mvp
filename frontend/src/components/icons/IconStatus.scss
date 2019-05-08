@@ -15,11 +15,11 @@
   color: $white;
 
   &.ok {
-    background: $green;
+    background: $ok-color;
   }
 
   &.warning {
-    background: $orange;
+    background: $warning-color;
   }
 
   &.unknown {
@@ -27,7 +27,7 @@
   }
 
   &.error {
-    background: $red;
+    background: $error-color;
   }
 
   &.newMeter {
