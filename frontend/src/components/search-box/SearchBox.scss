@@ -6,20 +6,17 @@
   display: flex;
 
   .SearchBox-input {
-    $border-focused: 1px;
-    $border-unfocused: 1px;
-
     flex: 1;
     font-size: $normal;
     font-family: $font-family;
-    margin: $border-focused - $border-unfocused 5px;
+    margin: 0 5px;
     padding: 0 20px 0 5px;
-    border: $border-unfocused solid $darkest-grey;
+    border: 1px solid $grey-900;
     border-radius: $border-radius;
     line-height: 32px;
 
     &:focus {
-      border: $border-focused solid $blue-A700;
+      border: 1px solid $blue-A700;
       outline: none;
       margin: 0 5px;
     }

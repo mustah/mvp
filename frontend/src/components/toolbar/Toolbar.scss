@@ -43,17 +43,17 @@ $toolbar-height: 48px;
   }
 
   .ToolbarActionButton {
-    color: $lightest-black !important;
+    color: $black-50 !important;
 
     svg {
-      fill: $lightest-black !important;
+      fill: $black-50 !important;
     }
 
     &:hover {
-      color: $blackest !important;
+      color: $black !important;
 
       svg {
-        fill: $blackest !important;
+        fill: $black !important;
       }
     }
 

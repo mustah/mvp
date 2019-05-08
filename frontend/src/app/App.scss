@@ -16,17 +16,17 @@ html, body, #app {
 html {
   font-family: $font-family;
   font-size: $normal;
-  color: $black;
+  color: $black-400;
 }
 
 body {
   padding: 0;
   margin: 0;
-  background-color: $light-grey;
+  background-color: $grey-50;
 }
 
 .link {
-  color: $black;
+  color: $black-400;
   text-decoration: none;
 }
 

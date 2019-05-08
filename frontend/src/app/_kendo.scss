@@ -9,7 +9,7 @@ $grid-header-padding-y: 8px;
 
 $grid-header-border: 0 1px 0 0 solid $border-color;
 
-$grid-header-text: $black;
+$grid-header-text: $black-400;
 
 $grid-sorted-bg: 'transparent';
 
@@ -102,7 +102,7 @@ $pager-number-hovered-text: $primary-fg-active;
     }
 
     td {
-      color: $blackest;
+      color: $black;
 
       &.left-most {
         padding-left: 16px;
@@ -114,7 +114,7 @@ $pager-number-hovered-text: $primary-fg-active;
 .Grouping-grid {
   .GroupHeader {
     height: 44px;
-    background-color: $light-grey;
+    background-color: $grey-50;
 
     td {
       padding: $space 0 $sm-space $sm-space;

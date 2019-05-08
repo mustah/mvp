@@ -13,16 +13,16 @@
       .Tab-header {
         text-align: center;
         padding: $sm-space $lg-space;
-        color: $lightest-black;
+        color: $black-50;
 
         &:hover {
-          color: $black;
+          color: $black-400;
         }
       }
 
       &.isSelected {
         .Tab-header {
-          color: $black;
+          color: $black-400;
         }
 
         &:hover {
@@ -34,7 +34,7 @@
 
       &:hover {
         .TabUnderline {
-          border-top: solid $underline-height $grey;
+          border-top: solid $underline-height $grey-200;
         }
       }
     }

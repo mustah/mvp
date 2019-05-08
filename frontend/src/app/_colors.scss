@@ -1,15 +1,18 @@
-// Material design colors from
-$blackest: #000000;
-$black: #0f2228;
-$light-black: #3c3c3c;
-$lightest-black: #7b7b7b;
+//
+// http://zavoloklom.github.io/material-design-color-palette/colors.html#light-blue
+//
+$black: #000000;
 $white: #ffffff;
-$light-grey: #f9f9f9;
-$grey: #f2f2f2;
-$dark-grey: #eaeaea;
-$darkest-grey: #cccccc;
 
-// light-blue: http://zavoloklom.github.io/material-design-color-palette/colors.html#light-blue
+$black-400: #0f2228;
+$black-200: #3c3c3c;
+$black-50: #7b7b7b;
+
+$grey-900: #cccccc;
+$grey-400: #eaeaea;
+$grey-200: #f2f2f2;
+$grey-50: #f9f9f9;
+
 $blue-1000: #013a65;
 $blue-900: #01579b;
 $blue-200: #81d4fa;
@@ -21,10 +24,9 @@ $blue-A400: #00b0ff;
 $blue-A700: #0091ea;
 $blue-A900: #01579b;
 
-$pink: #ff4081;
+$calendar-today-color: #ff4081;
 $notification-color: #e10050;
-
-$border-color: $dark-grey;
+$border-color: #eaeaea;
 
 // widget colors
 $count-color: #81d4fa;
@@ -45,7 +47,7 @@ $primary-fg: #3c3c3c;
 $primary-fg-active: #044462;
 $primary-fg-hover: #0f2228;
 
-$secondary-bg: $light-grey;
+$secondary-bg: #f9f9f9;
 $secondary-bg-active: #b6e2cc;
 $secondary-bg-hover: #edf8f2;
 

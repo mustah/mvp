@@ -9,15 +9,15 @@
 
   .Summary {
     padding-left: $space;
-    color: $light-black;
+    color: $black-200;
 
     .Summary-title {
       margin-bottom: $xs-space;
-      color: $lightest-black;
+      color: $black-50;
     }
 
     .Summary-value {
-      color: $light-black;
+      color: $black-200;
     }
   }
 }

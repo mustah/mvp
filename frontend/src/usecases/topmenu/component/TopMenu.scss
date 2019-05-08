@@ -13,7 +13,7 @@
   box-shadow: $box-shadow;
 
   .TopMenu-LeftContent {
-    color: $blackest;
+    color: $black;
     align-items: center;
 
     @media all and (max-width: $global-search-max-width - ($global-search-scale-width * 3)) {

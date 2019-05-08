@@ -5,10 +5,10 @@
   border-radius: $border-radius !important;
 
   svg {
-    color: $lightest-black !important;
+    color: $black-50 !important;
 
     &:hover {
-      color: $black !important;
+      color: $black-400 !important;
     }
   }
 

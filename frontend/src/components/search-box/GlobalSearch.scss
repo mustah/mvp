@@ -14,7 +14,7 @@
         background-color: $white;
         box-shadow: $box-shadow-hover;
         border: none;
-        color: $blackest;
+        color: $black;
         outline: none;
       }
     }
@@ -23,7 +23,7 @@
       flex: 1;
       background-color: $blue-1000;
       transition: background-color 100ms linear;
-      color: $lightest-black;
+      color: $black-50;
       font-size: $medium;
       font-family: $font-family;
       margin: 0;
@@ -36,7 +36,7 @@
       &:focus {
         box-shadow: $box-shadow-hover;
         background-color: $white;
-        color: $blackest;
+        color: $black;
       }
     }
   }

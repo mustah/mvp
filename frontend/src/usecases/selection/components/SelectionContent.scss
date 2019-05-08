@@ -2,7 +2,7 @@
 
 .SelectionContentBox {
   th {
-    border-top: 1px solid $grey;
+    border-top: 1px solid $grey-200;
   }
 }
 
@@ -20,7 +20,7 @@
       .label {
         padding-top: 10px;
         margin-left: 8px;
-        color: $lightest-black;
+        color: $black-50;
       }
     }
 

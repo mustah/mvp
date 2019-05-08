@@ -14,7 +14,7 @@
       width: $day-width-height !important;
       height: $day-width-height !important;
       border: none;
-      color: $black !important;
+      color: $black-400 !important;
       background: $white !important;
       border-radius: $day-width-height / 2;
     }
@@ -26,7 +26,7 @@
     }
 
     .CalendarDay__default:hover {
-      background: $grey !important;
+      background: $grey-200 !important;
       border: none;
       color: inherit !important;
     }
@@ -69,7 +69,7 @@
     .CalendarDay__today:hover,
     .CalendarDay__today:active {
       color: $white !important;
-      background: $pink !important;
+      background: $calendar-today-color !important;
     }
 
     .DayPicker__withBorder {
@@ -107,7 +107,7 @@
   }
 
   .DateRangePickerInput__withBorder {
-    border: 1px solid $darkest-grey !important;
+    border: 1px solid $grey-900 !important;
     border-radius: $border-radius !important;
 
     .DateInput {
