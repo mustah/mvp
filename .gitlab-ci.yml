@@ -341,6 +341,7 @@ deploy:staging:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export MVP_VERSION=$(cat .version)
     - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_VERSION=$CI_COMMIT_SHA
   script:
+    - pepper --fail-any -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.system $SALTENV
     - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.web $SALTENV
     - pepper --fail-any -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV
     - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
@@ -400,6 +401,7 @@ deploy:production:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export MVP_VERSION=$(cat .version)
     - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_VERSION=$CI_COMMIT_SHA
   script:
+    - pepper --fail-any -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.system $SALTENV
     - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.web $SALTENV
     - pepper --fail-any -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV
     - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
