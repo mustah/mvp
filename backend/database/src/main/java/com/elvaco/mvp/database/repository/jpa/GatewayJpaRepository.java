@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 
@@ -18,8 +17,6 @@ public interface GatewayJpaRepository {
   void deleteAll();
 
   List<GatewayEntity> findAll();
-
-  Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
   Page<String> findSerials(RequestParameters parameters, Pageable pageable);
 

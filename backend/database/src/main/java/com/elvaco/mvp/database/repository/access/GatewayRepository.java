@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -36,24 +35,6 @@ public class GatewayRepository implements Gateways {
     return gatewayJpaRepository.findAll().stream()
       .map(gatewayWithMetersMapper::toDomainModel)
       .collect(toList());
-  }
-
-  @Override
-  public Page<GatewaySummaryDto> findAll(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    PageRequest pageRequest = PageRequest.of(
-      pageable.getPageNumber(),
-      pageable.getPageSize(),
-      getSortOrUnsorted(parameters)
-    );
-    org.springframework.data.domain.Page<GatewaySummaryDto> pagedGateways =
-      gatewayJpaRepository.findAll(parameters, pageRequest);
-
-    return new PageAdapter<>(
-      pagedGateways
-    );
   }
 
   @Override
