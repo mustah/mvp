@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import com.elvaco.mvp.core.exception.EmailAddressAlreadyExists;
 import com.elvaco.mvp.core.exception.InvalidDisplayQuantity;
+import com.elvaco.mvp.core.exception.InvalidFormat;
 import com.elvaco.mvp.core.exception.InvalidId;
 import com.elvaco.mvp.core.exception.InvalidMeasumentRequestScope;
 import com.elvaco.mvp.core.exception.InvalidMeterDefinition;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
@@ -113,6 +115,11 @@ public class ApiExceptionHandler {
     return badRequest(message);
   }
 
+  @ExceptionHandler(MultipartException.class)
+  public ResponseEntity<ErrorMessageDto> handle(MultipartException exception) {
+    return badRequest(exception);
+  }
+
   /**
    * Thrown for example when we try to map strings to UUID in the JPA layer,
    * and Spring's AOP wraps the exception.
@@ -135,6 +142,11 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler(NoSuchQuantity.class)
   public ResponseEntity<ErrorMessageDto> handle(NoSuchQuantity exception) {
+    return badRequest(exception);
+  }
+
+  @ExceptionHandler(InvalidFormat.class)
+  public ResponseEntity<ErrorMessageDto> handle(InvalidFormat exception) {
     return badRequest(exception);
   }
 

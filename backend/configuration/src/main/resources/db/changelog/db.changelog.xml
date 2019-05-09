@@ -88,6 +88,7 @@
   <include file="xml/make_display_quantity_mode_advisory.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_gateway_serial_lowercase_index.xml" relativeToChangelogFile="true"/>
   <include file="xml/cascade_delete_organisations.xml" relativeToChangelogFile="true"/>
+  <include file="xml/create_organisation_assets.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

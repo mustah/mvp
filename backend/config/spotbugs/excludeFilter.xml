@@ -11,4 +11,22 @@
     <Class name="~com.elvaco.*\.*Test"/>
     <Bug code="NP"/>
   </Match>
+  <Match>
+    <Class name="~com.elvaco.mvp.core.domainmodels.Asset.*"/>
+  </Match>
+  <Match>
+    <Class name="~com.elvaco.mvp.core.domainmodels.Asset$*"/>
+  </Match>
+  <Match>
+    <Class name="~com.elvaco.mvp.core.domainmodels.Asset$AssetBuilder"/>
+  </Match>
+  <Match>
+    <Class name="~com.elvaco.mvp.database.entity.organisationasset.OrganisationAssetEntity.*"/>
+  </Match>
+  <Match>
+    <Class name="~com.elvaco.mvp.database.entity.organisationasset.OrganisationAssetEntity$*"/>
+  </Match>
+  <Match>
+    <Class name="~com.elvaco.mvp.database.entity.organisationasset.OrganisationAssetEntity$AssetBuilder"/>
+  </Match>
 </FindBugsFilter>

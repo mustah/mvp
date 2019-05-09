@@ -23,6 +23,14 @@ public class OrganisationPermissions {
     this.users = users;
   }
 
+  public static boolean userInOrganisationOrParent(
+    AuthenticatedUser currentUser,
+    Organisation organisation
+  ) {
+    return currentUser.isWithinOrganisation(organisation.id)
+      || (organisation.parent != null && currentUser.isWithinOrganisation(organisation.parent.id));
+  }
+
   public boolean isAllowed(
     AuthenticatedUser authenticatedUser,
     Organisation target,

@@ -1,0 +1,45 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create organisation_asset table" author="carhel">
+    <createTable tableName="organisation_asset">
+      <column name="organisation_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="asset_type" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="content_type" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="content" type="bytea">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="organisation_asset" columnNames="organisation_id,asset_type"/>
+
+    <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="organisation_asset"
+                             constraintName="organisation_asset_organisation_id_fkey"
+                             referencedColumnNames="id" referencedTableName="organisation"/>
+
+    <createTable schemaName="evoaudit" tableName="organisation_asset_aud">
+      <column name="organisation_id" type="uuid"/>
+      <column name="asset_type" type="text"/>
+      <column name="content_type" type="text"/>
+      <column name="content_type_mod" type="boolean"/>
+      <column name="content" type="bytea"/>
+      <column name="content_mod" type="boolean"/>
+      <column name="rev" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="revtype" type="tinyint(3)"/>
+      <column name="revend" type="bigint"/>
+      <column name="revend_tstmp" type="timestamp"/>
+    </createTable>
+
+  </changeSet>
+
+</databaseChangeLog>
