@@ -168,11 +168,10 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
     event.preventDefault();
     const {selectedItems} = this.props;
     this.setState({
-        isOpen: true,
-        anchorElement: event.currentTarget,
-        items: listItems(selectedItems, this.state.cache.items).sort(selectedFirstThenUnknownByNameAsc),
-      },
-    );
+      isOpen: true,
+      anchorElement: event.currentTarget,
+      items: listItems(selectedItems, this.state.cache.items).sort(selectedFirstThenUnknownByNameAsc),
+    });
   }
 
   closeMenu = (): void => this.setState({
@@ -186,8 +185,9 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
       searchText,
       ({items, totalElements, query}: PagedResponse) => {
         if (query) {
+          const {selectedItems} = this.props;
           this.setState({
-            items,
+            items: withNewItems(selectedItems, items),
             isSearching: true,
             page: 1,
             totalElements,
@@ -203,7 +203,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
   onClear = () => {
     const {selectedItems} = this.props;
     this.setState(({cache: {items, totalElements}}: State) => ({
-      items: listItems(selectedItems, items).sort(selectedFirstThenUnknownByNameAsc),
+      items: withNewItems(selectedItems, items).sort(selectedFirstThenUnknownByNameAsc),
       isSearching: false,
       page: 0,
       totalElements,
