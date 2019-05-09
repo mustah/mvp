@@ -48,14 +48,14 @@ export const mvpTheme = getMuiTheme({
     bodyColor: darkBlack,
   },
   flatButton: {
-    primaryTextColor: colors.primaryFgActive,
+    primaryTextColor: colors.primaryBg,
   },
   listItem: {
     nestedLevelDepth: 14,
   },
   menuItem: {
     hoverColor: colors.primaryBgHover,
-    selectedTextColor: colors.primaryFgActive,
+    selectedTextColor: colors.primaryBg,
   },
   palette: {
     primary1Color: fullBlack,
@@ -65,7 +65,7 @@ export const mvpTheme = getMuiTheme({
     primaryColor: colors.primaryBg,
   },
   toggle: {
-    trackOnColor: colors.primaryBgLight,
+    trackOnColor: colors.primaryBgActive,
     thumbOnColor: colors.primaryBg,
   }
 });
@@ -171,7 +171,7 @@ export const underlineFocusStyle = {
 };
 
 export const floatingLabelFocusStyle = {
-  color: colors.primaryFgActive,
+  color: colors.primaryBg,
 };
 
 export const paperStyle: React.CSSProperties = {

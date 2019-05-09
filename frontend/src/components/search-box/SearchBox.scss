@@ -11,12 +11,12 @@
     font-family: $font-family;
     margin: 0 5px;
     padding: 0 20px 0 5px;
-    border: 1px solid $grey-900;
+    border: $border;
     border-radius: $border-radius;
     line-height: 32px;
 
     &:focus {
-      border: 1px solid $blue-A700;
+      border: 1px solid $primary-bg;
       outline: none;
       margin: 0 5px;
     }
@@ -24,7 +24,7 @@
 
   &:hover {
     .SearchBox-input {
-      border: 1px solid $blue-A700 !important;
+      border: 1px solid $primary-bg !important;
       outline: none;
     }
   }

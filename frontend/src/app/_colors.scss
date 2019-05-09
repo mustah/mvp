@@ -1,32 +1,12 @@
-//
-// http://zavoloklom.github.io/material-design-color-palette/colors.html#light-blue
-//
 $black: #000000;
 $white: #ffffff;
 
-$black-400: #0f2228;
-$black-200: #3c3c3c;
-$black-50: #7b7b7b;
-
-$grey-900: #cccccc;
-$grey-400: #eaeaea;
-$grey-200: #f2f2f2;
-$grey-50: #f9f9f9;
-
-$blue-1000: #013a65;
-$blue-900: #01579b;
-$blue-200: #81d4fa;
-$blue-100: #b3e5fc;
-$blue-50: #e1f5fe;
-$blue-A100: #80d8ff;
-$blue-A200: #40c4ff;
-$blue-A400: #00b0ff;
-$blue-A700: #0091ea;
-$blue-A900: #01579b;
-
+$body-bg-color: #f9f9f9;
 $calendar-today-color: #ff4081;
 $notification-color: #e10050;
-$border-color: #eaeaea;
+$border-color: #cccccc;
+$divider-color: #eaeaea;
+$table-row-odd-bg: #fbfbfb;
 
 // widget colors
 $count-color: #81d4fa;
@@ -35,15 +15,14 @@ $ok-color: #41c300;
 $warning-color: #ff9800;
 $error-color: #e84d6f;
 
-$box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
-$box-shadow-hover: 0px 1px 6px 0px rgba(0, 0, 0, 0.22), 0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 2px -1px rgba(0, 0, 0, 0.14);
-
 // interaction
-$primary-bg: $blue-A700;
-$primary-bg-active: $blue-200;
-$primary-bg-hover: $blue-50;
+$primary-bg-hover: hsl(203, 100%, 96%);
+$primary-bg-active: hsl(203, 100%, 75%);
+$primary-bg: hsl(203, 100%, 46%);
+$primary-bg-dark: hsl(203, 100%, 29%);
+$primary-bg-darkest: hsl(203, 100%, 17%);
 
-$primary-fg: #3c3c3c;
+$primary-fg: #7b7b7b;
 $primary-fg-active: #044462;
 $primary-fg-hover: #0f2228;
 
@@ -54,5 +33,3 @@ $secondary-bg-hover: #edf8f2;
 $secondary-fg: #3c3c3c;
 $secondary-fg-active: #245c40;
 $secondary-fg-hover: #0f2228;
-
-$table-row-odd-bg: #fbfbfb;

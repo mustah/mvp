@@ -1,9 +1,0 @@
-@import "../../app/variables";
-
-.FlatButton {
-  &.disabled {
-    span {
-      color: $grey-400 !important;
-    }
-  }
-}

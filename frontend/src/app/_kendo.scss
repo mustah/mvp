@@ -7,9 +7,9 @@ $grid-cell-padding-y: 6px;
 $grid-header-padding-x: 2px;
 $grid-header-padding-y: 8px;
 
-$grid-header-border: 0 1px 0 0 solid $border-color;
+$grid-header-border: 0 1px 0 0 solid $divider-color;
 
-$grid-header-text: $black-400;
+$grid-header-text: $black;
 
 $grid-sorted-bg: 'transparent';
 
@@ -20,7 +20,7 @@ $grid-hovered-bg: $primary-bg-hover;
 $grid-cell-horizontal-border-width: 0;
 
 $pager-number-bg: null;
-$pager-number-text: $primary-fg;
+$pager-number-text: $black;
 $pager-number-selected-bg: $primary-bg;
 $pager-number-hovered-bg: $primary-bg-active;
 $pager-number-hovered-text: $primary-fg-active;
@@ -54,7 +54,7 @@ $pager-number-hovered-text: $primary-fg-active;
           background-color: $white;
           position: sticky;
           top: $top-menu-height;
-          border-bottom: $border;
+          border-bottom: $divider;
           z-index: 2;
         }
       }
@@ -114,11 +114,11 @@ $pager-number-hovered-text: $primary-fg-active;
 .Grouping-grid {
   .GroupHeader {
     height: 44px;
-    background-color: $grey-50;
+    background-color: $body-bg-color;
 
     td {
       padding: $space 0 $sm-space $sm-space;
-      border-bottom: $border;
+      border-bottom: $divider;
 
       &.check-box-td {
         padding-left: $grid-cell-padding-x;
@@ -145,7 +145,7 @@ $pager-number-hovered-text: $primary-fg-active;
 
     tr.last {
       td {
-        border-bottom: $border;
+        border-bottom: $divider;
       }
     }
 
