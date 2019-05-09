@@ -7,6 +7,7 @@ import {momentAtUtcPlusOneFrom, toPeriodApiParameters} from '../dateHelpers';
 import {idGenerator} from '../idGenerator';
 import {Maybe} from '../Maybe';
 import {
+  absoluteUrlFromPath,
   encodedUriParametersFrom,
   encodeRequestParameters,
   entityApiParametersGatewaysFactory,
@@ -46,7 +47,7 @@ describe('urlFactory', () => {
         media: [toIdNamed('District heating')],
         facilities: [toIdNamed(facilityId)],
         w: [toIdNamed('hej')],
-        collectionDateRange: { period: Period.custom, customDateRange: { start, end} }
+        collectionDateRange: {period: Period.custom, customDateRange: {start, end}}
       };
 
       const actualUrlParameters: RequestParameters = requestParametersFrom(selectedParameters);
@@ -54,9 +55,9 @@ describe('urlFactory', () => {
       expect(actualUrlParameters).toHaveProperty('threshold', 'Power < 3 kW');
       expect(actualUrlParameters).toHaveProperty('medium', ['District heating']);
       expect(actualUrlParameters).toHaveProperty('facility', [facilityId]);
-      expect(actualUrlParameters).toHaveProperty('w',  ['hej']);
-      expect(actualUrlParameters).toHaveProperty('collectionAfter',  '2018-12-24T00:00:00.000+01:00');
-      expect(actualUrlParameters).toHaveProperty('collectionBefore',  '2018-12-25T00:00:00.000+01:00');
+      expect(actualUrlParameters).toHaveProperty('w', ['hej']);
+      expect(actualUrlParameters).toHaveProperty('collectionAfter', '2018-12-24T00:00:00.000+01:00');
+      expect(actualUrlParameters).toHaveProperty('collectionBefore', '2018-12-25T00:00:00.000+01:00');
     });
 
     it('does not include parameters that does not have values', () => {
@@ -320,5 +321,14 @@ describe('urlFactory', () => {
       expect(encodedUriParametersFrom([...entityApiParameters, ...periodApiParameters, ...paginationApiParameters]))
         .toEqual('city=...&address=...&after=...&before=...&size=...&page=...');
     });
+  });
+
+  describe('absoluteUrlFromPath', () => {
+
+    it('adds the path to the current URL', () => {
+      expect(absoluteUrlFromPath('/hello'))
+        .toEqual('http://localhost/hello');
+    });
+
   });
 });

@@ -14,7 +14,15 @@ import {DomainModelsState} from '../../domainModels';
 import {postRequestOf, putRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {Organisation, OrganisationWithoutId} from '../organisationModels';
-import {addOrganisation, addSubOrganisation, updateOrganisation} from '../organisationsApiActions';
+import {
+  addOrganisation,
+  addSubOrganisation,
+  AssetTypeForOrganisation,
+  OrganisationAssetType,
+  resetAsset,
+  updateOrganisation,
+  uploadAsset
+} from '../organisationsApiActions';
 
 const configureMockStore = configureStore([thunk]);
 
@@ -70,7 +78,7 @@ describe('organisationsApiActions', () => {
       expect(store.getActions()).toEqual([
         createOrganisation.request(),
         createOrganisation.success(returnedOrganisation as Organisation),
-        showSuccessMessage('Successfully created the organisation ' +
+        showSuccessMessage('Created the organisation ' +
                            `${returnedOrganisation.name} (${returnedOrganisation.slug})`),
         routerActions.push(`${routes.adminOrganisations}`)
       ]);
@@ -116,7 +124,7 @@ describe('organisationsApiActions', () => {
       expect(store.getActions()).toEqual([
         createOrganisation.request(),
         createOrganisation.success(returnedOrganisation),
-        showSuccessMessage(`Successfully created the organisation ${name} (${slug})`),
+        showSuccessMessage(`Created the organisation ${name} (${slug})`),
         routerActions.push(`${routes.adminOrganisations}`)
       ]);
     });
@@ -163,7 +171,7 @@ describe('organisationsApiActions', () => {
       expect(store.getActions()).toEqual([
         putOrganisation.request(),
         putOrganisation.success(updatedOrganisation),
-        showSuccessMessage(`Successfully updated the organisation ${name} (${slug})`),
+        showSuccessMessage(`Updated the organisation ${name} (${slug})`),
       ]);
     });
 
@@ -181,7 +189,7 @@ describe('organisationsApiActions', () => {
       expect(store.getActions()).toEqual([
         putOrganisation.request(),
         putOrganisation.success(updatedOrganisation),
-        showSuccessMessage(`Successfully updated the organisation ${name} (${slug})`),
+        showSuccessMessage(`Updated the organisation ${name} (${slug})`),
       ]);
     });
 
@@ -196,7 +204,7 @@ describe('organisationsApiActions', () => {
       expect(store.getActions()).toEqual([
         putOrganisation.request(),
         putOrganisation.success(updatedOrganisation),
-        showSuccessMessage(`Successfully updated the organisation ${name} (${slug})`),
+        showSuccessMessage(`Updated the organisation ${name} (${slug})`),
       ]);
     });
 
@@ -215,8 +223,97 @@ describe('organisationsApiActions', () => {
       expect(store.getActions()).toEqual([
         putOrganisation.request(),
         putOrganisation.success(updatedOrganisation),
-        showSuccessMessage(`Successfully updated the organisation ${name} (${slug})`),
+        showSuccessMessage(`Updated the organisation ${name} (${slug})`),
       ]);
+    });
+
+  });
+
+  describe('asset', () => {
+
+    const params: AssetTypeForOrganisation = {
+      assetType: OrganisationAssetType.logotype,
+      organisationId: idGenerator.uuid(),
+    };
+
+    describe('uploadAsset', () => {
+
+      const putAsset = async (params: AssetTypeForOrganisation, payload, responseCode: number) => {
+        const {organisationId, assetType} = params;
+        mockRestClient
+          .onPut(`${EndPoints.organisations}/${organisationId}/assets/${assetType}`)
+          .reply(responseCode);
+        const formData = new FormData();
+        formData.append(assetType, payload);
+        return store.dispatch(uploadAsset(formData, params));
+      };
+
+      const fileToUpload = new Blob(['some file contents']);
+
+      it('handles a correct upload', async () => {
+        await putAsset(params, fileToUpload, 200);
+
+        expect(
+          store.getActions().map(({type, payload}) => [type, payload])
+        )
+          .toEqual([
+            ['DOMAIN_MODELS_REQUEST/organisations', undefined],
+            ['DOMAIN_MODELS_PUT_SUCCESS/organisations', undefined],
+            ['SHOW_SUCCESS_MESSAGE', 'Updated'],
+          ]);
+      });
+
+      it('handles upload error', async () => {
+        await putAsset(params, fileToUpload, 400);
+
+        expect(
+          store.getActions().map(({type, payload}) => [type, payload])
+        )
+          .toEqual([
+            ['DOMAIN_MODELS_REQUEST/organisations', undefined],
+            ['DOMAIN_MODELS_FAILURE/organisations', {message: 'An unexpected error occurred'}],
+            ['SHOW_FAIL_MESSAGE', 'Failed to update: An unexpected error occurred'],
+          ]);
+      });
+
+    });
+
+    describe('resetAsset', () => {
+
+      const deleteAsset = async (params: AssetTypeForOrganisation, responseCode: number) => {
+        const {organisationId, assetType} = params;
+        mockRestClient
+          .onDelete(`${EndPoints.organisations}/${organisationId}/assets/${assetType}`)
+          .reply(responseCode);
+        return store.dispatch(resetAsset(params));
+      };
+
+      it('handles a correct upload', async () => {
+        await deleteAsset(params, 200);
+
+        expect(
+          store.getActions().map(({type, payload}) => [type, payload])
+        )
+          .toEqual([
+            ['DOMAIN_MODELS_REQUEST/organisations', undefined],
+            ['DOMAIN_MODELS_DELETE_SUCCESS/organisations', undefined],
+            ['SHOW_SUCCESS_MESSAGE', 'Now using default'],
+          ]);
+      });
+
+      it('handles upload error', async () => {
+        await deleteAsset(params, 500);
+
+        expect(
+          store.getActions().map(({type, payload}) => [type, payload])
+        )
+          .toEqual([
+            ['DOMAIN_MODELS_REQUEST/organisations', undefined],
+            ['DOMAIN_MODELS_FAILURE/organisations', {message: 'An unexpected error occurred'}],
+            ['SHOW_FAIL_MESSAGE', 'Failed to update: An unexpected error occurred'],
+          ]);
+      });
+
     });
 
   });

@@ -107,6 +107,12 @@ describe('translations', () => {
       translate('alarm', {count: 2});
     });
 
+    it('translates organisation asset types', () => {
+      translate('logotype');
+      translate('login_logotype');
+      translate('login_background');
+    });
+
   });
 
 });

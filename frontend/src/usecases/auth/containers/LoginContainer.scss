@@ -2,7 +2,8 @@
 @import "../../../app/material-design";
 
 .LoginContainer {
-  background: url(../../../assets/images/login_bg.jpg) bottom left no-repeat;
+  background-position: bottom left;
+  background-repeat: no-repeat;
   background-size: cover;
   height: 100%;
   width: 100%;

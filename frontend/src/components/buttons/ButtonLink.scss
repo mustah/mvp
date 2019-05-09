@@ -16,4 +16,10 @@
       color: $blue-A700;
     }
   }
+
+  &.red {
+    .Normal {
+      color: $red;
+    }
+  }
 }

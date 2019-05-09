@@ -22,3 +22,9 @@ export const ButtonLinkBlue = ({className, children, onClick}: Omit<Props, 'text
     <FirstUpper>{children}</FirstUpper>
   </Row>
 );
+
+export const ButtonLinkRed = ({className, children, onClick}: Omit<Props, 'textClassName'>) => (
+  <Row className={classNames('ButtonLink red', className)} onClick={onClick}>
+    <FirstUpper>{children}</FirstUpper>
+  </Row>
+);

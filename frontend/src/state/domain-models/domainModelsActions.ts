@@ -7,13 +7,14 @@ import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {
+  ActionKey,
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
   Identifiable,
   Omit,
   payloadActionOf,
-  uuid, ActionKey,
+  uuid,
 } from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
@@ -44,8 +45,8 @@ export const clearError = (actionKey: ActionKey) =>
 export const domainModelsClear = (actionKey: ActionKey): string =>
   `DOMAIN_MODELS_CLEAR_${actionKey}`;
 
-export interface RequestCallbacks<T> {
-  afterSuccess?: (domainModel: T, dispatch: Dispatch<RootState>) => void;
+export interface RequestCallbacks<ResponseData> {
+  afterSuccess?: (domainModel: ResponseData, dispatch: Dispatch<RootState>) => void;
   afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;
 }
 
@@ -57,14 +58,14 @@ interface RequestHandler<T> {
   failure: (payload: ErrorResponse) => PayloadAction<string, ErrorResponse>;
 }
 
-interface AsyncRequest<REQUEST_MODEL, DATA> extends RequestHandler<DATA>, RequestCallbacks<DATA> {
-  requestFunc: (requestData?: REQUEST_MODEL) => any;
-  formatData?: DataFormatter<DATA>;
-  requestData?: REQUEST_MODEL;
+interface AsyncRequest<RequestData, Response> extends RequestHandler<Response>, RequestCallbacks<Response> {
+  requestFunc: (requestData?: RequestData) => any;
+  formatData?: DataFormatter<Response>;
+  requestData?: RequestData;
   dispatch: Dispatch<RootState>;
 }
 
-const asyncRequest = async <REQUEST_MODEL, DATA>(
+const asyncRequest = async <RequestData, Response>(
   {
     request,
     success,
@@ -75,7 +76,7 @@ const asyncRequest = async <REQUEST_MODEL, DATA>(
     formatData = (id) => id,
     requestData,
     dispatch,
-  }: AsyncRequest<REQUEST_MODEL, DATA>) => {
+  }: AsyncRequest<RequestData, Response>) => {
   try {
     dispatch(request());
     const {data: domainModelData} = await requestFunc(requestData);
@@ -236,40 +237,64 @@ export const postRequestToUrl = <T, P>(
         dispatch,
       });
 
-export const putRequestToUrl = <T, D, P>(
+export const putRequestToUrl = <ResponseFormat, RequestData, UrlParameters>(
   endPoint: EndPoints,
-  requestCallbacks: RequestCallbacks<T>,
-  url: (parameters: P) => string
+  requestCallbacks: RequestCallbacks<ResponseFormat>,
+  url: (parameters: UrlParameters) => string
 ) =>
-  (requestData: D, urlParameters: P) =>
+  (requestData: RequestData, urlParameters: UrlParameters) =>
     (dispatch) =>
-      asyncRequest<D, T>({
-        ...putRequestOf<T>(endPoint),
-        requestFunc: (requestData: D) => restClient.put(url(urlParameters), requestData),
+      asyncRequest<RequestData, ResponseFormat>({
+        ...putRequestOf<ResponseFormat>(endPoint),
+        requestFunc: (requestData: RequestData) => restClient.put(url(urlParameters), requestData),
         requestData,
         ...requestCallbacks,
         dispatch,
       });
 
-export const putRequest = <T, D>(
+export const putRequest = <SuccessPayload, RequestData>(
   endPoint: EndPoints,
-  requestCallbacks: RequestCallbacks<T>
+  requestCallbacks: RequestCallbacks<SuccessPayload>
 ) =>
-  (requestData: D) =>
+  (requestData: RequestData) =>
     (dispatch) =>
-      asyncRequest<D, T>({
-        ...putRequestOf<T>(endPoint),
-        requestFunc: (requestData: D) => restClient.put(endPoint, requestData),
+      asyncRequest<RequestData, SuccessPayload>({
+        ...putRequestOf<SuccessPayload>(endPoint),
+        requestFunc: (requestData: RequestData) => restClient.put(endPoint, requestData),
         requestData,
         ...requestCallbacks,
         dispatch,
       });
 
-export const deleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) =>
+export const putFile = <UrlParameters>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<undefined>,
+  url: (parameters: UrlParameters) => string
+) =>
+  (requestData: FormData, urlParameters: UrlParameters) =>
+    (dispatch) =>
+      asyncRequest<FormData, undefined>({
+        ...putRequestOf<undefined>(endPoint),
+        requestFunc: (requestData: FormData) =>
+          restClient.put(
+            url(urlParameters),
+            requestData,
+            {
+              headers: {
+                'content-type': 'multipart/form-data',
+              },
+            }
+          ),
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
+
+export const deleteRequest = <Response>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<Response>) =>
   (requestData: uuid) =>
     (dispatch) =>
-      asyncRequest<uuid, T>({
-        ...deleteRequestOf<T>(endPoint),
+      asyncRequest<uuid, Response>({
+        ...deleteRequestOf<Response>(endPoint),
         requestFunc: (requestData: uuid) =>
           restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`)),
         requestData,
@@ -277,12 +302,28 @@ export const deleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestC
         dispatch,
       });
 
-const makeRequestActionsOf = <T>(
+export const deleteRequestToUrl = <Response, RequestData>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<Response>,
+  url: (parameters: RequestData) => string
+) =>
+  (requestData: RequestData) =>
+    (dispatch) =>
+      asyncRequest<RequestData, Response>({
+        ...deleteRequestOf<Response>(endPoint),
+        requestFunc: (requestData: RequestData) =>
+          restClient.delete(url(requestData)),
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
+
+const makeRequestActionsOf = <Response>(
   actionKey: ActionKey,
   requestType: RequestType,
-): RequestHandler<T> => ({
+): RequestHandler<Response> => ({
   request: emptyActionOf(domainModelsRequest(actionKey)),
-  success: payloadActionOf<T>(domainModelsSuccess(requestType)(actionKey)),
+  success: payloadActionOf<Response>(domainModelsSuccess(requestType)(actionKey)),
   failure: payloadActionOf<ErrorResponse>(domainModelsFailure(actionKey)),
 });
 

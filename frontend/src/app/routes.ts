@@ -1,7 +1,5 @@
 import {createHashHistory, History, Location} from 'history';
-import evoLogoBlue from '../assets/images/elvaco.evo_logo_blue_cmyk.svg';
-import evoLogo from '../assets/images/elvaco.evo_logo_wt.svg';
-import wayneIndustries from '../assets/images/wayne-industries.png';
+import {config} from '../config/config';
 
 export const routes = {
   collection: '/collection',
@@ -39,10 +37,11 @@ export const isOnSearchPage = ({pathname}: Location): boolean => pathname.match(
 const meterDetailsRegExp = new RegExp(`${routes.meter}/`);
 export const isOnMeterDetailsPage = (pathName: string): boolean => pathName.match(meterDetailsRegExp) !== null;
 
-const organisationLogo = {
-  'wayne-industries': wayneIndustries,
-};
+export const getLoginLogoPath = (slug: string = 'elvaco'): string =>
+  `${config().axios.baseURL}/organisations/${slug}/assets/login_logotype`;
 
-export const getLogoPath = (slug: string): string => organisationLogo[slug] || evoLogo;
+export const getLogoPath = (slug: string = 'elvaco'): string =>
+  `${config().axios.baseURL}/organisations/${slug}/assets/logotype`;
 
-export const getLoginLogoPath = (slug: string): string => organisationLogo[slug] || evoLogoBlue;
+export const getBackgroundImagePath = (slug: string = 'elvaco'): string =>
+  `${config().axios.baseURL}/organisations/${slug}/assets/login_background`;

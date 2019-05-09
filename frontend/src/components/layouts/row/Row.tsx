@@ -9,23 +9,23 @@ export const Row = ({children, className, onClick, style, title}: LayoutProps) =
   </div>
 );
 
-export const RowCenter = (props: LayoutProps) =>
-  <Row {...props} className={classNames(props.className, 'Row-center')}/>;
+export const RowCenter = ({className, ...props}: LayoutProps) =>
+  <Row {...props} className={classNames(className, 'Row-center')}/>;
 
-export const RowRight = (props: LayoutProps) =>
-  <Row {...props} className={classNames(props.className, 'Row-right')}/>;
+export const RowRight = ({className, ...props}: LayoutProps) =>
+  <Row {...props} className={classNames(className, 'Row-right')}/>;
 
-export const RowLeft = (props: LayoutProps) =>
-  <Row {...props} className={classNames(props.className, 'Row-left')}/>;
+export const RowLeft = ({className, ...props}: LayoutProps) =>
+  <Row {...props} className={classNames(className, 'Row-left')}/>;
 
-export const RowMiddle = (props: LayoutProps) =>
-  <Row {...props} className={classNames(props.className, 'Row-middle')}/>;
+export const RowMiddle = ({className, ...props}: LayoutProps) =>
+  <Row {...props} className={classNames(className, 'Row-middle')}/>;
 
-export const RowBottom = (props: LayoutProps) =>
-  <Row {...props} className={classNames(props.className, 'Row-bottom')}/>;
+export const RowBottom = ({className, ...props}: LayoutProps) =>
+  <Row {...props} className={classNames(className, 'Row-bottom')}/>;
 
-export const RowIndented = (props: LayoutProps) =>
-  <Row {...props} className={classNames(props.className, 'Row-indented')}/>;
+export const RowIndented = ({className, ...props}: LayoutProps) =>
+  <Row {...props} className={classNames(className, 'Row-indented')}/>;
 
-export const RowSpaceBetween = (props: LayoutProps) =>
-  <Row {...props} className={classNames(props.className, 'Row-space-between')}/>;
+export const RowSpaceBetween = ({className, ...props}: LayoutProps) =>
+  <Row {...props} className={classNames(className, 'Row-space-between')}/>;
