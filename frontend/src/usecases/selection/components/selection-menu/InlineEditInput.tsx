@@ -43,7 +43,7 @@ const style: React.CSSProperties = {
 const iconStyle: React.CSSProperties = {
   width: 22,
   height: 22,
-  color: colors.lightBlack,
+  color: colors.primaryFg,
 };
 
 const buttonLinkStyle: React.CSSProperties = {

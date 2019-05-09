@@ -1,10 +1,11 @@
 import {SvgIconProps} from 'material-ui';
 import SvgIcon from 'material-ui/SvgIcon';
 import * as React from 'react';
+import {colors} from '../../app/colors';
 
 /* tslint:disable */
 export const IconTemperature = (props: SvgIconProps) => (
-  <SvgIcon viewBox="0 0 113 119" {...props} color={props.color || 'white'}>
+  <SvgIcon viewBox="0 0 113 119" {...props} color={props.color || colors.white}>
     <rect id="Rectangle-path" stroke="none" fillRule="evenodd" transform="translate(91.981884, 82.581777) rotate(-89.909097) translate(-91.981884, -82.581777) " x="87.781879" y="62.2817517" width="8.40001057" height="40.6000511"/>
     <rect id="Rectangle-path" stroke="none" fillRule="evenodd" x="86.6" y="54" width="25.7" height="8.4"/>
     <rect id="Rectangle-path" stroke="none" fillRule="evenodd" x="86.6" y="102.8" width="25.7" height="8.4"/>

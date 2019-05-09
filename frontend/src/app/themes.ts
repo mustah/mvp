@@ -1,7 +1,7 @@
 import {darkBlack, fullBlack} from 'material-ui/styles/colors';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import * as React from 'react';
-import {colors, secondaryBgActive, secondaryFgActive} from './colors';
+import {colors} from './colors';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
 interface Styles {
@@ -32,15 +32,15 @@ export const mvpTheme = getMuiTheme({
   appBar: {
     height: 60,
     padding: 16,
-    color: colors.blueA900,
+    color: colors.primaryBgDark,
   },
   badge: {
-    secondaryColor: colors.secondaryBg,
+    secondaryColor: colors.notification,
     secondaryTextColor: colors.white,
   },
   checkbox: {
-    checkedColor: colors.blueA700,
-    boxColor: colors.iconHover,
+    checkedColor: colors.primaryBg,
+    boxColor: colors.primaryFgHover,
   },
   fontFamily: 'TTNorms, Arial, sans-serif',
   dialog: {
@@ -48,25 +48,25 @@ export const mvpTheme = getMuiTheme({
     bodyColor: darkBlack,
   },
   flatButton: {
-    primaryTextColor: colors.blueA700,
+    primaryTextColor: colors.primaryFgActive,
   },
   listItem: {
     nestedLevelDepth: 14,
   },
   menuItem: {
-    hoverColor: colors.blue50,
-    selectedTextColor: colors.blueA700,
+    hoverColor: colors.primaryBgHover,
+    selectedTextColor: colors.primaryFgActive,
   },
   palette: {
     primary1Color: fullBlack,
     textColor: darkBlack,
   },
   raisedButton: {
-    primaryColor: colors.blueA700,
+    primaryColor: colors.primaryBg,
   },
   toggle: {
-    trackOnColor: colors.blueA100,
-    thumbOnColor: colors.blueA700,
+    trackOnColor: colors.primaryBgLight,
+    thumbOnColor: colors.primaryBg,
   }
 });
 
@@ -109,10 +109,8 @@ export const dividerStyle: React.CSSProperties = {
   backgroundColor: colors.dividerColor
 };
 
-export const selectedStyle: React.CSSProperties = {
-  color: colors.black,
+export const selectedMenuItemStyle: React.CSSProperties = {
   fontWeight: 'bold',
-  backgroundColor: colors.blue100
 };
 
 export const menuItemStyle: React.CSSProperties = {
@@ -132,9 +130,9 @@ export const listItemStyle: React.CSSProperties = {
 
 export const listItemStyleSelected: React.CSSProperties = {
   ...listItemStyle,
-  ...selectedStyle,
-  backgroundColor: secondaryBgActive,
-  color: secondaryFgActive
+  ...selectedMenuItemStyle,
+  backgroundColor: colors.secondaryBgActive,
+  color: colors.secondaryFgActive
 };
 
 export const listItemInnerDivStyle: React.CSSProperties = {
@@ -164,16 +162,16 @@ export const popoverStyle: React.CSSProperties = {
 export const dropdownStyle: Styles = {
   popoverStyle: {marginTop: 6, marginLeft: 2, ...popoverStyle},
   listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
-  parentStyle: {fontSize: 11, fontWeight: 'normal', color: colors.lightBlack},
+  parentStyle: {fontSize: 11, fontWeight: 'normal', color: colors.primaryFg},
 };
 
 export const underlineFocusStyle = {
-  borderColor: colors.blueA700,
+  borderColor: colors.primaryBg,
   borderWidth: 2,
 };
 
 export const floatingLabelFocusStyle = {
-  color: colors.blueA700,
+  color: colors.primaryFgActive,
 };
 
 export const paperStyle: React.CSSProperties = {
@@ -195,7 +193,7 @@ export const cardStyle: React.CSSProperties = {
 };
 
 export const buttonStyle: React.CSSProperties = {
-  backgroundColor: colors.blueA700,
+  backgroundColor: colors.primaryBg,
   color: colors.white,
 };
 
@@ -218,6 +216,6 @@ export const dividerBorder = `1px solid ${colors.dividerColor}`;
 export const border = `1px solid ${colors.borderColor}`;
 
 export const svgIconProps: SvgIconProps = {
-  color: colors.lightBlack,
-  hoverColor: colors.iconHover
+  color: colors.primaryFg,
+  hoverColor: colors.primaryFgHover
 };

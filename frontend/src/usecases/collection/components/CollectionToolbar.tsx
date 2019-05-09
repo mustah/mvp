@@ -46,7 +46,7 @@ export const CollectionToolbar = ({
             onClick={selectGraph}
             tooltip={firstUpperTranslated('graph')}
           >
-            <EditorShowChart color={colors.lightBlack} style={iconSizeMedium}/>
+            <EditorShowChart color={colors.primaryFg} style={iconSizeMedium}/>
           </ToolbarIconButton>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
@@ -54,7 +54,7 @@ export const CollectionToolbar = ({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={colors.lightBlack}/>
+            <EditorFormatListBulleted color={colors.primaryFg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 

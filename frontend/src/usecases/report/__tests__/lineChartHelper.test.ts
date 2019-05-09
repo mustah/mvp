@@ -21,7 +21,7 @@ describe('lineChartHelper', () => {
     it('has left axis props', () => {
       expect(toReferenceLineProps({left: 'abc'}, makeThreshold())).toEqual({
         label: 'Threshold 3 kW',
-        stroke: colors.blueGrey300,
+        stroke: colors.thresholdStroke,
         strokeWidth: 2,
         y: '3',
         yAxisId: 'left'
@@ -31,7 +31,7 @@ describe('lineChartHelper', () => {
     it('has right axis props', () => {
       expect(toReferenceLineProps({right: '123'}, makeThreshold())).toEqual({
         label: 'Threshold 3 kW',
-        stroke: colors.blueGrey300,
+        stroke: colors.thresholdStroke,
         strokeWidth: 2,
         y: '3',
         yAxisId: 'right'

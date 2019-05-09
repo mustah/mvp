@@ -43,7 +43,7 @@ export const MeterMeasurementsToolbar = ({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={colors.lightBlack}/>
+            <EditorFormatListBulleted color={colors.primaryFg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 

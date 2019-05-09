@@ -14,8 +14,8 @@ interface DispatchToProps {
 }
 
 const messageStyles: { [key in MessageType]: React.CSSProperties } = {
-  fail: {backgroundColor: colors.red},
-  success: {backgroundColor: colors.darkGreen},
+  fail: {backgroundColor: colors.error},
+  success: {backgroundColor: colors.ok},
 };
 
 const MessageComponent = ({message = '', isOpen, hideMessage, messageType}: StateToProps & DispatchToProps) => {

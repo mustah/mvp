@@ -10,7 +10,7 @@ import {useGlobalSearch} from './globalSearchHook';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
 const style: React.CSSProperties = {
-  color: colors.lightBlack,
+  color: colors.primaryFg,
   cursor: 'pointer',
   position: 'absolute',
   left: 16,
@@ -20,7 +20,7 @@ const style: React.CSSProperties = {
 
 const iconProps: SvgIconProps = {
   style,
-  hoverColor: colors.iconHover,
+  hoverColor: colors.primaryFgHover,
 };
 
 export const GlobalSearch = (props: GlobalSearchProps) => {

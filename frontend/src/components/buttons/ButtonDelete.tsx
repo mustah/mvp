@@ -7,7 +7,7 @@ import {Clickable} from '../../types/Types';
 export const ButtonDelete = ({onClick}: Clickable) => (
   <FlatButton
     hoverColor="inherit"
-    icon={<ActionDelete color={colors.blueA700}/>}
+    icon={<ActionDelete color={colors.primaryBg}/>}
     onClick={onClick}
     style={{minWidth: 24}}
   />

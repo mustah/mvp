@@ -1,6 +1,6 @@
 import {sortBy, toArray, uniqBy} from 'lodash';
 import {LegendPayload, ReferenceLineProps} from 'recharts';
-import {colors, secondaryBgActive} from '../../../app/colors';
+import {colors} from '../../../app/colors';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {AxesProps, GraphContents} from '../../../state/report/reportModels';
@@ -16,7 +16,7 @@ import {Dictionary} from '../../../types/Types';
 
 const colorize =
   (colorSchema: {[key: string]: string}) =>
-    (key: string) => colorSchema[key as string] || colors.blueA700;
+    (key: string) => colorSchema[key as string] || colors.primaryBg;
 
 export const colorFor = colorize({
   [Quantity.volume as string]: '#651FFF',
@@ -26,9 +26,9 @@ export const colorFor = colorize({
   [Quantity.forwardTemperature as string]: '#FF1744',
   [Quantity.returnTemperature as string]: '#D500F9',
   [Quantity.differenceTemperature as string]: '#2979FF',
-  [Quantity.externalTemperature as string]: colors.red,
-  [Quantity.relativeHumidity as string]: colors.orange,
-  ['count']: secondaryBgActive,
+  [Quantity.externalTemperature as string]: '#e84d6f',
+  [Quantity.relativeHumidity as string]: '#ff9800',
+  ['count']: colors.secondaryBgActive,
 });
 
 const yAxisIdLookup = (axes: AxesProps, unit: string): 'left' | 'right' | undefined => {
@@ -230,7 +230,7 @@ export const toReferenceLineProps = ({left}: AxesProps, threshold?: ThresholdQue
   Maybe.maybe(threshold)
     .map(({unit, value}: ThresholdQuery): ReferenceLineProps => ({
       label: `${firstUpperTranslated('threshold')} ${value} ${unit}`,
-      stroke: colors.blueGrey300,
+      stroke: colors.thresholdStroke,
       strokeWidth: 2,
       y: value,
       yAxisId: left ? 'left' : 'right',

@@ -2,7 +2,7 @@ import {default as classNames} from 'classnames';
 import {DropDownMenu, MenuItem} from 'material-ui';
 import * as React from 'react';
 import {colors} from '../../app/colors';
-import {borderRadius, fontSize, menuItemStyle} from '../../app/themes';
+import {borderRadius, fontSize, menuItemStyle, selectedMenuItemStyle} from '../../app/themes';
 import {ClassNamed, OnClick, Styled, WithChildren} from '../../types/Types';
 import {Period} from '../dates/dateModels';
 import {IconCalendar} from '../icons/IconCalendar';
@@ -14,7 +14,7 @@ const height = 32;
 
 const menu: {[name: string]: React.CSSProperties} = {
   iconStyle: {
-    fill: colors.lightBlack,
+    fill: colors.primaryFg,
     height,
     width: 36,
     right: 0,
@@ -41,7 +41,6 @@ const menu: {[name: string]: React.CSSProperties} = {
     borderWidth: 1,
     borderRadius,
   },
-  selectedMenuItemStyle: {color: colors.blueA700},
   underlineStyle: {border: 'none'},
 };
 
@@ -100,7 +99,7 @@ export const DropdownMenu = ({
         maxHeight={300}
         labelStyle={menuLabelStyle}
         listStyle={listStyle}
-        selectedMenuItemStyle={menu.selectedMenuItemStyle}
+        selectedMenuItemStyle={selectedMenuItemStyle}
         style={menuStyle}
         underlineStyle={menu.underlineStyle}
         value={value}

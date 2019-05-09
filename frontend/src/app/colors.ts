@@ -1,38 +1,38 @@
-//
-// http://zavoloklom.github.io/material-design-color-palette/colors.html#light-blue
-//
-const palette = {
-  blue200: '#81d4fa',
-  blue100: '#b3e5fc',
-  blue50: '#e1f5fe',
-  blueA100: '#80d8ff',
-  blueA200: '#40c4ff',
-  blueA400: '#00b0ff',
-  blueA700: '#0091ea',
-  blueA900: '#01579b',
+/**
+ * Defaults to hex color '#0091ea'.
+ *
+ * @param lightnessPercentage number between 0 and 100.
+ */
+const primaryBlueColor = (lightnessPercentage: number): string => `hsla(203, 100%, ${lightnessPercentage}%, 1)`;
 
-  blueGrey300: '#90A4AE',
+const primary = {
+  primaryBgHover: primaryBlueColor(92),
+  primaryBgLight: primaryBlueColor(75),
+  primaryBg: primaryBlueColor(46),
+  primaryBgDark: primaryBlueColor(29),
+
+  primaryFg: '#7b7b7b',
+  primaryFgActive: primaryBlueColor(46),
+  primaryFgHover: '#0f2228',
+};
+
+const secondary = {
+  secondaryBg: '#f9f9f9',
+  secondaryBgActive: '#b6e2cc',
+  secondaryBgHover: '#edf8f2',
+  secondaryFgActive: '#245c40',
 };
 
 export const colors = {
-  ...palette,
-  darkGreen: '#4caf50',
-  orange: '#ff9800',
-  red: '#e84d6f',
-  secondaryBg: '#e10050',
-  white: '#ffffff',
-  lightGrey: '#f9f9f9',
+  ...primary,
+  ...secondary,
+
   black: '#000000',
-  lightBlack: '#7b7b7b',
+  white: '#ffffff',
+  ok: '#41c300',
+  error: '#e84d6f',
+  notification: '#e10050',
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',
-  iconHover: '#0f2228',
-  menuItemLeftIcon: '#757575',
-  link: palette.blueA700,
+  thresholdStroke: '#90a4ae',
 };
-
-export const bgHoverColor = colors.blue50;
-
-export const secondaryBgActive = '#b6e2cc';
-export const secondaryBgHover = '#edf8f2';
-export const secondaryFgActive = '#245c40';

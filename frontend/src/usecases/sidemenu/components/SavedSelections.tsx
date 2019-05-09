@@ -1,6 +1,6 @@
 import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
-import {secondaryBgHover} from '../../../app/colors';
+import {colors} from '../../../app/colors';
 import {history, routes} from '../../../app/routes';
 import {listItemInnerDivStyle, listItemStyle, listItemStyleSelected} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
@@ -63,7 +63,7 @@ const ListItems = ({
         className="SavedSelection-ListItem"
         style={id === selection.id && isMeterPage ? listItemStyleSelected : listItemStyle}
         innerDivStyle={listItemInnerDivStyle}
-        hoverColor={secondaryBgHover}
+        hoverColor={colors.secondaryBgHover}
         key={`saved-${id}`}
       >
         <RowSpaceBetween>

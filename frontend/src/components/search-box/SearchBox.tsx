@@ -24,7 +24,7 @@ const style: React.CSSProperties = {
   position: 'absolute',
   right: 12,
   top: 6,
-  color: colors.lightBlack,
+  color: colors.primaryFg,
 };
 
 const styles: SvgIconProps = {
