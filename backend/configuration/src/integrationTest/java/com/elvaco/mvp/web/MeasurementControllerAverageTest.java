@@ -309,6 +309,130 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
+  public void fetchAverageOverMeterReplacement() {
+    ZonedDateTime date = context().now();
+    var logicalMeter1 = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(date.minusDays(2), date)),
+      physicalMeter().activePeriod(PeriodRange.from(date))
+    );
+    var logicalMeter2 = given(logicalMeter(), physicalMeter());
+
+    var physicalMeterOne = logicalMeter1.activePhysicalMeter(date.minusDays(1)).get();
+    var physicalMeterTwo = logicalMeter1.activePhysicalMeter(date).get();
+    var interval = Duration.ofDays(1);
+
+    given(measurementSeries()
+      .forMeter(physicalMeterOne)
+      .withQuantity(POWER)
+      .startingAt(date.minusDays(2))
+      .withInterval(interval)
+      .withValues(2.0, 4.0, 6.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterTwo)
+      .withQuantity(POWER)
+      .startingAt(date)
+      .withInterval(interval)
+      .withValues(8.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter2.activePhysicalMeter().get())
+      .withQuantity(POWER)
+      .startingAt(date.minusDays(2))
+      .withInterval(interval)
+      .withValues(10.0, 20.0, 30.0));
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+      String.format(
+        "/measurements/average"
+          + "?reportAfter=" + date.minusDays(2)
+          + "&reportBefore=" + date
+          + "&quantity=" + POWER.name
+          + "&logicalMeterId=%s"
+          + "&logicalMeterId=%s"
+          + "&resolution=day",
+        logicalMeter1.id.toString(),
+        logicalMeter2.id.toString()
+      ), MeasurementSeriesDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(
+      List.of(
+        MeasurementSeriesDto.builder()
+          .id(SERIES_ID_AVERAGE_POWER)
+          .quantity(POWER.name)
+          .unit(POWER.storageUnit)
+          .label(AVERAGE)
+          .values(List.of(
+            new MeasurementValueDto(date.minusDays(2).toInstant(), 6.0),
+            new MeasurementValueDto(date.minusDays(1).toInstant(), 12.0),
+            new MeasurementValueDto(date.toInstant(), 19.0)
+          ))
+          .build()));
+  }
+
+  @Test
+  public void fetchAverageConsumptionOverMeterReplacement() {
+    ZonedDateTime date = context().now();
+    var logicalMeter1 = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(date.minusDays(2), date)),
+      physicalMeter().activePeriod(PeriodRange.from(date))
+    );
+    var logicalMeter2 = given(logicalMeter(), physicalMeter());
+
+    var physicalMeterOne = logicalMeter1.activePhysicalMeter(date.minusDays(1)).get();
+    var physicalMeterTwo = logicalMeter1.activePhysicalMeter(date).get();
+    var interval = Duration.ofDays(1);
+
+    given(measurementSeries()
+      .forMeter(physicalMeterOne)
+      .withQuantity(ENERGY)
+      .startingAt(date.minusDays(2))
+      .withInterval(interval)
+      .withValues(2.0, 4.0, 6.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterTwo)
+      .withQuantity(ENERGY)
+      .startingAt(date)
+      .withInterval(interval)
+      .withValues(8.0, 12.0));
+    given(measurementSeries()
+      .forMeter(logicalMeter2.activePhysicalMeter().get())
+      .withQuantity(ENERGY)
+      .startingAt(date.minusDays(2))
+      .withInterval(interval)
+      .withValues(10.0, 20.0, 30.0, 40.0));
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+      String.format(
+        "/measurements/average"
+          + "?reportAfter=" + date.minusDays(2)
+          + "&reportBefore=" + date
+          + "&quantity=" + ENERGY.name
+          + "&logicalMeterId=%s"
+          + "&logicalMeterId=%s"
+          + "&resolution=day",
+        logicalMeter1.id.toString(),
+        logicalMeter2.id.toString()
+      ), MeasurementSeriesDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(
+      List.of(
+        MeasurementSeriesDto.builder()
+          .id(SERIES_ID_AVERAGE_ENERGY)
+          .quantity(ENERGY.name)
+          .unit(ENERGY.storageUnit)
+          .label(AVERAGE)
+          .values(List.of(
+            new MeasurementValueDto(date.minusDays(2).toInstant(), 6.0),
+            new MeasurementValueDto(date.minusDays(1).toInstant(), 10.0),
+            new MeasurementValueDto(date.toInstant(), 7.0)
+          ))
+          .build()));
+  }
+
+  @Test
   public void oneMeterOneHour_ShoulOnlyInclude_ValueAtIntervalStart() {
     var date = context().now();
 
@@ -397,7 +521,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void noActivePhysicalMeters_ReturnsEmpty() {
+  public void noActivePhysicalMeters_ReturnsEmptyValues() {
     var date = context().now();
     var logicalMeterWithoutPhysical = given(physicalMeter().activePeriod(PeriodRange.empty()));
 
@@ -405,7 +529,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .getList(String.format(
         "/measurements/average"
           + "?reportAfter=" + date
-          + "&reportBefore=" + date.plusHours(1)
+          + "&reportBefore=" + date
           + "&quantity=" + POWER.name
           + "&logicalMeterId=%s"
           + "&resolution=hour",
@@ -413,7 +537,15 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       ), MeasurementSeriesDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).isEmpty();
+    assertThat(response.getBody()).isEqualTo(
+      List.of(
+        MeasurementSeriesDto.builder()
+          .id(SERIES_ID_AVERAGE_POWER)
+          .quantity(POWER.name)
+          .unit("W")
+          .label(AVERAGE)
+          .values(List.of(new MeasurementValueDto(date.toInstant(), null)))
+          .build()));
   }
 
   @Test

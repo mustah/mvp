@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +19,7 @@ import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
-import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
+import com.elvaco.mvp.database.entity.jooq.Tables;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
@@ -41,7 +42,6 @@ import org.springframework.stereotype.Repository;
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static com.elvaco.mvp.database.entity.jooq.Tables.DISPLAY_QUANTITY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEDIUM;
-import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.QUANTITY;
 import static com.elvaco.mvp.database.entity.jooq.tables.Gateway.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
@@ -51,12 +51,14 @@ import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCENTAGE;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.LAST_DATA;
+import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.avg;
 import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.noCondition;
 import static org.jooq.impl.DSL.when;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
@@ -121,12 +123,14 @@ class LogicalMeterJooqJpaRepository
 
   @Override
   public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
-    return fetchAllBy(parameters, pageable, PHYSICAL_METER.ADDRESS);
+    return fetchAllBy(parameters, pageable, PHYSICAL_METER.ADDRESS,
+      periodContains(Tables.PHYSICAL_METER.ACTIVE_PERIOD, OffsetDateTime.now())
+    );
   }
 
   @Override
   public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
-    return fetchAllBy(parameters, pageable, PHYSICAL_METER.EXTERNAL_ID);
+    return fetchAllBy(parameters, pageable, LOGICAL_METER.EXTERNAL_ID, noCondition());
   }
 
   @Override
@@ -147,7 +151,7 @@ class LogicalMeterJooqJpaRepository
       LOGICAL_METER.CREATED,
       MEDIUM.NAME,
       GATEWAY.SERIAL,
-      DSL.field("null", Double.class).as(COLLECTION_PERCENTAGE.getName()),
+      DSL.field("null", Double.class).as(COLLECTION_PERCENTAGE.getName()), // TODO remove
       PHYSICAL_METER_STATUS_LOG.STATUS,
       PHYSICAL_METER.MANUFACTURER,
       PHYSICAL_METER.ADDRESS,
@@ -285,20 +289,20 @@ class LogicalMeterJooqJpaRepository
     ).distinctOn(QUANTITY.NAME)
       .from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
+    FilterVisitors.displayQuantity().accept((toFilters(parameters))).andJoinsOn(query);
 
-    var query2 = query
-      .join(DISPLAY_QUANTITY).on(METER_DEFINITION.ID.eq(DISPLAY_QUANTITY.METER_DEFINITION_ID))
-      .leftJoin(QUANTITY).on(QUANTITY.ID.eq(DISPLAY_QUANTITY.QUANTITY_ID))
-      .groupBy(QUANTITY.NAME, DISPLAY_QUANTITY.DISPLAY_UNIT, DISPLAY_QUANTITY.DISPLAY_MODE)
-      .orderBy(
-        QUANTITY.NAME,
-        cnt.desc(),
-        DISPLAY_QUANTITY.DISPLAY_UNIT,
-        DISPLAY_QUANTITY.DISPLAY_MODE
-      );
+    var orderedQuery = query.groupBy(
+      QUANTITY.NAME,
+      DISPLAY_QUANTITY.DISPLAY_UNIT,
+      DISPLAY_QUANTITY.DISPLAY_MODE
+    ).orderBy(
+      QUANTITY.NAME,
+      cnt.desc(),
+      DISPLAY_QUANTITY.DISPLAY_UNIT,
+      DISPLAY_QUANTITY.DISPLAY_MODE
+    );
 
-    return query2.fetch().stream()
+    return orderedQuery.fetch().stream()
       .map(record -> new QuantityParameter(
         record.value2(),
         record.value3(),
@@ -309,7 +313,8 @@ class LogicalMeterJooqJpaRepository
   private Page<String> fetchAllBy(
     RequestParameters parameters,
     Pageable pageable,
-    TableField<PhysicalMeterRecord, String> field
+    TableField<?, String> field,
+    Condition whereCondition
   ) {
     Field<Integer> editDistance = levenshtein(
       field,
@@ -326,7 +331,7 @@ class LogicalMeterJooqJpaRepository
       .andJoinsOn(selectQuery)
       .andJoinsOn(countQuery);
 
-    var select = selectQuery
+    var select = selectQuery.where(whereCondition)
       .orderBy(orderOf(field, pageable.getSort(), editDistance.asc()))
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue());
@@ -340,7 +345,7 @@ class LogicalMeterJooqJpaRepository
   }
 
   private OrderField<?> orderOf(
-    TableField<PhysicalMeterRecord, String> field,
+    TableField<?, String> field,
     Sort sort,
     OrderField<?> defaultOrder
   ) {

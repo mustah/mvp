@@ -32,7 +32,11 @@ public interface ContextDsl {
   IntegrationTestFixtureContext context();
 
   default LogicalMeter given(LogicalMeterBuilder logicalMeter) {
-    return context().given(logicalMeter);
+    return context().given(logicalMeter, true);
+  }
+
+  default LogicalMeter given(LogicalMeterBuilder logicalMeter, boolean withConnectedPhysicalMeter) {
+    return context().given(logicalMeter, withConnectedPhysicalMeter);
   }
 
   default Collection<LogicalMeter> given(LogicalMeterBuilder... logicalMeterBuilders) {

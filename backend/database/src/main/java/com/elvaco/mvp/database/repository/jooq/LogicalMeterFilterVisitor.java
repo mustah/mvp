@@ -1,14 +1,11 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 
-import com.elvaco.mvp.core.domainmodels.FilterPeriod;
-import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
-import com.elvaco.mvp.core.filter.ReportPeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 
-import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
@@ -20,37 +17,18 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
-import static org.jooq.impl.DSL.noCondition;
 
 class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
-  private Condition physicalMeterCondition = noCondition();
-
   LogicalMeterFilterVisitor(Collection<FilterAcceptor> decorators) {
     super(decorators);
+    addCondition(PHYSICAL_METER.ID.isNull()
+      .or(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, OffsetDateTime.now())));
   }
 
   @Override
   public void visit(OrganisationIdFilter filter) {
     addCondition(LOGICAL_METER.ORGANISATION_ID.in(filter.values()));
-  }
-
-  @Override
-  public void visit(ReportPeriodFilter filter) {
-    FilterPeriod period = filter.getPeriod();
-    // TODO should there be a equivalent filter for threshold period
-    physicalMeterCondition =
-      periodContains(PHYSICAL_METER.ACTIVE_PERIOD, period.stop.toOffsetDateTime());
-  }
-
-  @Override
-  public void visit(CollectionPeriodFilter filter) {
-    FilterPeriod period = filter.getPeriod();
-
-    if (physicalMeterCondition.equals(noCondition())) {
-      physicalMeterCondition =
-        periodContains(PHYSICAL_METER.ACTIVE_PERIOD, period.stop.toOffsetDateTime());
-    }
   }
 
   @Override
@@ -67,11 +45,11 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
   @Override
   protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
-    return query.join(PHYSICAL_METER)
+    return query.leftJoin(PHYSICAL_METER)
       .on(
         PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
           .and(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
-          .and(physicalMeterCondition)
+          .and(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, OffsetDateTime.now()))
       )
 
       .leftJoin(GATEWAYS_METERS)

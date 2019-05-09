@@ -1,6 +1,9 @@
 package com.elvaco.mvp.web;
 
+import java.time.ZonedDateTime;
+
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -11,7 +14,6 @@ import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,11 +32,6 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Autowired
   private UserSelections userSelections;
-
-  @After
-  public void tearDown() {
-    gatewayJpaRepository.deleteAll();
-  }
 
   @Test
   public void getCities() {
@@ -273,6 +270,28 @@ public class SelectionControllerTest extends IntegrationTest {
       new IdNamedDto("222"),
       new IdNamedDto("111")
     );
+  }
+
+  @Test
+
+  public void getSecondaryAddresses_DoNotIncludePassiveMeters() {
+    ZonedDateTime date = context().now();
+    given(
+      logicalMeter(),
+      physicalMeter()
+        .activePeriod(PeriodRange.halfOpenFrom(date.minusDays(1), date))
+        .address("1"),
+      physicalMeter()
+        .activePeriod(PeriodRange.from(date))
+        .address("2")
+    );
+
+    Page<IdNamedDto> response = asUser().getPage(
+      "/selections/secondary-addresses",
+      IdNamedDto.class
+    );
+
+    assertThat(response.getContent()).containsExactly(new IdNamedDto("2"));
   }
 
   @Test
@@ -608,6 +627,18 @@ public class SelectionControllerTest extends IntegrationTest {
       physicalMeter().externalId("1234"),
       physicalMeter().externalId("1234")
     );
+
+    Page<IdNamedDto> response = asUser().getPage(
+      "/selections/facilities",
+      IdNamedDto.class
+    );
+
+    assertThat(response).extracting("name").containsExactly("1234");
+  }
+
+  @Test
+  public void getFacilities_logicalWithoutPhysicalIncluded() {
+    given(logicalMeter().externalId("1234"), false);
 
     Page<IdNamedDto> response = asUser().getPage(
       "/selections/facilities",

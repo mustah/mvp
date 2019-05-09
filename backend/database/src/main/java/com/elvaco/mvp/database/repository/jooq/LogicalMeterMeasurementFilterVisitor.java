@@ -1,5 +1,7 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.util.Collection;
+
 import com.elvaco.mvp.core.filter.CityFilter;
 import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
@@ -16,7 +18,11 @@ import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownCities;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
-class LogicalMeterMeasurementFilterVisitor extends EmptyFilterVisitor {
+class LogicalMeterMeasurementFilterVisitor extends CommonFilterVisitor {
+
+  LogicalMeterMeasurementFilterVisitor(Collection<FilterAcceptor> decorators) {
+    super(decorators);
+  }
 
   @Override
   public void visit(OrganisationIdFilter filter) {

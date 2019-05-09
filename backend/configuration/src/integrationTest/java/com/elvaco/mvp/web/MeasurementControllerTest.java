@@ -28,7 +28,6 @@ import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import org.assertj.core.data.Offset;
 import org.assertj.core.util.DoubleComparator;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -573,8 +572,6 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(dto.label).isEqualTo(getExpectedLabel(logicalMeter));
   }
 
-  // Hoho fix MVP-1289
-  @Ignore
   @Test
   public void fetchMeasurementsOverMeterReplacement() {
     ZonedDateTime date = context().now();
@@ -638,6 +635,74 @@ public class MeasurementControllerTest extends IntegrationTest {
           List.of(
             new MeasurementValueDto(date.toInstant(), 8.0),
             new MeasurementValueDto(date.plusDays(1).toInstant(), 12.0)
+          )
+        )
+      );
+  }
+
+  @Test
+  public void fetchConsumptionOverMeterReplacement() {
+    ZonedDateTime date = context().now();
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(date.minusDays(2), date)),
+      physicalMeter().activePeriod(PeriodRange.from(date))
+    );
+
+    var physicalMeterOne = logicalMeter.activePhysicalMeter(date.minusDays(1)).get();
+    var physicalMeterTwo = logicalMeter.activePhysicalMeter(date).get();
+    var interval = Duration.ofDays(1);
+
+    given(measurementSeries()
+      .forMeter(physicalMeterOne)
+      .withQuantity(ENERGY)
+      .startingAt(date.minusDays(2))
+      .withInterval(interval)
+      .withValues(2.0, 4.0, 7.0));
+    given(measurementSeries()
+      .forMeter(physicalMeterTwo)
+      .withQuantity(ENERGY)
+      .startingAt(date)
+      .withInterval(interval)
+      .withValues(8.0, 12.0, 17.0));
+
+    List<MeasurementSeriesDto> contents = getListAsSuperAdmin(
+      "/measurements?quantity=Energy"
+        + "&logicalMeterId=" + logicalMeter.id.toString()
+        + "&resolution=day"
+        + "&reportAfter=" + date.minusDays(2)
+        + "&reportBefore=" + date.plusDays(1));
+
+    String labelForSerieOne = getExpectedLabel(logicalMeter, physicalMeterOne);
+    String labelForSerieTwo = getExpectedLabel(logicalMeter, physicalMeterTwo);
+
+    assertThat(contents)
+      .extracting(
+        dto -> dto.id,
+        dto -> dto.label,
+        dto -> dto.name,
+        dto -> dto.meterId,
+        dto -> dto.values
+      )
+      .containsExactlyInAnyOrder(
+        tuple(
+          logicalMeter.id.toString(),
+          labelForSerieOne,
+          logicalMeter.externalId,
+          physicalMeterOne.address,
+          List.of(
+            new MeasurementValueDto(date.minusDays(2).toInstant(), 2.0),
+            new MeasurementValueDto(date.minusDays(1).toInstant(), null)
+          )
+        ),
+        tuple(
+          logicalMeter.id.toString(),
+          labelForSerieTwo,
+          logicalMeter.externalId,
+          physicalMeterTwo.address,
+          List.of(
+            new MeasurementValueDto(date.toInstant(), 4.0),
+            new MeasurementValueDto(date.plusDays(1).toInstant(), 5.0)
           )
         )
       );

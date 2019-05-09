@@ -80,7 +80,7 @@ public class MeasurementRepository implements Measurements {
   private final QuantityProvider quantityProvider;
   private final UnitConverter unitConverter;
   private final MeasurementEntityMapper measurementEntityMapper;
-  private final FilterAcceptor logicalMeterFilters;
+  private final FilterAcceptor logicalMeterMeasurementFilters;
 
   public MeasurementRepository(
     DSLContext dsl,
@@ -88,13 +88,13 @@ public class MeasurementRepository implements Measurements {
     QuantityProvider quantityProvider,
     UnitConverter unitConverter,
     QuantityEntityMapper quantityEntityMapper,
-    FilterAcceptor logicalMeterFilters
+    FilterAcceptor logicalMeterMeasurementFilters
   ) {
     this.dsl = dsl;
     this.measurementJpaRepository = measurementJpaRepository;
     this.quantityProvider = quantityProvider;
     this.unitConverter = unitConverter;
-    this.logicalMeterFilters = logicalMeterFilters;
+    this.logicalMeterMeasurementFilters = logicalMeterMeasurementFilters;
     this.measurementEntityMapper = new MeasurementEntityMapper(
       unitConverter,
       quantityProvider,
@@ -312,8 +312,7 @@ public class MeasurementRepository implements Measurements {
         MEASUREMENT.CREATED.as(valueDate)
       ).from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameter.getParameters()))
-      .andJoinsOn(query);
+    logicalMeterMeasurementFilters.accept(toFilters(parameter.getParameters())).andJoinsOn(query);
 
     return withAdditionalJoins(query, parameter);
   }
@@ -336,7 +335,7 @@ public class MeasurementRepository implements Measurements {
     Field<String> streetAddress = field("street_address", String.class);
     Field<String> mediumName = field("medium_name", String.class);
 
-    var measurementSeries = dsl.select(
+    var query = dsl.select(
       LOGICAL_METER.ID.as(logicalMeterId),
       LOGICAL_METER.UTC_OFFSET.as(logicalMeterUtcOffset),
       PHYSICAL_METER.ADDRESS.as(physicalMeterAddress),
@@ -350,8 +349,7 @@ public class MeasurementRepository implements Measurements {
       MEASUREMENT.CREATED.as(valueDate)
     ).from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameter.getParameters()))
-      .andJoinsOn(measurementSeries);
+    logicalMeterMeasurementFilters.accept(toFilters(parameter.getParameters())).andJoinsOn(query);
 
     OffsetDateTime start = parameter.getResolution()
       .getStart(parameter.getFrom()).toOffsetDateTime();
@@ -378,7 +376,7 @@ public class MeasurementRepository implements Measurements {
       mediumName,
       value,
       valueDate
-    ).from(withAdditionalJoins(measurementSeries, parameter))
+    ).from(withAdditionalJoins(query, parameter))
       .where(condition)
       .orderBy(valueDate.asc());
   }
@@ -394,8 +392,7 @@ public class MeasurementRepository implements Measurements {
       MEASUREMENT.CREATED.as(valueDate)
     ).from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameter.getParameters()))
-      .andJoinsOn(query);
+    logicalMeterMeasurementFilters.accept(toFilters(parameter.getParameters())).andJoinsOn(query);
 
     query = withAdditionalJoins(query, parameter);
 
@@ -416,8 +413,7 @@ public class MeasurementRepository implements Measurements {
       MEASUREMENT.CREATED.as(valueDate)
     ).from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameter.getParameters()))
-      .andJoinsOn(query);
+    logicalMeterMeasurementFilters.accept(toFilters(parameter.getParameters())).andJoinsOn(query);
 
     return dsl.select(
       avg(value),

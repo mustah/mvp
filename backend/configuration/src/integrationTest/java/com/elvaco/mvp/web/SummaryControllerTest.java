@@ -1,7 +1,10 @@
 package com.elvaco.mvp.web;
 
+import java.time.ZonedDateTime;
+
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.OrganisationWithUsers;
@@ -198,6 +201,32 @@ public class SummaryControllerTest extends IntegrationTest {
       .get(summaryMetersUrl().build(), Long.class);
 
     assertThat(response.getBody()).isEqualTo(0L);
+  }
+
+  @Test
+  public void meterCount_IgnoreActivePeriod() {
+    ZonedDateTime date = context().now();
+
+    given(logicalMeter(), false);
+    given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(date.minusDays(2), date.minusDays(1)))
+    );
+    given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.from(date.minusDays(2)))
+    );
+
+    ResponseEntity<Long> response = asUser()
+      .get(
+        summaryMetersUrl()
+          .parameter("after", date)
+          .parameter("before", date.plusDays(1))
+          .build(),
+        Long.class
+      );
+
+    assertThat(response.getBody()).isEqualTo(3L);
   }
 
   @Test
