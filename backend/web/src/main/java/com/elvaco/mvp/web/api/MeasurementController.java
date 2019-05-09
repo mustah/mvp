@@ -14,13 +14,9 @@ import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
-import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +41,7 @@ public class MeasurementController {
     @RequestParam(name = "quantity") Set<QuantityParameter> optionalQuantityParameters,
     @RequestParam(name = "reportAfter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportStart,
 
-    @RequestParam(required = false,name = "reportBefore")
+    @RequestParam(required = false, name = "reportBefore")
     @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
 
     @RequestParam(required = false) TemporalResolution resolution,
@@ -92,7 +88,7 @@ public class MeasurementController {
     @RequestParam(name = "quantity") Optional<Set<QuantityParameter>> optionalQuantityParameters,
     @RequestParam(name = "reportAfter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportStart,
 
-    @RequestParam(required = false,name = "reportBefore")
+    @RequestParam(required = false, name = "reportBefore")
     @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
 
     @RequestParam(required = false) TemporalResolution resolution
@@ -134,17 +130,6 @@ public class MeasurementController {
           quantityMap.get(entry.getKey().quantity)
         ))
       .collect(toList());
-  }
-
-  @GetMapping("/paged")
-  public Page<MeasurementDto> latestMeasurements(
-    @RequestParam MultiValueMap<String, String> requestParams
-  ) {
-    var parameters = RequestParametersAdapter.of(requestParams);
-    var measurements = measurementUseCases.findAll(parameters).stream()
-      .map(MeasurementDtoMapper::toDto)
-      .collect(toList());
-    return new PageImpl<>(measurements);
   }
 
   private Map<String, QuantityParameter> getMappedQuantities(

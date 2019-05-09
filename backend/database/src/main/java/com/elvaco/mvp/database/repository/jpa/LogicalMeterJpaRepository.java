@@ -25,13 +25,9 @@ public interface LogicalMeterJpaRepository {
 
   Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId);
 
-  Optional<LogicalMeterEntity> findBy(RequestParameters parameters);
-
   Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable);
 
   Page<String> findFacilities(RequestParameters parameters, Pageable pageable);
-
-  List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 
   Set<LogicalMeterEntity> findAll(RequestParameters parameters);
 

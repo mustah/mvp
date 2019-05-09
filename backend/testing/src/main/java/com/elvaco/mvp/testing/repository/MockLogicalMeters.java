@@ -89,12 +89,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public List<LogicalMeter> findAllByOrganisationId(UUID organisationId) {
-    return filter(isSameOrganisationId(organisationId))
-      .collect(toList());
-  }
-
-  @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
     return saveMock(logicalMeter);
   }

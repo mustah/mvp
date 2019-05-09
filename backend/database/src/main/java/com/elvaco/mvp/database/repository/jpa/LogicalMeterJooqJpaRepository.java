@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
@@ -31,9 +30,7 @@ import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record2;
 import org.jooq.SelectForUpdateStep;
-import org.jooq.SelectJoinStep;
 import org.jooq.TableField;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -123,20 +120,6 @@ class LogicalMeterJooqJpaRepository
   }
 
   @Override
-  public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
-    SelectJoinStep<Record> query = dsl.select().from(LOGICAL_METER);
-
-    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
-
-    String sql = query.getSQL(ParamType.NAMED);
-    Query nativeQuery = entityManager.createNativeQuery(sql, LogicalMeterEntity.class);
-
-    query.getParams().forEach(nativeQuery::setParameter);
-
-    return Optional.ofNullable((LogicalMeterEntity) nativeQuery.getSingleResult());
-  }
-
-  @Override
   public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
     return fetchAllBy(parameters, pageable, PHYSICAL_METER.ADDRESS);
   }
@@ -144,12 +127,6 @@ class LogicalMeterJooqJpaRepository
   @Override
   public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
     return fetchAllBy(parameters, pageable, PHYSICAL_METER.EXTERNAL_ID);
-  }
-
-  @Override
-  public List<LogicalMeterEntity> findByOrganisationId(UUID organisationId) {
-    return nativeQuery(dsl.select().from(LOGICAL_METER)
-      .where(LOGICAL_METER.ORGANISATION_ID.equal(organisationId)));
   }
 
   @Override

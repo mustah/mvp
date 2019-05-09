@@ -16,10 +16,6 @@ public class FilterVisitors {
     return new LocationFilterVisitor();
   }
 
-  public static FilterAcceptor measurement() {
-    return new MeasurementFilterVisitor();
-  }
-
   public static FilterAcceptor selection() {
     return new SelectionFilterVisitor();
   }

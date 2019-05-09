@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -38,7 +37,6 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
@@ -563,12 +561,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .get().id))
         .isEmpty();
 
-      softly.assertThat(measurementJpaRepository.findAll(
-        new RequestParametersAdapter().add(
-          LOGICAL_METER_ID,
-          logicalMeter.id.toString()
-        ))
-      )
+      softly.assertThat(measurementJpaRepository.findAll())
         .isEmpty();
     });
   }

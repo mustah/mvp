@@ -25,7 +25,6 @@ import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.util.Dates;
@@ -280,13 +279,6 @@ public class MeasurementRepository implements Measurements {
     }
 
     return result;
-  }
-
-  @Override
-  public List<Measurement> findAll(RequestParameters parameters) {
-    return measurementJpaRepository.findAll(parameters).stream()
-      .map(measurementEntityMapper::toDomainModel)
-      .collect(toList());
   }
 
   @Override

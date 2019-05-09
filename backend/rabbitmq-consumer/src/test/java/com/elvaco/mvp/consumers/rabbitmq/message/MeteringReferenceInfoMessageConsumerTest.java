@@ -355,7 +355,8 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
       .organisationExternalId(ORGANISATION_EXTERNAL_ID)
       .build());
 
-    assertThat(logicalMeters.findAllByOrganisationId(organisation.id))
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters()))
+      .filteredOn(lm -> lm.organisationId.equals(organisation.id))
       .filteredOn(lm -> lm.externalId.equals(newExternalId))
       .flatExtracting(lm -> lm.meterDefinition.name, lm -> lm.meterDefinition.isDefault())
       .containsOnly("OrganisationDefault", false);
@@ -508,7 +509,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
       .physicalMeterId("4321")
       .build());
 
-    assertThat(logicalMeters.findAllByOrganisationId(organisation.id)).hasSize(1);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
     assertThat(physicalMeters.findAll().stream().map(pm -> pm.logicalMeterId))
       .isEqualTo(asList(logicalMeterId, logicalMeterId));
   }

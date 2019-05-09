@@ -13,7 +13,7 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
 
   private final PhysicalMeters physicalMeters;
   private final SettingUseCases settingUseCases;
-  private final MeasurementJpaRepositoryImpl measurementJpaRepository;
+  private final MeasurementJpaRepository measurementJpaRepository;
 
   private final ThreadLocalRandom random = ThreadLocalRandom.current();
   private final DemoDataHelper demoDataHelper;

@@ -34,10 +34,6 @@ public class MeasurementUseCases {
     measurements.createOrUpdate(m);
   }
 
-  public List<Measurement> findAll(RequestParameters parameters) {
-    return measurements.findAll(parameters.ensureOrganisationFilters(currentUser));
-  }
-
   public Map<String, List<MeasurementValue>> findAverageForPeriod(
     MeasurementParameter parameter
   ) {
