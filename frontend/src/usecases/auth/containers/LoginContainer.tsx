@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {getLoginLogoPath} from '../../../app/routes';
+import {getBackgroundImagePath, getLoginLogoPath} from '../../../app/routes';
 import {buttonStyle} from '../../../app/themes';
 import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
 import {TextFieldInput} from '../../../components/inputs/TextFieldInput';
@@ -56,8 +56,12 @@ const LoginContainerComponent = ({auth: {error}, match: {params: {organisation}}
     login(state.email, state.password);
   };
 
+  const loginContainerBackgroundImage: React.CSSProperties = {
+    backgroundImage: `url(${getBackgroundImagePath(organisation)})`,
+  };
+
   return (
-    <ColumnCenter className={classNames('LoginContainer')}>
+    <ColumnCenter style={loginContainerBackgroundImage} className={classNames('LoginContainer')}>
       <Paper zDepth={5} className="LoginPaper">
         <RowCenter className="customerLogo">
           <Logo className="login" src={getLoginLogoPath(organisation)}/>

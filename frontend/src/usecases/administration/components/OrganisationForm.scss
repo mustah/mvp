@@ -1,0 +1,25 @@
+@import '../../../app/variables';
+
+.OrganisationForm {
+
+  .SaveButton {
+    align-self: flex-start;
+  }
+
+  .preview-container {
+    padding: $xs-space;
+
+    img {
+      max-height: 200px;
+      max-width: 200px;
+    }
+  }
+
+  .configuration-section:not(:first-child) {
+    border-top: $border;
+    margin-bottom: $xxl-space;
+    margin-top: $xl-space;
+    padding-top: $xl-space;
+  }
+
+}

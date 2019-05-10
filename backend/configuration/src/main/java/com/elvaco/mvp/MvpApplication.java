@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.elvaco.mvp.configuration.config.ApmInterceptor;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.web.converter.AssetTypeConverter;
 import com.elvaco.mvp.web.converter.CityConverter;
 import com.elvaco.mvp.web.converter.QuantityConverter;
 
@@ -61,6 +62,7 @@ public class MvpApplication implements WebMvcConfigurer {
   public void addFormatters(FormatterRegistry registry) {
     registry.addConverter(new CityConverter());
     registry.addConverter(new QuantityConverter());
+    registry.addConverter(new AssetTypeConverter());
   }
 
   @Override

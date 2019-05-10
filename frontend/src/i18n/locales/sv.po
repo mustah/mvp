@@ -11,6 +11,39 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "information"
+msgstr "information"
+
+msgid "failed to update: {{error}}"
+msgstr "misslyckades att uppdatera: {{error}}"
+
+msgid "now using default"
+msgstr "nu används standard"
+
+msgid "use default"
+msgstr "använd standard"
+
+msgid "visual identity"
+msgstr "visuell identitet"
+
+msgid "updated"
+msgstr "uppdaterad"
+
+msgid "custom login URL"
+msgstr "anpassad inloggings-URL"
+
+msgid "upload"
+msgstr "ladda upp"
+
+msgid "logotype"
+msgstr "logotyp"
+
+msgid "login_logotype"
+msgstr "inloggningssida - logotyp"
+
+msgid "login_background"
+msgstr "inloggningssida - bakgrundsbild"
+
 msgid "scope of period length and meters is too large for this resolution"
 msgstr "periodens längd och antal mätare utgör för många datapunkter för denna upplösning"
 
@@ -522,19 +555,19 @@ msgstr "misslyckades med att uppdatera mätardefinitionen: {{error}}"
 msgid "no parent organisation"
 msgstr "ingen huvudorganisation"
 
-msgid "successfully deleted the organisation {{name}}"
+msgid "deleted the organisation {{name}}"
 msgstr "lyckades ta bort organisationen {{name}}"
 
 msgid "failed to delete the organisation: {{error}}"
 msgstr "misslyckades att skapa organisationen: {{error}}"
 
-msgid "successfully created the organisation {{name}} ({{slug}})"
+msgid "created the organisation {{name}} ({{slug}})"
 msgstr "skapade organisationen {{name}} ({{slug}})"
 
 msgid "failed to create organisation: {{error}}"
 msgstr "misslyckades skapa organisationen: {{error}}"
 
-msgid "successfully updated the organisation {{name}} ({{slug}})"
+msgid "updated the organisation {{name}} ({{slug}})"
 msgstr "lyckades uppdatera organisationen {{name}} ({{slug}})"
 
 msgid "failed to update organisation: {{error}}"

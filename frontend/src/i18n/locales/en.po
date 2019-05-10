@@ -11,6 +11,39 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "information"
+msgstr "information"
+
+msgid "failed to update: {{error}}"
+msgstr "failed to update: {{error}}"
+
+msgid "now using default"
+msgstr "now using default"
+
+msgid "use default"
+msgstr "use default"
+
+msgid "visual identity"
+msgstr "visual identity"
+
+msgid "updated"
+msgstr "updated"
+
+msgid "custom login URL"
+msgstr "custom login URL"
+
+msgid "upload"
+msgstr "upload"
+
+msgid "logotype"
+msgstr "logotype"
+
+msgid "login_logotype"
+msgstr "login page - logotype"
+
+msgid "login_background"
+msgstr "login page - background"
+
 msgid "scope of period length and meters is too large for this resolution"
 msgstr "scope of period length and meters is too large for this resolution"
 
@@ -469,20 +502,20 @@ msgstr "failed to update meter definition: {{error}}"
 msgid "no parent organisation"
 msgstr "no parent organisation"
 
-msgid "successfully deleted the organisation {{name}}"
-msgstr "successfully deleted the organisation {{name}}"
+msgid "deleted the organisation {{name}}"
+msgstr "deleted the organisation {{name}}"
 
 msgid "failed to delete the organisation: {{error}}"
 msgstr "failed to delete the organisation: {{error}}"
 
-msgid "successfully created the organisation {{name}} ({{slug}})"
-msgstr "successfully created the organisation {{name}} ({{slug}})"
+msgid "created the organisation {{name}} ({{slug}})"
+msgstr "created the organisation {{name}} ({{slug}})"
 
 msgid "failed to create organisation: {{error}}"
 msgstr "failed to create organisation: {{error}}"
 
-msgid "successfully updated the organisation {{name}} ({{slug}})"
-msgstr "successfully updated the organisation {{name}} ({{slug}})"
+msgid "updated the organisation {{name}} ({{slug}})"
+msgstr "updated the organisation {{name}} ({{slug}})"
 
 msgid "failed to update organisation: {{error}}"
 msgstr "failed to update organisation: {{error}}"

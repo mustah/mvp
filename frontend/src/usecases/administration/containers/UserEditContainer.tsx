@@ -89,7 +89,7 @@ class UserEdit extends React.Component<Props, {}> {
 
         <Paper style={paperStyle}>
           <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-            <RowIndented>
+            <RowIndented className="UserEditContainer">
               <Column style={userEditStyle}>
                 <UserEditForm
                   organisations={organisations}

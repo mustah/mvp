@@ -27,6 +27,7 @@ import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
+import com.elvaco.mvp.core.spi.repository.OrganisationAssets;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
@@ -130,6 +131,9 @@ public abstract class IntegrationTest implements ContextDsl {
   protected Organisations organisations;
 
   @Autowired
+  protected OrganisationAssets organisationAssets;
+
+  @Autowired
   protected LogicalMeters logicalMeters;
 
   @Autowired
@@ -227,6 +231,10 @@ public abstract class IntegrationTest implements ContextDsl {
     return restClient;
   }
 
+  protected RestClient asNotLoggedIn() {
+    return restClient();
+  }
+
   protected RestClient asUser() {
     return restAsUser(context().user);
   }
@@ -302,6 +310,7 @@ public abstract class IntegrationTest implements ContextDsl {
     logicalMeterJpaRepository.deleteAll();
     dashboardJpaRepository.deleteAll();
     widgetJpaRepository.deleteAll();
+    organisationAssets.deleteAll();
     removeNonSystemMeterDefinitions();
     ehCacheManager.getCacheNames().stream()
       .map(name -> ehCacheManager.getCache(name))

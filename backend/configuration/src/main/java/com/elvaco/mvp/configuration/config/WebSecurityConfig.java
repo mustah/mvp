@@ -38,11 +38,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private final TokenService tokenService;
 
   @Override
-  public UserDetailsService userDetailsService() {
-    return userDetailsService;
-  }
-
-  @Override
   protected void configure(AuthenticationManagerBuilder auth) {
     auth
       .authenticationProvider(
@@ -60,6 +55,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.authorizeRequests()
       .antMatchers(HttpMethod.OPTIONS, API).permitAll()
       .antMatchers(API_V1 + "/geocodes/**").permitAll()
+      .antMatchers(HttpMethod.GET, API_V1 + "/organisations/*/assets/*").permitAll()
       .antMatchers(API_V1 + "/logout").permitAll();
 
     String policyDirectives = "default-src 'self';"
@@ -86,6 +82,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .httpBasic().authenticationEntryPoint(new RestAuthenticationEntryPoint())
       .and()
       .addFilterAfter(tokenAuthenticationFilter(), BasicAuthenticationFilter.class);
+  }
+
+  @Override
+  public UserDetailsService userDetailsService() {
+    return userDetailsService;
   }
 
   private TokenAuthenticationFilter tokenAuthenticationFilter() {

@@ -1,11 +1,15 @@
 package com.elvaco.mvp.configuration.config;
 
+import java.io.IOException;
+import java.util.Map;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.domainmodels.Asset;
+import com.elvaco.mvp.core.domainmodels.AssetType;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.AlarmDescriptions;
@@ -18,6 +22,7 @@ import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
+import com.elvaco.mvp.core.spi.repository.OrganisationAssets;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Properties;
@@ -38,6 +43,7 @@ import com.elvaco.mvp.database.repository.access.MeasurementRepository;
 import com.elvaco.mvp.database.repository.access.MeterAlarmLogsRepository;
 import com.elvaco.mvp.database.repository.access.MeterDefinitionRepository;
 import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
+import com.elvaco.mvp.database.repository.access.OrganisationAssetRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.PropertiesRepository;
@@ -60,6 +66,7 @@ import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.OrganisationAssetJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
@@ -78,17 +85,21 @@ import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableConfigurationProperties(MvpProperties.class)
+@Slf4j
 class DataProviderConfig {
 
+  private static final byte[] EMPTY_CONTENT = {};
   private final PasswordEncoder passwordEncoder;
   private final UserJpaRepository userJpaRepository;
   private final SettingJpaRepository settingJpaRepository;
@@ -99,6 +110,7 @@ class DataProviderConfig {
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
   private final DisplayQuantityJpaRepository displayQuantityJpaRepository;
   private final OrganisationJpaRepository organisationJpaRepository;
+  private final OrganisationAssetJpaRepository organisationAssetJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
   private final GatewayJpaRepository gatewayJpaRepository;
@@ -190,6 +202,39 @@ class DataProviderConfig {
       .forEach(organisations::save);
 
     return organisations;
+  }
+
+  @Bean
+  OrganisationAssets organisationAssets() {
+    return new OrganisationAssetRepository(
+      Map.of(
+        AssetType.LOGOTYPE, Asset.builder()
+          .assetType(AssetType.LOGOTYPE)
+          .contentType("image/svg+xml")
+          .content(getBytesFromClassPathResource(
+            AssetType.LOGOTYPE,
+            "assets/logotype.svg"
+          ))
+          .build(),
+        AssetType.LOGIN_BACKGROUND, Asset.builder()
+          .assetType(AssetType.LOGIN_BACKGROUND)
+          .contentType("image/jpeg")
+          .content(getBytesFromClassPathResource(
+            AssetType.LOGIN_BACKGROUND,
+            "assets/login_background.jpg"
+          ))
+          .build(),
+        AssetType.LOGIN_LOGOTYPE, Asset.builder()
+          .assetType(AssetType.LOGIN_LOGOTYPE)
+          .contentType("image/svg+xml")
+          .content(getBytesFromClassPathResource(
+            AssetType.LOGIN_LOGOTYPE,
+            "assets/login_logotype.svg"
+          ))
+          .build()
+      ),
+      organisationAssetJpaRepository
+    );
   }
 
   @Bean
@@ -291,5 +336,17 @@ class DataProviderConfig {
   @Bean
   Widgets widgets() {
     return new WidgetRepository(widgetJpaRepository);
+  }
+
+  private byte[] getBytesFromClassPathResource(AssetType lookingFor, String path) {
+    try {
+      return new ClassPathResource(path)
+        .getInputStream()
+        .readAllBytes();
+    } catch (IOException e) {
+      log.warn("Found no default {}, looking at: {}", lookingFor, path);
+      // this will make the front end render "empty" images, which is better than just dying
+      return EMPTY_CONTENT;
+    }
   }
 }

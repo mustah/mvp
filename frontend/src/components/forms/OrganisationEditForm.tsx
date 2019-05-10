@@ -1,6 +1,7 @@
 import {omit} from 'lodash';
 import * as React from 'react';
 import {Overwrite} from 'utility-types';
+import {absoluteUrlFromPath} from '../../helpers/urlFactory';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
   noOrganisation,
@@ -13,7 +14,7 @@ import {ButtonSave} from '../buttons/ButtonSave';
 import {SelectFieldInput} from '../inputs/InputSelectable';
 import {TextFieldInput} from '../inputs/TextFieldInput';
 import {Column} from '../layouts/column/Column';
-import './OrganisationEditForm.scss';
+import {Row} from '../layouts/row/Row';
 
 const organisationById = (organisationId: uuid, organisations: Organisation[]): Organisation =>
   organisationId === noOrganisationId
@@ -48,7 +49,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
   }
 
   render() {
-    const {parent, name, selectionId} = this.state;
+    const {parent, name, selectionId, slug} = this.state;
     const {organisations, selections} = this.props;
 
     const nameLabel = firstUpperTranslated('organisation name');
@@ -68,15 +69,14 @@ export class OrganisationEditForm extends React.Component<Props, State> {
         const currentUserOwnsSelectedSelection: UserSelection | undefined = selections
           .find((selection: UserSelection) => selectionId === selection.id);
 
-        const selectionOptions: IdNamed[] =
-          [
-            {id: -1, name: ''},
-            ...selections
-              .filter((selection: UserSelection) =>
-                currentUserOwnsSelectedSelection === undefined || currentUserOwnsSelectedSelection.id === selection.id
-              )
-              .map(selectionOption)
-          ];
+        const selectionOptions: IdNamed[] = [
+          {id: -1, name: ''},
+          ...selections
+            .filter((selection: UserSelection) =>
+              currentUserOwnsSelectedSelection === undefined || currentUserOwnsSelectedSelection.id === selection.id
+            )
+            .map(selectionOption)
+        ];
 
         return (
           <SelectFieldInput
@@ -92,32 +92,55 @@ export class OrganisationEditForm extends React.Component<Props, State> {
       })()
       : null;
 
+    const loginUrl = absoluteUrlFromPath(`/login/${slug}`);
+    const customUrl = slug && (
+      <>
+        <h3>{firstUpperTranslated('custom login URL')}</h3>
+        <a href={loginUrl} target="_blank">{loginUrl}</a>
+      </>
+    );
+
     return (
-      <form onSubmit={this.wrappedSubmit}>
-        <Column className="EditOrganisationContainer">
-          <TextFieldInput
-            autoComplete="off"
-            floatingLabelText={nameLabel}
-            hintText={nameLabel}
-            id="name"
-            value={name}
-            onChange={this.onChangeName}
-          />
-          <SelectFieldInput
-            options={parentOrganisationOptions}
-            floatingLabelText={parentLabel}
-            hintText={parentLabel}
-            id="parent"
-            multiple={false}
-            onChange={this.changeParent}
-            value={parentId}
-          />
+      <Column className="flex-fill-horizontally">
+        <form onSubmit={this.wrappedSubmit}>
+          <Row className="configuration-section">
+            <Column className="one-third">
+              <h2>{firstUpperTranslated('information')}</h2>
+            </Column>
+            <Column className="two-thirds">
+              <TextFieldInput
+                autoComplete="off"
+                floatingLabelText={nameLabel}
+                hintText={nameLabel}
+                id="name"
+                value={name}
+                onChange={this.onChangeName}
+              />
+              {customUrl}
+            </Column>
+          </Row>
+          <Row className="configuration-section">
+            <Column className="one-third">
+              <h2>{firstUpperTranslated('parent organisation')}</h2>
+            </Column>
+            <Column className="two-thirds">
+              <SelectFieldInput
+                options={parentOrganisationOptions}
+                floatingLabelText={parentLabel}
+                hintText={parentLabel}
+                id="parent"
+                multiple={false}
+                onChange={this.changeParent}
+                value={parentId}
+              />
 
-          {selectionChooser}
+              {selectionChooser}
 
-          <ButtonSave className="SaveButton" type="submit"/>
-        </Column>
-      </form>
+              <ButtonSave className="SaveButton" type="submit"/>
+            </Column>
+          </Row>
+        </form>
+      </Column>
     );
   }
 

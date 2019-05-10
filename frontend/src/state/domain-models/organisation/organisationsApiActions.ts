@@ -6,7 +6,8 @@ import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {
   CallbackWithData,
-  CallbackWithDataAndUrlParameters, emptyActionOf,
+  CallbackWithDataAndUrlParameters,
+  emptyActionOf,
   ErrorResponse,
   Sectors,
   uuid
@@ -14,12 +15,15 @@ import {
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {
   clearError,
-  deleteRequest, domainModelsClear,
+  deleteRequest,
+  deleteRequestToUrl,
+  domainModelsClear,
   fetchEntityIfNeeded,
   fetchIfNeeded,
   fetchIfNeededForSector,
   postRequest,
   postRequestToUrl,
+  putFile,
   putRequest
 } from '../domainModelsActions';
 import {Organisation, OrganisationWithoutId} from './organisationModels';
@@ -47,7 +51,7 @@ export const fetchOrganisation = fetchEntityIfNeeded(EndPoints.organisations, 'o
 export const deleteOrganisation = deleteRequest<Organisation>(EndPoints.organisations, {
     afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
       const translatedMessage = firstUpperTranslated(
-        'successfully deleted the organisation {{name}}',
+        'deleted the organisation {{name}}',
         {...organisation},
       );
       dispatch(showSuccessMessage(translatedMessage));
@@ -66,7 +70,7 @@ const createOrganisationCallbacks = {
   afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(
       firstUpperTranslated(
-        'successfully created the organisation {{name}} ({{slug}})',
+        'created the organisation {{name}} ({{slug}})',
         {...organisation},
       ),
     ));
@@ -97,7 +101,7 @@ export const updateOrganisation: CallbackWithData =
       afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
         dispatch(showSuccessMessage(
           firstUpperTranslated(
-            'successfully updated the organisation {{name}} ({{slug}})',
+            'updated the organisation {{name}} ({{slug}})',
             {...organisation},
           ),
         ));
@@ -110,3 +114,46 @@ export const updateOrganisation: CallbackWithData =
       },
     }
   );
+
+export enum OrganisationAssetType {
+  logotype = 'logotype',
+  login_logotype = 'login_logotype',
+  login_background = 'login_background',
+}
+
+export interface AssetTypeForOrganisation {
+  organisationId: uuid;
+  assetType: OrganisationAssetType;
+}
+
+export const uploadAsset = putFile<AssetTypeForOrganisation>(
+  EndPoints.organisations,
+  {
+    afterSuccess: (_, dispatch: Dispatch<RootState>) => {
+      dispatch(showSuccessMessage(firstUpperTranslated('updated')));
+    },
+    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+      dispatch(showFailMessage(firstUpperTranslated(
+        'failed to update: {{error}}',
+        {error: firstUpperTranslated(message.toLowerCase())},
+      )));
+    },
+  },
+  ({organisationId, assetType}) => `${EndPoints.organisations}/${organisationId}/assets/${assetType}`
+);
+
+export const resetAsset = deleteRequestToUrl<undefined, AssetTypeForOrganisation>(
+  EndPoints.organisations,
+  {
+    afterSuccess: (_, dispatch: Dispatch<RootState>) => {
+      dispatch(showSuccessMessage(firstUpperTranslated('now using default')));
+    },
+    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+      dispatch(showFailMessage(firstUpperTranslated(
+        'failed to update: {{error}}',
+        {error: firstUpperTranslated(message.toLowerCase())},
+      )));
+    },
+  },
+  ({organisationId, assetType}) => `${EndPoints.organisations}/${organisationId}/assets/${assetType}`
+);

@@ -7,7 +7,9 @@ import {
   addSubOrganisation,
   clearOrganisationErrors,
   fetchOrganisations,
-  updateOrganisation
+  resetAsset,
+  updateOrganisation,
+  uploadAsset,
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {clearUserSelectionErrors, fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
@@ -30,6 +32,8 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchUserSelections,
   clearOrganisationErrors,
   clearUserSelectionErrors,
+  uploadAsset,
+  resetAsset,
 }, dispatch);
 
 export const OrganisationFormContainer =

@@ -7,13 +7,14 @@ import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {
+  ActionKey,
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
   Identifiable,
   Omit,
   payloadActionOf,
-  uuid, ActionKey,
+  uuid,
 } from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
@@ -44,8 +45,8 @@ export const clearError = (actionKey: ActionKey) =>
 export const domainModelsClear = (actionKey: ActionKey): string =>
   `DOMAIN_MODELS_CLEAR_${actionKey}`;
 
-export interface RequestCallbacks<T> {
-  afterSuccess?: (domainModel: T, dispatch: Dispatch<RootState>) => void;
+export interface RequestCallbacks<ResponseData> {
+  afterSuccess?: (domainModel: ResponseData, dispatch: Dispatch<RootState>) => void;
   afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;
 }
 
@@ -57,14 +58,15 @@ interface RequestHandler<T> {
   failure: (payload: ErrorResponse) => PayloadAction<string, ErrorResponse>;
 }
 
-interface AsyncRequest<REQUEST_MODEL, DATA> extends RequestHandler<DATA>, RequestCallbacks<DATA> {
-  requestFunc: (requestData?: REQUEST_MODEL) => any;
-  formatData?: DataFormatter<DATA>;
-  requestData?: REQUEST_MODEL;
+interface AsyncRequest<REQUEST_DATA, T>
+  extends RequestHandler<T>, RequestCallbacks<T> {
+  requestFunc: (requestData?: REQUEST_DATA) => any;
+  formatData?: DataFormatter<T>;
+  requestData?: REQUEST_DATA;
   dispatch: Dispatch<RootState>;
 }
 
-const asyncRequest = async <REQUEST_MODEL, DATA>(
+const asyncRequest = async <REQUEST_DATA, T>(
   {
     request,
     success,
@@ -75,7 +77,7 @@ const asyncRequest = async <REQUEST_MODEL, DATA>(
     formatData = (id) => id,
     requestData,
     dispatch,
-  }: AsyncRequest<REQUEST_MODEL, DATA>) => {
+  }: AsyncRequest<REQUEST_DATA, T>) => {
   try {
     dispatch(request());
     const {data: domainModelData} = await requestFunc(requestData);
@@ -236,30 +238,54 @@ export const postRequestToUrl = <T, P>(
         dispatch,
       });
 
-export const putRequestToUrl = <T, D, P>(
+export const putRequestToUrl = <T, REQUEST_DATA, URL_PARAMETERS>(
   endPoint: EndPoints,
   requestCallbacks: RequestCallbacks<T>,
-  url: (parameters: P) => string
+  url: (parameters: URL_PARAMETERS) => string
 ) =>
-  (requestData: D, urlParameters: P) =>
+  (requestData: REQUEST_DATA, urlParameters: URL_PARAMETERS) =>
     (dispatch) =>
-      asyncRequest<D, T>({
+      asyncRequest<REQUEST_DATA, T>({
         ...putRequestOf<T>(endPoint),
-        requestFunc: (requestData: D) => restClient.put(url(urlParameters), requestData),
+        requestFunc: (requestData: REQUEST_DATA) => restClient.put(url(urlParameters), requestData),
         requestData,
         ...requestCallbacks,
         dispatch,
       });
 
-export const putRequest = <T, D>(
+export const putRequest = <T, REQUEST_DATA>(
   endPoint: EndPoints,
   requestCallbacks: RequestCallbacks<T>
 ) =>
-  (requestData: D) =>
+  (requestData: REQUEST_DATA) =>
     (dispatch) =>
-      asyncRequest<D, T>({
+      asyncRequest<REQUEST_DATA, T>({
         ...putRequestOf<T>(endPoint),
-        requestFunc: (requestData: D) => restClient.put(endPoint, requestData),
+        requestFunc: (requestData: REQUEST_DATA) => restClient.put(endPoint, requestData),
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
+
+export const putFile = <URL_PARAMETERS>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<undefined>,
+  url: (parameters: URL_PARAMETERS) => string
+) =>
+  (requestData: FormData, urlParameters: URL_PARAMETERS) =>
+    (dispatch) =>
+      asyncRequest<FormData, undefined>({
+        ...putRequestOf<undefined>(endPoint),
+        requestFunc: (requestData: FormData) =>
+          restClient.put(
+            url(urlParameters),
+            requestData,
+            {
+              headers: {
+                'content-type': 'multipart/form-data',
+              },
+            }
+          ),
         requestData,
         ...requestCallbacks,
         dispatch,
@@ -272,6 +298,22 @@ export const deleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestC
         ...deleteRequestOf<T>(endPoint),
         requestFunc: (requestData: uuid) =>
           restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`)),
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
+
+export const deleteRequestToUrl = <T, REQUEST_DATA>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<T>,
+  url: (parameters: REQUEST_DATA) => string
+) =>
+  (requestData: REQUEST_DATA) =>
+    (dispatch) =>
+      asyncRequest<REQUEST_DATA, T>({
+        ...deleteRequestOf<T>(endPoint),
+        requestFunc: (requestData: REQUEST_DATA) =>
+          restClient.delete(url(requestData)),
         requestData,
         ...requestCallbacks,
         dispatch,

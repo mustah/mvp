@@ -171,19 +171,20 @@ public interface ContextDsl {
   }
 
   default OrganisationBuilder subOrganisation(Organisation parent, User owner) {
-    UUID orgId = randomUUID();
-    OrganisationBuilder organisationBuilder = context().organisation().id(orgId);
+    UUID subOrganisationId = randomUUID();
 
-    UserSelection userSelection = UserSelection.builder()
-      .id(randomUUID())
-      .ownerUserId(owner.id)
-      .organisationId(parent.id)
-      .selectionParameters(toJsonNode("{}"))
-      .name("user-selection for sub-organisation " + orgId.toString())
-      .build();
-
-    return organisationBuilder.parent(parent)
-      .selection(userSelection);
+    return organisation()
+      .id(subOrganisationId)
+      .parent(parent)
+      .selection(
+        UserSelection.builder()
+          .id(randomUUID())
+          .ownerUserId(owner.id)
+          .organisationId(parent.id)
+          .selectionParameters(toJsonNode("{}"))
+          .name("user-selection for sub-organisation " + subOrganisationId.toString())
+          .build()
+      );
   }
 
   default MeasurementSeriesBuilder measurementSeries() {

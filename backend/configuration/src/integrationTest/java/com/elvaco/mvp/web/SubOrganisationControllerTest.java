@@ -37,7 +37,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void getSavedSubOrganisation() {
+  public void subOrganisationsUseSameEndpointAsOrganisations() {
     UserSelectionDto userSelection = createUserSelection(context().superAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(

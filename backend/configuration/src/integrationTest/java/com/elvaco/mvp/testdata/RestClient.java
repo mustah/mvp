@@ -14,12 +14,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
@@ -46,12 +49,44 @@ public final class RestClient {
     return API_V1 + url;
   }
 
+  public <T> ResponseEntity<T> get(Url.UrlBuilder builder, Class<T> clazz) {
+    var urlTemplate = builder.build();
+    return get(urlTemplate.template(), clazz, urlTemplate.variables());
+  }
+
   public <T> ResponseEntity<T> get(UrlTemplate urlTemplate, Class<T> clazz) {
     return get(urlTemplate.template(), clazz, urlTemplate.variables());
   }
 
   public <T> ResponseEntity<T> get(String url, Class<T> clazz, Object... urlVariables) {
     return template.getForEntity(apiUrlOf(url), clazz, urlVariables);
+  }
+
+  public <T> ResponseEntity<T> putFile(
+    Url.UrlBuilder url,
+    String elementName,
+    String localFilename,
+    Class<T> responseType
+  ) {
+    LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<String, Object>();
+    parameters.add(elementName, new ClassPathResource(localFilename));
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+    HttpEntity<LinkedMultiValueMap<String, Object>> entity =
+      new HttpEntity<>(
+        parameters,
+        headers
+      );
+
+    return template.exchange(
+      apiUrlOf(url.build().template()),
+      HttpMethod.PUT,
+      entity,
+      responseType,
+      ""
+    );
   }
 
   public <T> ResponseEntity<T> post(UrlTemplate url, Object request, Class<T> responseType) {

@@ -223,3 +223,9 @@ export const makeUrl =
     parameters && parameters.length
       ? `${endpoint}?${parameters}`
       : endpoint;
+
+const aElement = document.createElement('a');
+export const absoluteUrlFromPath = (path: string) => {
+  aElement.href = path;
+  return aElement.href;
+};
