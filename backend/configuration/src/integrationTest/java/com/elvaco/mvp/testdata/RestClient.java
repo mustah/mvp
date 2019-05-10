@@ -54,6 +54,15 @@ public final class RestClient {
     return get(urlTemplate.template(), clazz, urlTemplate.variables());
   }
 
+  public <T> ResponseEntity<T> get(Url.UrlBuilder url, HttpHeaders headers, Class<T> clazz) {
+    return template.exchange(
+      apiUrlOf(url.build().template()),
+      HttpMethod.GET,
+      new HttpEntity<>("parameters", headers),
+      clazz
+    );
+  }
+
   public <T> ResponseEntity<T> get(UrlTemplate urlTemplate, Class<T> clazz) {
     return get(urlTemplate.template(), clazz, urlTemplate.variables());
   }

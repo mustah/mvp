@@ -1,6 +1,8 @@
 package com.elvaco.mvp.web.api;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +24,7 @@ import com.elvaco.mvp.web.exception.UserSelectionNotFound;
 import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -148,14 +151,26 @@ public class OrganisationController {
   public ResponseEntity<byte[]> logotype(
     @PathVariable String slug,
     @PathVariable Optional<AssetType> assetTypeOptional
-  ) {
+  ) throws NoSuchAlgorithmException {
     var assetType = assetTypeOptional.orElseThrow(() -> InvalidFormat.assetType());
 
     var asset = organisationUseCases.findAssetByOrganisationSlugOrFallback(slug, assetType);
 
     return ResponseEntity
       .ok()
+      .cacheControl(CacheControl.noCache())
+      .eTag(etag(asset.content))
       .contentType(MediaType.valueOf(asset.contentType))
       .body(asset.content);
+  }
+
+  private String etag(byte[] bytes) throws NoSuchAlgorithmException {
+    var md5 = MessageDigest.getInstance("MD5").digest(bytes);
+    StringBuilder etag = new StringBuilder(md5.length * 2);
+    for (int i = 0; i < md5.length; i++) {
+      etag.append(Character.forDigit((md5[i] >> 4) & 0xF, 16));
+      etag.append(Character.forDigit((md5[i] & 0xF), 16));
+    }
+    return etag.toString();
   }
 }

@@ -13,6 +13,7 @@ import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +44,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var organisation = given(organisation());
     var user = given(user().organisation(organisation));
 
-    cannotUpload(user, organisation, HttpStatus.NOT_FOUND);
+    assertCannotUpload(user, organisation, HttpStatus.NOT_FOUND);
   }
 
   @Test
@@ -51,7 +52,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var organisation = given(organisation());
     var user = given(user());
 
-    cannotUpload(user, organisation, HttpStatus.NOT_FOUND);
+    assertCannotUpload(user, organisation, HttpStatus.NOT_FOUND);
   }
 
   @Test
@@ -133,14 +134,14 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var organisation = given(organisation());
     var admin = given(user().organisation(organisation).asAdmin());
 
-    cannotUpload(admin, organisation, HttpStatus.FORBIDDEN);
+    assertCannotUpload(admin, organisation, HttpStatus.FORBIDDEN);
   }
 
   @Test
   public void admin_OwnOrganisation_Delete() {
     var organisation = given(organisation());
     var admin = given(user().organisation(organisation).asAdmin());
-    cannotDelete(admin, organisation, HttpStatus.FORBIDDEN);
+    assertCannotDelete(admin, organisation, HttpStatus.FORBIDDEN);
   }
 
   @Test
@@ -148,14 +149,14 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var parent = given(organisation().name("parent"));
     var admin = given(user().organisation(parent).asAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
-    cannotDelete(admin, subOrganisation, HttpStatus.FORBIDDEN);
+    assertCannotDelete(admin, subOrganisation, HttpStatus.FORBIDDEN);
   }
 
   @Test
   public void admin_OtherOrganisation_Delete() {
     var organisation = given(organisation());
     var admin = given(user().asAdmin());
-    cannotDelete(admin, organisation, HttpStatus.NOT_FOUND);
+    assertCannotDelete(admin, organisation, HttpStatus.NOT_FOUND);
   }
 
   @Test
@@ -168,14 +169,14 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var otherSubOrganisation = given(
       subOrganisation(otherOrganisationsParent, otherOrganisationsAdmin).name("sub")
     );
-    cannotDelete(admin, otherSubOrganisation, HttpStatus.NOT_FOUND);
+    assertCannotDelete(admin, otherSubOrganisation, HttpStatus.NOT_FOUND);
   }
 
   @Test
   public void admin_OtherOrganisation_Put() {
     var organisation = given(organisation());
     var admin = given(user().asAdmin());
-    cannotUpload(admin, organisation, HttpStatus.NOT_FOUND);
+    assertCannotUpload(admin, organisation, HttpStatus.NOT_FOUND);
   }
 
   @Test
@@ -184,7 +185,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var admin = given(user().organisation(parent).asAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
 
-    cannotUpload(admin, subOrganisation, HttpStatus.FORBIDDEN);
+    assertCannotUpload(admin, subOrganisation, HttpStatus.FORBIDDEN);
   }
 
   @Test
@@ -223,10 +224,65 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   public void superAdmin_RemoveAsset_AnyOrganisation() {
     var organisation = given(organisation());
     var superAdmin = given(user().asSuperAdmin());
-    canDelete(superAdmin, organisation);
+    assertCanDelete(superAdmin, organisation);
   }
 
-  private void cannotUpload(User user, Organisation organisation, HttpStatus expectedStatus) {
+  @Test
+  public void etag_Present() {
+    var response = asNotLoggedIn()
+      .get(assetGetUrl("some-organisation"), byte[].class);
+
+    assertThat(response.getHeaders()).containsKey("ETag");
+  }
+
+  @Test
+  public void etag_NoChanges() {
+    Url.UrlBuilder url = assetGetUrl("some-organisation");
+    var response = asNotLoggedIn()
+      .get(url, byte[].class);
+
+    var etag = response.getHeaders().getETag();
+
+    var headers = new HttpHeaders();
+    headers.add("If-None-Match", etag);
+
+    var cachedResponse = asNotLoggedIn()
+      .get(url, headers, byte[].class);
+
+    assertThat(cachedResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_MODIFIED);
+    assertThat(cachedResponse.getBody()).isNull();
+  }
+
+  @Test
+  public void etag_Changed() {
+    var organisation = given(organisation().slug("some-organisation"));
+    var response = asNotLoggedIn()
+      .get(assetGetUrl(organisation.slug), byte[].class);
+
+    var etag = response.getHeaders().getETag();
+
+    var modified = asSuperAdmin()
+      .putFile(
+        assetPutUrl(organisation),
+        "asset",
+        "logo_to_upload.jpg",
+        Object.class
+      );
+
+    assertThat(modified.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    var headers = new HttpHeaders();
+    headers.add("If-None-Match", etag);
+
+    var responseAfterInvalidatedCache = asNotLoggedIn()
+      .get(assetGetUrl(organisation.slug), headers, byte[].class);
+
+    assertThat(responseAfterInvalidatedCache.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(responseAfterInvalidatedCache.getHeaders().getETag()).isNotEqualTo(etag);
+    assertThat(responseAfterInvalidatedCache.getBody()).isNotNull();
+  }
+
+  private void assertCannotUpload(User user, Organisation organisation, HttpStatus expectedStatus) {
     var request = as(user)
       .putFile(
         assetPutUrl(organisation),
@@ -238,7 +294,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     assertThat(request.getStatusCode()).isEqualTo(expectedStatus);
   }
 
-  private void canDelete(User user, Organisation organisation) {
+  private void assertCanDelete(User user, Organisation organisation) {
     var created = asSuperAdmin()
       .putFile(
         assetPutUrl(organisation),
@@ -267,7 +323,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     assertThat(lookingAtFallback.getBody()).isEqualTo(assetFixtures.get(assetUnderTest()));
   }
 
-  private void cannotDelete(
+  private void assertCannotDelete(
     User user,
     Organisation organisation,
     HttpStatus expectedStatus

@@ -22,7 +22,8 @@ interface Props {
 const SingleAssetFrom =
   ({slug, resetAsset, id: organisationId, uploadAsset, assetType}: Props & {assetType: OrganisationAssetType}) => {
     const apiUrl = config().axios.baseURL;
-    const assetUrl = `${apiUrl}/organisations/${slug}/assets/${assetType}`;
+    const cacheBust = Math.random().toString(36).substr(2);
+    const assetUrl = `${apiUrl}/organisations/${slug}/assets/${assetType}?${cacheBust}`;
 
     const onSelectFile = (event) => selectFile(event.target.files[0]);
 
