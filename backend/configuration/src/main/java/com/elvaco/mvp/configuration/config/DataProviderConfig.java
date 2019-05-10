@@ -99,6 +99,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 class DataProviderConfig {
 
+  private static final byte[] EMPTY_CONTENT = {};
   private final PasswordEncoder passwordEncoder;
   private final UserJpaRepository userJpaRepository;
   private final SettingJpaRepository settingJpaRepository;
@@ -338,15 +339,14 @@ class DataProviderConfig {
   }
 
   private byte[] getBytesFromClassPathResource(AssetType lookingFor, String path) {
-    byte[] logotypeBytes = new byte[] {};
     try {
-      logotypeBytes = new ClassPathResource(path)
+      return new ClassPathResource(path)
         .getInputStream()
         .readAllBytes();
     } catch (IOException e) {
       log.warn("Found no default {}, looking at: {}", lookingFor, path);
+      // this will make the front end render "empty" images, which is better than just dying
+      return EMPTY_CONTENT;
     }
-    // this will make the front end render "empty" images, which is better than just dying
-    return logotypeBytes;
   }
 }

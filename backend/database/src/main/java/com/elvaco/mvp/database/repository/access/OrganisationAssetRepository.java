@@ -21,7 +21,7 @@ public class OrganisationAssetRepository implements OrganisationAssets {
   private final OrganisationAssetJpaRepository organisationAssetJpaRepository;
 
   @Override
-  public Asset defaultAsset(AssetType assetType) {
+  public Asset getDefault(AssetType assetType) {
     return defaultAssets.get(assetType);
   }
 
@@ -41,7 +41,7 @@ public class OrganisationAssetRepository implements OrganisationAssets {
   }
 
   @Override
-  public void createAsset(
+  public void create(
     UUID organisationId,
     Asset asset
   ) {
@@ -52,7 +52,7 @@ public class OrganisationAssetRepository implements OrganisationAssets {
   }
 
   @Override
-  public void deleteAsset(AssetType assetType, UUID organisationId) {
+  public void delete(AssetType assetType, UUID organisationId) {
     organisationAssetJpaRepository.deleteById(
       OrganisationAssetPk.builder()
         .assetType(assetType)

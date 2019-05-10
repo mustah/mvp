@@ -8,13 +8,13 @@ import com.elvaco.mvp.core.domainmodels.AssetType;
 
 public interface OrganisationAssets {
 
-  Asset defaultAsset(AssetType assetType);
+  Asset getDefault(AssetType assetType);
 
   Optional<Asset> findByOrganisationIdAndAssetType(UUID organisationId, AssetType assetType);
 
-  void createAsset(UUID organisationId, Asset asset);
+  void create(UUID organisationId, Asset asset);
 
-  void deleteAsset(AssetType assetType, UUID organisationId);
+  void delete(AssetType assetType, UUID organisationId);
 
   void deleteAll();
 }

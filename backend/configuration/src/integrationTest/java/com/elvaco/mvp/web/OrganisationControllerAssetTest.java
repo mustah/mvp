@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.elvaco.mvp.core.domainmodels.AssetType;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -39,7 +40,23 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   protected abstract AssetType assetUnderTest();
 
   @Test
-  public void user_CannotUpload() {
+  public void user_CannotUpload_OwnOrganisation() {
+    var organisation = given(organisation());
+    var user = given(user().organisation(organisation));
+    var putResponse = as(user)
+      .putFile(
+        assetPutUrl(organisation),
+        "asset",
+        "logo_to_upload.jpg",
+        UnauthorizedDto.class
+      );
+
+    assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(putResponse.getBody().message).contains("Unable to find organisation with ID");
+  }
+
+  @Test
+  public void user_CannotUpload_AnyOrganisation() {
     var organisation = given(organisation());
     var user = given(user());
     var putResponse = as(user)
@@ -72,6 +89,26 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var userFromOtherOrganisation = given(user().organisation(anotherOrganisation));
 
     var response = as(userFromOtherOrganisation)
+      .get(assetGetUrl(secretOrganisation.slug), byte[].class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test
+  public void loggedOut_CanViewAnyAsset() {
+    var secretOrganisation = given(organisation());
+
+    var createOneOrganisationsAsset = asSuperAdmin()
+      .putFile(
+        assetPutUrl(secretOrganisation),
+        "asset",
+        "logo_to_upload.jpg",
+        Object.class
+      );
+
+    assertThat(createOneOrganisationsAsset.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    var response = asNotLoggedIn()
       .get(assetGetUrl(secretOrganisation.slug), byte[].class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -127,7 +164,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   }
 
   @Test
-  public void admin_OwnOrganisation() {
+  public void admin_OwnOrganisation_Put() {
     var organisation = given(organisation());
     var admin = given(user().organisation(organisation).asAdmin());
 
@@ -143,7 +180,59 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   }
 
   @Test
-  public void admin_SubOrganisation() {
+  public void admin_OwnOrganisation_Delete() {
+    var organisation = given(organisation());
+    var admin = given(user().organisation(organisation).asAdmin());
+    canDelete(admin, organisation);
+  }
+
+  @Test
+  public void admin_OwnSubOrganisation_Delete() {
+    var parent = given(organisation().name("parent"));
+    var admin = given(user().organisation(parent).asAdmin());
+    var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
+    canDelete(admin, subOrganisation);
+  }
+
+  @Test
+  public void admin_OtherOrganisation_Delete() {
+    var organisation = given(organisation());
+    var admin = given(user().asAdmin());
+    cannotDelete(admin, organisation);
+  }
+
+  @Test
+  public void admin_OtherSubOrganisation_Delete() {
+    var adminsOrganisation = given(organisation());
+    var admin = given(user().organisation(adminsOrganisation).asAdmin());
+
+    var otherOrganisationsParent = given(organisation().name("parent"));
+    var otherOrganisationsAdmin = given(user().organisation(otherOrganisationsParent).asAdmin());
+    var otherSubOrganisation = given(
+      subOrganisation(otherOrganisationsParent, otherOrganisationsAdmin).name("sub")
+    );
+    cannotDelete(admin, otherSubOrganisation);
+  }
+
+  @Test
+  public void admin_OtherOrganisation_Put() {
+    var organisation = given(organisation());
+    var admin = given(user().asAdmin());
+
+    var request = as(admin)
+      .putFile(
+        assetPutUrl(organisation),
+        "asset",
+        "logo_to_upload.jpg",
+        ErrorMessageDto.class
+      );
+
+    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(request.getBody().message).contains("Unable to find organisation with ID");
+  }
+
+  @Test
+  public void admin_OwnSubOrganisation_Put() {
     var parent = given(organisation().name("parent"));
     var admin = given(user().organisation(parent).asAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
@@ -175,9 +264,13 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   }
 
   @Test
-  public void superAdmin_RemoveAsset() {
+  public void superAdmin_RemoveAsset_AnyOrganisation() {
     var organisation = given(organisation());
+    var superAdmin = given(user().asSuperAdmin());
+    canDelete(superAdmin, organisation);
+  }
 
+  private void canDelete(User user, Organisation organisation) {
     var created = asSuperAdmin()
       .putFile(
         assetPutUrl(organisation),
@@ -194,7 +287,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     assertThat(lookingAtNew.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(lookingAtNew.getBody()).isNotEqualTo(assetFixtures.get(assetUnderTest()));
 
-    var deleted = asSuperAdmin()
+    var deleted = as(user)
       .delete(assetDeleteUrl(organisation).build(), Object.class);
 
     assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -204,6 +297,37 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
     assertThat(lookingAtFallback.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(lookingAtFallback.getBody()).isEqualTo(assetFixtures.get(assetUnderTest()));
+  }
+
+  private void cannotDelete(User user, Organisation organisation) {
+    var created = asSuperAdmin()
+      .putFile(
+        assetPutUrl(organisation),
+        "asset",
+        "logo_to_upload.jpg",
+        Object.class
+      );
+
+    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    var lookingAtNew = asUser()
+      .get(assetGetUrl(organisation.slug), byte[].class);
+
+    var newAsset = lookingAtNew.getBody();
+
+    assertThat(lookingAtNew.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(newAsset).isNotEqualTo(assetFixtures.get(assetUnderTest()));
+
+    var deleted = as(user)
+      .delete(assetDeleteUrl(organisation).build(), Object.class);
+
+    assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+    var lookingAtFallback = asUser()
+      .get(assetGetUrl(organisation.slug), byte[].class);
+
+    assertThat(lookingAtFallback.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(lookingAtFallback.getBody()).isEqualTo(newAsset);
   }
 
   private Url.UrlBuilder assetDeleteUrl(Organisation organisation) {

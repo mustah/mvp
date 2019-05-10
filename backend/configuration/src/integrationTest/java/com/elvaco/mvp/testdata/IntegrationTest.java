@@ -231,6 +231,10 @@ public abstract class IntegrationTest implements ContextDsl {
     return restClient;
   }
 
+  protected RestClient asNotLoggedIn() {
+    return restClient();
+  }
+
   protected RestClient asUser() {
     return restAsUser(context().user);
   }

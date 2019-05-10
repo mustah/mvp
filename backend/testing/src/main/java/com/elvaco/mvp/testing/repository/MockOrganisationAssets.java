@@ -11,7 +11,7 @@ import com.elvaco.mvp.testing.exception.NotImplementedYet;
 public class MockOrganisationAssets implements OrganisationAssets {
 
   @Override
-  public Asset defaultAsset(AssetType assetType) {
+  public Asset getDefault(AssetType assetType) {
     throw new NotImplementedYet();
   }
 
@@ -23,12 +23,12 @@ public class MockOrganisationAssets implements OrganisationAssets {
   }
 
   @Override
-  public void createAsset(UUID organisationId, Asset asset) {
+  public void create(UUID organisationId, Asset asset) {
     throw new NotImplementedYet();
   }
 
   @Override
-  public void deleteAsset(AssetType assetType, UUID organisationId) {
+  public void delete(AssetType assetType, UUID organisationId) {
     throw new NotImplementedYet();
   }
 

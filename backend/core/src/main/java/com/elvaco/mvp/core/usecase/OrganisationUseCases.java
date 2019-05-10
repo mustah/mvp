@@ -105,12 +105,12 @@ public class OrganisationUseCases {
     if (!ALLOWED_CONTENT_TYPES_FOR_IMAGES.contains(asset.contentType)) {
       throw InvalidFormat.image(ALLOWED_CONTENT_TYPES_FOR_IMAGES, asset.contentType);
     }
-    organisationAssets.createAsset(organisation.id, asset);
+    organisationAssets.create(organisation.id, asset);
   }
 
   public void deleteAsset(Organisation organisation, AssetType assetType) {
     ensureAllowedToModifyAsset(organisation);
-    organisationAssets.deleteAsset(assetType, organisation.id);
+    organisationAssets.delete(assetType, organisation.id);
   }
 
   public Asset findAssetByOrganisationSlugOrFallback(
@@ -123,15 +123,12 @@ public class OrganisationUseCases {
         organisation.id,
         assetType
       ))
-      .orElse(organisationAssets.defaultAsset(assetType));
+      .orElse(organisationAssets.getDefault(assetType));
   }
 
   private void ensureAllowedToModifyAsset(Organisation organisation) {
-    if (currentUser.isSuperAdmin()) {
-      return;
-    }
-
-    if (currentUser.isAdmin() && userInOrganisationOrParent(currentUser, organisation)) {
+    if (currentUser.isSuperAdmin()
+      || (currentUser.isAdmin() && userInOrganisationOrParent(currentUser, organisation))) {
       return;
     }
 
