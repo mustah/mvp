@@ -15,6 +15,8 @@ import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {AssetTypeForOrganisation} from '../../../state/domain-models/organisation/organisationsApiActions';
+import {User} from '../../../state/domain-models/user/userModels';
+import {isSuperAdmin} from '../../../state/domain-models/user/userSelectors';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {
   CallbackWithData,
@@ -33,6 +35,7 @@ export interface StateToProps {
   organisationsError: Maybe<ErrorResponse>;
   userSelectionsError: Maybe<ErrorResponse>;
   selections: ObjectsById<UserSelection>;
+  user: User;
 }
 
 export interface DispatchToProps {
@@ -67,6 +70,7 @@ export const OrganisationForm = ({
   updateOrganisation,
   uploadAsset,
   resetAsset,
+  user,
 }: Props) => {
   React.useEffect(() => {
     fetchUserSelections();
@@ -78,7 +82,7 @@ export const OrganisationForm = ({
 
   // TODO what happens if the name/slug of an organisation changes from underneath? :S can we make "edit organisation
   // name" super admin-only? or maybe dev-only?
-  const organisationAssetForm = organisation
+  const organisationAssetForm = isSuperAdmin(user) && organisation
     ? (
       <OrganisationAssetForms
         id={organisation.id}

@@ -21,7 +21,6 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.OrganisationPermissions.userInOrganisationOrParent;
 import static com.elvaco.mvp.core.security.Permission.CREATE;
 import static com.elvaco.mvp.core.security.Permission.DELETE;
 import static com.elvaco.mvp.core.security.Permission.READ;
@@ -127,8 +126,7 @@ public class OrganisationUseCases {
   }
 
   private void ensureAllowedToModifyAsset(Organisation organisation) {
-    if (currentUser.isSuperAdmin()
-      || (currentUser.isAdmin() && userInOrganisationOrParent(currentUser, organisation))) {
+    if (currentUser.isSuperAdmin()) {
       return;
     }
 
