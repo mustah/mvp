@@ -1,21 +1,21 @@
+// static colors
 $black: #000000;
 $white: #ffffff;
-
+$table-row-odd-bg: #fbfbfb;
 $body-bg-color: #f9f9f9;
 $calendar-today-color: #ff4081;
 $notification-color: #e10050;
 $border-color: #cccccc;
 $divider-color: #eaeaea;
-$table-row-odd-bg: #fbfbfb;
-
-// widget colors
 $count-color: #81d4fa;
 $map-color: #3ebcee;
+$new-meter-color: #3ebcee;
 $ok-color: #41c300;
-$warning-color: #ff9800;
 $error-color: #e84d6f;
+$warning-color: #ff9800;
+$unknown-color: #7b7b7b;
 
-// interaction
+// primary dynamic colors for interactions and ui-elements
 $primary-bg-hover: hsl(203, 100%, 96%);
 $primary-bg-active: hsl(203, 100%, 75%);
 $primary-bg: hsl(203, 100%, 46%);
@@ -26,6 +26,7 @@ $primary-fg: #7b7b7b;
 $primary-fg-active: #044462;
 $primary-fg-hover: #0f2228;
 
+// secondary dynamic colors for interactions and ui-elements
 $secondary-bg: #f9f9f9;
 $secondary-bg-active: #b6e2cc;
 $secondary-bg-hover: #edf8f2;

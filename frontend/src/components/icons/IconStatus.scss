@@ -23,7 +23,7 @@
   }
 
   &.unknown {
-    background: $primary-fg;
+    background: $unknown-color;
   }
 
   &.error {
@@ -31,6 +31,6 @@
   }
 
   &.newMeter {
-    background: $primary-bg;
+    background: $new-meter-color;
   }
 }
