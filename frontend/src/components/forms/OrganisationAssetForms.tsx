@@ -26,9 +26,7 @@ const SingleAssetFrom =
 
     const onSelectFile = (event) => selectFile(event.target.files[0]);
 
-    const onResetAsset = () => {
-      resetAsset({organisationId, assetType});
-    };
+    const onResetAsset = () => resetAsset({organisationId, assetType});
 
     const [selectedFile, selectFile] = React.useState<undefined | string | Blob>(undefined);
 
@@ -75,7 +73,7 @@ const SingleAssetFrom =
     );
   };
 
-export const OrganisationAssetForm = (props: Props) => {
+export const OrganisationAssetForms = (props: Props) => {
 
   const assetTypeForms = Object.keys(OrganisationAssetType)
     .map((assetType: OrganisationAssetType) =>

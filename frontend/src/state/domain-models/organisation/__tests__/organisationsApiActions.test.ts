@@ -11,7 +11,7 @@ import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
 import {DomainModelsState} from '../../domainModels';
-import {postRequestOf, putRequestOf} from '../../domainModelsActions';
+import {deleteRequestOf, postRequestOf, putRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {Organisation, OrganisationWithoutId} from '../organisationModels';
 import {
@@ -250,29 +250,27 @@ describe('organisationsApiActions', () => {
 
       const fileToUpload = new Blob(['some file contents']);
 
+      const putActions = putRequestOf<undefined>(EndPoints.organisations);
+
       it('handles a correct upload', async () => {
         await putAsset(params, fileToUpload, 200);
 
-        expect(
-          store.getActions().map(({type, payload}) => [type, payload])
-        )
+        expect(store.getActions())
           .toEqual([
-            ['DOMAIN_MODELS_REQUEST/organisations', undefined],
-            ['DOMAIN_MODELS_PUT_SUCCESS/organisations', undefined],
-            ['SHOW_SUCCESS_MESSAGE', 'Updated'],
+            putActions.request(),
+            putActions.success(undefined),
+            showSuccessMessage('Updated'),
           ]);
       });
 
       it('handles upload error', async () => {
         await putAsset(params, fileToUpload, 400);
 
-        expect(
-          store.getActions().map(({type, payload}) => [type, payload])
-        )
+        expect(store.getActions())
           .toEqual([
-            ['DOMAIN_MODELS_REQUEST/organisations', undefined],
-            ['DOMAIN_MODELS_FAILURE/organisations', {message: 'An unexpected error occurred'}],
-            ['SHOW_FAIL_MESSAGE', 'Failed to update: An unexpected error occurred'],
+            putActions.request(),
+            putActions.failure({message: 'An unexpected error occurred'}),
+            showFailMessage('Failed to update: An unexpected error occurred'),
           ]);
       });
 
@@ -288,29 +286,27 @@ describe('organisationsApiActions', () => {
         return store.dispatch(resetAsset(params));
       };
 
+      const deleteActions = deleteRequestOf<undefined>(EndPoints.organisations);
+
       it('handles a correct upload', async () => {
         await deleteAsset(params, 200);
 
-        expect(
-          store.getActions().map(({type, payload}) => [type, payload])
-        )
+        expect(store.getActions())
           .toEqual([
-            ['DOMAIN_MODELS_REQUEST/organisations', undefined],
-            ['DOMAIN_MODELS_DELETE_SUCCESS/organisations', undefined],
-            ['SHOW_SUCCESS_MESSAGE', 'Now using default'],
+            deleteActions.request(),
+            deleteActions.success(undefined),
+            showSuccessMessage('Now using default'),
           ]);
       });
 
       it('handles upload error', async () => {
         await deleteAsset(params, 500);
 
-        expect(
-          store.getActions().map(({type, payload}) => [type, payload])
-        )
+        expect(store.getActions())
           .toEqual([
-            ['DOMAIN_MODELS_REQUEST/organisations', undefined],
-            ['DOMAIN_MODELS_FAILURE/organisations', {message: 'An unexpected error occurred'}],
-            ['SHOW_FAIL_MESSAGE', 'Failed to update: An unexpected error occurred'],
+            deleteActions.request(),
+            deleteActions.failure({message: 'An unexpected error occurred'}),
+            showFailMessage('Failed to update: An unexpected error occurred'),
           ]);
       });
 

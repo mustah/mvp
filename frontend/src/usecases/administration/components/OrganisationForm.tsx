@@ -4,7 +4,7 @@ import * as React from 'react';
 import {RouteComponentProps} from 'react-router';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {paperStyle} from '../../../app/themes';
-import {OrganisationAssetForm} from '../../../components/forms/OrganisationAssetForm';
+import {OrganisationAssetForms} from '../../../components/forms/OrganisationAssetForms';
 import {OrganisationEditForm} from '../../../components/forms/OrganisationEditForm';
 import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RowIndented} from '../../../components/layouts/row/Row';
@@ -80,7 +80,7 @@ export const OrganisationForm = ({
   // name" super admin-only? or maybe dev-only?
   const organisationAssetForm = organisation
     ? (
-      <OrganisationAssetForm
+      <OrganisationAssetForms
         id={organisation.id}
         slug={organisation.slug}
         uploadAsset={uploadAsset}
