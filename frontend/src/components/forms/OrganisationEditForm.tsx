@@ -92,7 +92,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
       })()
       : null;
 
-    const loginUrl = absoluteUrlFromPath(`/login/${slug}`);
+    const loginUrl = absoluteUrlFromPath(`/#/login/${slug}`);
     const customUrl = slug && (
       <>
         <h3>{firstUpperTranslated('custom login URL')}</h3>
