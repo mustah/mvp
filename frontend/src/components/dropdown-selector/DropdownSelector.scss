@@ -4,7 +4,7 @@
   margin-right: $lg-space;
 
   .DropdownSelector-Text {
-    color: $primary-fg;
+    color: $black;
     background-color: $secondary-bg;
     padding: 4px 4px 3px 10px;
     border: 2px solid transparent;
@@ -16,7 +16,7 @@
     }
 
     &.isOpen {
-      border: 2px solid $blue-A700;
+      border: 2px solid $primary-bg;
       border-radius: $border-radius;
       background-color: $primary-bg-hover;
     }
@@ -35,8 +35,4 @@
     overflow-y: scroll;
   }
 
-  .separation-border {
-    margin: 0 5px;
-    border-bottom: 1px solid $grey;
-  }
 }

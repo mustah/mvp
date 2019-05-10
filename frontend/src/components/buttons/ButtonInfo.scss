@@ -5,12 +5,12 @@
 
   &:hover {
     svg {
-      fill: $link-color !important;
+      fill: $primary-bg !important;
     }
   }
 
   .ButtonInfo-Label {
     cursor: pointer;
-    color: $link-color;
+    color: $primary-bg;
   }
 }

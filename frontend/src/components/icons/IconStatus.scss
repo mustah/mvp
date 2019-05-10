@@ -15,22 +15,22 @@
   color: $white;
 
   &.ok {
-    background: $green;
+    background: $ok-color;
   }
 
   &.warning {
-    background: $orange;
+    background: $warning-color;
   }
 
   &.unknown {
-    background: $lightest-black;
+    background: $unknown-color;
   }
 
   &.error {
-    background: $red;
+    background: $error-color;
   }
 
   &.newMeter {
-    background: $blue-A700;
+    background: $new-meter-color;
   }
 }

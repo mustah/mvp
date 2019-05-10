@@ -1,8 +1,9 @@
 import ListItem from 'material-ui/List/ListItem';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import * as React from 'react';
+import {colors} from '../../../app/colors';
 import {history, routes} from '../../../app/routes';
-import {colors, listItemInnerDivStyle, listItemStyle, secondaryBgHover} from '../../../app/themes';
+import {listItemInnerDivStyle, listItemStyle} from '../../../app/themes';
 import {RowMiddle} from '../../../components/layouts/row/Row';
 import {Medium} from '../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -13,7 +14,7 @@ const iconStyle: React.CSSProperties = {
   marginLeft: 8,
   width: 20,
   height: 20,
-  color: colors.lightBlack,
+  color: colors.primaryFg,
 };
 
 interface Props {
@@ -30,7 +31,7 @@ export const CreateNewSelectionListItem = ({resetSelection}: Props) => {
       className="SavedSelection-ListItem"
       style={listItemStyle}
       innerDivStyle={listItemInnerDivStyle}
-      hoverColor={secondaryBgHover}
+      hoverColor={colors.secondaryBgHover}
       key={`create-new-selection`}
     >
       <RowMiddle className="SavedSelection-Name flex-1" onClick={onSelect}>

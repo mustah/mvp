@@ -6,7 +6,6 @@ import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row} from '../../components/layouts/row/Row';
 import {ColoredEvent, Status} from '../../components/status/Status';
-import '../../components/table/Table.scss';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
@@ -28,7 +27,6 @@ import {ResponsiveMap} from '../../usecases/map/components/Map';
 import {MarkerCluster} from '../../usecases/map/components/MarkerCluster';
 import {MapMarker, OnCenterMapEvent} from '../../usecases/map/mapModels';
 import {CollectionContentContainer} from '../../usecases/meter/collection/containers/CollectionContentContainer';
-
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
 import {OwnProps} from '../../usecases/meter/measurements/meterDetailModels';
 import './MeterDetailsTabs.scss';

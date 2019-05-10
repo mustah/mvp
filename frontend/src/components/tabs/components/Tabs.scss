@@ -5,7 +5,7 @@
 
   .TabList {
     align-items: flex-end;
-    border-bottom: solid 1px $border-color;
+    border-bottom: $divider;
 
     .Tab {
       cursor: pointer;
@@ -13,7 +13,7 @@
       .Tab-header {
         text-align: center;
         padding: $sm-space $lg-space;
-        color: $lightest-black;
+        color: $primary-fg;
 
         &:hover {
           color: $black;
@@ -27,14 +27,14 @@
 
         &:hover {
           .TabUnderline {
-            border-top: solid $underline-height $blue-A700;
+            border-top: solid $underline-height $primary-bg;
           }
         }
       }
 
       &:hover {
         .TabUnderline {
-          border-top: solid $underline-height $grey;
+          border-top: solid $underline-height $secondary-bg-hover;
         }
       }
     }
@@ -44,7 +44,7 @@
       border-top-right-radius: $underline-height * 2;
 
       &.isSelected {
-        border-top: solid $underline-height $blue-A700;
+        border-top: solid $underline-height $primary-bg;
       }
     }
   }

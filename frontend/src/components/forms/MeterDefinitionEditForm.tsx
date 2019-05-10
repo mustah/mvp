@@ -139,11 +139,7 @@ export const MeterDefinitionEditForm = (
           editable={!isDefault}
         />
 
-        <ButtonSave
-          disabled={isDefault}
-          className="SaveButton"
-          type="submit"
-        />
+        <ButtonSave disabled={isDefault} className="SaveButton" type="submit"/>
       </Column>
 
     </ValidatorForm>

@@ -4,11 +4,11 @@ $toolbar-height: 48px;
 
 .Toolbar {
   height: $toolbar-height;
-  border-bottom: $border;
+  border-bottom: $divider;
   padding-right: $space;
 
   .Toolbar-ViewSettings {
-    border-right: $border;
+    border-right: $divider;
     padding-right: $space;
     margin-right: $space;
   }
@@ -22,46 +22,46 @@ $toolbar-height: 48px;
       background-color: $primary-bg-hover !important;
 
       svg {
-        fill: $blue-A700 !important;
+        fill: $primary-bg !important;
       }
     }
 
     &.disabled, &.disabled:hover {
-      color: $border-color !important;
+      color: $divider-color !important;
       background-color: transparent !important;
 
       svg {
-        fill: $border-color !important;
+        fill: $divider-color !important;
       }
     }
 
     &.isSelected {
       svg {
-        fill: $blue-A700 !important;
+        fill: $primary-bg !important;
       }
     }
   }
 
   .ToolbarActionButton {
-    color: $lightest-black !important;
+    color: $primary-fg !important;
 
     svg {
-      fill: $lightest-black !important;
+      fill: $primary-fg !important;
     }
 
     &:hover {
-      color: $blackest !important;
+      color: $black !important;
 
       svg {
-        fill: $blackest !important;
+        fill: $black !important;
       }
     }
 
     &.disabled, &.disabled:hover {
-      color: $border-color !important;
+      color: $divider-color !important;
 
       svg {
-        fill: $border-color !important;
+        fill: $divider-color !important;
       }
     }
   }
@@ -76,7 +76,7 @@ $toolbar-height: 48px;
       .Toolbar-RightPane {
         padding-top: 5px;
         height: $toolbar-height;
-        border-bottom: $border;
+        border-bottom: $divider;
         width: 100%;
       }
     }

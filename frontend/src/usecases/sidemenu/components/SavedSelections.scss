@@ -4,10 +4,6 @@
   cursor: pointer;
 
   &:hover {
-    .Medium {
-      color: $secondary-bg-hover;
-    }
-
     svg {
       fill: $secondary-fg-hover !important;
     }

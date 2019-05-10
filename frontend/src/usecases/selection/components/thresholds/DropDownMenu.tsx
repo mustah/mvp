@@ -1,6 +1,6 @@
 import {DropDownMenu as MaterialDropDownMenu} from 'material-ui/DropDownMenu';
 import * as React from 'react';
-import {colors} from '../../../../app/themes';
+import {colors} from '../../../../app/colors';
 import {WithChildren} from '../../../../types/Types';
 import DropDownMenuProps = __MaterialUI.Menus.DropDownMenuProps;
 import origin = __MaterialUI.propTypes.origin;

@@ -4,7 +4,8 @@ import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
-import {colors, iconSizeMedium, svgIconProps} from '../../../app/themes';
+import {colors} from '../../../app/colors';
+import {iconSizeMedium, svgIconProps} from '../../../app/themes';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
@@ -25,7 +26,7 @@ const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
     onClick={onClick}
     tooltip={firstUpperTranslated('filter')}
   >
-    <ContentFilterList color={disabled ? colors.borderColor : colors.lightBlack}/>
+    <ContentFilterList color={disabled ? colors.borderColor : colors.primaryFg}/>
   </ToolbarIconButton>
 );
 
@@ -68,7 +69,7 @@ export const ReportToolbar = ({
             onClick={selectGraph}
             tooltip={firstUpperTranslated('graph')}
           >
-            <EditorShowChart color={colors.lightBlack} style={iconSizeMedium}/>
+            <EditorShowChart color={colors.primaryFg} style={iconSizeMedium}/>
           </ToolbarIconButton>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
@@ -76,7 +77,7 @@ export const ReportToolbar = ({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={colors.lightBlack}/>
+            <EditorFormatListBulleted color={colors.primaryFg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 

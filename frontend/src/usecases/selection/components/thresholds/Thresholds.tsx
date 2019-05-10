@@ -1,6 +1,6 @@
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
-import {selectedStyle} from '../../../../app/themes';
+import {selectedMenuItemStyle} from '../../../../app/themes';
 import {ButtonLinkBlue} from '../../../../components/buttons/ButtonLink';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
@@ -133,7 +133,7 @@ export const Thresholds = ({query, onChange, className}: Props) => {
         onChange={onChangeQuantity}
         value={quantity}
         style={quantityDropDownStyle}
-        selectedMenuItemStyle={selectedStyle}
+        selectedMenuItemStyle={selectedMenuItemStyle}
       >
         {quantityMenuItems}
       </DropDownMenu>
@@ -142,7 +142,7 @@ export const Thresholds = ({query, onChange, className}: Props) => {
         onChange={onChangeRelationalOperator}
         value={relationalOperator}
         style={operatorDropDownStyle}
-        selectedMenuItemStyle={selectedStyle}
+        selectedMenuItemStyle={selectedMenuItemStyle}
       >
         {operatorMenuItems}
       </DropDownMenu>
@@ -164,7 +164,7 @@ export const Thresholds = ({query, onChange, className}: Props) => {
           onChange={onChangeDuration}
           value={durationOrNull}
           style={dropDownStyle}
-          selectedMenuItemStyle={selectedStyle}
+          selectedMenuItemStyle={selectedMenuItemStyle}
         >
           {duringDaysMenuItems}
         </DropDownMenu>

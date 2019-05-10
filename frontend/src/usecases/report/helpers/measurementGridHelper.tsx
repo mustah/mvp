@@ -8,7 +8,8 @@ import {
 import {GridRowType} from '@progress/kendo-react-grid/dist/es/interfaces/GridRowType';
 import {toArray} from 'lodash';
 import * as React from 'react';
-import {colors, dividerBorder} from '../../../app/themes';
+import {colors} from '../../../app/colors';
+import {dividerBorder} from '../../../app/themes';
 import {RowMiddle} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {displayDate} from '../../../helpers/dateHelpers';
@@ -38,7 +39,7 @@ export const cellRender = (td, {columnIndex, rowType}: GridCellProps) => {
   if (columnIndex === 0) {
     const cellStyle: React.CSSProperties = isGroupHeader(rowType)
       ? {
-        background: colors.lightGrey,
+        background: colors.secondaryBg,
         borderBottom: dividerBorder,
         borderTop: dividerBorder,
         paddingTop: 24

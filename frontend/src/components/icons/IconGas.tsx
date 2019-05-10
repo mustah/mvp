@@ -1,10 +1,11 @@
 import {SvgIconProps} from 'material-ui';
 import SvgIcon from 'material-ui/SvgIcon';
 import * as React from 'react';
+import {colors} from '../../app/colors';
 
 /* tslint:disable */
 export const IconGas = (props: SvgIconProps) => (
-  <SvgIcon viewBox="0 0 100 100" {...props} color={props.color || 'white'}>
+  <SvgIcon viewBox="0 0 100 100" {...props} color={props.color || colors.white}>
     <path d="M49.8,61c0.5,0,1,0.1,1.5,0.1c0.1,0,0.1,0,0.2,0c6.8,0,13.2-3.6,16.9-9.3c4.1-6.5,3.6-15-0.1-21.5
 	c-2.7-4.7-8.4-7.8-9.3-13.5c-0.8-5.2,1.6-10.2,4.7-14.1c-0.3,0.4-2.1,0.5-2.6,0.7c-0.9,0.3-1.9,0.6-2.8,0.9
 	c-1.7,0.6-3.4,1.3-5.1,2.1c-2.6,1.2-5,2.7-7.3,4.5c-11.5,9.1-19.2,26.8-11.6,40.6C37.5,57.1,43.3,60.5,49.8,61 M50,15.9

@@ -1,6 +1,6 @@
 import CircularProgress from 'material-ui/CircularProgress';
 import * as React from 'react';
-import {colors} from '../../app/themes';
+import {colors} from '../../app/colors';
 
 const loadingStyle: React.CSSProperties = {
   marginTop: 100,
@@ -12,7 +12,7 @@ export const LoadingLarge = () => (
     size={60}
     thickness={4}
     style={loadingStyle}
-    color={colors.blueA700}
+    color={colors.primaryBg}
   />
 );
 
@@ -25,7 +25,7 @@ export const LoadingSmall = () => (
     size={24}
     thickness={2}
     style={smallLoadingStyle}
-    color={colors.blueA700}
+    color={colors.primaryBg}
   />
 );
 const widgetLoadingStyle: React.CSSProperties = {
@@ -39,6 +39,6 @@ export const LoadingWidget = () => (
     size={24}
     thickness={2}
     style={widgetLoadingStyle}
-    color={colors.blueA700}
+    color={colors.primaryBg}
   />
 );

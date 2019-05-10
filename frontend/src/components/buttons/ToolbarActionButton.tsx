@@ -1,7 +1,7 @@
 import {default as classNames} from 'classnames';
 import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
-import {bgHoverColor} from '../../app/themes';
+import {colors} from '../../app/colors';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
 
 const labelStyle: React.CSSProperties = {
@@ -14,7 +14,7 @@ export const ToolbarActionButton = (props: FlatButtonProps) => (
     className={classNames('ToolbarActionButton', {disabled: props.disabled})}
     labelPosition="after"
     {...props}
-    hoverColor={bgHoverColor}
+    hoverColor={colors.primaryBgHover}
     labelStyle={labelStyle}
   />
 );

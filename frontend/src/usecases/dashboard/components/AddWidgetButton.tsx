@@ -1,7 +1,8 @@
 import FlatButton from 'material-ui/FlatButton';
 import Add from 'material-ui/svg-icons/content/add';
 import * as React from 'react';
-import {bgHoverColor, border, colors, svgIconProps} from '../../../app/themes';
+import {colors} from '../../../app/colors';
+import {border, svgIconProps} from '../../../app/themes';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {IconProps} from '../../../components/popover/PopoverMenu';
 import {translate} from '../../../services/translationService';
@@ -16,7 +17,7 @@ export const AddWidgetButton = ({renderPopoverContent}: Props) => {
   const iconProps: IconProps = {
     color: svgIconProps.color,
     icon: <Add color={svgIconProps.color}/>,
-    hoverColor: bgHoverColor,
+    hoverColor: colors.primaryBgHover,
     backgroundColor: colors.white,
     label: translate('add new widget'),
     labelStyle: {color: svgIconProps.color},

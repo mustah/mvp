@@ -2,7 +2,8 @@ import IconButton from 'material-ui/IconButton';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
-import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
+import {colors} from '../../../../app/colors';
+import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
 import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {RowBottom, RowLeft} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
@@ -42,7 +43,7 @@ const style: React.CSSProperties = {
 const iconStyle: React.CSSProperties = {
   width: 22,
   height: 22,
-  color: colors.lightBlack,
+  color: colors.primaryFg,
 };
 
 const buttonLinkStyle: React.CSSProperties = {

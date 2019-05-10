@@ -1,7 +1,7 @@
 import IconButton from 'material-ui/IconButton';
 import NavigationArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import * as React from 'react';
-import {colors} from '../../app/themes';
+import {colors} from '../../app/colors';
 import {ClassNamed, Clickable} from '../../types/Types';
 import './Icons.scss';
 

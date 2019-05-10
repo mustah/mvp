@@ -2,7 +2,8 @@ import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-b
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
-import {colors, iconSizeMedium, svgIconProps} from '../../../app/themes';
+import {colors} from '../../../app/colors';
+import {iconSizeMedium, svgIconProps} from '../../../app/themes';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
@@ -45,7 +46,7 @@ export const CollectionToolbar = ({
             onClick={selectGraph}
             tooltip={firstUpperTranslated('graph')}
           >
-            <EditorShowChart color={colors.lightBlack} style={iconSizeMedium}/>
+            <EditorShowChart color={colors.primaryFg} style={iconSizeMedium}/>
           </ToolbarIconButton>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
@@ -53,7 +54,7 @@ export const CollectionToolbar = ({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={colors.lightBlack}/>
+            <EditorFormatListBulleted color={colors.primaryFg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 

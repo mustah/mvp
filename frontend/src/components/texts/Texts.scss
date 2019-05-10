@@ -51,11 +51,11 @@
 }
 
 .Error {
-  color: $error;
+  color: $error-color;
   font-weight: bold;
 }
 
 .InfoText {
-  color: $lightest-black;
+  color: $primary-fg;
   font-style: italic;
 }

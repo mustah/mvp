@@ -81,7 +81,7 @@ export const SelectionContent = ({
   };
 
   return (
-    <Column className="SelectionContentBox">
+    <Column>
 
       <Foldable title={translate('filter')}>
         <Row className="SelectionDropdownOptions">

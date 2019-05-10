@@ -2,7 +2,8 @@ import {default as classNames} from 'classnames';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import * as React from 'react';
-import {colors, svgIconProps} from '../../app/themes';
+import {colors} from '../../app/colors';
+import {svgIconProps} from '../../app/themes';
 import {ClassNamed, OnChange} from '../../types/Types';
 import './SearchBox.scss';
 import SvgIconProps = __MaterialUI.SvgIconProps;
@@ -23,7 +24,7 @@ const style: React.CSSProperties = {
   position: 'absolute',
   right: 12,
   top: 6,
-  color: colors.lightBlack,
+  color: colors.primaryFg,
 };
 
 const styles: SvgIconProps = {

@@ -1,7 +1,8 @@
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
-import {colors, iconSizeMedium, svgIconProps} from '../../../../app/themes';
+import {colors} from '../../../../app/colors';
+import {iconSizeMedium, svgIconProps} from '../../../../app/themes';
 import {ToolbarIconButton} from '../../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
@@ -42,7 +43,7 @@ export const MeterMeasurementsToolbar = ({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={colors.lightBlack}/>
+            <EditorFormatListBulleted color={colors.primaryFg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 
