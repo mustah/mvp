@@ -64,7 +64,7 @@ const SingleAssetFrom =
           <img alt="" style={{...previewBackgroundStyle}} src={assetUrl}/>
         </Row>
         <Row className="flex-fill-horizontally" style={{paddingTop: 32}}>
-          <input name="asset" onChange={onSelectFile} type="file"/>
+          <input name="asset" onChange={onSelectFile} accept=".gif,.png,.jpg,.jpeg" type="file"/>
           <ButtonLinkRed className="Row-center" onClick={onResetAsset}>
             {firstUpperTranslated('use default')}
           </ButtonLinkRed>
@@ -85,6 +85,7 @@ export const OrganisationAssetForms = (props: Props) => {
     <Row className="flex-fill-horizontally configuration-section">
       <Column className="one-third">
         <h2>{firstUpperTranslated('visual identity')}</h2>
+        <p>{firstUpperTranslated('valid file formats: png, jpg and gif')}</p>
       </Column>
       <Column className="two-thirds">
         {assetTypeForms}
