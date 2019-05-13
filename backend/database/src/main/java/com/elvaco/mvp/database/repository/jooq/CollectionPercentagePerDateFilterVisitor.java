@@ -59,7 +59,7 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
             .from(MEASUREMENT_STAT_DATA)
             .where(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
             .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
-            .orderBy(MEASUREMENT_STAT_DATA.STAT_DATE)
+            .orderBy(MEASUREMENT_STAT_DATA.STAT_DATE.desc())
             .limit(1)
           )
         )

@@ -348,6 +348,44 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   }
 
   @Test
+  public void oneHundredPercentForDayWhenPreviousDayHasExtraQuantity() {
+    var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
+
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().now())
+      .withQuantity(Quantity.VOLUME)
+      .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(24).toArray()));
+    given(measurementSeries()
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().now())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
+
+    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        statsFacilityUrl(context().now(), context().now().plusDays(2)),
+        CollectionStatsDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getContent())
+      .extracting(m -> m.collectionPercentage)
+      .contains(100.0);
+
+    var listedPercentage = asUser().getList(
+      statsDateUrl(
+        context().now().plusDays(1),
+        context().now().plusDays(2)
+      ),
+      CollectionStatsPerDateDto.class
+    );
+    assertThat(listedPercentage.getBody()).hasSize(1);
+    assertThat(listedPercentage.getBody().get(0).collectionPercentage).isEqualTo(100.0);
+  }
+
+  @Test
   public void fiftyPercentWithThresholdFilter() {
     ZonedDateTime now = context().now();
     var meterMatchingThreshold = given(logicalMeter()
