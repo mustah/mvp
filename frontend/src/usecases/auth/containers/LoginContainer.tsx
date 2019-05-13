@@ -13,6 +13,7 @@ import {TextFieldInput} from '../../../components/inputs/TextFieldInput';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
+import {slugOfHostname} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {login} from '../authActions';
@@ -56,15 +57,17 @@ const LoginContainerComponent = ({auth: {error}, match: {params: {organisation}}
     login(state.email, state.password);
   };
 
+  const slug: string = slugOfHostname(window.location.hostname).orElse(organisation);
+
   const loginContainerBackgroundImage: React.CSSProperties = {
-    backgroundImage: `url(${getBackgroundImagePath(organisation)})`,
+    backgroundImage: `url(${getBackgroundImagePath(slug)})`,
   };
 
   return (
     <ColumnCenter style={loginContainerBackgroundImage} className={classNames('LoginContainer')}>
       <Paper zDepth={5} className="LoginPaper">
         <RowCenter className="customerLogo">
-          <Logo className="login" src={getLoginLogoPath(organisation)}/>
+          <Logo className="login" src={getLoginLogoPath(slug)}/>
         </RowCenter>
         <form onSubmit={onSubmit}>
           <TextFieldInput

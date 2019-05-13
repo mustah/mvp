@@ -225,7 +225,11 @@ export const makeUrl =
       : endpoint;
 
 const aElement = document.createElement('a');
-export const absoluteUrlFromPath = (path: string) => {
+export const absoluteUrlFromPath = (path: string): string => {
   aElement.href = path;
   return aElement.href;
 };
+
+export const slugOfHostname = (hostname: string): Maybe<string> =>
+  Maybe.maybe(hostname.match(/^([^.]+)\.(evo|evo-staging)\.elvaco\.se$/))
+    .map(matches => matches[1]);
