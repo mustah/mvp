@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet author="carhel" id="cascade_delete_organisation_assets">
+    <dropUniqueConstraint
+      constraintName="organisation_asset_organisation_id_fkey"
+      tableName="organisation_asset"
+    />
+    <addForeignKeyConstraint
+      constraintName="organisation_asset_organisation_id_fkey"
+      baseTableName="organisation_asset"
+      baseColumnNames="organisation_id"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+    />
+  </changeSet>
+</databaseChangeLog>

@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
+import com.elvaco.mvp.web.dto.OrganisationDto;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -280,6 +281,35 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     assertThat(responseAfterInvalidatedCache.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(responseAfterInvalidatedCache.getHeaders().getETag()).isNotEqualTo(etag);
     assertThat(responseAfterInvalidatedCache.getBody()).isNotNull();
+  }
+
+  @Test
+  public void deleteOrganisation_DeletesAssets() {
+    var organisation = given(organisation());
+    var modified = asSuperAdmin()
+      .putFile(
+        assetPutUrl(organisation),
+        "asset",
+        "logo_to_upload.jpg",
+        Object.class
+      );
+
+    assertThat(modified.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    var deleted = asSuperAdmin()
+      .delete("/organisations/" + organisation.id, OrganisationDto.class);
+
+    assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    var shouldBeDeleted = asSuperAdmin()
+      .get("/organisations/" + organisation.id, OrganisationDto.class);
+    assertThat(shouldBeDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+    var lookingAtFallback = asUser()
+      .get(assetGetUrl(organisation.slug), byte[].class);
+
+    assertThat(lookingAtFallback.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(lookingAtFallback.getBody()).isEqualTo(assetFixtures.get(assetUnderTest()));
   }
 
   private void assertCannotUpload(User user, Organisation organisation, HttpStatus expectedStatus) {
