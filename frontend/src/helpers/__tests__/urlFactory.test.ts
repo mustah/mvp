@@ -14,6 +14,7 @@ import {
   entityApiParametersMetersFactory,
   RequestParameters,
   requestParametersFrom,
+  slugOfHostname,
   toGatewayIdsApiParameters,
   toMeterIdsApiParameters,
   toPaginationApiParameters,
@@ -330,5 +331,23 @@ describe('urlFactory', () => {
         .toEqual('http://localhost/hello');
     });
 
+  });
+
+  describe('slugOfHostname', () => {
+
+    it('finds customer\'s subdomains', () => {
+      expect(slugOfHostname('nostromo.evo.elvaco.se')).toEqual(Maybe.just('nostromo'));
+      expect(slugOfHostname('with-dash.evo.elvaco.se')).toEqual(Maybe.just('with-dash'));
+      expect(slugOfHostname('with-dash.evo-staging.elvaco.se')).toEqual(Maybe.just('with-dash'));
+    });
+
+    it('ignores evo related subdomains', () => {
+      expect(slugOfHostname('evo.elvaco.se')).toEqual(Maybe.nothing());
+      expect(slugOfHostname('evo-staging.elvaco.se')).toEqual(Maybe.nothing());
+    });
+
+    it('ignores localhost', () => {
+      expect(slugOfHostname('localhost')).toEqual(Maybe.nothing());
+    });
   });
 });

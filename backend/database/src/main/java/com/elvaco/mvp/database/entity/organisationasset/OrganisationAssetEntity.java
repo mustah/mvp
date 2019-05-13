@@ -36,4 +36,7 @@ public class OrganisationAssetEntity implements Serializable {
 
   @Column(nullable = false)
   public byte[] content;
+
+  @Column(nullable = false)
+  public String checksum;
 }

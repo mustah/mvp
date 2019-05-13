@@ -23,6 +23,7 @@ public class OrganisationAssetEntityMapper {
     return OrganisationAssetEntity.builder()
       .content(model.content)
       .contentType(model.contentType)
+      .checksum(model.checksum)
       .organisationAssetPk(
         OrganisationAssetPk.builder()
           .assetType(model.assetType)

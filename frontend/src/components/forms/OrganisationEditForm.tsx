@@ -1,7 +1,7 @@
 import {omit} from 'lodash';
 import * as React from 'react';
 import {Overwrite} from 'utility-types';
-import {absoluteUrlFromPath} from '../../helpers/urlFactory';
+import {absoluteUrlFromPath, slugOfHostname} from '../../helpers/urlFactory';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
   noOrganisation,
@@ -49,7 +49,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
   }
 
   render() {
-    const {parent, name, selectionId, slug} = this.state;
+    const {parent, name, selectionId, slug, id} = this.state;
     const {organisations, selections} = this.props;
 
     const nameLabel = firstUpperTranslated('organisation name');
@@ -92,8 +92,13 @@ export class OrganisationEditForm extends React.Component<Props, State> {
       })()
       : null;
 
-    const loginUrl = absoluteUrlFromPath(`/login/${slug}`);
-    const customUrl = slug && (
+    // we assume that super admins never use custom domains to administrate other organisations,
+    // if they do, this URL not match the expected behavior
+    const loginUrl = slugOfHostname(window.location.hostname)
+      .map((_) => absoluteUrlFromPath(`/#/login/`))
+      .orElseGet(() => absoluteUrlFromPath(`/#/login/${slug}`));
+
+    const customUrl = (
       <>
         <h3>{firstUpperTranslated('custom login URL')}</h3>
         <a href={loginUrl} target="_blank">{loginUrl}</a>
@@ -116,7 +121,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
                 value={name}
                 onChange={this.onChangeName}
               />
-              {customUrl}
+              {id && customUrl}
             </Column>
           </Row>
           <Row className="configuration-section">

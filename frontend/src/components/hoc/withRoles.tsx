@@ -21,7 +21,7 @@ const onlyAdmins =
 
 const mapStateToProps = ({auth}: RootState): AuthenticatedUser => ({user: getUser(auth)});
 
-export const superAdminOnly =
+const superAdminOnly =
   <P extends AuthenticatedUser>(Component: React.ComponentType<P>): React.SFC<P> =>
     componentOrNothing<P>(userIsSuperAdmin)(Component);
 

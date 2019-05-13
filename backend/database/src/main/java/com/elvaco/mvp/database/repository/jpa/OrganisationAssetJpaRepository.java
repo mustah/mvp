@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface OrganisationAssetJpaRepository
   extends JpaRepository<OrganisationAssetEntity, OrganisationAssetPk> {
 
+  boolean existsByOrganisationAssetPkAndChecksum(OrganisationAssetPk id, String checksum);
 }

@@ -22,6 +22,7 @@ import com.elvaco.mvp.web.exception.UserSelectionNotFound;
 import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -147,15 +149,33 @@ public class OrganisationController {
   @GetMapping("{slug}/assets/{assetTypeOptional}")
   public ResponseEntity<byte[]> logotype(
     @PathVariable String slug,
-    @PathVariable Optional<AssetType> assetTypeOptional
+    @PathVariable Optional<AssetType> assetTypeOptional,
+    @RequestHeader(value = "If-None-Match") Optional<String> ifNoneMatch
   ) {
     var assetType = assetTypeOptional.orElseThrow(() -> InvalidFormat.assetType());
 
-    var asset = organisationUseCases.findAssetByOrganisationSlugOrFallback(slug, assetType);
+    return organisationUseCases
+      .findAssetOrFallback(
+        slug,
+        assetType,
+        ifNoneMatch
+      )
+      .map(asset ->
+        ResponseEntity.ok()
+          .cacheControl(CacheControl.noCache())
+          .eTag(asset.checksum)
+          .contentType(MediaType.valueOf(asset.contentType))
+          .body(asset.content)
+      )
+      .orElseGet(() -> {
+        var response = ResponseEntity.ok()
+          .cacheControl(CacheControl.noCache());
 
-    return ResponseEntity
-      .ok()
-      .contentType(MediaType.valueOf(asset.contentType))
-      .body(asset.content);
+        if (ifNoneMatch.isPresent()) {
+          response.eTag(ifNoneMatch.get());
+        }
+
+        return response.build();
+      });
   }
 }
