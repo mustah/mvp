@@ -1,8 +1,6 @@
 package com.elvaco.mvp.web.api;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -150,27 +149,33 @@ public class OrganisationController {
   @GetMapping("{slug}/assets/{assetTypeOptional}")
   public ResponseEntity<byte[]> logotype(
     @PathVariable String slug,
-    @PathVariable Optional<AssetType> assetTypeOptional
-  ) throws NoSuchAlgorithmException {
+    @PathVariable Optional<AssetType> assetTypeOptional,
+    @RequestHeader(value = "If-None-Match") Optional<String> ifNoneMatch
+  ) {
     var assetType = assetTypeOptional.orElseThrow(() -> InvalidFormat.assetType());
 
-    var asset = organisationUseCases.findAssetByOrganisationSlugOrFallback(slug, assetType);
+    return organisationUseCases
+      .findAssetOrFallback(
+        slug,
+        assetType,
+        ifNoneMatch
+      )
+      .map(asset ->
+        ResponseEntity.ok()
+          .cacheControl(CacheControl.noCache())
+          .eTag(asset.checksum)
+          .contentType(MediaType.valueOf(asset.contentType))
+          .body(asset.content)
+      )
+      .orElseGet(() -> {
+        var response = ResponseEntity.ok()
+          .cacheControl(CacheControl.noCache());
 
-    return ResponseEntity
-      .ok()
-      .cacheControl(CacheControl.noCache())
-      .eTag(etag(asset.content))
-      .contentType(MediaType.valueOf(asset.contentType))
-      .body(asset.content);
-  }
+        if (ifNoneMatch.isPresent()) {
+          response.eTag(ifNoneMatch.get());
+        }
 
-  private String etag(byte[] bytes) throws NoSuchAlgorithmException {
-    var md5 = MessageDigest.getInstance("MD5").digest(bytes);
-    StringBuilder etag = new StringBuilder(md5.length * 2);
-    for (int i = 0; i < md5.length; i++) {
-      etag.append(Character.forDigit((md5[i] >> 4) & 0xF, 16));
-      etag.append(Character.forDigit((md5[i] & 0xF), 16));
-    }
-    return etag.toString();
+        return response.build();
+      });
   }
 }

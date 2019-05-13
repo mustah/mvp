@@ -112,17 +112,33 @@ public class OrganisationUseCases {
     organisationAssets.delete(assetType, organisation.id);
   }
 
-  public Asset findAssetByOrganisationSlugOrFallback(
+  public Optional<Asset> findAssetOrFallback(
     String slug,
-    AssetType assetType
+    AssetType assetType,
+    Optional<String> matchChecksum
   ) {
-    return organisations
-      .findBySlug(slug)
-      .flatMap(organisation -> organisationAssets.findByOrganisationIdAndAssetType(
-        organisation.id,
-        assetType
-      ))
-      .orElse(organisationAssets.getDefault(assetType));
+    var organisation = organisations.findBySlug(slug);
+
+    if (organisation.isEmpty()) {
+      var defaultAsset = organisationAssets.getDefault(assetType);
+      if (matchChecksum.isPresent() && defaultAsset.checksum.equals(matchChecksum.get())) {
+        return Optional.empty();
+      }
+      return Optional.of(defaultAsset);
+    }
+
+    if (matchChecksum.isPresent()
+      && organisationAssets.existsByOrganisationIdAndAssetTypeAndChecksum(
+      organisation.get().id,
+      assetType,
+      matchChecksum.get()
+    )) {
+      return Optional.empty();
+    }
+
+    return organisation
+      .flatMap(org -> organisationAssets.findByOrganisationIdAndAssetType(org.id, assetType))
+      .or(() -> Optional.of(organisationAssets.getDefault(assetType)));
   }
 
   private void ensureAllowedToModifyAsset(Organisation organisation) {

@@ -26,17 +26,31 @@ public class OrganisationAssetRepository implements OrganisationAssets {
   }
 
   @Override
+  public boolean existsByOrganisationIdAndAssetTypeAndChecksum(
+    UUID organisationId,
+    AssetType assetType,
+    String checksum
+  ) {
+    return organisationAssetJpaRepository.existsByOrganisationAssetPkAndChecksum(
+      OrganisationAssetPk.builder()
+        .organisationId(organisationId)
+        .assetType(assetType)
+        .build(),
+      checksum
+    );
+  }
+
+  @Override
   public Optional<Asset> findByOrganisationIdAndAssetType(
     UUID organisationId,
     AssetType assetType
   ) {
-    return organisationAssetJpaRepository
-      .findById(
-        OrganisationAssetPk.builder()
-          .organisationId(organisationId)
-          .assetType(assetType)
-          .build()
-      )
+    return organisationAssetJpaRepository.findById(
+      OrganisationAssetPk.builder()
+        .organisationId(organisationId)
+        .assetType(assetType)
+        .build()
+    )
       .map(OrganisationAssetEntityMapper::toDomainModel);
   }
 

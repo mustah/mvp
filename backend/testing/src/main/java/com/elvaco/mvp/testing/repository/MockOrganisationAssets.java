@@ -16,8 +16,18 @@ public class MockOrganisationAssets implements OrganisationAssets {
   }
 
   @Override
+  public boolean existsByOrganisationIdAndAssetTypeAndChecksum(
+    UUID organisationId,
+    AssetType assetType,
+    String checksum
+  ) {
+    throw new NotImplementedYet();
+  }
+
+  @Override
   public Optional<Asset> findByOrganisationIdAndAssetType(
-    UUID organisationId, AssetType assetType
+    UUID organisationId,
+    AssetType assetType
   ) {
     throw new NotImplementedYet();
   }
