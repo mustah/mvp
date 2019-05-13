@@ -11,8 +11,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
-msgid "valid file formats: png, jpg and gif"
-msgstr "valid file formats: png, jpg and gif" 
+msgid "valid file formats: png, jpg, jpeg and gif"
+msgstr "valid file formats: png, jpg, jpeg and gif"
 
 msgid "information"
 msgstr "information"

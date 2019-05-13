@@ -85,7 +85,7 @@ export const OrganisationAssetForms = (props: Props) => {
     <Row className="flex-fill-horizontally configuration-section">
       <Column className="one-third">
         <h2>{firstUpperTranslated('visual identity')}</h2>
-        <p>{firstUpperTranslated('valid file formats: png, jpg and gif')}</p>
+        <p>{firstUpperTranslated('valid file formats: png, jpg, jpeg and gif')}</p>
       </Column>
       <Column className="two-thirds">
         {assetTypeForms}
