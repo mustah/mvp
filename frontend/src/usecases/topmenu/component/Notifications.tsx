@@ -5,6 +5,7 @@ import {colors} from '../../../app/colors';
 import {linkToReleaseNotes} from '../../../app/routes';
 import {iconStyle} from '../../../app/themes';
 import {withContent} from '../../../components/hoc/withContent';
+import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {IconDuck} from '../../../components/icons/IconDuck';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../../../components/popover/PopoverMenu';
@@ -22,7 +23,16 @@ const duckIconStyle: React.CSSProperties = {
   height: 26,
 };
 
-const NotificationIndicator = withContent(() => <div className="Notification"/>);
+const Notification = withCssStyles(({cssStyles: {primary}}: ThemeContext) => {
+  const style = {
+    border: '1px solid',
+    background: colors.notification,
+    borderColor: primary.bgDark,
+  };
+  return <div className="Notification" style={style}/>;
+});
+
+const NotificationIndicator = withContent(Notification);
 
 const PopoverIcon = () => <SocialNotifications color={colors.white} style={iconStyle}/>;
 

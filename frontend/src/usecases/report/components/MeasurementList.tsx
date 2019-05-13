@@ -3,6 +3,8 @@ import {ExcelExport} from '@progress/kendo-react-excel-export';
 import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import {first} from 'lodash';
 import * as React from 'react';
+import {makeGridClassName} from '../../../app/themes';
+import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {isDefined} from '../../../helpers/commonHelpers';
@@ -62,7 +64,12 @@ const save = (exporter: React.Ref<{}>) => {
 
 const state: State = {group: [{field: 'label', dir: 'desc'}], sort: [{field: 'label', dir: 'asc'}]};
 
-export const MeasurementList = ({measurements, exportToExcelSuccess, isExportingToExcel}: MeasurementListProps) => {
+export const MeasurementList = ({
+  cssStyles,
+  measurements,
+  exportToExcelSuccess,
+  isExportingToExcel
+}: MeasurementListProps & ThemeContext) => {
   const [listItems, quantityColumns] = React.useMemo(() => renderColumns(measurements), [measurements]);
 
   const exporter = useExportToExcel({isExportingToExcel, exportToExcelSuccess, save});
@@ -113,6 +120,7 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
     <Column className="Grouping-grid">
       <ExcelExport data={listItems} ref={exporter} filterable={true}>
         <Grid
+          className={makeGridClassName(cssStyles)}
           scrollable="none"
           data={dataResult}
           groupable={true}

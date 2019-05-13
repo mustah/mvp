@@ -4,11 +4,12 @@ import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {borderRadius, drawerContainerStyle, gridStyle, iconStyle} from '../../../app/themes';
+import {borderRadius, drawerContainerStyle, gridStyle, makeGridClassName} from '../../../app/themes';
 import {ButtonClose} from '../../../components/buttons/ButtonClose';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonInfo} from '../../../components/buttons/ButtonInfo';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
+import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
 import {orUnknown} from '../../../helpers/translations';
@@ -31,11 +32,7 @@ const renderLabel = ({id, label, type}: any) =>
   isMedium(type)
     ? (
       <Link to={`${routes.meter}/${id}`} className="link">
-        <ButtonInfo
-          label={orUnknown(label)}
-          iconStyle={iconStyle}
-          title={orUnknown(label).toString()}
-        />
+        <ButtonInfo label={orUnknown(label)} title={orUnknown(label).toString()}/>
       </Link>
     )
     : orUnknown(label);
@@ -60,6 +57,7 @@ const buttonCloseStyle: React.CSSProperties = {
 const state: State = {group: [{field: 'type'}]};
 
 export const Legend = ({
+  cssStyles,
   columnQuantities,
   deleteItem,
   showHideAllByType,
@@ -73,7 +71,7 @@ export const Legend = ({
   toggleLine,
   toggleQuantityByType,
   toggleQuantityById,
-}: DispatchToProps & StateToProps & OwnProps) => {
+}: DispatchToProps & StateToProps & OwnProps & ThemeContext) => {
   const columnRenderProps: QuantityCell = {
     columnQuantities,
     selectedQuantitiesMap,
@@ -152,6 +150,7 @@ export const Legend = ({
       <Column className="Legend Grouping-grid">
         <ButtonClose onClick={showHideLegend} style={buttonCloseStyle}/>
         <Grid
+          className={makeGridClassName(cssStyles)}
           data={dataResult}
           groupable={true}
           cellRender={cellRender}

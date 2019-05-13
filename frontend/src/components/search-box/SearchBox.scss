@@ -1,7 +1,7 @@
 @import "../../app/variables";
 
 .SearchBox {
-  position: relative; // Used to position the search icon.
+  position: relative;
   margin-bottom: $sm-space;
   display: flex;
 
@@ -14,18 +14,10 @@
     border: $border;
     border-radius: $border-radius;
     line-height: 32px;
+    outline: none;
 
     &:focus {
-      border: 1px solid $primary-bg;
-      outline: none;
       margin: 0 5px;
-    }
-  }
-
-  &:hover {
-    .SearchBox-input {
-      border: 1px solid $primary-bg !important;
-      outline: none;
     }
   }
 }

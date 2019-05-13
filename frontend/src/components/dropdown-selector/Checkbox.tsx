@@ -9,6 +9,7 @@ interface Props extends Clickable, ClassNamed {
   checked?: boolean;
   style: React.CSSProperties;
   label: Children;
+  labelClassName?: string;
 }
 
 interface State {
@@ -23,11 +24,11 @@ export class Checkbox extends React.Component<Props, State> {
   }
 
   render() {
-    const {label, style, className} = this.props;
+    const {label, style, className, labelClassName} = this.props;
     const {checked} = this.state;
     return (
-      <RowMiddle className="Checkbox" style={style}>
-        <label className={classNames('clickable', className, {Bold: checked})}>
+      <RowMiddle className={classNames('Checkbox', className)} style={style}>
+        <label className={classNames('clickable', labelClassName, {Bold: checked})}>
           <input
             type="checkbox"
             onClick={this.onClick}

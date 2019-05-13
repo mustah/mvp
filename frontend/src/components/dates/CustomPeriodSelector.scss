@@ -8,31 +8,21 @@
     margin-top: 6px;
 
     $day-width-height: 39px;
-    $range-bg-color: rgba($primary-bg, 0.7);
 
     .CalendarDay__default {
       width: $day-width-height !important;
       height: $day-width-height !important;
       border: none;
       color: $black !important;
-      background: $white !important;
       border-radius: $day-width-height / 2;
     }
 
-    .CalendarDay__hovered_offset {
-      background: $secondary-bg !important;
-      border: 1px double $border-color !important;
-      color: inherit !important;
-    }
-
     .CalendarDay__default:hover {
-      background: $secondary-bg-hover !important;
       border: none;
       color: inherit !important;
     }
 
     .CalendarDay__selected_span {
-      background: $range-bg-color !important;
       border: none;
       color: $white !important;
     }
@@ -40,27 +30,17 @@
     .CalendarDay__selected,
     .CalendarDay__selected:active,
     .CalendarDay__selected:hover {
-      background: $primary-bg-dark !important;
       border: none;
       color: $white !important;
     }
 
     .CalendarDay__selected_span:active,
     .CalendarDay__selected_span:hover {
-      background: $range-bg-color !important;
       border: none;
       color: $white !important;
     }
 
-    .CalendarDay__hovered_span,
-    .CalendarDay__hovered_span:hover {
-      background: $range-bg-color !important;
-      border: none;
-      color: $white !important;
-    }
-
-    .CalendarDay__hovered_span:active {
-      background: $primary-bg-dark !important;
+    .CalendarDay__hovered_span {
       border: none;
       color: $white !important;
     }
@@ -88,17 +68,8 @@
     top: 10px;
     border-radius: 20px;
 
-    &:hover {
-      border: 1px solid $primary-bg;
-
-      .DayPickerNavigation_svg__horizontal {
-        fill: $primary-bg;
-      }
-    }
-
     &:active {
       outline: none;
-      background: $primary-bg-hover;
     }
   }
 

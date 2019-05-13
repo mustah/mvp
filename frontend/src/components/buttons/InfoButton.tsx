@@ -1,17 +1,15 @@
 import IconButton from 'material-ui/IconButton';
 import ActionInfoOutline from 'material-ui/svg-icons/action/info-outline';
 import * as React from 'react';
-import {colors} from '../../app/colors';
 import {OnClick} from '../../types/Types';
+import SvgIconProps = __MaterialUI.SvgIconProps;
 
-export interface InfoButtonProps {
-  color?: string;
-  iconStyle?: React.CSSProperties;
+interface Props {
   onClick?: OnClick;
 }
 
-export const InfoButton = ({color, iconStyle, onClick}: InfoButtonProps) => (
-  <IconButton onClick={onClick} style={iconStyle}>
-    <ActionInfoOutline style={iconStyle} color={color || colors.primaryFg} hoverColor={colors.primaryFgHover}/>
+export const InfoButton = ({color, style, hoverColor, onClick}: SvgIconProps & Props) => (
+  <IconButton onClick={onClick} style={style}>
+    <ActionInfoOutline style={style} color={color} hoverColor={hoverColor}/>
   </IconButton>
 );

@@ -115,6 +115,8 @@
     "@progress/kendo-theme-material": "^2.4.1",
     "axios": "^0.17.1",
     "classnames": "^2.2.6",
+    "csstips": "^0.3.0",
+    "csx": "^9.1.0",
     "es6-shim": "^0.35.5",
     "history": "^4.9.0",
     "i18next": "^13.0.1",
@@ -148,6 +150,7 @@
     "redux-thunk": "^2.2.0",
     "reselect": "^4.0.0",
     "typesafe-actions": "4.0.0",
+    "typestyle": "^2.0.2",
     "utility-types": "3.5.0",
     "uuid": "^3.3.2"
   }

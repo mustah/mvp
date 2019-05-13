@@ -3,17 +3,10 @@
 .SavedSelection-ListItem {
   cursor: pointer;
 
-  &:hover {
-    svg {
-      fill: $secondary-fg-hover !important;
-    }
-  }
-
   .SavedSelection-Name {
     height: $list-item-height;
 
     .Medium {
-      color: $secondary-fg;
       padding-left: 38px;
 
       &.CreateNewSelection {

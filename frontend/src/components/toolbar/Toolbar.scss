@@ -18,47 +18,9 @@ $toolbar-height: 48px;
   }
 
   .ToolbarIconButton {
-    &:hover {
-      background-color: $primary-bg-hover !important;
-
-      svg {
-        fill: $primary-bg !important;
-      }
-    }
-
     &.disabled, &.disabled:hover {
       color: $divider-color !important;
       background-color: transparent !important;
-
-      svg {
-        fill: $divider-color !important;
-      }
-    }
-
-    &.isSelected {
-      svg {
-        fill: $primary-bg !important;
-      }
-    }
-  }
-
-  .ToolbarActionButton {
-    color: $primary-fg !important;
-
-    svg {
-      fill: $primary-fg !important;
-    }
-
-    &:hover {
-      color: $black !important;
-
-      svg {
-        fill: $black !important;
-      }
-    }
-
-    &.disabled, &.disabled:hover {
-      color: $divider-color !important;
 
       svg {
         fill: $divider-color !important;

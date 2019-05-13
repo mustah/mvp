@@ -5,7 +5,7 @@ import {momentAtUtcPlusOneFrom, prettyRange} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {CallbackWith, Styled} from '../../types/Types';
-import {PeriodConfirmDialog} from '../dialog/PeriodConfirmDialog';
+import {DatePickerDialog} from '../dialog/DatePickerDialog';
 import {DropdownMenu, MenuItemProps} from '../dropdown-selector/DropdownMenu';
 import {DateRange, Period} from './dateModels';
 
@@ -86,7 +86,7 @@ export class PeriodSelection extends React.Component<Props, State> {
         style={style}
         disabled={disabled}
       >
-        <PeriodConfirmDialog
+        <DatePickerDialog
           isOpen={this.state.periodSelectorOpen}
           confirm={this.confirmCustomPeriod}
           close={this.closePeriodSelector}

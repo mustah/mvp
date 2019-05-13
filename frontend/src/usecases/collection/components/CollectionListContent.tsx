@@ -1,5 +1,7 @@
 import * as React from 'react';
+import {compose} from 'recompose';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
+import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {WithChildren} from '../../../types/Types';
@@ -8,7 +10,12 @@ import {CollectionStatList} from './CollectionStatList';
 
 export type CollectionListProps = StateToProps & DispatchToProps;
 
-const CollectionListWrapper = withEmptyContent<CollectionListProps & WithEmptyContentProps>(CollectionStatList);
+type WrapperProps = CollectionListProps & WithEmptyContentProps;
+
+const CollectionListWrapper = compose<WrapperProps & ThemeContext, WrapperProps>(
+  withCssStyles,
+  withEmptyContent
+)(CollectionStatList);
 
 export const CollectionListContent = (props: CollectionListProps & WithChildren) => {
   const {
@@ -29,7 +36,7 @@ export const CollectionListContent = (props: CollectionListProps & WithChildren)
   const {children, ...otherProps} = props;
   const hasContent = result.length > 0;
 
-  const wrapperProps: CollectionListProps & WithEmptyContentProps = {
+  const wrapperProps: WrapperProps = {
     ...otherProps,
     noContentText: firstUpperTranslated('no meters'),
     hasContent,

@@ -3,6 +3,8 @@ import Popover from 'material-ui/Popover/Popover';
 import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';
 import {Index, InfiniteLoader, List, ListRowProps} from 'react-virtualized';
+import {style as typestyle} from 'typestyle';
+import {colors} from '../../app/colors';
 import {dropdownStyle} from '../../app/themes';
 import {getId} from '../../helpers/collections';
 import {selectedFirstThenUnknownByNameAsc} from '../../helpers/comparators';
@@ -12,10 +14,11 @@ import {Address, City} from '../../state/domain-models/location/locationModels';
 import {FetchByPage, PagedResponse} from '../../state/domain-models/selections/selectionsApiActions';
 import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
 import {Children, IdNamed, uuid} from '../../types/Types';
+import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
-import {SearchBox} from '../search-box/SearchBox';
+import {SearchBoxProps, SearchBox} from '../search-box/SearchBox';
 import {LabelWithSubtitle} from '../texts/Labels';
 import {FirstUpper} from '../texts/Texts';
 import {Checkbox} from './Checkbox';
@@ -58,7 +61,7 @@ const anchorOrigin: origin = {horizontal: 'left', vertical: 'bottom'};
 const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
 
 export type SearchableProps = QueryProps & SelectableProps & OptionalProps;
-export type DropdownComponentProps = QueryProps & SelectableProps & Required<OptionalProps>;
+export type DropdownComponentProps = QueryProps & SelectableProps & Required<OptionalProps> & ThemeContext;
 
 const listItems = (
   selectedItems: SelectionListItem[],
@@ -110,7 +113,8 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
 
   render() {
     const {anchorElement, cache, isOpen, isSearching, items, totalElements, query} = this.state;
-    const {fetchItemsByQuery, selectionText, selectedItems} = this.props;
+    const {cssStyles, fetchItemsByQuery, selectionText, selectedItems} = this.props;
+    const {primary, secondary} = cssStyles;
 
     const selectedOverview: string = searchOverviewText(selectedItems, cache.totalElements);
 
@@ -122,14 +126,32 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
       ? numItems + offset
       : totalElements;
 
-    const renderSearchBox =
-      fetchItemsByQuery && <SearchBox onChange={this.onUpdateSearch} clear={!isOpen} onClear={this.onClear}/>;
+    const searchBoxProps: SearchBoxProps = {
+      cssStyles,
+      clear: !isOpen,
+      onChange: this.onUpdateSearch,
+      onClear: this.onClear
+    };
+
+    const renderSearchBox = fetchItemsByQuery && <SearchBox {...searchBoxProps}/>;
+
+    const dropdownTextClassName = typestyle({
+      color: colors.black,
+      backgroundColor: secondary.bg,
+      $nest: {
+        '&:hover': {backgroundColor: primary.bgHover},
+        '&.isOpen': {
+          border: `2px solid ${primary.bg}`,
+          backgroundColor: primary.bgHover,
+        },
+      }
+    });
 
     return (
       <Row className="DropdownSelector">
         <div
           onClick={this.openMenu}
-          className={classNames('DropdownSelector-Text clickable', {isOpen})}
+          className={classNames('DropdownSelector-Text clickable', {isOpen}, dropdownTextClassName)}
         >
           <RowMiddle>
             <FirstUpper>{selectionText}{selectedOverview}</FirstUpper>
@@ -219,6 +241,8 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
 
   rowRenderer = ({index, style}: ListRowProps) => {
     const {items} = this.state;
+    const {cssStyles: {primary}} = this.props;
+    const className = typestyle({$nest: {'&.Checkbox:hover': {backgroundColor: primary.bgHover}}});
     const selectedItem = items[index];
     const {id, selected} = selectedItem;
     const onClick = () => this.onSelect(selectedItem, id);
@@ -227,10 +251,11 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
       <Checkbox
         id={id}
         label={label}
+        labelClassName="first-uppercase"
         onClick={onClick}
         key={`${index}-${id}`}
         style={style}
-        className="first-uppercase"
+        className={className}
         checked={selected}
       />
     );
@@ -296,14 +321,14 @@ export const renderAddressLabel = (index: number, filteredList: SelectionListIte
   );
 };
 
-const DropdownSelector = (props: SearchableProps) => (
+const DropdownSelector = withCssStyles((props: SearchableProps & ThemeContext) => (
   <DropdownComponent
     renderLabel={renderLabelAtIndex}
     rowHeight={40}
     visibleItems={10}
     {...props}
   />
-);
+));
 
 export const SearchableDropdownSelector = (props: SearchableProps) => (
   <DropdownSelector

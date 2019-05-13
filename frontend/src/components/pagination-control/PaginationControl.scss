@@ -11,16 +11,6 @@
     border-radius: 20px !important;
   }
 
-  .PageNumber {
-    @extend .rounded;
-
-    &:disabled {
-      background: $primary-bg !important;
-      color: $white !important;
-      box-shadow: $box-shadow;
-    }
-  }
-
   .PageNumber-arrow {
     @extend .rounded;
   }

@@ -1,8 +1,9 @@
-import {darkBlack, fullBlack} from 'material-ui/styles/colors';
+import {important} from 'csx';
+import {MuiTheme} from 'material-ui/styles';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import * as React from 'react';
-import {colors} from './colors';
-import SvgIconProps = __MaterialUI.SvgIconProps;
+import {style} from 'typestyle';
+import {colors, CssStyles, withStyles} from './colors';
 
 interface Styles {
   [key: string]: React.CSSProperties;
@@ -13,6 +14,13 @@ interface FontSize {
   normal: number;
   medium: number;
 }
+
+export interface Theme {
+  muiTheme: MuiTheme;
+  cssStyles: CssStyles;
+}
+
+export const fontFamily = 'TTNorms, Arial, sans-serif';
 
 export const fontSize: FontSize = {
   small: 12,
@@ -28,54 +36,73 @@ export const boxShadow =
 const popoverBoxShadow =
   '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)';
 
-export const mvpTheme = getMuiTheme({
-  appBar: {
-    height: 60,
-    padding: 16,
-    color: colors.primaryBgDark,
-  },
-  badge: {
-    secondaryColor: colors.notification,
-    secondaryTextColor: colors.white,
-  },
-  checkbox: {
-    checkedColor: colors.primaryBg,
-    boxColor: colors.primaryFgHover,
-  },
-  fontFamily: 'TTNorms, Arial, sans-serif',
-  dialog: {
-    bodyFontSize: fontSize.normal,
-    bodyColor: darkBlack,
-  },
-  flatButton: {
-    primaryTextColor: colors.primaryBg,
-  },
-  listItem: {
-    nestedLevelDepth: 14,
-  },
-  menuItem: {
-    hoverColor: colors.primaryBgHover,
-    selectedTextColor: colors.primaryBg,
-  },
-  palette: {
-    primary1Color: fullBlack,
-    textColor: darkBlack,
-  },
-  raisedButton: {
-    primaryColor: colors.primaryBg,
-  },
-  toggle: {
-    trackOnColor: colors.primaryBgActive,
-    thumbOnColor: colors.primaryBg,
-  }
-});
+const makeTheme = (cssStyles: CssStyles): Theme => {
+  const {primary, secondary} = cssStyles;
+  return ({
+    cssStyles,
+    muiTheme: getMuiTheme({
+      badge: {
+        secondaryColor: colors.notification,
+        secondaryTextColor: colors.white,
+      },
+      checkbox: {
+        checkedColor: primary.bg,
+        boxColor: primary.fgHover,
+      },
+      dialog: {
+        bodyFontSize: fontSize.normal,
+        bodyColor: colors.black,
+      },
+      flatButton: {
+        buttonFilterColor: primary.bg,
+        color: colors.white,
+        secondaryTextColor: secondary.fg,
+        textColor: colors.white,
+      },
+      fontFamily,
+      listItem: {
+        nestedLevelDepth: 14,
+      },
+      menuItem: {
+        hoverColor: primary.bgHover,
+        selectedTextColor: primary.bg,
+      },
+      palette: {
+        primary1Color: primary.bg,
+        textColor: colors.black,
+      },
+      raisedButton: {
+        primaryColor: primary.bg,
+      },
+      toggle: {
+        trackOnColor: primary.bgActive,
+        thumbOnColor: primary.bg,
+      }
+    }),
+  });
+};
 
-export const appBarHeight: number = mvpTheme.appBar!.height!;
+export const mvpTheme: Theme = makeTheme(withStyles({primary: '#0091ea', secondary: '#b6e2cc'}));
+
+export const makeGridClassName = ({primary}: CssStyles): string =>
+  style({
+    $nest: {
+      '&.k-grid tr:hover': {backgroundColor: important(primary.bgHover)},
+      '&.k-grid .k-grid-pager :hover .k-link': {backgroundColor: important(primary.bgHover)},
+      '&.k-grid .k-grid-pager .k-state-selected': {backgroundColor: important(primary.bg)},
+      '&.k-grid .k-grid-pager .k-link.k-pager-nav:hover': {backgroundColor: important(primary.bgHover)},
+      '&.k-grid .k-grid-pager :hover .k-state-selected': {backgroundColor: important(primary.bg)},
+      '&.k-grid .k-textbox': {border: `1px solid ${primary.bg}`, height: 32, fontSize: fontSize.medium},
+      '&.k-grid .k-numerictextbox': {border: `1px solid ${primary.bg}`},
+    },
+  });
+
+export const topMenuHeight: number = 60;
 
 export const drawerContainerStyle: React.CSSProperties = {
   boxShadow,
-  top: appBarHeight,
-  paddingBottom: appBarHeight + 24,
+  top: topMenuHeight,
+  paddingBottom: topMenuHeight + 24,
 };
 
 export const sideMenuWidth = 300;
@@ -131,12 +158,6 @@ export const listItemStyle: React.CSSProperties = {
 export const listItemStyleSelected: React.CSSProperties = {
   ...listItemStyle,
   ...selectedMenuItemStyle,
-  backgroundColor: colors.secondaryBgActive,
-  color: colors.secondaryFgActive
-};
-
-export const listItemInnerDivStyle: React.CSSProperties = {
-  padding: 0,
 };
 
 export const menuItemInnerDivStyle: React.CSSProperties = {
@@ -162,16 +183,10 @@ export const popoverStyle: React.CSSProperties = {
 export const dropdownStyle: Styles = {
   popoverStyle: {marginTop: 6, marginLeft: 2, ...popoverStyle},
   listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
-  parentStyle: {fontSize: 11, fontWeight: 'normal', color: colors.primaryFg},
 };
 
-export const underlineFocusStyle = {
-  borderColor: colors.primaryBg,
+export const underlineFocusStyle: React.CSSProperties = {
   borderWidth: 2,
-};
-
-export const floatingLabelFocusStyle = {
-  color: colors.primaryBg,
 };
 
 export const paperStyle: React.CSSProperties = {
@@ -192,11 +207,6 @@ export const cardStyle: React.CSSProperties = {
   boxShadow,
 };
 
-export const buttonStyle: React.CSSProperties = {
-  backgroundColor: colors.primaryBg,
-  color: colors.white,
-};
-
 export const dropdownListStyle: React.CSSProperties = {
   width: 200,
   paddingTop: 8,
@@ -214,8 +224,3 @@ export const gridStyle: React.CSSProperties = {
 
 export const dividerBorder = `1px solid ${colors.dividerColor}`;
 export const border = `1px solid ${colors.borderColor}`;
-
-export const svgIconProps: SvgIconProps = {
-  color: colors.primaryFg,
-  hoverColor: colors.primaryFgHover
-};

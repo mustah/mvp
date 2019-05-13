@@ -1,5 +1,6 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -7,7 +8,8 @@ import {getDomainModel, getError} from '../../../state/domain-models/domainModel
 import {MeterDefinition} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {
   clearMeterDefinitionErrors,
-  deleteMeterDefinition, fetchMeterDefinitions
+  deleteMeterDefinition,
+  fetchMeterDefinitions
 } from '../../../state/domain-models/meter-definitions/meterDefinitionsApiActions';
 
 import {ClearError, ErrorResponse, Fetch, OnClickWithId} from '../../../types/Types';
@@ -40,4 +42,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 export const MeterDefinitionsContainer = connect<StateToProps, DispatchToProps>(
   mapStateToProps,
   mapDispatchToProps,
-)(MeterDefinitionList);
+)(withCssStyles(MeterDefinitionList));

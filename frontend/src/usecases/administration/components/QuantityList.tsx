@@ -1,6 +1,8 @@
 import {Grid, GridColumn, GridToolbar} from '@progress/kendo-react-grid';
 import * as React from 'react';
+import {makeGridClassName} from '../../../app/themes';
 import {ButtonLink} from '../../../components/buttons/ButtonLink';
+import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {InputSelectableCell} from '../../../components/inputs/InputSelectableCell';
 import {translate} from '../../../services/translationService';
 import {DisplayQuantity, Quantity} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
@@ -14,11 +16,17 @@ interface OwnProps {
   editable: boolean;
 }
 
-type Props = OwnProps;
+type Props = OwnProps & ThemeContext;
 
 type state = DisplayQuantity[];
 
-export const QuantityList = ({definitionQuantities, allQuantities, changedQuantities, editable}: Props) => {
+export const QuantityList = ({
+  cssStyles,
+  allQuantities,
+  changedQuantities,
+  definitionQuantities,
+  editable
+}: Props) => {
   let x = 0;
   definitionQuantities.forEach((q) => q.gridIndex = x++);
 
@@ -111,17 +119,12 @@ export const QuantityList = ({definitionQuantities, allQuantities, changedQuanti
     );
   };
 
-  const addNewQuantityButton = editable ?
-    (
-      <ButtonLink
-        className="k-button k-primary"
-        onClick={enterInsert}
-      >{translate('add quantity')}
-      </ButtonLink>
-    )
+  const addNewQuantityButton = editable
+    ? <ButtonLink className="k-button k-primary" onClick={enterInsert}>{translate('add quantity')}</ButtonLink>
     : null;
   return (
     <Grid
+      className={makeGridClassName(cssStyles)}
       style={{marginTop: 32, marginBottom: 32}}
       data={localQuantities}
       scrollable="none"

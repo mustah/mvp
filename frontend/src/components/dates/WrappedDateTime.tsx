@@ -12,9 +12,6 @@ interface Props extends HasContent, Styled {
 
 const DateTime = ({date}: Props) => <Normal>{displayDate(date)}</Normal>;
 
-const WrappedComponent = withEmptyContentComponent<Props>(
-  DateTime,
-  Separator,
-);
+const WrappedComponent = withEmptyContentComponent<Props>(DateTime, Separator);
 
 export const WrappedDateTime = (props: Props) => <WrappedComponent {...props}/>;

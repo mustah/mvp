@@ -11,19 +11,17 @@
 
     &:hover, &.hasValue {
       .GlobalSearch-input {
-        background-color: $white;
+        background-color: $white !important;
         box-shadow: $box-shadow-hover;
         border: none;
-        color: $black;
+        color: $black !important;
         outline: none;
       }
     }
 
     .GlobalSearch-input {
       flex: 1;
-      background-color: $primary-bg-darkest;
       transition: background-color 100ms linear;
-      color: $primary-fg;
       font-size: $medium;
       font-family: $font-family;
       margin: 0;
@@ -36,7 +34,7 @@
       &:focus {
         box-shadow: $box-shadow-hover;
         background-color: $white;
-        color: $black;
+        color: $black !important;
       }
     }
   }

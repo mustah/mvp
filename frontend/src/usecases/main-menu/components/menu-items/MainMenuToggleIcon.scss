@@ -9,15 +9,4 @@
   &.isSideMenuOpen {
     left: 174px;
   }
-
-  &:hover {
-    .MainMenuToggleIcon-Button {
-      background-color: $primary-bg-hover !important;
-      box-shadow: $box-shadow-hover !important;
-
-      svg {
-        fill: $black !important;
-      }
-    }
-  }
 }

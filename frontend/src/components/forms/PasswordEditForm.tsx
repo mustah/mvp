@@ -1,10 +1,9 @@
-import {FlatButton} from 'material-ui';
 import * as React from 'react';
 import {ValidatorForm} from 'react-material-ui-form-validator';
-import {buttonStyle} from '../../app/themes';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Password, User} from '../../state/domain-models/user/userModels';
 import {uuid} from '../../types/Types';
+import {ButtonPrimary} from '../buttons/ButtonPrimary';
 import {ErrorMessage} from '../error-message/ErrorMessage';
 import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
 import {Column} from '../layouts/column/Column';
@@ -76,11 +75,10 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
           <Row className="Error-message-container">
             <ErrorMessage message={error}/>
           </Row>
-          <FlatButton
+          <ButtonPrimary
             type="submit"
-            className="SaveButton"
+            className="ButtonSave"
             label={firstUpperTranslated('change password')}
-            style={buttonStyle}
           />
         </Column>
       </ValidatorForm>

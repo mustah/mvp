@@ -7,22 +7,11 @@
       height: $main-menu-item-height;
 
       &:hover {
-        background-color: $primary-bg-hover;
         border-radius: $menu-item-border-radius;
       }
 
       &.isSelected {
-        background-color: $primary-bg-active;
         border-radius: $menu-item-border-radius;
-
-        .Normal {
-          color: $primary-fg-active !important;
-          font-weight: bold;
-        }
-
-        .MainMenuItem-icon {
-          fill: $primary-fg-active !important;
-        }
       }
     }
 
@@ -36,18 +25,6 @@
 
     .Foldable-content {
       padding-left: 0;
-    }
-
-    .Foldable-Small {
-      .Foldable-title {
-        padding-left: $sm-space;
-        height: $list-item-height;
-
-        &:hover {
-          background-color: $secondary-bg-hover;
-          border-radius: $menu-item-border-radius;
-        }
-      }
     }
   }
 }

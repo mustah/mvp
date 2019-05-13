@@ -15,15 +15,10 @@ $grid-sorted-bg: 'transparent';
 
 $grid-alt-bg: $table-row-odd-bg;
 
-$grid-hovered-bg: $primary-bg-hover;
-
 $grid-cell-horizontal-border-width: 0;
 
 $pager-number-bg: null;
 $pager-number-text: $black;
-$pager-number-selected-bg: $primary-bg;
-$pager-number-hovered-bg: $primary-bg-active;
-$pager-number-hovered-text: $primary-fg-active;
 
 @import '~@progress/kendo-theme-material/scss/grid.scss';
 
@@ -84,7 +79,6 @@ $pager-number-hovered-text: $primary-fg-active;
 
             &:hover {
               color: $white;
-              background-color: $pager-number-selected-bg;
             }
           }
         }
@@ -164,7 +158,6 @@ $pager-number-hovered-text: $primary-fg-active;
 /* tree view */
 $treeview-item-padding-x: 0;
 $treeview-item-padding-y: 0;
-$treeview-item-hovered-bg: $secondary-bg-hover;
 
 @import '~@progress/kendo-theme-material/scss/treeview.scss';
 

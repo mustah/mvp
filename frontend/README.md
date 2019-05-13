@@ -7,6 +7,9 @@
   * [Run Fake REST api](#fake-api)
 * [Developing](#developing)
 * [Testing](#testing)
+* [Upgrading packages](#upgradingPackages)
+* [Css](#css)
+  * [Material Design](#materialDesign)
 * [Resources](#resources)
 
 ## Prerequisite
@@ -48,7 +51,11 @@ Some tips:
 - Use `yarn outdated` to find which packages are in need of updates
 - Upgrade one package at a time, run `yarn tslint`, start the application, commit, upgrade the next package
 
-# Material Design
+# Css
+We use sass-files to write our _old_ main css but from **now on (2019-05-13) we will/must** use _css-in-js_ 
+library called [typestyle](https://typestyle.github.io/#/). So no more changes in sass-files! 
+
+## Material Design
 We are using the material design react components from [material-ui](http://www.material-ui.com/#/) library.
 
 ## Icons
@@ -90,6 +97,7 @@ how to handle the Elvaco proprietary icons.
 * [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) - Redux DevTools for debugging application's state changes.
 
 ### Other
+* [typestyle](https://typestyle.github.io/#/) - Making CSS TypeSafe
 * [Axios](https://github.com/mzabriskie/axios) - Promise based HTTP client for the browser and node.js
 * [Jest](https://github.com/kulshekhar/ts-jest) - Test framework
 * [normalizer](https://tonyhb.gitbooks.io/redux-without-profanity/content/normalizer.html) - API response that has nested resources and flatten them

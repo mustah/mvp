@@ -16,6 +16,7 @@ import {
 import {CallbackWithData, uuid} from '../../types/Types';
 import {QuantityList} from '../../usecases/administration/components/QuantityList';
 import {ButtonSave} from '../buttons/ButtonSave';
+import {withCssStyles} from '../hoc/withThemeProvider';
 import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
 import {ValidatedInputSelectable} from '../inputs/ValidatedInputSelectable';
 import {Column} from '../layouts/column/Column';
@@ -45,6 +46,8 @@ const initialMeterDefinition: MeterDefinitionMaybeId = {
   medium: {id: '', name: ''},
   autoApply: true,
 };
+
+const ThemedQuantityList = withCssStyles(QuantityList);
 
 export const MeterDefinitionEditForm = (
   {mediums, organisations, meterDef, updateMeterDefinition, addMeterDefinition, allQuantities}: Props
@@ -132,14 +135,14 @@ export const MeterDefinitionEditForm = (
           value={autoApply + ''}
         />
 
-        <QuantityList
+        <ThemedQuantityList
           changedQuantities={setQuantities}
           definitionQuantities={quantities}
           allQuantities={allQuantities}
           editable={!isDefault}
         />
 
-        <ButtonSave disabled={isDefault} className="SaveButton" type="submit"/>
+        <ButtonSave disabled={isDefault} className="ButtonSave" type="submit"/>
       </Column>
 
     </ValidatorForm>

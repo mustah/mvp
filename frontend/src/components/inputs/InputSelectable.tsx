@@ -2,8 +2,9 @@ import {default as classNames} from 'classnames';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
-import {floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
+import {underlineFocusStyle} from '../../app/themes';
 import {ClassNamed, IdNamed, OnChange, uuid} from '../../types/Types';
+import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
 import SelectFieldProps = __MaterialUI.SelectFieldProps;
 
 export const renderMenuItem = ({id, name}: IdNamed) =>
@@ -20,7 +21,7 @@ export interface SelectFieldInputProps extends ClassNamed {
   disabled?: boolean;
 }
 
-type Props = SelectFieldInputProps & MultipleOrSingle;
+type Props = SelectFieldInputProps & MultipleOrSingle & ThemeContext;
 
 /**
  * WrappedSelectField is used as a workaround until @types/material-ui/SelectField is
@@ -32,16 +33,16 @@ export interface WrappedSelectFieldProps extends SelectFieldProps {
 
 const WrappedSelectField = (props: WrappedSelectFieldProps) => <SelectField {...props} />;
 
-export const SelectFieldInput = ({className, options, ...props}: Props) => {
+export const SelectFieldInput = withCssStyles(({cssStyles: {primary}, className, options, ...props}: Props) => {
   const renderedItems = options.map(renderMenuItem);
   return (
     <WrappedSelectField
       className={classNames('SelectField', className)}
-      floatingLabelFocusStyle={floatingLabelFocusStyle}
-      underlineFocusStyle={underlineFocusStyle}
+      floatingLabelFocusStyle={{color: primary.bg}}
+      underlineFocusStyle={{...underlineFocusStyle, borderColor: primary.bg}}
       {...props}
     >
       {renderedItems}
     </WrappedSelectField>
   );
-};
+});

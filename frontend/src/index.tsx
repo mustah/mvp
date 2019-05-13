@@ -12,20 +12,25 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {App} from './app/App';
 import {history} from './app/routes';
 import {mvpTheme} from './app/themes';
+import {withThemeProvider} from './components/hoc/withThemeProvider';
 import {LoadingLarge} from './components/loading/Loading';
 import {onTranslationInitialized} from './services/translationService';
 import {persistor, store} from './store/configureStore';
+
+const ThemeProvider = withThemeProvider(() => (
+  <PersistGate loading={<LoadingLarge/>} persistor={persistor}>
+    <ConnectedRouter history={history}>
+      <App/>
+    </ConnectedRouter>
+  </PersistGate>
+));
 
 onTranslationInitialized(() =>
   ReactDOM.render(
     (
       <Provider store={store}>
-        <MuiThemeProvider muiTheme={mvpTheme}>
-          <PersistGate loading={<LoadingLarge/>} persistor={persistor}>
-            <ConnectedRouter history={history}>
-              <App/>
-            </ConnectedRouter>
-          </PersistGate>
+        <MuiThemeProvider muiTheme={mvpTheme.muiTheme}>
+          <ThemeProvider cssStyles={mvpTheme.cssStyles}/>
         </MuiThemeProvider>
       </Provider>
     ),

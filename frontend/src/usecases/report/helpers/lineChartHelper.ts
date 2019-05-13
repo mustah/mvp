@@ -16,7 +16,7 @@ import {Dictionary} from '../../../types/Types';
 
 const colorize =
   (colorSchema: {[key: string]: string}) =>
-    (key: string) => colorSchema[key as string] || colors.primaryBg;
+    (key: string) => colorSchema[key as string] || '#00B0FF';
 
 export const colorFor = colorize({
   [Quantity.volume as string]: '#651FFF',
@@ -28,7 +28,7 @@ export const colorFor = colorize({
   [Quantity.differenceTemperature as string]: '#2979FF',
   [Quantity.externalTemperature as string]: '#e84d6f',
   [Quantity.relativeHumidity as string]: '#ff9800',
-  ['count']: colors.secondaryBgActive,
+  ['count']: '#b6e2cc',
 });
 
 const yAxisIdLookup = (axes: AxesProps, unit: string): 'left' | 'right' | undefined => {

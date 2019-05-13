@@ -6,12 +6,10 @@ import {clearValidationSearch, validationSearch} from '../state/search/searchAct
 import {OnSearch, Query} from '../state/search/searchModels';
 import {OnClickWith} from '../types/Types';
 
-interface DispatchToProps {
+export interface DispatchToProps {
   onSearch: OnSearch;
   onClear: OnClickWith<string>;
 }
-
-export type GlobalSearchProps = Query & DispatchToProps;
 
 const mapStateToProps = ({search: {validation: {query}}}: RootState): Query => ({query});
 

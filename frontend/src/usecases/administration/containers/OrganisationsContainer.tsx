@@ -1,5 +1,6 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -38,4 +39,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const OrganisationsContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(OrganisationList);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(withCssStyles(OrganisationList));

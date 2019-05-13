@@ -3,8 +3,9 @@ import ContentClear from 'material-ui/svg-icons/content/clear';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {colors} from '../../../../app/colors';
-import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
+import {underlineFocusStyle} from '../../../../app/themes';
 import {ButtonLink} from '../../../../components/buttons/ButtonLink';
+import {ThemeContext, withCssStyles} from '../../../../components/hoc/withThemeProvider';
 import {RowBottom, RowLeft} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
@@ -40,30 +41,32 @@ const style: React.CSSProperties = {
   width: 24
 };
 
-const iconStyle: React.CSSProperties = {
-  width: 22,
-  height: 22,
-  color: colors.primaryFg,
-};
-
-const buttonLinkStyle: React.CSSProperties = {
+const buttonStyle: React.CSSProperties = {
   marginLeft: 16,
+  marginBottom: 8,
 };
 
-const ResetIconButton = ({onClick}: Clickable) => (
-  <IconButton
-    onClick={onClick}
-    style={style}
-    iconStyle={iconStyle}
-    touch={true}
-    tooltip={translate('reset selection')}
-    tooltipPosition="top-center"
-  >
-    <ContentClear hoverColor={colors.black} style={iconStyle}/>
-  </IconButton>
-);
+const ResetIconButton = withCssStyles(({cssStyles: {primary}, onClick}: Clickable & ThemeContext) => {
+  const iconStyle: React.CSSProperties = {
+    width: 22,
+    height: 22,
+    color: primary.fg,
+  };
+  return (
+    <IconButton
+      onClick={onClick}
+      style={style}
+      iconStyle={iconStyle}
+      touch={true}
+      tooltip={translate('reset selection')}
+      tooltipPosition="top-center"
+    >
+      <ContentClear hoverColor={colors.black} style={iconStyle}/>
+    </IconButton>
+  );
+});
 
-interface Props extends DispatchToProps, StateToProps {
+interface Props extends DispatchToProps, StateToProps, ThemeContext {
   isChanged: boolean;
 }
 
@@ -90,8 +93,8 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {id} = this.state;
     return (
       <RowLeft>
-        {isSavedSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
-        <ButtonLink onClick={this.onSaveAs} style={buttonLinkStyle}>{translate('save as')}</ButtonLink>
+        {isSavedSelection(id) && <ButtonLink onClick={this.onSave} style={buttonStyle}>{translate('save')}</ButtonLink>}
+        <ButtonLink onClick={this.onSaveAs} style={buttonStyle}>{translate('save as')}</ButtonLink>
       </RowLeft>
     );
   }
@@ -99,7 +102,7 @@ export class InlineEditInput extends React.Component<Props, State> {
   renderSelectionResetButton = (): React.ReactNode => {
     const {selection: {id}, resetToSavedSelection} = this.props;
     const reset = () => resetToSavedSelection(id);
-    return <ButtonLink onClick={reset} style={buttonLinkStyle}>{translate('discard changes')}</ButtonLink>;
+    return <ButtonLink onClick={reset} style={buttonStyle}>{translate('discard changes')}</ButtonLink>;
   }
 
   onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});
@@ -120,7 +123,7 @@ export class InlineEditInput extends React.Component<Props, State> {
   }
 
   render() {
-    const {isChanged: changed, resetSelection} = this.props;
+    const {cssStyles: {primary}, isChanged: changed, resetSelection} = this.props;
     const {isChanged, name, id} = this.state;
     const shouldRenderActionButtons = name && (isChanged || changed || isInitialSelection(id));
     const shouldRenderResetButton = changed && isInitialSelection(id) || isSavedSelection(id) && !changed;
@@ -130,7 +133,7 @@ export class InlineEditInput extends React.Component<Props, State> {
       <RowBottom className="InlineEditInput">
         <TextField
           style={textFieldStyle}
-          floatingLabelFocusStyle={floatingLabelFocusStyle}
+          floatingLabelFocusStyle={{color: primary.bg}}
           inputStyle={inputStyle}
           hintStyle={hintStyle}
           underlineFocusStyle={underlineFocusStyle}

@@ -4,16 +4,17 @@ import Divider from 'material-ui/Divider/index';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
 import * as React from 'react';
-import {actionMenuItemIconStyle, cardStyle, dividerStyle, svgIconProps} from '../../../app/themes';
+import {actionMenuItemIconStyle, cardStyle, dividerStyle} from '../../../app/themes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
+import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowMiddle} from '../../../components/layouts/row/Row';
 import {WidgetTitle} from '../../../components/texts/Titles';
 import {translate} from '../../../services/translationService';
-import {OnClick, RenderFunction, uuid, WithChildren} from '../../../types/Types';
+import {OnClick, RenderFunction, Styled, uuid, WithChildren} from '../../../types/Types';
 import {WidgetDispatchProps} from '../dashboardModels';
 import './Widget.scss';
 
@@ -23,7 +24,9 @@ interface WidgetWithTitleProps extends WidgetDispatchProps, WithChildren {
   title: string;
 }
 
-const EditIcon = <ImageEdit {...svgIconProps} style={actionMenuItemIconStyle}/>;
+const EditIcon = withCssStyles(({cssStyles: {primary}, style}: Styled & ThemeContext) =>
+  <ImageEdit style={style} color={primary.fg} hoverColor={primary.fgHover}/>
+);
 
 export const WidgetWithTitle = ({
   children,
@@ -50,7 +53,7 @@ export const WidgetWithTitle = ({
       (
         <ActionMenuItem
           key="edit-widget"
-          leftIcon={EditIcon}
+          leftIcon={<EditIcon style={actionMenuItemIconStyle}/>}
           name={translate('edit widget')}
           onClick={onClickEdit}
         />

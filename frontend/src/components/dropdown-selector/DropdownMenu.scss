@@ -1,19 +1,5 @@
 @import "../../app/variables";
 
-.DropdownMenu {
-  &.isActive {
-    &:hover {
-      .DropdownMenu-dropdown {
-        border: 1px solid $primary-bg !important;
-      }
-
-      .IconButton {
-        fill: $primary-bg !important;
-      }
-    }
-  }
-}
-
 .DropdownMenu-MenuItem {
   &:first-letter {
     text-transform: uppercase;

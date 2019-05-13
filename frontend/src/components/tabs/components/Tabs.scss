@@ -10,31 +10,18 @@
     .Tab {
       cursor: pointer;
 
-      .Tab-header {
-        text-align: center;
-        padding: $sm-space $lg-space;
-        color: $primary-fg;
-
-        &:hover {
-          color: $black;
-        }
-      }
-
       &.isSelected {
         .Tab-header {
           color: $black;
         }
-
-        &:hover {
-          .TabUnderline {
-            border-top: solid $underline-height $primary-bg;
-          }
-        }
       }
 
-      &:hover {
-        .TabUnderline {
-          border-top: solid $underline-height $secondary-bg-hover;
+      .Tab-header {
+        text-align: center;
+        padding: $sm-space $lg-space;
+
+        &:hover {
+          color: $black;
         }
       }
     }
@@ -42,10 +29,6 @@
     .TabUnderline {
       border-top-left-radius: $underline-height * 2;
       border-top-right-radius: $underline-height * 2;
-
-      &.isSelected {
-        border-top: solid $underline-height $primary-bg;
-      }
     }
   }
 

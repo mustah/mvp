@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {compose} from 'recompose';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated} from '../../services/translationService';
 import {useFetchMeters} from '../../state/domain-models-paginated/meter/fetchMetersHook';
@@ -30,6 +31,7 @@ import {toLegendItem} from '../../usecases/report/helpers/legendHelper';
 import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
+import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
 import {Column} from '../layouts/column/Column';
 import {RetryLoader} from '../loading/Loader';
 
@@ -57,14 +59,19 @@ export interface MeterListDispatchToProps {
   sortTable: CallbackWith<ApiRequestSortingOptions[]>;
 }
 
-export type MeterListProps = MeterListStateToProps & MeterListDispatchToProps;
+export type MeterListProps = MeterListStateToProps & MeterListDispatchToProps ;
 
 export interface MeterListActionDropdownProps {
   syncMeters: OnClick;
   addAllToReport: OnClick;
 }
 
-const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
+type WrapperProps = MeterListProps & WithEmptyContentProps;
+
+const MeterListWrapper = compose<WrapperProps & ThemeContext, WrapperProps>(
+  withCssStyles,
+  withEmptyContent
+)(MeterList);
 
 const MeterListActionsDropdownWrapper = withContent<MeterListActionDropdownProps>(MeterListActionsDropdown);
 
@@ -85,7 +92,7 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
   useFetchMeters({fetchMeters, parameters, sort, page, entities});
   const {children, ...otherProps} = props;
   const hasContent = result.length > 0;
-  const wrapperProps: MeterListProps & WithEmptyContentProps = {
+  const wrapperProps: WrapperProps = {
     ...otherProps,
     noContentText: firstUpperTranslated('no meters'),
     hasContent,

@@ -1,30 +1,26 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
-import {Clickable, Omit, Styled} from '../../types/Types';
+import {colors} from '../../app/colors';
+import {ClassNamed, Clickable, Styled, WithChildren} from '../../types/Types';
+import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
 import {Row} from '../layouts/row/Row';
-import {BoldFirstUpper, FirstUpper} from '../texts/Texts';
-import './ButtonLink.scss';
+import {FirstUpper} from '../texts/Texts';
 
-interface Props extends Clickable, Styled {
-  className?: string;
-  children?: React.ReactNode | React.ReactNode[];
-  textClassName?: string;
+interface Props extends ClassNamed, Clickable, Styled, WithChildren {
+  color?: string;
 }
 
-export const ButtonLink = ({className, children, onClick, textClassName, style}: Props) => (
-  <Row className={classNames('ButtonLink', className)} onClick={onClick} style={style}>
-    <BoldFirstUpper className={textClassName}>{children}</BoldFirstUpper>
+export const ButtonLink = withCssStyles(({
+  className,
+  children,
+  color,
+  cssStyles: {primary},
+  onClick,
+  style,
+}: Props & ThemeContext) => (
+  <Row className={classNames('clickable', className)} onClick={onClick} style={style}>
+    <FirstUpper style={{color: color || primary.bg}} className="underline">{children}</FirstUpper>
   </Row>
-);
+));
 
-export const ButtonLinkBlue = ({className, children, onClick}: Omit<Props, 'textClassName'>) => (
-  <Row className={classNames('ButtonLink blue', className)} onClick={onClick}>
-    <FirstUpper>{children}</FirstUpper>
-  </Row>
-);
-
-export const ButtonLinkRed = ({className, children, onClick}: Omit<Props, 'textClassName'>) => (
-  <Row className={classNames('ButtonLink red', className)} onClick={onClick}>
-    <FirstUpper>{children}</FirstUpper>
-  </Row>
-);
+export const ButtonLinkRed = (props: Props) => <ButtonLink {...props} color={colors.notification}/>;

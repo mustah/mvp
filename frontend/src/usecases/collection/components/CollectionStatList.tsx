@@ -9,7 +9,8 @@ import {
   GridSortSettings
 } from '@progress/kendo-react-grid';
 import * as React from 'react';
-import {gridStyle} from '../../../app/themes';
+import {gridStyle, makeGridClassName} from '../../../app/themes';
+import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
 
 import {formatCollectionPercentage, formatReadInterval} from '../../../helpers/formatters';
@@ -42,6 +43,7 @@ const renderCollectionPercentage = ({dataItem: {collectionPercentage, readInterv
   <td>{formatCollectionPercentage(collectionPercentage, readInterval)}</td>;
 
 export const CollectionStatList = ({
+  cssStyles,
   changePage,
   exportToExcelSuccess,
   isExportingToExcel,
@@ -51,7 +53,7 @@ export const CollectionStatList = ({
   pagination: {page, size, totalElements: total},
   sort,
   sortTable,
-}: CollectionListProps) => {
+}: CollectionListProps & ThemeContext) => {
   const exporter = useExportToExcel({
     exportToExcelSuccess,
     isExportingToExcel,
@@ -70,6 +72,7 @@ export const CollectionStatList = ({
   return (
     <ExcelExport data={data} ref={exporter} filterable={true}>
       <Grid
+        className={makeGridClassName(cssStyles)}
         data={gridData}
 
         pageable={total > size ? pageable : undefined}

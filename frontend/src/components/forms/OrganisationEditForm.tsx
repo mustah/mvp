@@ -141,7 +141,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
 
               {selectionChooser}
 
-              <ButtonSave className="SaveButton" type="submit"/>
+              <ButtonSave className="ButtonSave" type="submit"/>
             </Column>
           </Row>
         </form>

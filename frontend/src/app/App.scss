@@ -30,6 +30,12 @@ body {
   text-decoration: none;
 }
 
+.underline {
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .Content {
   padding: $lg-space + $top-menu-height $lg-space $lg-space $lg-space;
 }

@@ -39,7 +39,7 @@ export const cellRender = (td, {columnIndex, rowType}: GridCellProps) => {
   if (columnIndex === 0) {
     const cellStyle: React.CSSProperties = isGroupHeader(rowType)
       ? {
-        background: colors.secondaryBg,
+        background: colors.alternate,
         borderBottom: dividerBorder,
         borderTop: dividerBorder,
         paddingTop: 24

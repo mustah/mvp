@@ -6,19 +6,12 @@
   height: $main-menu-item-height;
 
   &:hover {
-    background-color: $primary-bg-hover;
     border-radius: $menu-item-border-radius;
   }
 
   &.isSelected {
-    background-color: $primary-bg-active;
     border-radius: $menu-item-border-radius;
-    color: $primary-fg-active;
     font-weight: bold;
-
-    .MainMenuItem-icon {
-      fill: $primary-fg-active !important;
-    }
   }
 
   .MainMenuItem-icon {

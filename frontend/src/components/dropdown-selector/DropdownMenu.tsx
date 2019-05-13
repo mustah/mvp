@@ -1,10 +1,13 @@
 import {default as classNames} from 'classnames';
+import {important} from 'csx';
 import {DropDownMenu, MenuItem} from 'material-ui';
 import * as React from 'react';
+import {style as typestyle} from 'typestyle';
 import {colors} from '../../app/colors';
 import {borderRadius, fontSize, menuItemStyle, selectedMenuItemStyle} from '../../app/themes';
 import {ClassNamed, OnClick, Styled, WithChildren} from '../../types/Types';
 import {Period} from '../dates/dateModels';
+import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
 import './DropdownMenu.scss';
@@ -14,7 +17,6 @@ const height = 32;
 
 const menu: {[name: string]: React.CSSProperties} = {
   iconStyle: {
-    fill: colors.primaryFg,
     height,
     width: 36,
     right: 0,
@@ -44,7 +46,7 @@ const menu: {[name: string]: React.CSSProperties} = {
   underlineStyle: {border: 'none'},
 };
 
-export interface DropdownMenuProps extends WithChildren, Styled, ClassNamed {
+export interface DropdownMenuProps extends WithChildren, Styled, ClassNamed, ThemeContext {
   disabled?: boolean;
   labelStyle?: React.CSSProperties;
   listStyle?: React.CSSProperties;
@@ -62,9 +64,10 @@ export interface MenuItemProps {
   value: Period | string | undefined;
 }
 
-export const DropdownMenu = ({
+export const DropdownMenu = withCssStyles(({
   children,
   className,
+  cssStyles: {primary},
   disabled,
   IconButton = IconCalendar,
   labelStyle,
@@ -73,7 +76,6 @@ export const DropdownMenu = ({
   value,
   style
 }: DropdownMenuProps) => {
-
   const renderedMenuItems = menuItems.map(({hasDivider, primaryText, label, value, onClick}: MenuItemProps) => (
     <MenuItem
       className={classNames('DropdownMenu-MenuItem', {hasDivider})}
@@ -88,14 +90,20 @@ export const DropdownMenu = ({
 
   const menuStyle = {...menu.style, ...style};
   const menuLabelStyle = {...menu.labelStyle, ...labelStyle};
+  const menuClassName = typestyle({
+    $nest: {
+      '&.isActive:hover .DropdownMenu-dropdown': {border: important(`1px solid ${primary.bg}`)},
+      '&.isActive:hover .IconButton': {fill: important(primary.bg)},
+    },
+  });
 
   return (
-    <Row className={classNames('DropdownMenu', className, {isActive: !disabled})}>
+    <Row className={classNames('DropdownMenu clickable', className, {isActive: !disabled}, menuClassName)}>
       <DropDownMenu
         className="DropdownMenu-dropdown"
         disabled={disabled}
-        iconButton={<IconButton className="IconButton"/>}
-        iconStyle={menu.iconStyle}
+        iconButton={<IconButton className="bordered" color={primary.fg} hoverColor={colors.black}/>}
+        iconStyle={{...menu.iconStyle, fill: primary.fg}}
         maxHeight={300}
         labelStyle={menuLabelStyle}
         listStyle={listStyle}
@@ -109,4 +117,4 @@ export const DropdownMenu = ({
       {children}
     </Row>
   );
-};
+});

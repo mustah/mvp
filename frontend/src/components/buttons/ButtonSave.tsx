@@ -1,18 +1,6 @@
-import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
-import {buttonStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ClassNamed} from '../../types/Types';
+import {ButtonPrimary} from './ButtonPrimary';
+import FlatButtonProps = __MaterialUI.FlatButtonProps;
 
-interface Props extends ClassNamed {
-  type: 'submit';
-  disabled?: boolean;
-}
-
-export const ButtonSave = (props: Props) => (
-  <FlatButton
-    {...props}
-    label={firstUpperTranslated('save')}
-    style={buttonStyle}
-  />
-);
+export const ButtonSave = (props: FlatButtonProps) => <ButtonPrimary {...props} label={firstUpperTranslated('save')}/>;

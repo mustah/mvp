@@ -4,9 +4,11 @@ import NavigationCheck from 'material-ui/svg-icons/navigation/check';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
+import {makeGridClassName} from '../../../app/themes';
 import {ButtonAdd} from '../../../components/buttons/ButtonAdd';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
+import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
@@ -15,11 +17,12 @@ import {DispatchToProps, StateToProps} from '../containers/MeterDefinitionsConta
 import {MeterDefinitionActions} from './MeterDefinitionActions';
 import './MeterDefinitionList.scss';
 
-type Props = StateToProps & DispatchToProps;
+type Props = StateToProps & DispatchToProps & ThemeContext;
 
 export const MeterDefinitionList = ({
-  deleteMeterDefinition,
+  cssStyles,
   clearError,
+  deleteMeterDefinition,
   error,
   fetchMeterDefinitions,
   isFetching,
@@ -51,6 +54,7 @@ export const MeterDefinitionList = ({
           </Link>
         </Row>
         <Grid
+          className={makeGridClassName(cssStyles)}
           style={{borderTopWidth: 1}}
           data={meterDefinitions}
           scrollable="none"

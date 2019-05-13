@@ -1,7 +1,7 @@
 @import "../../app/variables";
 
 .TimestampInfoMessage {
-  color: $primary-fg;
+  color: $info-color;
   margin: $space $space $sm-space $space;
 
   &.Measurements {

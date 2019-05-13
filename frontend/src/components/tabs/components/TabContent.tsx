@@ -3,7 +3,6 @@ import * as React from 'react';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {ClassNamed} from '../../../types/Types';
 import {Column} from '../../layouts/column/Column';
-import './Tabs.scss';
 
 export interface TabContentProps extends ClassNamed {
   tab: TabName;

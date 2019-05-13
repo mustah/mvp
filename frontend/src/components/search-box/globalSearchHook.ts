@@ -1,16 +1,16 @@
 import * as React from 'react';
 import {history, routes} from '../../app/routes';
-import {GlobalSearchProps} from '../../containers/GlobalSearchContainer';
 import {OnChange, OnClick, OnKeyPress} from '../../types/Types';
+import {Props} from './GlobalSearch';
 
-interface GlobalSearch {
+export interface GlobalSearch {
   value?: string;
   onChange: OnChange;
   onEnter: OnKeyPress;
   onClearValue: OnClick;
 }
 
-export const useGlobalSearch = ({onSearch, onClear, query = ''}: GlobalSearchProps): GlobalSearch => {
+export const useGlobalSearch = ({onSearch, onClear, query = ''}: Props): GlobalSearch => {
   const [value, setValue] = React.useState<string>(query);
 
   const onEnter = (event) => {

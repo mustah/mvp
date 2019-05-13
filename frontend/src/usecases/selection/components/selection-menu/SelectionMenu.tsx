@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {ThemeContext, withCssStyles} from '../../../../components/hoc/withThemeProvider';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {initialSelectionId, UserSelection} from '../../../../state/user-selection/userSelectionModels';
 import {CallbackWith, OnClick, OnClickWithId} from '../../../../types/Types';
@@ -15,9 +16,9 @@ export interface DispatchToProps {
   updateSelection: CallbackWith<UserSelection>;
 }
 
-type Props = StateToProps & DispatchToProps;
+type Props = StateToProps & DispatchToProps & ThemeContext;
 
-export const SelectionMenu = (props: Props) => (
+export const SelectionMenu = withCssStyles((props: Props) => (
   <RowMiddle>
     <InlineEditInput
       key={`${props.selection.id}-${props.selection.id === initialSelectionId ? '' : props.selection.isChanged}`}
@@ -25,4 +26,4 @@ export const SelectionMenu = (props: Props) => (
       {...props}
     />
   </RowMiddle>
-);
+));

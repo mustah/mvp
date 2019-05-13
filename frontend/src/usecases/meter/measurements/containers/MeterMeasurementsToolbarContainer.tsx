@@ -1,6 +1,8 @@
 import {connect} from 'react-redux';
+import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../../components/dates/dateModels';
+import {ThemeContext, withCssStyles} from '../../../../components/hoc/withThemeProvider';
 import {RootState} from '../../../../reducers/rootReducer';
 import {changeMeterMeasurementsToolbarView} from '../../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarViewSettings} from '../../../../state/ui/toolbar/toolbarModels';
@@ -53,5 +55,8 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   setTimePeriod,
 }, dispatch);
 
+const ThemedMeterMeasurementsToolbar =
+  compose<Props & OwnProps & ThemeContext, Props & OwnProps>(withCssStyles)(MeterMeasurementsToolbar);
+
 export const MeterMeasurementsToolbarContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeterMeasurementsToolbar);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(ThemedMeterMeasurementsToolbar);

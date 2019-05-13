@@ -3255,6 +3255,23 @@ cssstyle@^1.0.0:
   dependencies:
     cssom "0.3.x"
 
+csstips@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/csstips/-/csstips-0.3.0.tgz#e9a069363fbd53002ac4dd4221b5f4ad4e18f65c"
+  integrity sha512-Y9xM+P1ma92WZ9Czg3dKPJ96o5w5oc97R5iYTRojLGqorUPFgpkfofYJSoaSzaJTSB8SwU54jbwePhq1u3KXyw==
+
+csstype@^2.4.0, csstype@^2.5.1:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.4.tgz#d585a6062096e324e7187f80e04f92bd0f00e37f"
+  integrity sha512-lAJUJP3M6HxFXbqtGRc0iZrdyeN+WzOWeY0q/VnFzI+kqVrYIzC7bWlKqCW7oCIdzoPkvfp82EVvrTlQ8zsWQg==
+
+csx@^9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/csx/-/csx-9.1.0.tgz#add8e5102857fbe81c0edd76c672cf593067a79a"
+  integrity sha512-klhvUgpPYdZIM8WshgDqDrgiBr/j8hMpv9+RflCxdsSfvdynF1IKYOCoXGW0io8GeqHqDONn6LnZdmtzxpDYUQ==
+  dependencies:
+    csstype "^2.5.1"
+
 currently-unhandled@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/currently-unhandled/-/currently-unhandled-0.4.1.tgz#988df33feab191ef799a61369dd76c17adf957ea"
@@ -4288,6 +4305,11 @@ fragment-cache@^0.2.1:
   integrity sha1-QpD60n8T6Jvn8zeZxrxaCr//DRk=
   dependencies:
     map-cache "^0.2.2"
+
+free-style@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/free-style/-/free-style-2.5.1.tgz#5e3f684c470d3bba7e4dbb43524e0a08917e873c"
+  integrity sha512-X7dtUSTrlS1KRQBtiQ618NWIRDdRgD91IeajKCSh0fgTqArSixv+n3ea6F/OSvrvg14tPLR+yCq2s+O602+pRw==
 
 fresh@0.5.0:
   version "0.5.0"
@@ -10589,6 +10611,14 @@ typescript@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.1.tgz#43738f29585d3a87575520a4b93ab6026ef11fdb"
   integrity sha512-zQIMOmC+372pC/CCVLqnQ0zSBiY7HHodU7mpQdjiZddek4GMj31I3dUJ7gAs9o65X7mnRma6OokOkc6f9jjfBg==
+
+typestyle@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/typestyle/-/typestyle-2.0.2.tgz#e22f24f5d7e8506aa36b1fd3606824ac16291104"
+  integrity sha512-2nKRvMFE12MYudRu0UxYryZw3vbSOnZyuZiGTblYKIEi/U+VaH/hThv69AWCu89V7qc9uqrcQme1GCXmObomuQ==
+  dependencies:
+    csstype "^2.4.0"
+    free-style "2.5.1"
 
 ua-parser-js@^0.7.18, ua-parser-js@^0.7.9:
   version "0.7.19"

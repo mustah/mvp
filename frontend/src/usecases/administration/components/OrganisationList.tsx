@@ -1,7 +1,9 @@
 import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import {toArray} from 'lodash';
 import * as React from 'react';
+import {makeGridClassName} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
+import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
@@ -11,9 +13,10 @@ import {DispatchToProps, StateToProps} from '../containers/OrganisationsContaine
 import {AddOrganisationButton} from './AddOrganisationButton';
 import {OrganisationActions} from './OrganisationActions';
 
-type Props = StateToProps & DispatchToProps;
+type Props = StateToProps & DispatchToProps & ThemeContext;
 
 export const OrganisationList = ({
+  cssStyles,
   deleteOrganisation,
   clearError,
   error,
@@ -47,7 +50,12 @@ export const OrganisationList = ({
           <Row>
             <AddOrganisationButton/>
           </Row>
-          <Grid style={{borderTopWidth: 1}} data={toArray(entities)} scrollable="none">
+          <Grid
+            className={makeGridClassName(cssStyles)}
+            style={{borderTopWidth: 1}}
+            data={toArray(entities)}
+            scrollable="none"
+          >
             <GridColumn field="name" title={translate('name')} headerClassName="left-most" className="left-most"/>
             <GridColumn cell={parent} title={translate('parent organisation')}/>
             <GridColumn field="slug" title={translate('slug')}/>

@@ -1,7 +1,7 @@
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
 import {selectedMenuItemStyle} from '../../../../app/themes';
-import {ButtonLinkBlue} from '../../../../components/buttons/ButtonLink';
+import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
@@ -122,7 +122,7 @@ export const Thresholds = ({query, onChange, className}: Props) => {
   const clearThresholdButton = thresholdQueryIsModified(currentQuery)
     ? (
       <RowBottom style={{marginLeft: 16, paddingBottom: 12}}>
-        <ButtonLinkBlue onClick={clearThreshold}>{translate('clear threshold')}</ButtonLinkBlue>
+        <ButtonLink onClick={clearThreshold}>{translate('clear threshold')}</ButtonLink>
       </RowBottom>
     )
     : null;

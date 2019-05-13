@@ -7,10 +7,6 @@
     display: flex;
   }
 
-  &:hover {
-    background-color: $primary-bg-hover;
-  }
-
   input[type=checkbox] {
     margin-right: $space;
   }

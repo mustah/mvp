@@ -3,7 +3,6 @@ import NavigationArrowDropRight from 'material-ui/svg-icons/navigation-arrow-dro
 import * as React from 'react';
 import {colors} from '../../app/colors';
 import {ClassNamed, Clickable} from '../../types/Types';
-import './Icons.scss';
 
 const iconSize: React.CSSProperties = {
   width: 30,

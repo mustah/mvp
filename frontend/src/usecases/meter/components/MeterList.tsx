@@ -8,10 +8,11 @@ import {
   GridSortSettings
 } from '@progress/kendo-react-grid';
 import * as React from 'react';
-import {gridStyle} from '../../../app/themes';
+import {gridStyle, makeGridClassName} from '../../../app/themes';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
+import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
 import {MeterListProps} from '../../../components/meters/MeterListContent';
@@ -42,6 +43,7 @@ const sortable: GridSortSettings = {
 };
 
 export const MeterList = ({
+  cssStyles,
   changePage,
   deleteMeter,
   result,
@@ -52,7 +54,7 @@ export const MeterList = ({
   pagination: {page, size, totalElements: total},
   sort,
   sortTable,
-}: MeterListProps) => {
+}: MeterListProps & ThemeContext) => {
   const {closeConfirm, confirm, id, isOpen, openConfirm} = useConfirmDialog((id: uuid) => deleteMeter(id, page));
 
   const renderMeterId = ({dataItem: {address}}: GridCellProps) => (
@@ -109,6 +111,7 @@ export const MeterList = ({
 
   return (
     <Grid
+      className={makeGridClassName(cssStyles)}
       data={gridData}
 
       pageable={total > size ? pageable : undefined}

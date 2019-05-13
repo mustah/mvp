@@ -5,18 +5,4 @@
   top: $top-menu-height + $space;;
   right: $lg-space;
   z-index: $main-menu-z-index + 1;
-
-  &:hover {
-    button {
-      border: 1px solid $primary-bg-active !important;
-    }
-
-    span {
-      color: $black !important;
-    }
-
-    svg {
-      fill: $black !important;
-    }
-  }
 }

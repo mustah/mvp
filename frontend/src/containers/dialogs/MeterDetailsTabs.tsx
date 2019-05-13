@@ -1,9 +1,12 @@
 import {Grid, GridColumn, GridDetailRowProps} from '@progress/kendo-react-grid';
 import {toArray} from 'lodash';
 import * as React from 'react';
+import {compose} from 'recompose';
+import {makeGridClassName} from '../../app/themes';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
+import {ThemeContext, withCssStyles} from '../../components/hoc/withThemeProvider';
 import {Row} from '../../components/layouts/row/Row';
 import {ColoredEvent, Status} from '../../components/status/Status';
 import {Tab} from '../../components/tabs/components/Tab';
@@ -94,7 +97,7 @@ const ExtraInfo = ({dataItem: {extraInfo}}: GridDetailRowProps) => {
   );
 };
 
-const GatewayContent = ({gateways}: MeterGatewayProps) => {
+const GatewayContent = ({cssStyles, gateways}: MeterGatewayProps & ThemeContext) => {
   const forceUpdate = useForceUpdate();
 
   const onExpandChange = (ev) => {
@@ -104,6 +107,7 @@ const GatewayContent = ({gateways}: MeterGatewayProps) => {
 
   return (
     <Grid
+      className={makeGridClassName(cssStyles)}
       scrollable="none"
       data={gateways}
       detail={ExtraInfo}
@@ -124,7 +128,12 @@ export const initialMeterDetailsState: MeterDetailsState = {
   selectedTab: TabName.values,
 };
 
-const GatewayContentWrapper = withEmptyContent<MeterGatewayProps & WithEmptyContentProps>(GatewayContent);
+type WrapperProps = MeterGatewayProps & WithEmptyContentProps;
+
+const GatewayContentWrapper = compose<WrapperProps & ThemeContext, WrapperProps>(
+  withCssStyles,
+  withEmptyContent
+)(GatewayContent);
 
 const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
 
@@ -153,7 +162,7 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
       onCenterMap,
     };
 
-    const gatewaysWrapperProps: MeterGatewayProps & WithEmptyContentProps = {
+    const gatewaysWrapperProps: WrapperProps = {
       gateways,
       noContentText: firstUpperTranslated('no gateway connected'),
       hasContent: gateways.length > 0,

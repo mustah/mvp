@@ -1,13 +1,12 @@
 import {default as classNames} from 'classnames';
 import {Paper} from 'material-ui';
-import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {getBackgroundImagePath, getLoginLogoPath} from '../../../app/routes';
-import {buttonStyle} from '../../../app/themes';
+import {ButtonPrimary} from '../../../components/buttons/ButtonPrimary';
 import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
 import {TextFieldInput} from '../../../components/inputs/TextFieldInput';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
@@ -90,10 +89,9 @@ const LoginContainerComponent = ({auth: {error}, match: {params: {organisation}}
             onKeyPress={onKeyPress}
             type="password"
           />
-          <FlatButton
+          <ButtonPrimary
             fullWidth={true}
             label={translate('login')}
-            style={buttonStyle}
             type="submit"
           />
           <ErrorMessage {...error} style={{marginTop: 16}}/>

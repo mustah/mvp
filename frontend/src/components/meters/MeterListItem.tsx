@@ -10,28 +10,11 @@ interface Props {
   subPath?: string;
 }
 
-const labelStyle: React.CSSProperties = {
-  textOverflow: 'ellipsis',
-  maxWidth: 170,
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-};
-
-const iconStyle: React.CSSProperties = {
-  height: 40,
-  padding: 0,
-};
-
 export const MeterListItem = ({meter: {facility, id}, subPath = ''}: Props) =>
   (
     <Row>
       <Link to={`${routes.meter}/${id}${subPath}`} className="link">
-        <ButtonInfo
-          label={facility}
-          iconStyle={iconStyle}
-          labelStyle={labelStyle}
-          title={facility.toString()}
-        />
+        <ButtonInfo label={facility} title={facility.toString()}/>
       </Link>
     </Row>
   );

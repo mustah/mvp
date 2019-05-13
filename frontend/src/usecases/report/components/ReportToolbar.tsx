@@ -5,11 +5,12 @@ import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
 import {colors} from '../../../app/colors';
-import {iconSizeMedium, svgIconProps} from '../../../app/themes';
+import {iconSizeMedium} from '../../../app/themes';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
+import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Row, RowMiddle} from '../../../components/layouts/row/Row';
 import {IconProps} from '../../../components/popover/PopoverMenu';
 import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../components/toolbar/Toolbar';
@@ -19,19 +20,20 @@ import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {Clickable} from '../../../types/Types';
 import {Props} from '../containers/ToolbarContainer';
 
-const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
+const LegendActionButton = ({color, onClick, disabled}: Clickable & IconProps) => (
   <ToolbarIconButton
     disabled={disabled}
     iconStyle={iconSizeMedium}
     onClick={onClick}
     tooltip={firstUpperTranslated('filter')}
   >
-    <ContentFilterList color={disabled ? colors.borderColor : colors.primaryFg}/>
+    <ContentFilterList color={color}/>
   </ToolbarIconButton>
 );
 
-export const ReportToolbar = ({
+export const ReportToolbar = withCssStyles(({
   canShowAverage,
+  cssStyles: {primary},
   changeToolbarView,
   hasLegendItems,
   hasMeasurements,
@@ -48,7 +50,7 @@ export const ReportToolbar = ({
   timePeriod,
   toggleComparePeriod,
   toggleShowAverage,
-}: Props) => {
+}: Props & ThemeContext) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
   const selectPeriod = (period: Period) => setReportTimePeriod({period});
@@ -69,7 +71,7 @@ export const ReportToolbar = ({
             onClick={selectGraph}
             tooltip={firstUpperTranslated('graph')}
           >
-            <EditorShowChart color={colors.primaryFg} style={iconSizeMedium}/>
+            <EditorShowChart color={primary.fg} style={iconSizeMedium}/>
           </ToolbarIconButton>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
@@ -77,7 +79,7 @@ export const ReportToolbar = ({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={colors.primaryFg}/>
+            <EditorFormatListBulleted color={primary.fg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 
@@ -89,7 +91,7 @@ export const ReportToolbar = ({
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >
-            <CloudDownload {...svgIconProps}/>
+            <CloudDownload color={primary.fg} hoverColor={primary.fgHover}/>
           </ToolbarIconButton>
         </RowMiddle>
       </ToolbarLeftPane>
@@ -122,8 +124,12 @@ export const ReportToolbar = ({
           setCustomDateRange={setCustomDateRange}
           style={{marginBottom: 0, marginLeft: 0}}
         />
-        <LegendActionButton onClick={showHideLegend} disabled={!hasLegendItems}/>
+        <LegendActionButton
+          color={hasLegendItems ? primary.fg : colors.borderColor}
+          onClick={showHideLegend}
+          disabled={!hasLegendItems}
+        />
       </ToolbarRightPane>
     </Toolbar>
   );
-};
+});

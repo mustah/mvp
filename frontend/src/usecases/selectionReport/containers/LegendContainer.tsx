@@ -1,7 +1,9 @@
 import {connect} from 'react-redux';
+import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {withContent} from '../../../components/hoc/withContent';
+import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {RootState} from '../../../reducers/rootReducer';
 import {
   showHideAllByType,
@@ -56,7 +58,12 @@ export interface OwnProps extends Visible {
   showHideLegend: OnClick;
 }
 
-const LegendComponent = withContent<DispatchToProps & StateToProps>(Legend);
+type WrapperProps = DispatchToProps & StateToProps & OwnProps;
+
+const LegendComponent = compose<WrapperProps & ThemeContext, WrapperProps>(
+  withCssStyles,
+  withContent
+)(Legend);
 
 const mapStateToProps = ({selectionReport}: RootState): StateToProps => {
   const {temporal: {resolution}, savedReports} = selectionReport;

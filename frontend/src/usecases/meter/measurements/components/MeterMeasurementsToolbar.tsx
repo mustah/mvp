@@ -1,12 +1,12 @@
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
-import {colors} from '../../../../app/colors';
-import {iconSizeMedium, svgIconProps} from '../../../../app/themes';
+import {iconSizeMedium} from '../../../../app/themes';
 import {ToolbarIconButton} from '../../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../../components/dates/ResolutionSelection';
+import {ThemeContext} from '../../../../components/hoc/withThemeProvider';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../../helpers/Maybe';
@@ -15,6 +15,7 @@ import {ToolbarView} from '../../../../state/ui/toolbar/toolbarModels';
 import {Props} from '../containers/MeterMeasurementsToolbarContainer';
 
 export const MeterMeasurementsToolbar = ({
+  cssStyles: {primary},
   changeToolbarView,
   exportToExcel,
   hasMeasurements,
@@ -25,7 +26,7 @@ export const MeterMeasurementsToolbar = ({
   setTimePeriod,
   timePeriod,
   view,
-}: Props) => {
+}: Props & ThemeContext) => {
   const selectTable = () => changeToolbarView(ToolbarView.table);
   const selectPeriod = (period: Period) => setTimePeriod({period});
   const setCustomDateRange = (customDateRange: DateRange) => setTimePeriod({
@@ -43,7 +44,7 @@ export const MeterMeasurementsToolbar = ({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={colors.primaryFg}/>
+            <EditorFormatListBulleted color={primary.fg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 
@@ -55,7 +56,7 @@ export const MeterMeasurementsToolbar = ({
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >
-            <CloudDownload  {...svgIconProps}/>
+            <CloudDownload color={primary.fg} hoverColor={primary.fgHover}/>
           </ToolbarIconButton>
         </RowMiddle>
       </ToolbarLeftPane>

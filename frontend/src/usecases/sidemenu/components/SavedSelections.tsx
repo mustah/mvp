@@ -1,11 +1,11 @@
 import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
-import {colors} from '../../../app/colors';
 import {history, routes} from '../../../app/routes';
-import {listItemInnerDivStyle, listItemStyle, listItemStyleSelected} from '../../../app/themes';
+import {listItemStyle, listItemStyleSelected} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {withContent} from '../../../components/hoc/withContent';
+import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {Medium} from '../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -30,6 +30,7 @@ const SavedSelectionActionsDropdownWrapper = withContent<ActionDropdownProps>(Sa
 const ListItems = ({
   addToReport,
   confirmDelete,
+  cssStyles: {secondary},
   isMeterPage,
   fetchUserSelections,
   resetSelection,
@@ -37,7 +38,7 @@ const ListItems = ({
   selectSelection,
   selectSavedSelection,
   selection
-}: Props & ConfirmDelete) => {
+}: Props & ConfirmDelete & ThemeContext) => {
   React.useEffect(() => {
     fetchUserSelections();
   }, [savedSelections]);
@@ -58,17 +59,22 @@ const ListItems = ({
     const onEditSelection: Callback = () => selectSavedSelection(id);
     const onSelect: Callback = () => selectSelection(id);
 
+    const selectedStyle: React.CSSProperties = {
+      ...listItemStyleSelected,
+      backgroundColor: secondary.bgActive,
+      color: secondary.fgActive
+    };
     return (
       <ListItem
         className="SavedSelection-ListItem"
-        style={id === selection.id && isMeterPage ? listItemStyleSelected : listItemStyle}
-        innerDivStyle={listItemInnerDivStyle}
-        hoverColor={colors.secondaryBgHover}
+        style={id === selection.id && isMeterPage ? selectedStyle : listItemStyle}
+        innerDivStyle={{padding: 0}}
+        hoverColor={secondary.bgHover}
         key={`saved-${id}`}
       >
         <RowSpaceBetween>
           <RowMiddle className="SavedSelection-Name flex-1" onClick={onSelect}>
-            <Medium className="first-uppercase">{name}</Medium>
+            <Medium className="first-uppercase" style={{color: secondary.fg}}>{name}</Medium>
           </RowMiddle>
           <Row className="UserSelectionActionDropdown">
             <SavedSelectionActionsDropdownWrapper
@@ -95,11 +101,13 @@ const ListItems = ({
   );
 };
 
+const ThemedListItems = withCssStyles(ListItems);
+
 export const SavedSelections = (props: Props) => {
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(props.deleteUserSelection);
   return (
     <>
-      <ListItems {...props} confirmDelete={openConfirm}/>
+      <ThemedListItems {...props} confirmDelete={openConfirm}/>
       <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={confirm}/>
     </>
   );

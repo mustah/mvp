@@ -2,11 +2,11 @@ import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-b
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
-import {colors} from '../../../app/colors';
-import {iconSizeMedium, svgIconProps} from '../../../app/themes';
+import {iconSizeMedium} from '../../../app/themes';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
+import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {RowMiddle} from '../../../components/layouts/row/Row';
 import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../helpers/Maybe';
@@ -14,10 +14,11 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {DispatchToProps, StateToProps} from '../containers/CollectionToolbarContainer';
 
-type Props = StateToProps & DispatchToProps;
+type Props = StateToProps & DispatchToProps & ThemeContext;
 
-export const CollectionToolbar = ({
+export const CollectionToolbar = withCssStyles(({
   changeToolbarView,
+  cssStyles: {primary},
   hasCollectionStats,
   exportToExcel,
   isExportingToExcel,
@@ -46,7 +47,7 @@ export const CollectionToolbar = ({
             onClick={selectGraph}
             tooltip={firstUpperTranslated('graph')}
           >
-            <EditorShowChart color={colors.primaryFg} style={iconSizeMedium}/>
+            <EditorShowChart color={primary.fg} style={iconSizeMedium}/>
           </ToolbarIconButton>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
@@ -54,7 +55,7 @@ export const CollectionToolbar = ({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={colors.primaryFg}/>
+            <EditorFormatListBulleted color={primary.fg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 
@@ -66,7 +67,7 @@ export const CollectionToolbar = ({
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
           >
-            <CloudDownload {...svgIconProps}/>
+            <CloudDownload color={primary.fg} hoverColor={primary.fgHover}/>
           </ToolbarIconButton>
         </RowMiddle>
       </ToolbarLeftPane>
@@ -82,4 +83,4 @@ export const CollectionToolbar = ({
       </ToolbarRightPane>
     </Toolbar>
   );
-};
+});
