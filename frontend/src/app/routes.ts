@@ -37,11 +37,13 @@ export const isOnSearchPage = ({pathname}: Location): boolean => pathname.match(
 const meterDetailsRegExp = new RegExp(`${routes.meter}/`);
 export const isOnMeterDetailsPage = (pathName: string): boolean => pathName.match(meterDetailsRegExp) !== null;
 
-export const getLoginLogoPath = (slug: string = 'elvaco'): string =>
+const defaultNonExistingSlug = '__default__';
+
+export const getLoginLogoPath = (slug: string = defaultNonExistingSlug): string =>
   `${config().axios.baseURL}/organisations/${slug}/assets/login_logotype`;
 
-export const getLogoPath = (slug: string = 'elvaco'): string =>
+export const getLogoPath = (slug: string = defaultNonExistingSlug): string =>
   `${config().axios.baseURL}/organisations/${slug}/assets/logotype`;
 
-export const getBackgroundImagePath = (slug: string = 'elvaco'): string =>
+export const getBackgroundImagePath = (slug: string = defaultNonExistingSlug): string =>
   `${config().axios.baseURL}/organisations/${slug}/assets/login_background`;
