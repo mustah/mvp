@@ -5,12 +5,12 @@
 {% endif %}
 
 server {
-    listen 80;
+    listen 80 default_server;
     return 301 https://$host$request_uri;
 }
 
 server {
-    listen 443;
+    listen 443 default_server;
     server_name {{ fqdn }};
 
     ssl_certificate           /etc/nginx/cert.crt;
@@ -87,3 +87,10 @@ server {
       proxy_redirect      http://localhost:8080 https://$host$request_uri;
     }
   }
+
+server {
+    listen 80;
+    server_name evo.kalmarenergi.se;
+
+    return 301 https://kalmarenergi.{{ fqdn }};
+}
