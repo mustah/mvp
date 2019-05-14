@@ -223,7 +223,7 @@ class LogicalMeterJooqJpaRepository
       .map(record -> new CollectionStatsDto(
         record.value1(),
         record.value2(),
-        record.value3().intValue(),
+        record.value3() == null ? null : record.value3().intValue(),
         record.value4(),
         record.value5()
       ))
