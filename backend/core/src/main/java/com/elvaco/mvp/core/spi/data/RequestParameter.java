@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum RequestParameter {
   ADDRESS("address"),
-  AFTER("after"),
   ALARM("alarm"),
-  BEFORE("before"),
+  THRESHOLD_AFTER("after"),
+  THRESHOLD_BEFORE("before"),
   CITY("city"),
   COLLECTION_AFTER("collectionAfter"),
   COLLECTION_BEFORE("collectionBefore"),
@@ -25,6 +25,8 @@ public enum RequestParameter {
   PHYSICAL_METER_ID("physicalMeterId"),
   QUANTITY("quantity"),
   RESOLUTION("resolution"),
+  REPORT_AFTER("reportAfter"),
+  REPORT_BEFORE("reportBefore"),
   SECONDARY_ADDRESS("secondaryAddress"),
   SERIAL("serial"),
   SORT("sort"),

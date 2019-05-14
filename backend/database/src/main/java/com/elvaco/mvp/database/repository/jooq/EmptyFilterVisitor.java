@@ -16,9 +16,10 @@ import com.elvaco.mvp.core.filter.MediumFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.OrganisationParentFilter;
-import com.elvaco.mvp.core.filter.PeriodFilter;
+import com.elvaco.mvp.core.filter.ReportPeriodFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
+import com.elvaco.mvp.core.filter.ThresholdPeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 
 abstract class EmptyFilterVisitor extends JooqFilterVisitor {
@@ -46,7 +47,10 @@ abstract class EmptyFilterVisitor extends JooqFilterVisitor {
   public void visit(AlarmFilter filter) {}
 
   @Override
-  public void visit(PeriodFilter filter) {}
+  public void visit(ReportPeriodFilter filter) {}
+
+  @Override
+  public void visit(ThresholdPeriodFilter filter) {}
 
   @Override
   public void visit(CollectionPeriodFilter filter) { }

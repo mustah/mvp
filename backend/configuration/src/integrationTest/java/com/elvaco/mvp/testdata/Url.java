@@ -15,16 +15,18 @@ import com.elvaco.mvp.core.spi.data.RequestParameter;
 
 import lombok.Builder;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORT_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORT_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.RESOLUTION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
 import static java.util.Collections.emptyMap;
 
 @Builder
@@ -98,8 +100,12 @@ public class Url implements UrlTemplate {
       return b;
     }
 
-    public UrlBuilder period(ZonedDateTime start, ZonedDateTime stop) {
-      return parameter(BEFORE, stop).parameter(AFTER, start);
+    public UrlBuilder thresholdPeriod(ZonedDateTime start, ZonedDateTime stop) {
+      return parameter(THRESHOLD_BEFORE, stop).parameter(THRESHOLD_AFTER, start);
+    }
+
+    public UrlBuilder reportPeriod(ZonedDateTime start, ZonedDateTime stop) {
+      return parameter(REPORT_BEFORE, stop).parameter(REPORT_AFTER, start);
     }
 
     public UrlBuilder collectionPeriod(ZonedDateTime start, ZonedDateTime stop) {

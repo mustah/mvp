@@ -107,14 +107,20 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   }
 
   LogicalMeter given(LogicalMeterBuilder logicalMeterBuilder) {
+    return given(logicalMeterBuilder, true);
+  }
+
+  LogicalMeter given(LogicalMeterBuilder logicalMeterBuilder, boolean withConnectedPhysicalMeter) {
     LogicalMeter builtMeter = logicalMeterBuilder.build();
     LogicalMeter logicalMeter = logicalMeters.save(builtMeter);
-    if (builtMeter.physicalMeters.isEmpty()) {
+    if (builtMeter.physicalMeters.isEmpty() && withConnectedPhysicalMeter) {
       PhysicalMeter physicalMeter = physicalMeters.save(connect(
         logicalMeter,
         physicalMeter().build()
       ));
       return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
+    } else if (builtMeter.physicalMeters.isEmpty()) {
+      return logicalMeter;
     } else {
       return logicalMeter.toBuilder()
         .physicalMeters(builtMeter.physicalMeters.stream()

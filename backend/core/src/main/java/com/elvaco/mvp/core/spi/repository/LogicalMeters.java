@@ -33,8 +33,6 @@ public interface LogicalMeters {
 
   List<LogicalMeter> findAllBy(RequestParameters parameters);
 
-  List<LogicalMeter> findAllByOrganisationId(UUID organisationId);
-
   LogicalMeter save(LogicalMeter logicalMeter);
 
   MeterSummary summary(RequestParameters parameters);

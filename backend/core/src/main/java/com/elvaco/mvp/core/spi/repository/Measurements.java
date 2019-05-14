@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface Measurements {
 
@@ -25,8 +24,6 @@ public interface Measurements {
   Map<MeasurementKey, List<MeasurementValue>> findAllForPeriod(MeasurementParameter parameter);
 
   Map<String, List<MeasurementValue>> findAverageAllForPeriod(MeasurementParameter parameter);
-
-  List<Measurement> findAll(RequestParameters parameters);
 
   Optional<Measurement> firstForPhysicalMeterWithinDateRange(
     UUID physicalMeterId,

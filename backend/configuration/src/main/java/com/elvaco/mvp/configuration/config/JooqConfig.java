@@ -62,6 +62,15 @@ class JooqConfig {
 
   @Bean
   @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  FilterAcceptor logicalMeterMeasurementFilters(
+    DSLContext dsl,
+    MeasurementThresholdParser measurementThresholdParser
+  ) {
+    return FilterVisitors.measurement(dsl, measurementThresholdParser);
+  }
+
+  @Bean
+  @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
   FilterAcceptor gatewayFilters(
     DSLContext dsl,
     MeasurementThresholdParser measurementThresholdParser

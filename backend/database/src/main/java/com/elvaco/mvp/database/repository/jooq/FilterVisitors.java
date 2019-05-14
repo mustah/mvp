@@ -16,12 +16,16 @@ public class FilterVisitors {
     return new LocationFilterVisitor();
   }
 
-  public static FilterAcceptor measurement() {
-    return new MeasurementFilterVisitor();
+  public static FilterAcceptor measurement(DSLContext dsl, MeasurementThresholdParser parser) {
+    return new LogicalMeterMeasurementFilterVisitor(filterDecorators(dsl, parser));
   }
 
   public static FilterAcceptor selection() {
     return new SelectionFilterVisitor();
+  }
+
+  public static FilterAcceptor displayQuantity() {
+    return new DisplayQuantityFilterVisitor();
   }
 
   public static FilterAcceptor organisation() {
@@ -32,24 +36,16 @@ public class FilterVisitors {
     return new LogicalMeterFilterVisitor(filterDecorators(dsl, parser));
   }
 
-  public static FilterAcceptor logicalMeterWithCollectionPercentage(
-    DSLContext dsl,
-    MeasurementThresholdParser parser
-  ) {
-    return new LogicalMeterFilterVisitor(Stream.concat(
-      filterDecorators(dsl, parser).stream(),
-      Stream.of(new CollectionPercentageFilterVisitor(dsl))
-    ).collect(Collectors.toList()));
-  }
-
   public static FilterAcceptor logicalMeterWithCollectionPercentageAndLastData(
     DSLContext dsl,
     MeasurementThresholdParser parser
   ) {
     return new LogicalMeterFilterVisitor(Stream.concat(
       filterDecorators(dsl, parser).stream(),
-      Stream.of(new CollectionPercentageFilterVisitor(dsl),
-        new MeasurementLastDataFilterVisitor(dsl))
+      Stream.of(
+        new CollectionPercentageFilterVisitor(dsl),
+        new MeasurementLastDataFilterVisitor(dsl)
+      )
     ).collect(Collectors.toList()));
   }
 

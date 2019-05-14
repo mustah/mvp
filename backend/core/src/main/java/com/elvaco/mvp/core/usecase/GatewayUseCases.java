@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -20,10 +19,6 @@ public class GatewayUseCases {
 
   private final Gateways gateways;
   private final AuthenticatedUser currentUser;
-
-  public Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
-    return gateways.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
-  }
 
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
     return gateways.findSerials(parameters.ensureOrganisationFilters(currentUser), pageable);

@@ -36,9 +36,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Collections.singleton;
@@ -132,13 +130,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     User user = given(organisation(), user()).getUser();
 
-    ZonedDateTime before = NOW.plusDays(2);
-    ZonedDateTime after = NOW.minusDays(2);
-
     Url urlDefinition =
       Url.builder().path("/map-markers/meters")
-        .parameter(BEFORE, before)
-        .parameter(AFTER, after)
         .build();
 
     ResponseEntity<MapMarkersDto> differentOrganisation = restAsUser(user)
@@ -162,8 +155,6 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     Url url = Url.builder()
       .path("/map-markers/meters")
-      .parameter(BEFORE, NOW.plusDays(1))
-      .parameter(AFTER, NOW.minusDays(1))
       .build();
 
     ResponseEntity<MapMarkersDto> response = asSuperAdmin()
@@ -188,8 +179,6 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     Url url = Url.builder()
       .path("/map-markers/meters")
-      .parameter(BEFORE, NOW.plusDays(1))
-      .parameter(AFTER, NOW.minusDays(1))
       .parameter(CITY, "sverige,kungsbacka")
       .build();
 
@@ -277,8 +266,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     Url url = Url.builder().path("/map-markers/gateways")
       .parameter(RequestParameter.THRESHOLD, "Power >= 10.0 W")
-      .parameter(RequestParameter.AFTER, now.minusHours(1))
-      .parameter(RequestParameter.BEFORE, now.plusHours(1))
+      .parameter(RequestParameter.THRESHOLD_AFTER, now.minusHours(1))
+      .parameter(RequestParameter.THRESHOLD_BEFORE, now.plusHours(1))
       .build();
 
     ResponseEntity<MapMarkersDto> response = asUser()
@@ -310,8 +299,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     Url url = Url.builder().path("/map-markers/gateways")
       .parameter(RequestParameter.THRESHOLD, "Power < 10.0 W")
-      .parameter(RequestParameter.AFTER, now.minusHours(1))
-      .parameter(RequestParameter.BEFORE, now.plusHours(1))
+      .parameter(RequestParameter.THRESHOLD_AFTER, now.minusHours(1))
+      .parameter(RequestParameter.THRESHOLD_BEFORE, now.plusHours(1))
       .build();
 
     ResponseEntity<MapMarkersDto> response = asUser()
@@ -336,8 +325,6 @@ public class MapMarkerControllerTest extends IntegrationTest {
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter.primaryKey()).build());
     Url url = Url.builder().path("/map-markers/gateways")
       .parameter(RequestParameter.ALARM, "yes")
-      .parameter(RequestParameter.AFTER, now.minusDays(1).plusHours(1))
-      .parameter(RequestParameter.BEFORE, now)
       .build();
 
     ResponseEntity<MapMarkersDto> response = asUser()
@@ -386,8 +373,6 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     Url url = Url.builder()
       .path("/map-markers/gateways")
-      .parameter(RequestParameter.BEFORE, NOW.plusHours(1))
-      .parameter(RequestParameter.AFTER, NOW.minusHours(1))
       .parameter(CITY, "sverige,kungsbacka")
       .build();
 
@@ -595,20 +580,14 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   private static UrlTemplate mapMarkerAlarmUrl(String alarm) {
-    ZonedDateTime now = ZonedDateTime.now();
     return Url.builder().path("/map-markers/meters")
       .parameter(ALARM, alarm)
-      .parameter(AFTER, now.minusDays(1))
-      .parameter(BEFORE, now.plusDays(1))
       .build();
   }
 
   private static UrlTemplate gatewayMapMarkerAlarmUrl(String alarm) {
-    ZonedDateTime now = ZonedDateTime.now();
     return Url.builder().path("/map-markers/gateways")
       .parameter(ALARM, alarm)
-      .parameter(AFTER, now.minusDays(1))
-      .parameter(BEFORE, now.plusDays(1))
       .build();
   }
 }

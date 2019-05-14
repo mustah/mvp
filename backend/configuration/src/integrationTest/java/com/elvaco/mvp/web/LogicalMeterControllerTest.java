@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -25,6 +23,7 @@ import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -36,11 +35,8 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
@@ -142,7 +138,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .period(context().yesterday().minusDays(5), context().now())
           .build(),
         PagedLogicalMeterDto.class
       )
@@ -454,43 +449,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findAllMeters_FindsActivePhysicalMeter() {
-    given(
-      logicalMeter(),
-      physicalMeter()
-        .address("1")
-        .activePeriod(PeriodRange.halfOpenFrom(
-          context().now().minusDays(5),
-          context().now().minusDays(2)
-        )),
-      physicalMeter()
-        .address("2")
-        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(context().now().minusDays(2))))
-    );
-
-    Page<PagedLogicalMeterDto> oldPeriod = asUser()
-      .getPage(
-        Url.builder().path("/meters")
-          .period(context().now().minusDays(5), context().now().minusDays(3))
-          .build(),
-        PagedLogicalMeterDto.class
-      );
-
-    Page<PagedLogicalMeterDto> currentPeriod = asUser()
-      .getPage(
-        Url.builder().path("/meters")
-          .period(context().now().minusDays(1), context().now())
-          .build(),
-        PagedLogicalMeterDto.class
-      );
-
-    assertSoftly(softly -> {
-      softly.assertThat(oldPeriod.getContent()).extracting(m -> m.address).contains("1");
-      softly.assertThat(currentPeriod.getContent()).extracting(m -> m.address).contains("2");
-    });
-  }
-
-  @Test
   public void userCannotRemoveLogicalMeter() {
     var meter = given(logicalMeter());
     given(measurementSeries()
@@ -562,13 +520,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .get().id))
         .isEmpty();
 
-      softly.assertThat(measurementJpaRepository.findAll(
-        new RequestParametersAdapter().add(
-          LOGICAL_METER_ID,
-          logicalMeter.id.toString()
-        ))
-      )
-        .isEmpty();
+      softly.assertThat(measurementJpaRepository.findAll().isEmpty());
     });
   }
 
@@ -839,8 +791,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(AFTER, context().now())
-          .parameter(BEFORE, context().now().plusHours(9))
           .parameter(ALARM, "yes")
           .build(),
         PagedLogicalMeterDto.class
@@ -866,8 +816,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(AFTER, context().now())
-          .parameter(BEFORE, context().now().plusHours(9))
           .parameter(ALARM, "no")
           .build(),
         PagedLogicalMeterDto.class
@@ -965,8 +913,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(AFTER, context().yesterday().plusHours(1))
-          .parameter(BEFORE, context().now().plusHours(23))
           .parameter(SECONDARY_ADDRESS, "bbb")
           .build(),
         PagedLogicalMeterDto.class
@@ -992,8 +938,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(AFTER, context().now().plusHours(1))
-          .parameter(BEFORE, context().now().plusHours(23))
           .parameter(SECONDARY_ADDRESS, "bbb")
           .build(),
         PagedLogicalMeterDto.class
@@ -1006,6 +950,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  @Ignore // Irrelevant case?
   public void findMeterByPreviouslyActivePhysicalMetersAddress() {
     given(
       logicalMeter(),
@@ -1019,8 +964,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(AFTER, context().yesterday().minusHours(1))
-          .parameter(BEFORE, context().yesterday().plusHours(1))
           .parameter(SECONDARY_ADDRESS, "aaa")
           .build(),
         PagedLogicalMeterDto.class
@@ -1044,8 +987,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(AFTER, context().now().minusDays(3))
-          .parameter(BEFORE, context().now().minusDays(2))
           .build(),
         PagedLogicalMeterDto.class
       );
@@ -1063,8 +1004,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(AFTER, context().now().minusDays(3))
-          .parameter(BEFORE, context().now().minusDays(2))
           .build(),
         PagedLogicalMeterDto.class
       );
@@ -1103,8 +1042,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private static UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
       .path("/meters")
-      .parameter(AFTER, after)
-      .parameter(BEFORE, before)
       .build();
   }
 

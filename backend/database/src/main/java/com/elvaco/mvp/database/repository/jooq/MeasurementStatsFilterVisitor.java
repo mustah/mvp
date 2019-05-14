@@ -7,7 +7,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
-import com.elvaco.mvp.core.filter.PeriodFilter;
+import com.elvaco.mvp.core.filter.ThresholdPeriodFilter;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.util.DurationLongerThanSelectionException;
 
@@ -46,7 +46,7 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
   }
 
   @Override
-  public void visit(PeriodFilter filter) {
+  public void visit(ThresholdPeriodFilter filter) {
     FilterPeriod period = filter.getPeriod();
     selectionDurationInDays = ChronoUnit.DAYS.between(period.start, period.stop);
     measurementStatsCondition = measurementStatsConditionFor(period);

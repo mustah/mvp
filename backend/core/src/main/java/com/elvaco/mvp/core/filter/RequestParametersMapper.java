@@ -16,9 +16,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ADDRESS;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
@@ -37,11 +35,15 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_ORGANISATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORT_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORT_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.RESOLUTION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
@@ -50,10 +52,12 @@ public final class RequestParametersMapper {
   private static final Map<RequestParameter, Function<List<String>, VisitableFilter>>
     PARAMETER_TO_FILTER = new HashMap<>();
   private static final List<RequestParameter> IGNORED_PARAMETERS = List.of(
-    BEFORE,
-    AFTER,
+    THRESHOLD_BEFORE,
+    THRESHOLD_AFTER,
     COLLECTION_AFTER,
     COLLECTION_BEFORE,
+    REPORT_AFTER,
+    REPORT_BEFORE,
     SORT,
     QUANTITY,
     RESOLUTION
@@ -111,15 +115,18 @@ public final class RequestParametersMapper {
 
   public static Filters toFilters(RequestParameters requestParameters) {
     Collection<VisitableFilter> visitableFilters = new ArrayList<>();
-    requestParameters.getPeriod()
-      .ifPresent(period -> visitableFilters.add(new PeriodFilter(List.of(period), period)));
+    requestParameters.getThresholdPeriod()
+      .ifPresent(period -> visitableFilters.add(
+        new ThresholdPeriodFilter(List.of(period), period))
+      );
     requestParameters.getCollectionPeriod()
       .ifPresent(period -> visitableFilters.add(
-        new CollectionPeriodFilter(
-
-          List.of(period),
-          period
-        )));
+        new CollectionPeriodFilter(List.of(period), period))
+      );
+    requestParameters.getReportPeriod()
+      .ifPresent(period -> visitableFilters.add(
+        new ReportPeriodFilter(List.of(period), period))
+      );
     visitableFilters.addAll(
       requestParameters.entrySet().stream()
         .filter(param -> !param.getValue().isEmpty() && !isIgnored(param.getKey()))

@@ -365,7 +365,8 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
 
     messageConsumer.accept(newMeasurementMessage(getDistrictHeatingValues()));
 
-    assertThat(logicalMeters.findAllByOrganisationId(organisation.id))
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters()))
+      .filteredOn(lm -> lm.organisationId.equals(organisation.id))
       .flatExtracting(lm -> lm.meterDefinition.name, lm -> lm.meterDefinition.isDefault())
       .containsOnly("OrganisationDefault", false);
   }

@@ -357,7 +357,6 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
   ) {
     Url url = Url.builder()
       .path("/meters")
-      .period(context().now(), context().now().plusDays(1))
       .size(expectedProperties.size())
       .page(0)
       .sortBy(sort)

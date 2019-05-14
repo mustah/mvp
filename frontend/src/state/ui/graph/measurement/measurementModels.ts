@@ -26,7 +26,7 @@ export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>
 
 export interface MeasurementParameters {
   legendItems: LegendItem[];
-  dateRange: SelectionInterval;
+  reportDateRange: SelectionInterval;
   resolution: TemporalResolution;
   shouldComparePeriod: boolean;
   shouldShowAverage: boolean;

@@ -6,7 +6,12 @@ import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonHelpers';
 import {makeCompareCustomDateRange, makeCompareDateRange} from '../../../../helpers/dateHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
-import {encodeRequestParameters, makeUrl, requestParametersFrom} from '../../../../helpers/urlFactory';
+import {
+  encodeRequestParameters,
+  makeReportPeriodParametersOf,
+  makeUrl,
+  requestParametersFrom
+} from '../../../../helpers/urlFactory';
 import {GetState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
@@ -61,13 +66,12 @@ const measurementMeterUri = (
 ): EncodedUriParameters => {
   const quantityWithParams = quantity + ':' + quantityAttributes[quantity].unit + ':' + displayMode;
 
-  return encodeRequestParameters({
-    ...requestParametersFrom({dateRange}),
+  return `${makeReportPeriodParametersOf(dateRange)}&${encodeRequestParameters({
     label,
     quantity: quantityWithParams,
     resolution,
     logicalMeterId: meterIds.map(id => id.toString()),
-  });
+  })}`;
 };
 
 interface LabelItem {
@@ -108,7 +112,7 @@ export const urlsByType = (parameters: MeasurementParameters): EncodedUriParamet
 
 export const makeMeasurementMetersUriParameters = (
   {
-    dateRange,
+    reportDateRange,
     legendItems,
     resolution,
     displayMode,
@@ -129,7 +133,7 @@ export const makeMeasurementMetersUriParameters = (
       return measurementMeterUri(
         quantity,
         resolution,
-        dateRange,
+        reportDateRange,
         quantityToIds[quantity],
         labelFactory({type, quantity}),
         displayMode || quantityAttributes[quantity].displayMode,
@@ -150,20 +154,20 @@ const compareMeterRequests = (parameters: MeasurementParameters): GraphDataReque
   Maybe.maybe<MeasurementParameters>(parameters)
     .filter(it => it.shouldComparePeriod)
     .map(it => {
-        const {period, customDateRange} = it.dateRange;
+        const {period, customDateRange} = it.reportDateRange;
         const dateRange = Maybe.maybe<DateRange>(customDateRange)
           .map(makeCompareCustomDateRange)
           .orElseGet(() => makeCompareDateRange(period));
         return metersByQuantityRequests({
           ...it,
-          dateRange: {period: Period.custom, customDateRange: dateRange}
+          reportDateRange: {period: Period.custom, customDateRange: dateRange}
         });
       }
     ).orElse([]);
 
 const averageForUserSelectionsRequests = (
   {
-    dateRange,
+    reportDateRange,
     legendItems,
     resolution
   }: MeasurementParameters,
@@ -184,7 +188,7 @@ const averageForUserSelectionsRequests = (
         .map(id => getDomainModelById<UserSelection>(id)(rootState.domainModels.userSelections).getOrElseUndefined())
         .filter(isDefined)
         .map((it: UserSelection) => ({
-          ...requestParametersFrom({...it.selectionParameters, dateRange}),
+          ...requestParametersFrom({...it.selectionParameters, reportDateRange}),
           quantity,
           resolution,
           label: it.name,

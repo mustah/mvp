@@ -12,8 +12,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MeasurementJpaRepository
-  extends MeasurementJpaRepositoryCustom, JpaRepository<MeasurementEntity, MeasurementPk> {
+public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntity, MeasurementPk> {
 
   @Modifying
   @Query(nativeQuery = true, value =

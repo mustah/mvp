@@ -287,8 +287,8 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
     String url = "/measurements?quantity=Energy,Power"
       + "&logicalMeterId=" + logicalMeter.id
-      + "&after=" + start
-      + "&before=" + start.plusHours(1);
+      + "&reportAfter=" + start
+      + "&reportBefore=" + start.plusHours(1);
     var measurementSeriesDtos = asUser().getList(url, MeasurementSeriesDto.class).getBody();
 
     assertThat(measurementSeriesDtos)

@@ -12,7 +12,9 @@ public interface FilterVisitor {
 
   void visit(AlarmFilter filter);
 
-  void visit(PeriodFilter filter);
+  void visit(ReportPeriodFilter filter);
+
+  void visit(ThresholdPeriodFilter filter);
 
   void visit(CollectionPeriodFilter filter);
 

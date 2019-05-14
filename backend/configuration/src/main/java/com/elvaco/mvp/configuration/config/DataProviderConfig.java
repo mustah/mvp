@@ -176,7 +176,7 @@ class DataProviderConfig {
     DSLContext dsl,
     QuantityProvider quantityProvider,
     QuantityEntityMapper quantityEntityMapper,
-    FilterAcceptor logicalMeterFilters
+    FilterAcceptor logicalMeterMeasurementFilters
   ) {
     return new MeasurementRepository(
       dsl,
@@ -184,7 +184,7 @@ class DataProviderConfig {
       quantityProvider,
       unitConverter,
       quantityEntityMapper,
-      logicalMeterFilters
+      logicalMeterMeasurementFilters
     );
   }
 

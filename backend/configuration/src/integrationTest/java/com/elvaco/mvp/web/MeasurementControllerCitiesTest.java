@@ -57,7 +57,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         measurementsAverageUrl()
-          .period(start, start.plusHours(1))
+          .reportPeriod(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .parameter("label", "Stockholm")
           .city("sverige,stockholm")
@@ -118,7 +118,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     var response = asUser()
       .getList(
         measurementsAverageUrl()
-          .period(start, start.plusHours(1))
+          .reportPeriod(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
           .resolution(TemporalResolution.hour)
@@ -168,7 +168,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         measurementsAverageUrl()
-          .period(start, start.plusHours(1))
+          .reportPeriod(start, start.plusHours(1))
           .parameter("quantity", "External temperature")
           .city("sverige,kiruna")
           .resolution(TemporalResolution.hour)
@@ -206,7 +206,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         measurementsAverageUrl()
-          .period(start, start.plusHours(1))
+          .reportPeriod(start, start.plusHours(1))
           .parameter("quantity", "Relative humidity")
           .city("sverige,stockholm")
           .resolution(TemporalResolution.hour)
@@ -225,7 +225,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         measurementsAverageUrl()
-          .period(start, start.plusHours(1))
+          .reportPeriod(start, start.plusHours(1))
           .parameter("quantity", Quantity.VOLUME.name)
           .city("sverige,stockholm")
           .resolution(TemporalResolution.hour).build(),
@@ -257,7 +257,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         measurementsAverageUrl()
-          .period(start, start.plusHours(1))
+          .reportPeriod(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
           .city("sverige,kungsbacka")
@@ -301,7 +301,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .withValues(3.0, 4.0));
 
     Url cityAverageUrl = measurementsAverageUrl()
-      .period(start, start.plusHours(1))
+      .reportPeriod(start, start.plusHours(1))
       .city("sverige,stockholm")
       .resolution(TemporalResolution.hour)
       .parameter("quantity", Quantity.POWER.name + ":W")
@@ -310,7 +310,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     Url metersAverageUrl = Url
       .builder()
       .path("/measurements/average")
-      .period(start, start.plusHours(1))
+      .reportPeriod(start, start.plusHours(1))
       .resolution(TemporalResolution.hour)
       .parameter("quantity", Quantity.POWER.name + ":W")
       .parameter("id", List.of(meterOne.id, meterTwo.id))

@@ -130,13 +130,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeter> findAllByOrganisationId(UUID organisationId) {
-    return logicalMeterJpaRepository.findByOrganisationId(organisationId).stream()
-      .map(logicalMeterEntityMapper::toDomainModel)
-      .collect(toList());
-  }
-
-  @Override
   @Caching(evict = {
     @CacheEvict(
       cacheNames = "logicalMeter.organisationIdExternalId",

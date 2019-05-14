@@ -14,11 +14,13 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORT_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORT_BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
 
 public interface RequestParameters {
 
@@ -57,16 +59,20 @@ public interface RequestParameters {
     }
   }
 
-  default RequestParameters setPeriod(ZonedDateTime start, ZonedDateTime stop) {
-    return add(AFTER, start.toString()).add(BEFORE, stop.toString());
+  default RequestParameters setReportPeriod(ZonedDateTime start, ZonedDateTime stop) {
+    return add(REPORT_AFTER, start.toString()).add(REPORT_BEFORE, stop.toString());
   }
 
   default Optional<FilterPeriod> getCollectionPeriod() {
     return getPeriod(COLLECTION_AFTER, COLLECTION_BEFORE);
   }
 
-  default Optional<FilterPeriod> getPeriod() {
-    return getPeriod(AFTER, BEFORE);
+  default Optional<FilterPeriod> getReportPeriod() {
+    return getPeriod(REPORT_AFTER, REPORT_BEFORE);
+  }
+
+  default Optional<FilterPeriod> getThresholdPeriod() {
+    return getPeriod(THRESHOLD_AFTER, THRESHOLD_BEFORE);
   }
 
   default Optional<FilterPeriod> getPeriod(RequestParameter after, RequestParameter before) {

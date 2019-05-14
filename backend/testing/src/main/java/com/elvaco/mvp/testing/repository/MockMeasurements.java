@@ -11,9 +11,7 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.Collections.emptyMap;
 
@@ -56,11 +54,6 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
     MeasurementParameter parameter
   ) {
     return emptyMap();
-  }
-
-  @Override
-  public List<Measurement> findAll(RequestParameters parameters) {
-    throw new NotImplementedYet();
   }
 
   @Override
