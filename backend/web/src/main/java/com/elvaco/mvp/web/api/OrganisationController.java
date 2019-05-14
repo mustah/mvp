@@ -9,6 +9,7 @@ import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.Asset;
 import com.elvaco.mvp.core.domainmodels.AssetType;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Theme;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.exception.InvalidFormat;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
@@ -16,6 +17,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
+import com.elvaco.mvp.web.dto.PropertyDto;
 import com.elvaco.mvp.web.dto.SubOrganisationRequestDto;
 import com.elvaco.mvp.web.exception.OrganisationNotFound;
 import com.elvaco.mvp.web.exception.UserSelectionNotFound;
@@ -39,7 +41,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static com.elvaco.mvp.web.mapper.OrganisationDtoMapper.toDomainModel;
 import static com.elvaco.mvp.web.mapper.OrganisationDtoMapper.toDto;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @AllArgsConstructor
 @RestApi("/api/v1/organisations")
@@ -177,5 +181,44 @@ public class OrganisationController {
 
         return response.build();
       });
+  }
+
+  @GetMapping("{slug}/theme")
+  public List<PropertyDto> themeOfSlug(@PathVariable String slug) {
+    return organisationUseCases.findTheme(slug)
+      .map(theme -> theme.properties.entrySet()
+        .stream()
+        .map(entry -> new PropertyDto(entry.getKey(), entry.getValue()))
+        .collect(toList()))
+      .orElse(emptyList());
+  }
+
+  @PutMapping("{id}/theme")
+  public List<PropertyDto> putTheme(
+    @PathVariable UUID id,
+    @RequestBody List<PropertyDto> properties
+  ) {
+    var organisation = organisationUseCases
+      .findById(id)
+      .orElseThrow(() -> new OrganisationNotFound(id));
+
+    organisationUseCases.saveTheme(
+      Theme.builder().organisationId(organisation.id)
+        .properties(properties.stream().collect(toMap(p -> p.key, p -> p.value))).build()
+    );
+
+    return organisationUseCases.findTheme(organisation).properties.entrySet()
+      .stream()
+      .map(entry -> new PropertyDto(entry.getKey(), entry.getValue()))
+      .collect(toList());
+  }
+
+  @DeleteMapping("{id}/theme")
+  public void deleteTheme(@PathVariable UUID id) {
+    var organisation = organisationUseCases
+      .findById(id)
+      .orElseThrow(() -> new OrganisationNotFound(id));
+
+    organisationUseCases.deleteTheme(organisation);
   }
 }

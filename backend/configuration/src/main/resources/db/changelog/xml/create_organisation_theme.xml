@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create organisation_theme" author="carhel">
+    <createTable tableName="organisation_theme">
+      <column name="organisation_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="property" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="value" type="text">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="organisation_theme" columnNames="organisation_id,property"/>
+
+    <addForeignKeyConstraint
+      constraintName="organisation_theme_organisation_id_fkey"
+      baseTableName="organisation_theme"
+      baseColumnNames="organisation_id"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+    />
+
+    <createTable schemaName="evoaudit" tableName="organisation_theme_aud">
+      <column name="organisation_id" type="uuid"/>
+      <column name="property" type="text"/>
+      <column name="value" type="text"/>
+      <column name="value_mod" type="boolean"/>
+      <column name="rev" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="revtype" type="tinyint(3)"/>
+      <column name="revend" type="bigint"/>
+      <column name="revend_tstmp" type="timestamp"/>
+    </createTable>
+
+  </changeSet>
+
+</databaseChangeLog>

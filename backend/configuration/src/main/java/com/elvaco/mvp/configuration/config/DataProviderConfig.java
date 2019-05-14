@@ -23,6 +23,7 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.OrganisationAssets;
+import com.elvaco.mvp.core.spi.repository.OrganisationThemes;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Properties;
@@ -45,6 +46,7 @@ import com.elvaco.mvp.database.repository.access.MeterDefinitionRepository;
 import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationAssetRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationRepository;
+import com.elvaco.mvp.database.repository.access.OrganisationThemeRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.PropertiesRepository;
 import com.elvaco.mvp.database.repository.access.QuantityRepository;
@@ -68,6 +70,7 @@ import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationAssetJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.OrganisationThemeJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
@@ -235,6 +238,13 @@ class DataProviderConfig {
       ),
       organisationAssetJpaRepository
     );
+  }
+
+  @Bean
+  OrganisationThemes organisationTheme(
+    OrganisationThemeJpaRepository organisationThemeJpaRepository
+  ) {
+    return new OrganisationThemeRepository(organisationThemeJpaRepository);
   }
 
   @Bean

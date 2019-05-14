@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Asset;
 import com.elvaco.mvp.core.domainmodels.AssetType;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Theme;
 import com.elvaco.mvp.core.exception.InvalidFormat;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -17,6 +18,7 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.OrganisationAssets;
+import com.elvaco.mvp.core.spi.repository.OrganisationThemes;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class OrganisationUseCases {
   private final Organisations organisations;
   private final OrganisationPermissions organisationPermissions;
   private final OrganisationAssets organisationAssets;
+  private final OrganisationThemes organisationTheme;
 
   public List<Organisation> findAll() {
     if (currentUser.isSuperAdmin()) {
@@ -100,7 +103,7 @@ public class OrganisationUseCases {
   }
 
   public void createAsset(Organisation organisation, Asset asset) {
-    ensureAllowedToModifyAsset(organisation);
+    ensureAllowedToModifyAsset();
     if (!ALLOWED_CONTENT_TYPES_FOR_IMAGES.contains(asset.contentType)) {
       throw InvalidFormat.image(ALLOWED_CONTENT_TYPES_FOR_IMAGES, asset.contentType);
     }
@@ -108,7 +111,7 @@ public class OrganisationUseCases {
   }
 
   public void deleteAsset(Organisation organisation, AssetType assetType) {
-    ensureAllowedToModifyAsset(organisation);
+    ensureAllowedToModifyAsset();
     organisationAssets.delete(assetType, organisation.id);
   }
 
@@ -166,7 +169,31 @@ public class OrganisationUseCases {
       .or(() -> Optional.of(organisationAssets.getDefault(assetType)));
   }
 
-  private void ensureAllowedToModifyAsset(Organisation organisation) {
+  public Theme findTheme(Organisation organisation) {
+    return organisationTheme.findByOrganisation(organisation);
+  }
+
+  public Optional<Theme> findTheme(String slug) {
+    return organisations.findBySlug(slug)
+      .map(organisationTheme::findByOrganisation);
+  }
+
+  public void saveTheme(Theme theme) {
+    ensureAllowedToModifyAsset();
+    sanityCheck(theme);
+    organisationTheme.save(theme);
+  }
+
+  public void deleteTheme(Organisation organisation) {
+    ensureAllowedToModifyAsset();
+    organisationTheme.deleteThemeForOrganisation(organisation);
+  }
+
+  public Optional<Organisation> findBySlug(String slug) {
+    return organisations.findBySlug(slug);
+  }
+
+  private void ensureAllowedToModifyAsset() {
     if (currentUser.isSuperAdmin()) {
       return;
     }
@@ -177,6 +204,21 @@ public class OrganisationUseCases {
 
   private boolean mayRead(Organisation organisation) {
     return organisationPermissions.isAllowed(currentUser, organisation, READ);
+  }
+
+  private void sanityCheck(Theme theme) {
+    var len = 100;
+    var nr = 100;
+    if (theme.properties.size() > nr) {
+      throw new IllegalArgumentException("Too many theme properties, max allowed is " + nr);
+    }
+
+    if (theme.properties.entrySet().stream()
+      .anyMatch(p ->
+        (p.getKey() != null && p.getKey().length() > len)
+          || (p.getValue() != null && p.getValue().length() > len))) {
+      throw new IllegalArgumentException("Theme property size exceeds " + len);
+    }
   }
 
   private Organisation persist(Organisation organisation, Permission permission) {

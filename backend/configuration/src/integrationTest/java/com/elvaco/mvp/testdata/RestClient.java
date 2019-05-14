@@ -151,6 +151,20 @@ public final class RestClient {
       .put(URI.create(apiUrlOf(url)))
       .accept(MediaType.APPLICATION_JSON)
       .body(body);
+
+    return template.exchange(request, responseType);
+  }
+
+  public <T1, T2> ResponseEntity<T2> put(
+    String url,
+    T1 body,
+    ParameterizedTypeReference<T2> responseType
+  ) {
+    RequestEntity<T1> request = RequestEntity
+      .put(URI.create(apiUrlOf(url)))
+      .accept(MediaType.APPLICATION_JSON)
+      .body(body);
+
     return template.exchange(request, responseType);
   }
 

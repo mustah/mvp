@@ -56,6 +56,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.OPTIONS, API).permitAll()
       .antMatchers(API_V1 + "/geocodes/**").permitAll()
       .antMatchers(HttpMethod.GET, API_V1 + "/organisations/*/assets/*").permitAll()
+      .antMatchers(HttpMethod.GET, API_V1 + "/organisations/*/theme").permitAll()
       .antMatchers(API_V1 + "/logout").permitAll();
 
     String policyDirectives = "default-src 'self';"

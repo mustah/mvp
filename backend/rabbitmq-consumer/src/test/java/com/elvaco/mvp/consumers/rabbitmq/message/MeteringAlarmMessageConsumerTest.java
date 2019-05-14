@@ -17,6 +17,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testing.repository.MockMeterAlarmLogs;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisationAssets;
+import com.elvaco.mvp.testing.repository.MockOrganisationThemes;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
@@ -55,7 +56,8 @@ public class MeteringAlarmMessageConsumerTest {
         authenticatedUser,
         new MockOrganisations(singletonList(organisation)),
         new OrganisationPermissions(new MockUsers(singletonList(authenticatedUser.getUser()))),
-        new MockOrganisationAssets()
+        new MockOrganisationAssets(),
+        new MockOrganisationThemes()
       ),
       meterAlarmLogs
     );

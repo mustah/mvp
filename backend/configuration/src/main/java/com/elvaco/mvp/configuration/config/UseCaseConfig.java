@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.OrganisationAssets;
+import com.elvaco.mvp.core.spi.repository.OrganisationThemes;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Properties;
@@ -90,13 +91,15 @@ class UseCaseConfig {
   @Bean
   OrganisationUseCases organisationUseCases(
     AuthenticatedUser currentUser,
-    OrganisationAssets organisationAssets
+    OrganisationAssets organisationAssets,
+    OrganisationThemes organisationTheme
   ) {
     return new OrganisationUseCases(
       currentUser,
       organisations,
       new OrganisationPermissions(users),
-      organisationAssets
+      organisationAssets,
+      organisationTheme
     );
   }
 

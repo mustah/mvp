@@ -3,7 +3,6 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.access.MediumProvider;
@@ -37,6 +36,7 @@ import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
 import com.elvaco.mvp.testing.repository.MockMeterDefinitions;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisationAssets;
+import com.elvaco.mvp.testing.repository.MockOrganisationThemes;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockProperties;
@@ -64,6 +64,7 @@ import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME_FLOW;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toMap;
 
 public abstract class MessageConsumerTest {
 
@@ -100,7 +101,7 @@ public abstract class MessageConsumerTest {
     ENERGY_RETURN,
     REACTIVE_ENERGY,
     EXTERNAL_TEMPERATURE
-  ).stream().collect(Collectors.toMap(q -> q.name, q -> q));
+  ).stream().collect(toMap(q -> q.name, q -> q));
 
   AuthenticatedUser authenticatedUser;
   PhysicalMeters physicalMeters;
@@ -179,7 +180,8 @@ public abstract class MessageConsumerTest {
           .asSuperAdmin()
           .build()
       ))),
-      new MockOrganisationAssets()
+      new MockOrganisationAssets(),
+      new MockOrganisationThemes()
     );
     gatewayUseCases = new GatewayUseCases(gateways, authenticatedUser);
 
