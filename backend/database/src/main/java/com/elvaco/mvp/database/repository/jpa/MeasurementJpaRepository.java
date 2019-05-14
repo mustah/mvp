@@ -11,7 +11,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntity, MeasurementPk> {
+public interface MeasurementJpaRepository
+  extends JpaRepository<MeasurementEntity, MeasurementPk>,
+          MeasurementJpaRepositoryCustom {
 
   @Query(nativeQuery = true, value = "SELECT"
     + "     measurement.organisation_id,"

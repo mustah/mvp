@@ -18,7 +18,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.Measurement.MEASUREMENT
 @Repository
 public class MeasurementJpaRepositoryImpl
   extends BaseJooqRepository<MeasurementEntity, Long>
-  implements MeasurementJpaRepository {
+  implements MeasurementJpaRepositoryCustom {
 
   private final DSLContext dsl;
 

@@ -657,13 +657,15 @@ public class MeasurementControllerTest extends IntegrationTest {
     var interval = Duration.ofDays(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeterOne)
+      .forPhysicalMeter(physicalMeterOne)
+      .forMeter(logicalMeter)
       .withQuantity(ENERGY)
       .startingAt(date.minusDays(2))
       .withInterval(interval)
       .withValues(2.0, 4.0, 7.0));
     given(measurementSeries()
-      .forMeter(physicalMeterTwo)
+      .forPhysicalMeter(physicalMeterTwo)
+      .forMeter(logicalMeter)
       .withQuantity(ENERGY)
       .startingAt(date)
       .withInterval(interval)
