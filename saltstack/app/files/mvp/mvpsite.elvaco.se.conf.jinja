@@ -59,8 +59,8 @@ server {
     ssl_certificate           /etc/nginx/wildcard.evo.elvaco.se.crt;
     ssl_certificate_key       /etc/nginx/wildcard.evo.elvaco.se.key;
 
-    access_log            /var/log/nginx/$subdomain.{{ fqdn }}.access.log;
-    error_log             /var/log/nginx/$subdomain.{{ fqdn }}.error.log;
+    access_log            /var/log/nginx/wildcard.{{ fqdn }}.access.log;
+    error_log             /var/log/nginx/wildcard.{{ fqdn }}.error.log;
 
     error_page 502 /evo-502.html;
 
@@ -84,6 +84,6 @@ server {
       proxy_pass          http://localhost:8080;
       proxy_read_timeout  90;
 
-      proxy_redirect      http://localhost:8080 https://$subdomain.{{ fqdn }};
+      proxy_redirect      http://localhost:8080 https://$host$request_uri;
     }
   }
