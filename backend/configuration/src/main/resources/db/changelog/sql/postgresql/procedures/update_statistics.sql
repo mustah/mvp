@@ -17,6 +17,10 @@ begin
   else
     rec := NEW;
   end if;
+
+
+  --TODO remove the rest
+
   -- Get measurement date, as meter's local time, because that's how we want to aggregate
   -- Note: Postgres uses posix style for timezone and we use ISO8601 style this is why we negate
   -- the tz using an interval.
@@ -40,36 +44,29 @@ begin
   then
     return null;
   end if;
-
-  measurement_date := (rec.readout_time at time zone measurement_tz)::date;
-  measurement_date_to := measurement_date;
-  perform
-  calculate_and_write_statistics(rec.organisation_id,
-                                 rec.quantity_id,
-                                 rec.physical_meter_id,
-                                 measurement_date,
-                                 measurement_date_to,
-                                 measurement_tz,
-                                 read_interval,
-                                 false);
-
-  if (consumption)
-  then
-    --expand date-range for consumption and missing measurements situations
-    measurement_date := ((rec.readout_time - cast(
-        (case when read_interval = 0 then 60 else read_interval end) ||
-        ' minutes' as interval)) at time zone measurement_tz)::date;
-    measurement_date_to := measurement_date;
-    select coalesce((min(readout_time at time zone measurement_tz)::date),
-                    measurement_date_to) into measurement_date_to
-    from measurement
-    where physical_meter_id = rec.physical_meter_id and
-          quantity_id = rec.quantity_id and
-          readout_time > rec.readout_time;
-    perform
-    calculate_and_write_statistics(rec.organisation_id, rec.quantity_id, rec.physical_meter_id, measurement_date,
-                                   measurement_date_to, measurement_tz, read_interval, true);
-  end if;
+insert into measurement_stat_job(organisation_id,
+                                          stat_date,
+                                          physical_meter_id,
+                                          quantity_id,
+                                          read_interval_minutes,
+                                          posix_offset,
+                                          is_consumption,
+                                          modified,
+                                          shard_key)
+                                          values
+                                          ( rec.organisation_id,
+                                          (rec.readout_time at time zone measurement_tz)::date,
+                                          rec.physical_meter_id,
+                                          rec.quantity_id,
+                                          read_interval,
+                                          measurement_tz,
+                                          COALESCE (consumption,false),
+                                          now(),
+                                          ('x' || substring(rec.physical_meter_id::text from 1 for 1)
+                                          )::bit(4)::int
+                                          )
+                                      ON CONFLICT (organisation_id,physical_meter_id, stat_date, quantity_id)
+      DO UPDATE SET modified = now();
 
   return null;
 end;

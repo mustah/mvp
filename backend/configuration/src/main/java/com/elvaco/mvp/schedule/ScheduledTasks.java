@@ -20,4 +20,5 @@ public class ScheduledTasks {
     log.info("Closing alarms");
     meterAlarmUseCases.closeAlarms();
   }
+
 }

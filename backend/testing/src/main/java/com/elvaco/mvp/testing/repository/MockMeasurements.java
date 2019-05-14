@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.Collections.emptyMap;
 
@@ -67,6 +68,11 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
         && ((measurement.readoutTime.isBefore(beforeOrEqual)
                || measurement.readoutTime.isEqual(beforeOrEqual))))
       .findFirst();
+  }
+
+  @Override
+  public int popAndCalculate(int limit, long ageMillis, int numberOfWorkers, int workerId) {
+    throw new NotImplementedYet();
   }
 
   @Override

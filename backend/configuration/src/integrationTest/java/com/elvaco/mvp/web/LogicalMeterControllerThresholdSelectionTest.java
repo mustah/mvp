@@ -44,6 +44,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD, "Power >= 0 W")
       .build();
 
+    waitForMeasurementStat();
+
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
@@ -66,6 +68,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power < 0 W")
       .build();
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
@@ -90,6 +94,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD, "Power < 0 W")
       .build();
 
+    waitForMeasurementStat();
+
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
@@ -112,6 +118,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power < 0 W")
       .build();
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
@@ -136,6 +144,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD, "Power <= 0 W")
       .build();
 
+    waitForMeasurementStat();
+
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
@@ -158,6 +168,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power >= 9 W")
       .build();
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
@@ -182,6 +194,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD, "Power > 9000 W")
       .build();
 
+    waitForMeasurementStat();
+
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
@@ -204,6 +218,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD_BEFORE, now.plusHours(1))
       .parameter(THRESHOLD, "Power < 9 kW")
       .build();
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
@@ -228,6 +244,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .parameter(THRESHOLD, "Power < 9 m^3")
       .build();
 
+    waitForMeasurementStat();
+
     var result = asUser()
       .get(url, ErrorMessageDto.class)
       .getBody();
@@ -245,6 +263,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .startingAt(now)
       .withQuantity(Quantity.VOLUME)
       .withValues(DoubleStream.iterate(0, (m) -> m + 24).limit(4).toArray()));
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
@@ -272,6 +292,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .startingAt(now)
       .withQuantity(Quantity.VOLUME)
       .withValues(DoubleStream.iterate(0, (m) -> m + 1).limit(24 * 8).toArray()));
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
@@ -308,6 +330,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .startingAt(now.plusDays(1))
       .withQuantity(Quantity.VOLUME)
       .withValues(DoubleStream.generate(() -> 24).limit(24).toArray()));
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
@@ -348,6 +372,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .withQuantity(Quantity.ENERGY)
       .withValues(DoubleStream.generate(() -> 0.1).limit(24 * 7).toArray()));
 
+    waitForMeasurementStat();
+
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
         .path("/meters")
@@ -385,6 +411,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .startingAt(now.plusDays(3))
       .withQuantity(Quantity.EXTERNAL_TEMPERATURE)
       .withValues(DoubleStream.generate(() -> 23).limit(24 * 3).toArray()));
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(Url.builder()
@@ -431,6 +459,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .withQuantity(Quantity.VOLUME)
       .withValues(DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()));
 
+    waitForMeasurementStat();
+
     ResponseEntity<PagedLogicalMeterDto> response = asUser()
       .get(Url.builder()
         .path("/meters")
@@ -450,6 +480,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .startingAt(now)
       .withQuantity(Quantity.VOLUME)
       .withValues(DoubleStream.iterate(0, (m) -> m + 1).limit(24 * 8).toArray()));
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
@@ -478,6 +510,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .withQuantity(Quantity.VOLUME)
       .withValues(DoubleStream.iterate(0, (m) -> m + 24).limit(4).toArray()));
 
+    waitForMeasurementStat();
+
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
@@ -504,6 +538,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .startingAt(now)
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(0, (m) -> m + 24).limit(2).toArray()));
+
+    waitForMeasurementStat();
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
       .path("/meters")

@@ -57,6 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -179,6 +180,9 @@ public abstract class IntegrationTest implements ContextDsl {
 
   @Autowired
   private CacheManager ehCacheManager;
+
+  @Value("${mvp.measurement.stat.queue.age:1}")
+  private int statQueueAge;
 
   private IntegrationTestFixtureContextFactory integrationTestFixtureContextFactory;
 
@@ -390,4 +394,13 @@ public abstract class IntegrationTest implements ContextDsl {
     }
     return integrationTestFixtureContextFactory;
   }
+
+  protected void waitForMeasurementStat() {
+    try {
+      Thread.sleep(statQueueAge + 100);
+    } catch (InterruptedException e) {
+      //Noop
+    }
+  }
+
 }

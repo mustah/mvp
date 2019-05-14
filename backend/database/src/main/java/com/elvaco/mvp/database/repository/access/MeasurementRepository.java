@@ -53,6 +53,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static com.elvaco.mvp.database.entity.jooq.Tables.DISPLAY_QUANTITY;
@@ -75,6 +76,7 @@ import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.lead;
 import static org.jooq.impl.DSL.noCondition;
+import static org.jooq.impl.DSL.val;
 
 public class MeasurementRepository implements Measurements {
 
@@ -300,6 +302,59 @@ public class MeasurementRepository implements Measurements {
   ) {
     return measurementJpaRepository.firstForPhysicalMeter(physicalMeterId, after, beforeOrEquals)
       .map(measurementEntityMapper::toDomainModel);
+  }
+
+  @Override
+  @Transactional
+  public int popAndCalculate(int limit, long ageMillis, int numberOfWorkers, int workerId) {
+    //Will rewrite to JOOQ in next release.
+    return dsl.execute("delete from measurement_stat_job where(organisation_id,physical_meter_id,"
+      + "                                               quantity_id,stat_date,is_consumption) in\n"
+      + "                                      (select organisation_id,physical_meter_id,"
+      + "                                  quantity_id,stat_date,is_consumption "
+      + " from (select *,\n"
+      + "    calculate_and_write_statistics(organisation_id,\n"
+      + "                                   quantity_id,\n"
+      + "                                   physical_meter_id,\n"
+      + "                                   stat_date,\n"
+      + "                                   stat_date,\n"
+      + "                                   posix_offset,\n"
+      + "                                   read_interval_minutes,\n"
+      + "                                   false),\n"
+      + "    case when is_consumption then\n"
+      + "      calculate_and_write_statistics("
+      + "          organisation_id,\n"
+      + "          quantity_id,\n"
+      + "          physical_meter_id,\n"
+      + "          (((stat_date::timestamp at time zone posix_offset) - "
+      + "            cast(\n"
+      + "              (case when read_interval_minutes = 0 then "
+      + "                60 "
+      + "              else "
+      + "                read_interval_minutes "
+      + "               end) "
+      + "             ||' minutes' as interval)) at time zone posix_offset)::date,\n"
+      + "          (select coalesce( "
+      + "            (select min(msd.stat_date) from measurement_stat_data msd where "
+      + "               msd.physical_meter_id = m1.physical_meter_id "
+      + "               and msd.organisation_id = m1.organisation_id "
+      + "               and msd.quantity_id= m1.quantity_id "
+      + "               and msd.stat_date>m1.stat_date),"
+      +  "         stat_date)),\n"
+      + "          posix_offset,\n"
+      + "          read_interval_minutes,\n"
+      + "          is_consumption)\n"
+      + "    else\n"
+      + "      null\n"
+      + "    end\n"
+      + "from measurement_stat_job m1\n"
+      + "         where modified <(now()- (({0}||' ms')::interval)) "
+      + "               and shard_key % {1} = {2} "
+      + "          order by modified asc\n"
+      + "          limit 1 for update skip locked ) as a);\n",
+      val(ageMillis),
+      val(numberOfWorkers),
+      val(workerId));
   }
 
   private ResultQuery<Record11<

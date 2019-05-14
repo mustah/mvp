@@ -31,4 +31,6 @@ public interface Measurements {
     ZonedDateTime after,
     ZonedDateTime beforeOrEqual
   );
+
+  int popAndCalculate(int limit, long ageMillis, int numberOfWorkers, int workerId);
 }
