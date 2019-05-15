@@ -29,17 +29,30 @@ public class MeasurementEntity extends IdentifiableType<MeasurementPk> {
   @EmbeddedId
   public MeasurementPk id;
 
+  @Column
+  public ZonedDateTime receivedTime;
+
+  @Column
+  public ZonedDateTime expectedTime;
+
   @Column(nullable = false)
   public double value;
 
   public MeasurementEntity(
-    ZonedDateTime created,
+    ZonedDateTime readoutTime,
+    ZonedDateTime receivedTime,
+    ZonedDateTime expectedTime,
     QuantityEntity quantity,
     double value,
     PhysicalMeterEntity physicalMeter
   ) {
-    this.id = new MeasurementPk(created, quantity, physicalMeter);
+    this.id = new MeasurementPk(readoutTime,
+      quantity,
+      physicalMeter,
+      physicalMeter.getOrganisationId());
     this.value = value;
+    this.receivedTime = receivedTime;
+    this.expectedTime = expectedTime;
   }
 
   @Override

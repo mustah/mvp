@@ -8,17 +8,19 @@ $BODY$
   language plpgsql;
 
 drop function if exists calculate_statistics;
-create or replace function calculate_statistics(quantity_id int,
+create or replace function calculate_statistics(p_organisation_id uuid,
+                                                p_quantity_id int,
                                                 p_meter_id uuid,
-                                                stat_date date,
+                                                p_stat_date date,
                                                 stop_date date,
                                                 current_tz text,
                                                 read_interval int,
                                                 consumption boolean) returns
   table (
-    stat_d date,
+    organisation_id uuid,
+    stat_date date,
     physical_meter_id uuid,
-    quantity int,
+    quantity_id int,
     min double precision,
     max double precision,
     expected_count int,
@@ -31,80 +33,85 @@ begin
   if (not consumption)
   then
     return query (
-      select gen.d2,
+      select
+             p_organisation_id,
+             gen.d2,
              p_meter_id,
-             quantity_id,
+             p_quantity_id,
              mg.min,
              mg.max,
              mg.expected_count,
              mg.received_count,
              mg.average,
              false
-      from (select cast(generate_series(stat_date::timestamp at time zone current_tz,
+      from (select cast(generate_series(p_stat_date::timestamp at time zone current_tz,
                                         stop_date::timestamp at time zone current_tz,
                                         '1 day'::interval) at time zone
                         current_tz as date) as d2) as gen
              left join
-           (select (m.created at time zone current_tz)::date as date1,
+           (select (m.readout_time at time zone current_tz)::date as date1,
                    min(value),
                    max(value),
                    coalesce(60 * 24 / nullif(read_interval, 0), 0) as expected_count,
                    count(value)::int as received_count,
                    avg(value) as average
-            from generate_series(stat_date::timestamp at time zone current_tz,
+            from generate_series(p_stat_date::timestamp at time zone current_tz,
                                  (stop_date::timestamp + interval '1 day') at time zone current_tz,
                                  read_interval_interval(read_interval)) as date_serie
-                   join measurement m on (m.created = date_serie)
+                   join measurement m on (m.readout_time = date_serie)
             where m.physical_meter_id = p_meter_id and
-                  m.quantity = quantity_id and
-                  m.created >= stat_date::timestamp
+                  m.organisation_id = p_organisation_id and
+                  m.quantity_id = p_quantity_id and
+                  m.readout_time >= p_stat_date::timestamp
                     at time zone current_tz and
-                  m.created < (stop_date::timestamp + interval '1 day')
+                  m.readout_time < (stop_date::timestamp + interval '1 day')
                     at time zone current_tz
-            group by date1, m.physical_meter_id, m.quantity) as mg on mg.date1 = gen.d2);
+            group by date1, m.physical_meter_id, m.quantity_id) as mg on mg.date1 = gen.d2);
   else
     return query (
-      select (m.created at time zone current_tz)::date as date,
+      select p_organisation_id,
+             (m.readout_time at time zone current_tz)::date as date,
              p_meter_id as physical_meter_id,
-             quantity_id as quantity,
+             p_quantity_id as quantity_id,
              min(m.consumption),
              max(m.consumption),
              coalesce(60 * 24 / nullif(read_interval, 0), 0) as expected,
              count(m.consumption)::int,
              avg(m.consumption),
              true
-      from (select created,
+      from (select readout_time,
                    value,
                    case
                      when lead(last_known_partition.value) over
-                       (order by created asc) is null then
+                       (order by readout_time asc) is null then
                        null
                      else lead(last_known_partition.value) over
-                       (order by created asc) - first_value
+                       (order by readout_time asc) - first_value
                      end as consumption
-            from (select part.created,
+            from (select part.readout_time,
                          value_partition,
                          part.value,
                          first_value(value)
-                                     over (partition by value_partition order by created) as first_value
-                  from (select measurements.created,
+                                     over (partition by value_partition order by readout_time) as first_value
+                  from (select measurements.readout_time,
                                measurements.value,
                                sum(case when measurements.value is null then 0 else 1 end)
-                                   over (order by created) as value_partition
-                        from (select measurement_serie.when as created,
+                                   over (order by readout_time) as value_partition
+                        from (select measurement_serie.when as readout_time,
                                      measurement_serie.value as value
                               from (select value, date_serie.date as when
                                     from (select generate_series(
-                                                     stat_date::timestamp - cast('2 day' as interval),
+                                                     p_stat_date::timestamp - cast('2 day' as interval),
                                                      stop_date::timestamp + cast('2 day' as interval),
                                                      read_interval_interval(read_interval)
                                                    ) at time zone current_tz as date) as date_serie
-                                           left join measurement on date_serie.date = created
-                                      and measurement.quantity = quantity_id
+                                           left join measurement on date_serie.date = readout_time
+                                      and measurement.quantity_id = p_quantity_id
                                       and measurement.physical_meter_id = p_meter_id
+                                      and measurement.organisation_id = p_organisation_id
                                    ) as measurement_serie
                               where measurement_serie.when >=
-                                    stat_date::timestamp at time zone current_tz
+                                    p_stat_date::timestamp at time zone current_tz
                                       - cast('2 day' as interval) and
                                     measurement_serie.when <=
                                     stop_date::timestamp at time zone current_tz
@@ -113,14 +120,14 @@ begin
                              ) as measurements
                        ) as part
                  ) as last_known_partition
-            where last_known_partition.created >=
-                  stat_date::timestamp at time zone current_tz and
-                  last_known_partition.created <=
+            where last_known_partition.readout_time >=
+                  p_stat_date::timestamp at time zone current_tz and
+                  last_known_partition.readout_time <=
                   stop_date::timestamp at time zone current_tz + cast('1 day' as interval)
            ) m
-      where m.created >=
-            stat_date::timestamp at time zone current_tz and
-            m.created < (stop_date::timestamp + interval '1 day') at time zone current_tz
+      where m.readout_time >=
+            p_stat_date::timestamp at time zone current_tz and
+            m.readout_time < (stop_date::timestamp + interval '1 day') at time zone current_tz
       group by date
     );
   end if;

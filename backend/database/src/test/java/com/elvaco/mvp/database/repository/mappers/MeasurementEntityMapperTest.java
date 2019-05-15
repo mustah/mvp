@@ -53,7 +53,7 @@ public class MeasurementEntityMapperTest {
   @Test
   public void toEntity_HandlesQuantity() {
     Measurement measurement = Measurement.builder()
-      .created(ZonedDateTime.now())
+      .readoutTime(ZonedDateTime.now())
       .value(2.0)
       .quantity(VOLUME.name)
       .unit(VOLUME.storageUnit)

@@ -4,6 +4,7 @@ import java.time.temporal.ChronoUnit;
 
 import com.elvaco.mvp.core.domainmodels.FilterPeriod;
 import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
+import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
@@ -34,10 +35,16 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
   private final DSLContext dsl;
 
   private FilterPeriod collectionPeriod;
+  private Condition orgCondition = trueCondition();
 
   @Override
   public void visit(CollectionPeriodFilter filter) {
     collectionPeriod = filter.getPeriod();
+  }
+
+  @Override
+  public void visit(OrganisationIdFilter filter) {
+    orgCondition = MEASUREMENT_STAT_DATA.ORGANISATION_ID.in(filter.values());
   }
 
   @Override
@@ -50,11 +57,13 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
     } else {
       condition = measurementStatsConditionFor(collectionPeriod)
         .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
-        .and(MEASUREMENT_STAT_DATA.QUANTITY.equal(
-          dsl.select(MEASUREMENT_STAT_DATA.QUANTITY)
+        .and(MEASUREMENT_STAT_DATA.QUANTITY_ID.equal(
+          dsl.select(MEASUREMENT_STAT_DATA.QUANTITY_ID)
             .from(MEASUREMENT_STAT_DATA)
             .where(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
             .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
+            .and(MEASUREMENT_STAT_DATA.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID))
+            .and(orgCondition)
             .orderBy(MEASUREMENT_STAT_DATA.STAT_DATE.desc())
             .limit(1)
           )
@@ -83,6 +92,7 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
           .from(PHYSICAL_METER)
           .leftJoin(MEASUREMENT_STAT_DATA)
           .on(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+          .and(MEASUREMENT_STAT_DATA.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID))
           .where(condition)
       ).as(METER_STATS)
     ).on(trueCondition());

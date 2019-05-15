@@ -1,0 +1,182 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="copy data and default new columns to new_measurement" author="erimel">
+    <sql>
+      CREATE TABLE new_measurement AS SELECT
+        (SELECT p.organisation_id FROM physical_meter p WHERE p.id = physical_meter_id) as organisation_id,
+        physical_meter_id,
+        quantity as quantity_id,
+        created as readout_time,
+        (SELECT
+          CASE
+            WHEN
+              p.read_interval_minutes is null or p.read_interval_minutes=0
+            THEN
+              null
+            WHEN
+              ((extract(EPOCH from (m.created at time zone l.utc_offset))*1000)::bigint -
+              (extract(EPOCH from (date_trunc('day', m.created at time zone l.utc_offset)))*1000)::bigint) % (p.read_interval_minutes*60*1000)::bigint = 0
+            THEN
+              CASE
+                WHEN
+                  range_contains_elem(p.active_period,m.created)
+                THEN
+                  m.created
+                ELSE
+                  null
+              END
+            ELSE
+              null
+          END
+        FROM physical_meter p inner join logical_meter l on p.logical_meter_id=l.id where p.id=physical_meter_id
+        ) as expected_time,
+        null::TIMESTAMP WITH TIME ZONE as received_time,
+        value from measurement m
+    </sql>
+  </changeSet>
+
+  <changeSet id="drop measurement and reneme new_measurement to measurement" author="erimel">
+    <dropTable tableName="measurement"/>
+    <renameTable oldTableName="new_measurement" newTableName="measurement"/>
+  </changeSet>
+
+  <changeSet id="att not null constraints and PK" author="erimel">
+    <sql>
+      ALTER TABLE measurement
+        ALTER COLUMN organisation_id SET NOT NULL,
+        ALTER COLUMN physical_meter_id SET NOT NULL,
+        ALTER COLUMN readout_time SET NOT NULL,
+        ALTER COLUMN quantity_id SET NOT NULL,
+        ADD PRIMARY KEY (organisation_id, physical_meter_id, readout_time, quantity_id)
+    </sql>
+  </changeSet>
+
+  <changeSet id="add contraint to organisation" author="erimel">
+    <addForeignKeyConstraint baseTableName="measurement" baseColumnNames="organisation_id"
+                             referencedTableName="organisation" referencedColumnNames="id"
+                             deferrable="false"
+                             initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+                             constraintName="measurement_organisation_id_fkey"/>
+  </changeSet>
+  <changeSet id="add physicalmeter_id fk to measurement" author="erimel">
+  <addForeignKeyConstraint baseTableName="measurement" baseColumnNames="physical_meter_id"
+                           constraintName="measurement_physical_meter_id_fkey"
+                           deferrable="false"
+                           initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+                           referencedColumnNames="id" referencedTableName="physical_meter"/>
+  </changeSet>
+
+  <changeSet id="create partial index on measurement where expected_time is not null" author="erimel">
+    <sql>
+      CREATE UNIQUE INDEX ON measurement (organisation_id, physical_meter_id, quantity_id, expected_time, value)
+      WHERE expected_time IS NOT NULL
+    </sql>
+  </changeSet>
+  <changeSet id="create index on measurement (organisation_id, physical_meter_id, quantity, created, value)" author="erimel">
+    <sql>
+      CREATE UNIQUE INDEX ON measurement (organisation_id, physical_meter_id, quantity_id, readout_time, value)
+    </sql>
+  </changeSet>
+  <changeSet id="add reatout_time index" author="erimel">
+    <sql>
+      CREATE INDEX ON measurement (readout_time)
+    </sql>
+  </changeSet>
+  <changeSet id="Add tigger to calculate stat on the new measurement table" author="erimel">
+    <sql>
+      drop trigger if exists update_statistics_trigger on measurement;
+      create trigger update_statistics_trigger
+      after insert or update or delete
+      on measurement
+      for each row execute procedure update_statistics();
+    </sql>
+  </changeSet>
+
+  <!-- Measurement stat-->
+  <changeSet id="set organisation to measurement_stat_data" author="erimel">
+    <sql>
+      CREATE TABLE new_measurement_stat_data AS SELECT
+        (SELECT p.organisation_id FROM physical_meter p WHERE p.id = physical_meter_id) as organisation_id,
+        stat_date,
+        physical_meter_id,
+        quantity as quantity_id,
+        min,
+        max,
+        expected_count,
+        received_count,
+        average,
+        is_consumption
+      FROM measurement_stat_data
+    </sql>
+  </changeSet>
+  <changeSet id="rename new table to measurement_stat" author="erimel">
+    <dropTable tableName="measurement_stat_data"/>
+    <renameTable oldTableName="new_measurement_stat_data" newTableName="measurement_stat_data"/>
+  </changeSet>
+  <changeSet id="add not null constraints and PK to measurement_stat_data" author="erimel">
+    <sql>
+      ALTER TABLE measurement_stat_data
+        ALTER COLUMN organisation_id SET NOT NULL,
+        ALTER COLUMN stat_date SET NOT NULL,
+        ALTER COLUMN physical_meter_id SET NOT NULL,
+        ALTER COLUMN quantity_id SET NOT NULL,
+        ALTER COLUMN min SET NOT NULL,
+        ALTER COLUMN max SET NOT NULL,
+        ALTER COLUMN expected_count SET NOT NULL,
+        ALTER COLUMN received_count SET NOT NULL,
+        ALTER COLUMN average SET NOT NULL,
+        ALTER COLUMN is_consumption SET NOT NULL,
+        ALTER COLUMN is_consumption SET DEFAULT false,
+        ADD PRIMARY KEY (organisation_id,quantity_id, physical_meter_id, stat_date, is_consumption)
+    </sql>
+  </changeSet>
+
+  <changeSet id="Add FKs in measurement_stat_data" author="erimel">
+    <addForeignKeyConstraint baseTableName="measurement_stat_data" baseColumnNames="organisation_id"
+                             referencedTableName="organisation" referencedColumnNames="id"
+                             constraintName="measurement_stat_data_organisation_id_fkey"
+                             onDelete="CASCADE"/>
+    <addForeignKeyConstraint baseTableName="measurement_stat_data" baseColumnNames="physical_meter_id"
+                             referencedTableName="physical_meter" referencedColumnNames="id"
+                             constraintName="measurement_stat_data_physical_meter_id_fkey"
+                             onDelete="CASCADE"/>
+    <addForeignKeyConstraint baseTableName="measurement_stat_data" baseColumnNames="quantity_id"
+                             referencedTableName="quantity" referencedColumnNames="id"
+                             constraintName="measurement_stat_data_quantity_id_fkey"
+                             onDelete="CASCADE"/>
+  </changeSet>
+
+  <changeSet id="add measurement_stat_data min-index" author="erimel">
+    <createIndex
+      indexName="measurement_stat_data_org_id_p_meter_id_quantity_stat_date_min_idx"
+      tableName="measurement_stat_data"
+      schemaName="public">
+      <column name="organisation_id"/>
+      <column name="physical_meter_id"/>
+      <column name="quantity_id"/>
+      <column name="stat_date"/>
+      <column name="min"/>
+    </createIndex>
+  </changeSet>
+  <changeSet id="add measurement_stat_data max-index" author="erimel">
+    <createIndex
+      indexName="measurement_stat_data_org_id_p_meter_id_quantity_stat_date_max_idx"
+      tableName="measurement_stat_data"
+      schemaName="public">
+      <column name="organisation_id"/>
+      <column name="physical_meter_id"/>
+      <column name="quantity_id"/>
+      <column name="stat_date"/>
+      <column name="max"/>
+    </createIndex>
+  </changeSet>
+  <changeSet id="add measurement_stat_data with organisation_id to support faster query for last measurement " author="erimel">
+    <sql>
+      create unique index on measurement_stat_data(organisation_id,physical_meter_id, stat_date, quantity_id)
+      where is_consumption = false;
+    </sql>
+  </changeSet>
+</databaseChangeLog>

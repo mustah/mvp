@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.entity.measurement;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -33,10 +34,10 @@ public class MeasurementPk implements Serializable {
   private static final long serialVersionUID = 5534347183934651569L;
 
   @Column(nullable = false, updatable = false)
-  public ZonedDateTime created;
+  public ZonedDateTime readoutTime;
 
   @ManyToOne(optional = false, cascade = javax.persistence.CascadeType.MERGE)
-  @JoinColumn(name = "quantity", nullable = false, updatable = false)
+  @JoinColumn(name = "quantity_id", nullable = false, updatable = false)
   public QuantityEntity quantity;
 
   @JsonBackReference
@@ -45,5 +46,8 @@ public class MeasurementPk implements Serializable {
   @Fetch(FetchMode.JOIN)
   @JoinColumn(name = "physical_meter_id", nullable = false, updatable = false)
   public PhysicalMeterEntity physicalMeter;
+
+  @Column(nullable = false, updatable = false)
+  public UUID organisationId;
 
 }

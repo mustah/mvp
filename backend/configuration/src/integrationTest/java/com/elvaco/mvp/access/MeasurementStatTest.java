@@ -48,9 +48,10 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void insertUpdatesStats() {
-    PhysicalMeter meter = newConnectedMeter();
+    Meters meter = newConnectedMeter();
     Measurement measurement = measurements.save(
-      powerMeasurementFor(meter).created(TIME).value(1.0).build()
+      powerMeasurementFor(meter.physicalMeter).readoutTime(TIME).value(1.0).build(),
+      meter.logicalMeter
     );
 
     MeasurementStatDto stat = fetchMeasurementStats().get(0);
@@ -68,16 +69,18 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void insertMultipleForDay_StatsAreCorrect() {
-    PhysicalMeter meter = newConnectedMeter();
+    Meters meter = newConnectedMeter();
     Measurement measurement = measurements.save(
-      powerMeasurementFor(meter).created(TIME).value(1.0).build()
+      powerMeasurementFor(meter.physicalMeter).readoutTime(TIME).value(1.0).build(),
+      meter.logicalMeter
     );
 
     measurements.save(
-      powerMeasurementFor(meter)
+      powerMeasurementFor(meter.physicalMeter)
         .value(8.0)
-        .created(TIME.plusHours(1))
-        .build()
+        .readoutTime(TIME.plusHours(1))
+        .build(),
+      meter.logicalMeter
     );
 
     MeasurementStatDto stat = fetchMeasurementStats().get(0);
@@ -94,13 +97,14 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void respectsMeterTimeZone() {
-    PhysicalMeter meter = newConnectedMeter(60, "+05");
+    Meters meter = newConnectedMeter(60, "+05");
 
     IntStream.range(0, 25).forEach(i -> measurements.save(
-      powerMeasurementFor(meter)
+      powerMeasurementFor(meter.physicalMeter)
         .value(8.0)
-        .created(UTC_TIME.plusHours(i))
-        .build())
+        .readoutTime(UTC_TIME.plusHours(i))
+        .build(),
+      meter.logicalMeter)
     );
 
     List<MeasurementStatDto> result = fetchMeasurementStats();
@@ -115,16 +119,18 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void deleteUpdatesStats() {
-    PhysicalMeter meter = newConnectedMeter();
+    Meters meter = newConnectedMeter();
     Measurement measurement = measurements.save(
-      powerMeasurementFor(meter).created(TIME).value(1.0).build()
+      powerMeasurementFor(meter.physicalMeter).readoutTime(TIME).value(1.0).build(),
+      meter.logicalMeter
     );
 
     measurements.save(
-      powerMeasurementFor(meter)
+      powerMeasurementFor(meter.physicalMeter)
         .value(8.0)
-        .created(TIME.plusHours(1))
-        .build()
+        .readoutTime(TIME.plusHours(1))
+        .build(),
+      meter.logicalMeter
     );
 
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
@@ -143,16 +149,18 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void updateUpdatesStats() {
-    PhysicalMeter meter = newConnectedMeter();
+    Meters meter = newConnectedMeter();
     Measurement measurement = measurements.save(
-      powerMeasurementFor(meter).created(TIME).value(1.0).build()
+      powerMeasurementFor(meter.physicalMeter).readoutTime(TIME).value(1.0).build(),
+      meter.logicalMeter
     );
 
     measurements.save(
-      powerMeasurementFor(meter)
-        .created(TIME)
+      powerMeasurementFor(meter.physicalMeter)
+        .readoutTime(TIME)
         .value(2.0)
-        .build()
+        .build(),
+      meter.logicalMeter
     );
 
     MeasurementStatDto stat = fetchMeasurementStats().get(0);
@@ -170,9 +178,10 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void deleteLastMeasurementForDayDeletesStats() {
-    PhysicalMeter meter = newConnectedMeter();
+    Meters meter = newConnectedMeter();
     Measurement measurement = measurements.save(
-      powerMeasurementFor(meter).created(TIME).value(1.0).build()
+      powerMeasurementFor(meter.physicalMeter).readoutTime(TIME).value(1.0).build(),
+      meter.logicalMeter
     );
 
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
@@ -185,10 +194,11 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void insertMeasurementForZeroIntervalMeterIsOk() {
-    PhysicalMeter meter = newConnectedMeter(0);
+    Meters meter = newConnectedMeter(0);
 
     Measurement measurement = measurements.save(
-      powerMeasurementFor(meter).created(TIME).value(1.0).build()
+      powerMeasurementFor(meter.physicalMeter).readoutTime(TIME).value(1.0).build(),
+      meter.logicalMeter
     );
 
     MeasurementStatDto stat = fetchMeasurementStats().get(0);
@@ -206,13 +216,14 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void consumptionFor24h() {
-    PhysicalMeter meter = newConnectedMeter();
+    Meters meter = newConnectedMeter();
 
     IntStream.range(0, 25).forEach(i -> measurements.save(
-      volumeMeasurementFor(meter)
+      volumeMeasurementFor(meter.physicalMeter)
         .value((double) i)
-        .created(UTC_TIME.plusHours(i - 1))
-        .build())
+        .readoutTime(UTC_TIME.plusHours(i - 1))
+        .build(),
+      meter.logicalMeter)
     );
 
     List<MeasurementStatDto> result = fetchConsumptionMeasurementStats();
@@ -224,13 +235,14 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void consumptionFor24hUnknownMeter() {
-    PhysicalMeter meter = newUnknownMeter();
+    Meters meter = newUnknownMeter();
 
     IntStream.range(0, 24).forEach(i -> measurements.save(
-      volumeMeasurementFor(meter)
+      volumeMeasurementFor(meter.physicalMeter)
         .value((double) i)
-        .created(UTC_TIME.plusHours(i - 1))
-        .build())
+        .readoutTime(UTC_TIME.plusHours(i - 1))
+        .build(),
+      meter.logicalMeter)
     );
 
     List<MeasurementStatDto> result = fetchMeasurementStats();
@@ -242,20 +254,22 @@ public class MeasurementStatTest extends IntegrationTest {
   
   @Test
   public void consumptionAddInAGapFor24h() {
-    PhysicalMeter meter = newConnectedMeter(60, "+00:00");
+    Meters meter = newConnectedMeter(60, "+00:00");
 
     IntStream.range(0, 24).forEach(i -> measurements.save(
-      volumeMeasurementFor(meter)
+      volumeMeasurementFor(meter.physicalMeter)
         .value((double) i)
-        .created(UTC_TIME.plusHours(i))
-        .build())
+        .readoutTime(UTC_TIME.plusHours(i))
+        .build(),
+      meter.logicalMeter)
     );
 
     IntStream.range(0, 24).forEach(i -> measurements.save(
-      volumeMeasurementFor(meter)
+      volumeMeasurementFor(meter.physicalMeter)
         .value((double) i + 49)
-        .created(UTC_TIME.plusDays(2).plusHours(1 + i))
-        .build())
+        .readoutTime(UTC_TIME.plusDays(2).plusHours(1 + i))
+        .build(),
+      meter.logicalMeter)
     );
 
     List<MeasurementStatDto> result = fetchConsumptionMeasurementStats();
@@ -269,10 +283,11 @@ public class MeasurementStatTest extends IntegrationTest {
       .truncatedTo(ChronoUnit.DAYS).toLocalDate());
 
     measurements.save(
-      volumeMeasurementFor(meter)
+      volumeMeasurementFor(meter.physicalMeter)
         .value((double) 48)
-        .created(UTC_TIME.plusDays(2))
-        .build());
+        .readoutTime(UTC_TIME.plusDays(2))
+        .build(),
+      meter.logicalMeter);
     result = fetchConsumptionMeasurementStats();
 
     assertThat(result).hasSize(3);
@@ -290,17 +305,19 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void consumptionDeleteOne() {
-    PhysicalMeter meter = newConnectedMeter();
+    Meters meter = newConnectedMeter();
     measurements.save(
-      volumeMeasurementFor(meter)
+      volumeMeasurementFor(meter.physicalMeter)
         .value((double) 1)
-        .created(UTC_TIME)
-        .build());
+        .readoutTime(UTC_TIME)
+        .build(),
+      meter.logicalMeter);
     Measurement measurement = measurements.save(
-      volumeMeasurementFor(meter)
+      volumeMeasurementFor(meter.physicalMeter)
         .value((double) 1)
-        .created(UTC_TIME.plusHours(1))
-        .build());
+        .readoutTime(UTC_TIME.plusHours(1))
+        .build(),
+      meter.logicalMeter);
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
 
     assertThat(fetchConsumptionMeasurementStats()).hasSize(0);
@@ -361,22 +378,24 @@ public class MeasurementStatTest extends IntegrationTest {
 
   private MeasurementStatDto.MeasurementStatDtoBuilder newStatDto(Measurement measurement) {
     return MeasurementStatDto.builder()
-      .date(measurement.created.toLocalDate())
+      .date(measurement.readoutTime.toLocalDate())
       .expectedCount(24)
       .quantityId(quantityProvider.getId(measurement.getQuantity()))
-      .physicalMeterId(measurement.physicalMeter.id);
+      .physicalMeterId(measurement.physicalMeter.id)
+      .organisationId(measurement.physicalMeter.organisationId);
   }
 
-  private PhysicalMeter newUnknownMeter() {
+  private Meters newUnknownMeter() {
+    Meters meters = new Meters();
     UUID logicalMeterId = UUID.randomUUID();
-    logicalMeters.save(LogicalMeter.builder()
+    meters.logicalMeter = logicalMeters.save(LogicalMeter.builder()
         .organisationId(context().organisationId())
         .externalId(logicalMeterId.toString())
         .meterDefinition(MeterDefinition.UNKNOWN)
         .id(logicalMeterId)
         .utcOffset("+01")
         .build());
-    return physicalMeters.save(PhysicalMeter.builder()
+    meters.physicalMeter = physicalMeters.save(PhysicalMeter.builder()
       .manufacturer("ELV")
       .id(UUID.randomUUID())
       .externalId(logicalMeterId.toString())
@@ -385,15 +404,17 @@ public class MeasurementStatTest extends IntegrationTest {
       .logicalMeterId(logicalMeterId)
       .readIntervalMinutes(60)
       .build());
+    return meters;
   }
 
-  private PhysicalMeter newConnectedMeter() {
+  private Meters newConnectedMeter() {
     return newConnectedMeter(60);
   }
 
-  private PhysicalMeter newConnectedMeter(int readIntervalMinutes, String utcOffset) {
+  private Meters newConnectedMeter(int readIntervalMinutes, String utcOffset) {
+    Meters meters = new Meters();
     UUID logicalMeterId = UUID.randomUUID();
-    logicalMeters.save(
+    meters.logicalMeter = logicalMeters.save(
       LogicalMeter.builder()
         .organisationId(context().organisationId())
         .externalId(logicalMeterId.toString())
@@ -403,7 +424,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .build()
     );
 
-    return physicalMeters.save(PhysicalMeter.builder()
+    meters.physicalMeter = physicalMeters.save(PhysicalMeter.builder()
       .manufacturer("ELV")
       .id(UUID.randomUUID())
       .externalId(logicalMeterId.toString())
@@ -412,9 +433,10 @@ public class MeasurementStatTest extends IntegrationTest {
       .logicalMeterId(logicalMeterId)
       .readIntervalMinutes(readIntervalMinutes)
       .build());
+    return meters;
   }
 
-  private PhysicalMeter newConnectedMeter(int readIntervalMinutes) {
+  private Meters newConnectedMeter(int readIntervalMinutes) {
     return newConnectedMeter(readIntervalMinutes, LogicalMeter.UTC_OFFSET);
   }
 
@@ -423,6 +445,7 @@ public class MeasurementStatTest extends IntegrationTest {
   @Builder
   @ToString
   static class MeasurementStatDto {
+    public final UUID organisationId;
     public final LocalDate date;
     public final UUID physicalMeterId;
     public final int quantityId;
@@ -432,5 +455,10 @@ public class MeasurementStatTest extends IntegrationTest {
     public final int receivedCount;
     public final double average;
     public final boolean isConsumption;
+  }
+
+  private static class Meters {
+    public PhysicalMeter physicalMeter;
+    public LogicalMeter logicalMeter;
   }
 }

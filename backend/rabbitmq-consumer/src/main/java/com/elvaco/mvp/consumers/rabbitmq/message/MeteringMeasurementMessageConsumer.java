@@ -148,10 +148,13 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       );
       return physicalMeterUseCases.save(physicalMeter);
     });
-
+    ZonedDateTime now = ZonedDateTime.now();
     measurementMessage.values
-      .forEach(value -> createMeasurement(value, physicalMeter)
-        .ifPresent(measurementUseCases::createOrUpdate));
+      .forEach(value -> createMeasurement(value, now, physicalMeter)
+        .ifPresent(
+          (measurement) -> measurementUseCases.createOrUpdate(measurement,connectedLogicalMeter)
+        )
+    );
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
       || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
@@ -172,7 +175,9 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         "MeteringMeasurementMessage without timestamp " + measurementMessage));
   }
 
-  private Optional<Measurement> createMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
+  private Optional<Measurement> createMeasurement(ValueDto value,
+                                                  ZonedDateTime receivedTime,
+                                                  PhysicalMeter physicalMeter) {
     Optional<Quantity> quantity = mappedQuantity(value.quantity);
     if (!quantity.isPresent()) {
       log.warn(
@@ -202,7 +207,8 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     return Optional.of(Measurement.builder()
       .physicalMeter(physicalMeter)
-      .created(value.timestamp.atZone(METERING_TIMEZONE))
+      .readoutTime(value.timestamp.atZone(METERING_TIMEZONE))
+      .receivedTime(receivedTime)
       .value(value.value)
       .unit(value.unit)
       .quantity(quantity.get().name)

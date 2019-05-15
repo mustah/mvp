@@ -49,7 +49,7 @@ spring:
     password: mvp
     # Not specifying this causes liquibase's autoconfiguration to use the Spring datasource, which
     # prevents us from overriding the user/password
-    url: jdbc:postgresql://localhost:5432/mvp
+    url: jdbc:postgresql://localhost:5432/mvp?tcpKeepAlive=true
     parameters:
       application_database: mvp
       application_user: appuser
@@ -97,3 +97,9 @@ geo-service:
 
 jooq:
   sql-dialect: 'POSTGRES'
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        type: trace

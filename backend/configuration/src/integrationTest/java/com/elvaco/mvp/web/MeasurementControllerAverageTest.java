@@ -323,19 +323,22 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var interval = Duration.ofDays(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeterOne)
+      .forPhysicalMeter(physicalMeterOne)
+      .forMeter(logicalMeter1)
       .withQuantity(POWER)
       .startingAt(date.minusDays(2))
       .withInterval(interval)
       .withValues(2.0, 4.0, 6.0));
     given(measurementSeries()
-      .forMeter(physicalMeterTwo)
+      .forPhysicalMeter(physicalMeterTwo)
+      .forMeter(logicalMeter1)
       .withQuantity(POWER)
       .startingAt(date)
       .withInterval(interval)
       .withValues(8.0));
     given(measurementSeries()
-      .forMeter(logicalMeter2.activePhysicalMeter().get())
+      .forPhysicalMeter(logicalMeter2.activePhysicalMeter().get())
+      .forMeter(logicalMeter2)
       .withQuantity(POWER)
       .startingAt(date.minusDays(2))
       .withInterval(interval)
@@ -385,19 +388,22 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var interval = Duration.ofDays(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeterOne)
+      .forPhysicalMeter(physicalMeterOne)
+      .forMeter(logicalMeter1)
       .withQuantity(ENERGY)
       .startingAt(date.minusDays(2))
       .withInterval(interval)
       .withValues(2.0, 4.0, 6.0));
     given(measurementSeries()
-      .forMeter(physicalMeterTwo)
+      .forPhysicalMeter(physicalMeterTwo)
+      .forMeter(logicalMeter1)
       .withQuantity(ENERGY)
       .startingAt(date)
       .withInterval(interval)
       .withValues(8.0, 12.0));
     given(measurementSeries()
-      .forMeter(logicalMeter2.activePhysicalMeter().get())
+      .forPhysicalMeter(logicalMeter2.activePhysicalMeter().get())
+      .forMeter(logicalMeter2)
       .withQuantity(ENERGY)
       .startingAt(date.minusDays(2))
       .withInterval(interval)

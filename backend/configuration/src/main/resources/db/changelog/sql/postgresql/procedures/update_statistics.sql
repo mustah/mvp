@@ -31,7 +31,7 @@ begin
          inner join physical_meter p
                    on l.id = p.logical_meter_id
          left join meter_definition on meter_definition.id = l.meter_definition_id
-         left join display_quantity on display_quantity.quantity_id = rec.quantity and
+         left join display_quantity on display_quantity.quantity_id = rec.quantity_id and
                                        meter_definition.id = display_quantity.meter_definition_id
   where p.id = rec.physical_meter_id;
 
@@ -41,27 +41,33 @@ begin
     return null;
   end if;
 
-  measurement_date := (rec.created at time zone measurement_tz)::date;
+  measurement_date := (rec.readout_time at time zone measurement_tz)::date;
   measurement_date_to := measurement_date;
   perform
-  calculate_and_write_statistics(rec.quantity, rec.physical_meter_id, measurement_date,
-                                 measurement_date_to, measurement_tz, read_interval, false);
+  calculate_and_write_statistics(rec.organisation_id,
+                                 rec.quantity_id,
+                                 rec.physical_meter_id,
+                                 measurement_date,
+                                 measurement_date_to,
+                                 measurement_tz,
+                                 read_interval,
+                                 false);
 
   if (consumption)
   then
     --expand date-range for consumption and missing measurements situations
-    measurement_date := ((rec.created - cast(
+    measurement_date := ((rec.readout_time - cast(
         (case when read_interval = 0 then 60 else read_interval end) ||
         ' minutes' as interval)) at time zone measurement_tz)::date;
     measurement_date_to := measurement_date;
-    select coalesce((min(created at time zone measurement_tz)::date),
+    select coalesce((min(readout_time at time zone measurement_tz)::date),
                     measurement_date_to) into measurement_date_to
     from measurement
     where physical_meter_id = rec.physical_meter_id and
-          quantity = rec.quantity and
-          created > rec.created;
+          quantity_id = rec.quantity_id and
+          readout_time > rec.readout_time;
     perform
-    calculate_and_write_statistics(rec.quantity, rec.physical_meter_id, measurement_date,
+    calculate_and_write_statistics(rec.organisation_id, rec.quantity_id, rec.physical_meter_id, measurement_date,
                                    measurement_date_to, measurement_tz, read_interval, true);
   end if;
 

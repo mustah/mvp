@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -21,27 +22,30 @@ public class MeterAlarmUseCasesTest extends DefaultTestFixture {
 
   private Measurements measurements;
   private MeterAlarmLogs meterAlarmLogs;
-  private PhysicalMeter meter;
+  private LogicalMeter logicalMeter;
+  private PhysicalMeter physicalMeter;
   private MeterAlarmUseCases meterAlarmUseCases;
 
   @Before
   public void before() {
     measurements = new MockMeasurements();
     meterAlarmLogs = new MockMeterAlarmLogs();
-    meter = physicalMeter().build();
+    physicalMeter = physicalMeter().build();
+    logicalMeter = logicalMeter().physicalMeter(physicalMeter).build();
     meterAlarmUseCases = new MeterAlarmUseCases(measurements, meterAlarmLogs);
   }
 
   @Test
   public void testAlarmClosed() {
     measurements.save(Measurement.builder()
-      .created(ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS))
+      .readoutTime(ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS))
       .quantity("temperature")
-      .physicalMeter(meter)
-      .build());
+      .physicalMeter(physicalMeter)
+      .build(),
+      logicalMeter);
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .primaryKey(meter.primaryKey())
+      .primaryKey(physicalMeter.primaryKey())
       .start(ZonedDateTime.now().minusDays(5).truncatedTo(ChronoUnit.HOURS))
       .lastSeen(ZonedDateTime.now()
         .minusDays(4).truncatedTo(ChronoUnit.HOURS))
@@ -55,13 +59,14 @@ public class MeterAlarmUseCasesTest extends DefaultTestFixture {
   @Test
   public void testAlarmNotClosedForMeasurementNotOlderThanADay() {
     measurements.save(Measurement.builder()
-      .created(ZonedDateTime.now().minusHours(23))
+      .readoutTime(ZonedDateTime.now().minusHours(23))
       .quantity("temperature")
-      .physicalMeter(meter)
-      .build());
+      .physicalMeter(physicalMeter)
+      .build(),
+      logicalMeter);
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .primaryKey(meter.primaryKey())
+      .primaryKey(physicalMeter.primaryKey())
       .start(ZonedDateTime.now().minusDays(5).truncatedTo(ChronoUnit.HOURS))
       .lastSeen(ZonedDateTime.now()
         .minusDays(4).truncatedTo(ChronoUnit.HOURS))
@@ -75,14 +80,15 @@ public class MeterAlarmUseCasesTest extends DefaultTestFixture {
   @Test
   public void testAlarmNotClosed() {
     measurements.save(Measurement.builder()
-      .created(ZonedDateTime.now()
+      .readoutTime(ZonedDateTime.now()
         .minusDays(1)
         .truncatedTo(ChronoUnit.DAYS))
       .quantity("temperature")
-      .physicalMeter(meter).build());
+      .physicalMeter(physicalMeter).build(),
+      logicalMeter);
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .primaryKey(meter.primaryKey())
+      .primaryKey(physicalMeter.primaryKey())
       .start(ZonedDateTime.now().minusDays(5).truncatedTo(ChronoUnit.HOURS))
       .lastSeen(ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.HOURS)).build());
 
@@ -94,12 +100,13 @@ public class MeterAlarmUseCasesTest extends DefaultTestFixture {
   @Test
   public void testAlarmNotClosedSameLastSeenAsValue() {
     measurements.save(Measurement.builder()
-      .created(ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS))
+      .readoutTime(ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS))
       .quantity("temperature")
-      .physicalMeter(meter).build());
+      .physicalMeter(physicalMeter).build(),
+      logicalMeter);
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .primaryKey(meter.primaryKey())
+      .primaryKey(physicalMeter.primaryKey())
       .start(ZonedDateTime.now().minusDays(5).truncatedTo(ChronoUnit.HOURS))
       .lastSeen(ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS)).build());
 

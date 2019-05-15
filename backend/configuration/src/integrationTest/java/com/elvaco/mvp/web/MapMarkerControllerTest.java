@@ -262,7 +262,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = savePhysicalMeterWith(meter, StatusType.OK);
 
     ZonedDateTime now = ZonedDateTime.parse("2018-02-01T01:00:00+01");
-    addMeasurementsForMeterQuantities(physicalMeter, singleton(Quantity.POWER), now, 10.0);
+    addMeasurementsForMeterQuantities(physicalMeter, meter, singleton(Quantity.POWER), now, 10.0);
 
     Url url = Url.builder().path("/map-markers/gateways")
       .parameter(RequestParameter.THRESHOLD, "Power >= 10.0 W")
@@ -295,7 +295,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = savePhysicalMeterWith(meter, StatusType.OK);
 
     ZonedDateTime now = ZonedDateTime.parse("2018-02-01T01:00:00+01");
-    addMeasurementsForMeterQuantities(physicalMeter, singleton(Quantity.POWER), now, 10.0);
+    addMeasurementsForMeterQuantities(physicalMeter, meter, singleton(Quantity.POWER), now, 10.0);
 
     Url url = Url.builder().path("/map-markers/gateways")
       .parameter(RequestParameter.THRESHOLD, "Power < 10.0 W")
@@ -511,6 +511,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
         .externalId(logicalMeter.externalId)
         .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(NOW)))
         .address("v1")
+        .readIntervalMinutes(60)
         .manufacturer("ELV")
         .organisationId(context().organisationId())
         .build()

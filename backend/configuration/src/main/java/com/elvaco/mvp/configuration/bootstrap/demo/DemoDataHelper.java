@@ -30,6 +30,8 @@ public class DemoDataHelper {
     return List.of(
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.VOLUME),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 2),
         meter
@@ -44,12 +46,16 @@ public class DemoDataHelper {
     return asList(
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.EXTERNAL_TEMPERATURE),
         RANDOM.nextDouble(15, 40),
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.HUMIDITY),
         RANDOM.nextDouble(40, 90),
         meter
@@ -65,24 +71,32 @@ public class DemoDataHelper {
     return asList(
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.ENERGY),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 4),
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.ENERGY_RETURN),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 1),
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.REACTIVE_ENERGY),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 2),
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.POWER),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 3),
         meter
@@ -100,42 +114,56 @@ public class DemoDataHelper {
     return asList(
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.FORWARD_TEMPERATURE),
         tempIn,
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.RETURN_TEMPERATURE),
         tempOut,
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.DIFFERENCE_TEMPERATURE),
         tempIn - tempOut,
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.VOLUME_FLOW),
         RANDOM.nextDouble(0.0, 3.0),
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.POWER),
         RANDOM.nextDouble(100.0, 200.0),
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.ENERGY),
         RANDOM.nextDouble(1000.0, 3000.0),
         meter
       ),
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.VOLUME),
         RANDOM.nextDouble(1.0, 3.0),
         meter
@@ -153,6 +181,8 @@ public class DemoDataHelper {
     return List.of(
       new MeasurementEntity(
         created,
+        created,
+        null,
         getQuantityEntity(Quantity.VOLUME),
         value,
         meter

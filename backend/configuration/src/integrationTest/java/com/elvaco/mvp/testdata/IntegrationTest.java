@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.Identifiable;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -35,6 +36,7 @@ import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
+
 import com.elvaco.mvp.database.repository.jpa.DashboardJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
@@ -279,18 +281,21 @@ public abstract class IntegrationTest implements ContextDsl {
 
   protected void addMeasurementsForMeterQuantities(
     PhysicalMeter physicalMeter,
+    LogicalMeter logicalMeter,
     Set<Quantity> quantities,
     ZonedDateTime when,
     double value
   ) {
     for (Quantity quantity : quantities) {
       measurements.save(Measurement.builder()
-        .created(when)
+        .readoutTime(when)
         .quantity(quantity.name)
         .value(value)
         .unit(quantity.storageUnit)
         .physicalMeter(physicalMeter)
-        .build()
+        .build(),
+        logicalMeter
+
       );
     }
   }

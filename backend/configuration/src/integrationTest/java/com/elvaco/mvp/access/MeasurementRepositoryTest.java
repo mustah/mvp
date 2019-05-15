@@ -3,6 +3,7 @@ package com.elvaco.mvp.access;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -434,13 +436,15 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var interval = Duration.ofDays(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeterOne)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterOne)
       .withQuantity(Quantity.POWER)
       .startingAt(start.minusDays(2))
       .withInterval(interval)
       .withValues(2.0, 4.0));
     given(measurementSeries()
-      .forMeter(physicalMeterTwo)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterTwo)
       .withQuantity(Quantity.POWER)
       .startingAt(start)
       .withInterval(interval)
@@ -527,7 +531,8 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var interval = Duration.ofHours(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeter)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeter)
       .withQuantity(Quantity.POWER)
       .startingAt(start.minusDays(1).minusHours(4))
       .withInterval(interval)
@@ -564,13 +569,15 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var interval = Duration.ofDays(1);
 
     given(measurementSeries()
-      .forMeter(physicalMeterOne)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterOne)
       .withQuantity(Quantity.VOLUME)
       .startingAt(start.minusDays(2))
       .withInterval(interval)
       .withValues(2.0, 4.0));
     given(measurementSeries()
-      .forMeter(physicalMeterTwo)
+      .forMeter(logicalMeter)
+      .forPhysicalMeter(physicalMeterTwo)
       .withQuantity(Quantity.VOLUME)
       .startingAt(start)
       .withInterval(interval)
@@ -600,13 +607,16 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    measurements.createOrUpdate(Measurement.builder()
-      .unit("MWh")
-      .value(2.0)
-      .physicalMeter(meter.activePhysicalMeter().orElseThrow())
-      .created(start)
-      .quantity("Energy")
-      .build());
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start)
+        .quantity("Energy")
+        .build(),
+      meter
+    );
 
     assertThat(measurementJpaRepository.findAll()).extracting(e -> e.value).containsOnly(2000.0);
   }
@@ -617,13 +627,16 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    measurements.save(Measurement.builder()
-      .unit("MWh")
-      .value(2.0)
-      .physicalMeter(meter.activePhysicalMeter().orElseThrow())
-      .created(start)
-      .quantity("Energy")
-      .build());
+    measurements.save(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start)
+        .quantity("Energy")
+        .build(),
+      meter
+    );
 
     assertThat(measurementJpaRepository.findAll()).extracting(e -> e.value).containsOnly(2000.0);
   }
@@ -634,7 +647,8 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var meter = given(logicalMeter());
 
     given(measurementSeries()
-      .forMeter(meter.activePhysicalMeter().orElseThrow())
+      .forMeter(meter)
+      .forPhysicalMeter(meter.activePhysicalMeter().orElseThrow())
       .withQuantity(Quantity.POWER)
       .startingAt(start)
       .withValues(2000.0));
@@ -661,21 +675,23 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     PhysicalMeter physicalMeter = meter.activePhysicalMeter().orElseThrow();
     measurements.save(
       Measurement.builder()
-        .created(start)
+        .readoutTime(start)
         .value(2.0)
         .quantity(Quantity.POWER.name)
         .unit(WATT)
         .physicalMeter(physicalMeter)
-        .build()
+        .build(),
+      meter
     );
     measurements.save(
       Measurement.builder()
-        .created(start.plusHours(1))
+        .readoutTime(start.plusHours(1))
         .value(0.002)
         .quantity(Quantity.POWER.name)
         .unit(KILOWATT)
         .physicalMeter(physicalMeter)
-        .build()
+        .build(),
+      meter
     );
 
     Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
@@ -697,19 +713,210 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var physicalMeter = meter.activePhysicalMeter().get();
 
     given(measurementSeries()
-      .forMeter(physicalMeter)
+      .forMeter(meter)
+      .forPhysicalMeter(physicalMeter)
       .withQuantity(Quantity.VOLUME)
       .startingAt(start)
       .withValues(2.0));
 
-    assertThatThrownBy(() -> measurements.save(Measurement.builder()
-      .physicalMeter(physicalMeter)
-      .created(start.plusMinutes(1))
-      .value(2.0)
-      .unit("m³/s")
-      .quantity("Volume")
-      .build())
+    assertThatThrownBy(() -> measurements.save(
+      Measurement.builder()
+        .physicalMeter(physicalMeter)
+        .readoutTime(start.plusMinutes(1))
+        .value(2.0)
+        .unit("m³/s")
+        .quantity("Volume")
+        .build(),
+      meter
+      )
     ).isInstanceOf(UnitConversionError.class);
+  }
+
+  @Test
+  @Transactional
+  public void valuesExpectedTimeIsSetWhenExcpected() {
+    ZonedDateTime start = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS);
+    var meter = given(logicalMeter().utcOffset("+02"));
+    //On schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start)
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+    //Two seconds off schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start.plusSeconds(2))
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+
+    assertThat(measurementJpaRepository.findAll())
+      .extracting(e -> e.expectedTime).containsExactly(start, null);
+  }
+
+  @Test
+  @Transactional
+  public void valuesExpectedTimeIsSetWhenExcpectedTimeZoneDailySchedule() {
+    ZonedDateTime start = ZonedDateTime.parse("2007-12-03T00:00:00+03:00");
+    var meter = given(logicalMeter().utcOffset("+3")
+      .physicalMeter(physicalMeter()
+        .readIntervalMinutes(1440)
+        .build()));
+    //On schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start)
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+    //Two seconds off schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start.plusSeconds(2))
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+    //On schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start.plusDays(1L))
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+
+    assertThat(measurementJpaRepository.findAll())
+      .extracting(e -> e.expectedTime != null ? e.expectedTime.toInstant() : null)
+      .containsExactly(start.toInstant(), null, start.plusDays(1L).toInstant());
+  }
+
+  @Test
+  @Transactional
+  public void valuesExpectedTimeIsNotSetWhenTimeZoneDiffFromValuesTimeZone() {
+    ZonedDateTime start = ZonedDateTime.parse("2007-12-03T00:00:00+00:00");
+    var meter = given(logicalMeter().utcOffset("+3")
+      .physicalMeter(physicalMeter()
+        .readIntervalMinutes(1440)
+        .build()));
+    //On schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start)
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+    //Two seconds off schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start.plusSeconds(2))
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+    //On schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+        .readoutTime(start.plusDays(1L))
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+
+    assertThat(measurementJpaRepository.findAll())
+      .extracting(e -> e.expectedTime != null ? e.expectedTime.toInstant() : null)
+      .containsExactly(null, null, null);
+  }
+
+  @Test
+  @Transactional
+  public void valuesExpectedTimeIsSetCorrectlyWhenMeterIsActiveAndInactive() {
+    ZonedDateTime start = ZonedDateTime.parse("2007-12-03T00:00:00+03:00");
+    var meter = given(logicalMeter().utcOffset("+3")
+      .physicalMeter(physicalMeter()
+        .activePeriod(PeriodRange.builder().start(PeriodBound.inclusiveOf(start.plusHours(1)))
+          .stop(PeriodBound.exclusiveOf(start.plusDays(2))).build())
+        .readIntervalMinutes(1440)
+        .build()));
+    //On schedule, not on active period
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.physicalMeters.get(0))
+        .readoutTime(start)
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+    //Two seconds off schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.physicalMeters.get(0))
+        .readoutTime(start.plusSeconds(2))
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+    //On schedule
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.physicalMeters.get(0))
+        .readoutTime(start.plusDays(1L))
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+
+    //On schedule, outside period
+    measurements.createOrUpdate(
+      Measurement.builder()
+        .unit("MWh")
+        .value(2.0)
+        .physicalMeter(meter.physicalMeters.get(0))
+        .readoutTime(start.plusDays(2L))
+        .quantity("Energy")
+        .build(),
+      meter
+    );
+
+    assertThat(measurementJpaRepository.findAll())
+      .extracting(e -> e.expectedTime != null ? e.expectedTime.toInstant() : null)
+      .containsExactly(null, null, start.plusDays(1L).toInstant(), null);
   }
 
   private List<QuantityParameter> quantityParametersOf(DisplayQuantity quantity) {

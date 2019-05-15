@@ -1,10 +1,13 @@
 package com.elvaco.mvp.database.repository.access;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,6 +19,7 @@ import java.util.Queue;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
@@ -28,6 +32,8 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.util.Dates;
+import com.elvaco.mvp.database.entity.jooq.tables.records.MeasurementRecord;
+import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
@@ -44,6 +50,7 @@ import org.jooq.Record3;
 import org.jooq.ResultQuery;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -141,10 +148,13 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Measurement save(Measurement measurement) {
+  public Measurement save(Measurement measurement, LogicalMeter logicalMeter) {
     try {
+      MeasurementEntity entity = measurementEntityMapper.toEntity(measurement);
+
+      entity.expectedTime = getExpectedTime(measurement, logicalMeter.utcOffset);
       return measurementEntityMapper.toDomainModel(
-        measurementJpaRepository.save(measurementEntityMapper.toEntity(measurement))
+        measurementJpaRepository.save(entity)
       );
     } catch (DataIntegrityViolationException ex) {
       throw SqlErrorMapper.mapDataIntegrityViolation(ex);
@@ -152,14 +162,17 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public void createOrUpdate(Measurement measurement) {
+  public void createOrUpdate(Measurement measurement, LogicalMeter logicalMeter) {
     try {
       MeasurementUnit measurementUnit = new MeasurementUnit(measurement.unit, measurement.value);
       Quantity quantity = quantityProvider.getByNameOrThrow(measurement.quantity);
 
       measurementJpaRepository.createOrUpdate(
+        measurement.physicalMeter.organisationId,
         measurement.physicalMeter.id,
-        measurement.created,
+        measurement.readoutTime,
+        measurement.receivedTime,
+        getExpectedTime(measurement, logicalMeter.utcOffset),
         quantity.id,
         unitConverter.convert(measurementUnit, quantity.storageUnit).getValue()
       );
@@ -296,7 +309,6 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter
   ) {
     Field<OffsetDateTime> valueDate = field(VALUE_DATE_FIELD_NAME, OffsetDateTime.class);
-
     var query =
       dsl.select(
         LOGICAL_METER.ID,
@@ -308,8 +320,8 @@ public class MeasurementRepository implements Measurements {
         LOCATION.CITY,
         LOCATION.STREET_ADDRESS,
         MEDIUM.NAME,
-        getValueField(false),
-        MEASUREMENT.CREATED.as(valueDate)
+        getValueField(false, parameter.getResolution()),
+        getDateTimeFieldForResolution(parameter.getResolution()).as(valueDate)
       ).from(LOGICAL_METER);
 
     logicalMeterMeasurementFilters.accept(toFilters(parameter.getParameters())).andJoinsOn(query);
@@ -345,8 +357,8 @@ public class MeasurementRepository implements Measurements {
       LOCATION.CITY.as(city),
       LOCATION.STREET_ADDRESS.as(streetAddress),
       MEDIUM.NAME.as(mediumName),
-      getValueField(true).as(value),
-      MEASUREMENT.CREATED.as(valueDate)
+      getValueField(true, parameter.getResolution()).as(value),
+      getDateTimeFieldForResolution(parameter.getResolution()).as(valueDate)
     ).from(LOGICAL_METER);
 
     logicalMeterMeasurementFilters.accept(toFilters(parameter.getParameters())).andJoinsOn(query);
@@ -385,11 +397,10 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter
   ) {
     Field<OffsetDateTime> valueDate = field(VALUE_DATE_FIELD_NAME, OffsetDateTime.class);
-
     var query = dsl.select(
       avg(MEASUREMENT.VALUE),
       QUANTITY.NAME,
-      MEASUREMENT.CREATED.as(valueDate)
+      getDateTimeFieldForResolution(parameter.getResolution()).as(valueDate)
     ).from(LOGICAL_METER);
 
     logicalMeterMeasurementFilters.accept(toFilters(parameter.getParameters())).andJoinsOn(query);
@@ -408,9 +419,9 @@ public class MeasurementRepository implements Measurements {
     Field<String> quantity = field(QUANTITY_FIELD_NAME, String.class);
 
     var query = dsl.select(
-      getValueField(true).as(value),
+      getValueField(true, parameter.getResolution()).as(value),
       QUANTITY.NAME.as(quantity),
-      MEASUREMENT.CREATED.as(valueDate)
+      getDateTimeFieldForResolution(parameter.getResolution()).as(valueDate)
     ).from(LOGICAL_METER);
 
     logicalMeterMeasurementFilters.accept(toFilters(parameter.getParameters())).andJoinsOn(query);
@@ -444,13 +455,15 @@ public class MeasurementRepository implements Measurements {
     if (parameter.getQuantities().get(0).isConsumption() && TemporalResolution.all != resolution) {
       stop = stop.plus(1, resolution);
     }
-
+    TableField<MeasurementRecord, OffsetDateTime> timeField = getDateTimeFieldForResolution(
+      resolution);
     Condition resolutionCondition = TemporalResolution.all == resolution
       ? noCondition()
-      : MEASUREMENT.CREATED.eq(atTimeZone(
+      : timeField.eq(atTimeZone(
         iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
         DSL.trunc(
-          atTimeZone(iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET), MEASUREMENT.CREATED),
+          atTimeZone(iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
+            timeField),
           toDatePart(resolution)
         )
       ));
@@ -462,10 +475,22 @@ public class MeasurementRepository implements Measurements {
       .on(DISPLAY_QUANTITY.QUANTITY_ID.eq(QUANTITY.ID).and(quantityCondition))
       .innerJoin(MEASUREMENT)
       .on(MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-        .and(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, MEASUREMENT.CREATED))
-        .and(resolutionCondition).and(MEASUREMENT.CREATED.lessOrEqual(stop))
-        .and(MEASUREMENT.CREATED.greaterOrEqual(parameter.getFrom().toOffsetDateTime()))
-        .and(MEASUREMENT.QUANTITY.equal(QUANTITY.ID)));
+        .and(timeField.isNotNull())
+        .and(MEASUREMENT.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID))
+        .and(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, timeField))
+        .and(resolutionCondition).and(timeField.lessOrEqual(stop))
+        .and(timeField.greaterOrEqual(parameter.getFrom().toOffsetDateTime()))
+        .and(MEASUREMENT.QUANTITY_ID.equal(QUANTITY.ID)));
+  }
+
+  private TableField<MeasurementRecord, OffsetDateTime> getDateTimeFieldForResolution(
+    TemporalResolution resolution
+  ) {
+    var timeField = MEASUREMENT.EXPECTED_TIME;
+    if (resolution == TemporalResolution.all) {
+      timeField = MEASUREMENT.READOUT_TIME;
+    }
+    return timeField;
   }
 
   private DatePart toDatePart(TemporalResolution resolution) {
@@ -479,11 +504,11 @@ public class MeasurementRepository implements Measurements {
     throw new IllegalArgumentException("Unknown resolution: " + resolution.toString());
   }
 
-  private Field<Double> getValueField(boolean isConsumption) {
+  private Field<Double> getValueField(boolean isConsumption, TemporalResolution resolution) {
     if (isConsumption) {
       return lead(MEASUREMENT.VALUE).over()
-        .partitionBy(PHYSICAL_METER.ID, MEASUREMENT.QUANTITY)
-        .orderBy(MEASUREMENT.CREATED.asc())
+        .partitionBy(MEASUREMENT.PHYSICAL_METER_ID, MEASUREMENT.QUANTITY_ID)
+        .orderBy(getDateTimeFieldForResolution(resolution).asc())
         .minus(MEASUREMENT.VALUE);
     } else {
       return MEASUREMENT.VALUE;
@@ -587,4 +612,22 @@ public class MeasurementRepository implements Measurements {
   private static Field<String> iso8601OffsetToPosixOffset(Field<String> iso8600Offset) {
     return iso8600Offset.cast(Integer.class).neg().cast(String.class);
   }
+
+  private static ZonedDateTime getExpectedTime(Measurement measurement, String utcOffset) {
+    if (measurement.physicalMeter.readIntervalMinutes == 0
+      || !measurement.physicalMeter.isActive(measurement.readoutTime)
+    ) {
+      return null;
+    }
+    var instant = measurement.readoutTime.toInstant()
+      .atOffset(ZoneOffset.of(utcOffset));
+    var startOfDay = instant.truncatedTo(ChronoUnit.DAYS);
+
+    var duration = Duration.between(startOfDay, instant);
+    if (duration.toMillis() % (measurement.physicalMeter.readIntervalMinutes * 60L * 1000L) == 0) {
+      return measurement.readoutTime;
+    }
+    return null;
+  }
+
 }

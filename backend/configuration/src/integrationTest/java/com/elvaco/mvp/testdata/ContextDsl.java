@@ -98,12 +98,12 @@ public interface ContextDsl {
     return context().given(alarmLogEntryBuilders);
   }
 
-  default void given(MeasurementBuilder... measurementBuilders) {
-    context().given(measurementBuilders);
+  default void given(LogicalMeter logicalMeter, MeasurementBuilder... measurementBuilders) {
+    context().given(logicalMeter, measurementBuilders);
   }
 
-  default void given(Collection<Measurement> measurements) {
-    context().given(measurements);
+  default void given(LogicalMeter logicalMeter, Collection<Measurement> measurements) {
+    context().given(measurements, logicalMeter);
   }
 
   default MeterDefinition given(MeterDefinitionBuilder meterDefinitionBuilder) {

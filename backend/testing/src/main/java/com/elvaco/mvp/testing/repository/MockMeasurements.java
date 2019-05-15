@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
@@ -19,12 +20,12 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   implements Measurements {
 
   @Override
-  public Measurement save(Measurement measurement) {
+  public Measurement save(Measurement measurement, LogicalMeter logicalMeter) {
     return saveMock(measurement);
   }
 
   @Override
-  public void createOrUpdate(Measurement measurement) {
+  public void createOrUpdate(Measurement measurement, LogicalMeter logicalMeter) {
     saveMock(measurement);
   }
 
@@ -61,17 +62,17 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
     UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEqual
   ) {
     return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
-      .sorted(Comparator.comparing(o -> o.created))
-      .filter(measurement -> measurement.created.isAfter(after)
-        && ((measurement.created.isBefore(beforeOrEqual)
-               || measurement.created.isEqual(beforeOrEqual))))
+      .sorted(Comparator.comparing(o -> o.readoutTime))
+      .filter(measurement -> measurement.readoutTime.isAfter(after)
+        && ((measurement.readoutTime.isBefore(beforeOrEqual)
+               || measurement.readoutTime.isEqual(beforeOrEqual))))
       .findFirst();
   }
 
   @Override
   protected Measurement copyWithId(Measurement.Id id, Measurement entity) {
     return Measurement.builder()
-      .created(entity.created)
+      .readoutTime(entity.readoutTime)
       .quantity(entity.quantity)
       .value(entity.value)
       .unit(entity.unit)
@@ -81,6 +82,6 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
 
   @Override
   protected Measurement.Id generateId(Measurement entity) {
-    return Measurement.idOf(entity.created, entity.quantity, entity.physicalMeter);
+    return Measurement.idOf(entity.readoutTime, entity.quantity, entity.physicalMeter);
   }
 }
