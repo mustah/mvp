@@ -177,7 +177,8 @@ class RabbitMqConfig {
     container.setAlwaysRequeueWithTxManagerRollback(consumerProperties.getRequeueRejected());
     container.setPrefetchCount(consumerProperties.getPrefetchCount());
     container.setTxSize(consumerProperties.getTxSize());
-    container.setConcurrency("1-4");
+    //Temporary set to 1 was 1-4
+    container.setConcurrency("1");
     container.setAdviceChain(
       RetryInterceptorBuilder
         .stateful()
