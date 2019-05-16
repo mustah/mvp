@@ -2,7 +2,11 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-
+  <changeSet id="stop autovaccum for measurement temporarily" author="erimel">
+    <sql>
+      ALTER TABLE measurement SET (autovacuum_enabled = false);
+    </sql>
+  </changeSet>
   <changeSet id="copy data and default new columns to new_measurement" author="erimel">
     <sql>
       CREATE TABLE new_measurement AS SELECT
@@ -179,4 +183,10 @@
       where is_consumption = false;
     </sql>
   </changeSet>
+  <changeSet id="start autovaccum for measurement" author="erimel">
+    <sql>
+      ALTER TABLE measurement SET (autovacuum_enabled = true);
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>
