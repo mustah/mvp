@@ -12,15 +12,16 @@ import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Row, RowMiddle} from '../../../components/layouts/row/Row';
-import {IconProps} from '../../../components/popover/PopoverMenu';
 import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {Clickable} from '../../../types/Types';
 import {Props} from '../containers/ToolbarContainer';
+import FlatButtonProps = __MaterialUI.FlatButtonProps;
+import SvgIconProps = __MaterialUI.SvgIconProps;
 
-const LegendActionButton = ({color, onClick, disabled}: Clickable & IconProps) => (
+const LegendActionButton = ({color, onClick, disabled}: Clickable & FlatButtonProps & SvgIconProps) => (
   <ToolbarIconButton
     disabled={disabled}
     iconStyle={iconSizeMedium}

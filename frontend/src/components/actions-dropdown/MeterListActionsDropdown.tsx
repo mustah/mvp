@@ -3,13 +3,13 @@ import * as React from 'react';
 import {actionMenuItemIconStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {OnClick, RenderFunction} from '../../types/Types';
-import {connectedSuperAdminOnly} from '../hoc/withRoles';
+import {withSuperAdminOnly} from '../hoc/withRoles';
 import {IconReport} from '../icons/IconReport';
 import {MeterListActionDropdownProps} from '../meters/MeterListContent';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 
-const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
+const SyncWithMeteringMenuItem = withSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 
 export const MeterListActionsDropdown =
   ({addAllToReport, syncMeters}: MeterListActionDropdownProps) => {

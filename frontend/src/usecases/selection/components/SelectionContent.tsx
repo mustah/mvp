@@ -6,7 +6,7 @@ import {
   SearchableDropdownSelector,
   SearchableProps
 } from '../../../components/dropdown-selector/DropdownSelector';
-import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
+import {withSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {Foldable} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
@@ -35,7 +35,7 @@ import {Thresholds} from './thresholds/Thresholds';
 const unknownCity: City = mapSelectedIdToCity('unknown,unknown');
 const unknownAddress: Address = mapSelectedIdToAddress('unknown,unknown,unknown');
 
-const OrganisationDropDown = connectedSuperAdminOnly<SearchableProps>(SearchableDropdownSelector);
+const OrganisationDropDown = withSuperAdminOnly<SearchableProps>(SearchableDropdownSelector);
 
 export const SelectionContent = ({
   addresses,

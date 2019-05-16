@@ -11,7 +11,7 @@ import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {LegendItem} from '../../state/report/reportModels';
 import {OnClick, OnClickWith, OnClickWithId, RenderFunction} from '../../types/Types';
 import {toLegendItem} from '../../usecases/report/helpers/legendHelper';
-import {connectedSuperAdminOnly} from '../hoc/withRoles';
+import {withSuperAdminOnly} from '../hoc/withRoles';
 import {IconReport} from '../icons/IconReport';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
@@ -36,9 +36,9 @@ const MyDivider = ({deleteMeter, dispatch, ...otherProps}: DeleteMeterMenuItemPr
 type DeleteMeterMenuItemProps = ActionMenuItemProps & DeleteMeter & DispatchProp<any>;
 
 const withDeleteMeterActionButton = branch<DeleteMeterMenuItemProps>(
-  ({deleteMeter}) => isDefined(deleteMeter), connectedSuperAdminOnly, renderNothing);
+  ({deleteMeter}) => isDefined(deleteMeter), withSuperAdminOnly, renderNothing);
 
-const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
+const SyncWithMeteringMenuItem = withSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 const DeleteMeterActionMenuItem = withDeleteMeterActionButton(ActionMenuItem);
 const DeleteDivider = withDeleteMeterActionButton(MyDivider);
 

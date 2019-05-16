@@ -11,6 +11,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "change colors"
+msgstr "change colors"
+
+msgid "apply"
+msgstr "apply"
+
+msgid "primary color"
+msgstr "primary color"
+
+msgid "secondary color"
+msgstr "secondary color"
+
+msgid "reset"
+msgstr "reset"
+
 msgid "valid file formats: png, jpg, jpeg and gif"
 msgstr "valid file formats: png, jpg, jpeg and gif"
 

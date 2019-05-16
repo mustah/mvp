@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {connectedAdminOnly} from '../../../components/hoc/withRoles';
+import {withAdminOnly} from '../../../components/hoc/withRoles';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Row, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {WithChildren} from '../../../types/Types';
@@ -8,7 +8,7 @@ import {ProfileContainer} from '../containers/ProfileContainer';
 import {AppSwitch} from './AppSwitch';
 import './TopMenu.scss';
 
-const AppSwitchDropdownComponent = connectedAdminOnly(AppSwitch);
+const AppSwitchDropdownComponent = withAdminOnly(AppSwitch);
 
 export const TopMenu = withCssStyles(({children, cssStyles: {primary}}: WithChildren & ThemeContext) => (
   <RowSpaceBetween className="TopMenu" style={{backgroundColor: primary.bgDark}}>

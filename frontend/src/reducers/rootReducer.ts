@@ -28,6 +28,7 @@ import {collection, meterCollection} from '../usecases/collection/collectionRedu
 import {map, MapState} from '../usecases/map/mapReducer';
 import {MeterDetailState} from '../usecases/meter/measurements/meterDetailModels';
 import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
+import {theme, ThemeState} from '../usecases/theme/themeReducer';
 import {currentVersion, migrations} from './stateMigrations';
 
 export interface RootState {
@@ -39,15 +40,16 @@ export interface RootState {
   meterCollection: CollectionState;
   measurement: MeasurementState;
   meterDetail: MeterDetailState;
+  organisationSummary: SummaryState;
   paginatedDomainModels: PaginatedDomainModelsState;
   previousSession: PreviousSessionState;
+  report: ReportState;
+  routing: RouterState;
   selectionReport: ReportState;
   selectionMeasurement: MeasurementState;
   search: SearchState;
   summary: SummaryState;
-  organisationSummary: SummaryState;
-  report: ReportState;
-  routing: RouterState;
+  theme: ThemeState;
   ui: UiState;
   userSelection: UserSelectionState;
   widget: WidgetState;
@@ -63,6 +65,7 @@ const whitelist: Array<keyof RootState> = [
   'previousSession',
   'report',
   'selectionReport',
+  'theme',
   'ui',
   'userSelection',
 ];
@@ -98,5 +101,6 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     collection,
     meterCollection,
     meterDetail,
+    theme,
     widget,
   });

@@ -10,16 +10,12 @@ import FlatButtonProps = __MaterialUI.FlatButtonProps;
 import origin = __MaterialUI.propTypes.origin;
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
-export interface IconProps extends React.CSSProperties {
-  disabled?: boolean;
-}
-
-type ExtendedIconProps = IconProps & (FlatButtonProps | SvgIconProps);
+export type IconProps = FlatButtonProps | SvgIconProps;
 
 interface Props {
   renderPopoverContent: RenderFunction<OnClick>;
-  IconComponent: React.StatelessComponent<ExtendedIconProps>;
-  iconProps?: ExtendedIconProps;
+  IconComponent: React.StatelessComponent<IconProps>;
+  iconProps?: IconProps;
   onRequestClose?: OnClick;
   className?: string;
   popoverClassName?: string;

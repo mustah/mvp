@@ -100,13 +100,13 @@ export class OrganisationEditForm extends React.Component<Props, State> {
 
     const customUrl = (
       <>
-        <h3>{firstUpperTranslated('custom login URL')}</h3>
+        <h3 style={{marginBottom: 16}}>{firstUpperTranslated('custom login URL')}</h3>
         <a href={loginUrl} target="_blank">{loginUrl}</a>
       </>
     );
 
     return (
-      <Column className="flex-fill-horizontally">
+      <Column className="flex-fill-horizontally" style={{marginBottom: 24}}>
         <form onSubmit={this.wrappedSubmit}>
           <Row className="configuration-section">
             <Column className="one-third">

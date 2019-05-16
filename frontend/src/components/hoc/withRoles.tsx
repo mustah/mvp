@@ -25,10 +25,10 @@ const superAdminOnly =
   <P extends AuthenticatedUser>(Component: React.ComponentType<P>): React.SFC<P> =>
     componentOrNothing<P>(userIsSuperAdmin)(Component);
 
-export const connectedSuperAdminOnly =
+export const withSuperAdminOnly =
   <OwnProps extends {}>(Component: React.ComponentType<OwnProps & AuthenticatedUser>) =>
     connect<AuthenticatedUser>(mapStateToProps)(superAdminOnly(Component));
 
-export const connectedAdminOnly =
+export const withAdminOnly =
   <OwnProps extends {}>(Component: React.ComponentType<OwnProps & AuthenticatedUser>) =>
     connect<AuthenticatedUser>(mapStateToProps)(onlyAdmins(Component));

@@ -5,6 +5,7 @@
 @import "flex";
 @import "input";
 @import "kendo";
+@import "react-color";
 @import "react-grid-layout";
 @import "material-design";
 
@@ -23,6 +24,10 @@ body {
   padding: 0;
   margin: 0;
   background-color: $body-bg-color;
+}
+
+h2, h3 {
+  margin: 0;
 }
 
 .link {

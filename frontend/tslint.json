@@ -36,6 +36,7 @@
       "leaflet",
       "leaflet.markercluster",
       "lodash",
+      "react-color",
       "react-dates",
       "react-grid-layout",
       "react-resizable",

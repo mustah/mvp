@@ -7,7 +7,7 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {paperStyle} from '../../../app/themes';
 import {AssetFormProps, OrganisationAssetForms} from '../../../components/forms/OrganisationAssetForms';
 import {OrganisationEditForm} from '../../../components/forms/OrganisationEditForm';
-import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
+import {withSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RowIndented} from '../../../components/layouts/row/Row';
@@ -55,7 +55,7 @@ type Props = InjectedAuthRouterProps & RouteComponentProps<{organisationId: uuid
 
 const SuperAdminAssetForms = compose<AssetFormProps & ThemeContext, AssetFormProps>(
   withCssStyles,
-  connectedSuperAdminOnly
+  withSuperAdminOnly
 )(OrganisationAssetForms);
 
 export const OrganisationForm = ({

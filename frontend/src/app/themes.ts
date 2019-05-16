@@ -1,9 +1,9 @@
-import {important} from 'csx';
+import {color, ColorHelper, important} from 'csx';
 import {MuiTheme} from 'material-ui/styles';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import * as React from 'react';
 import {style} from 'typestyle';
-import {colors, CssStyles, withStyles} from './colors';
+import {ColorProperties, colors, CssStyles} from './colors';
 
 interface Styles {
   [key: string]: React.CSSProperties;
@@ -36,7 +36,34 @@ export const boxShadow =
 const popoverBoxShadow =
   '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)';
 
-const makeTheme = (cssStyles: CssStyles): Theme => {
+export const withStyles = ({primary, secondary}: ColorProperties): CssStyles => {
+  const primaryHelper: ColorHelper = color(primary).toHSL();
+  const secondaryHelper: ColorHelper = color(secondary).toHSL();
+  return ({
+    primary: {
+      bgHover: primaryHelper.lighten(0.90, true).toString(),
+      bgActive: primaryHelper.lighten(0.29).toHexString(),
+      bg: primaryHelper.toHexString(),
+      bgDark: primaryHelper.darken(0.17).toHexString(),
+      bgDarkest: primaryHelper.darken(0.29).toHexString(),
+      fg: '#7b7b7b',
+      fgActive: '#044462',
+      fgHover: '#0f2228',
+    },
+    secondary: {
+      bgHover: '#edf8f2',
+      bgActive: secondaryHelper.toHexString(),
+      bg: '#f9f9f9',
+      bgDark: secondaryHelper.toHexString(),
+      bgDarkest: secondaryHelper.toHexString(),
+      fg: '#3c3c3c',
+      fgActive: '#245c40',
+      fgHover: '#0f2228',
+    },
+  });
+};
+
+export const makeTheme = (cssStyles: CssStyles): Theme => {
   const {primary, secondary} = cssStyles;
   return ({
     cssStyles,
@@ -81,8 +108,6 @@ const makeTheme = (cssStyles: CssStyles): Theme => {
     }),
   });
 };
-
-export const mvpTheme: Theme = makeTheme(withStyles({primary: '#0091ea', secondary: '#b6e2cc'}));
 
 export const makeGridClassName = ({primary}: CssStyles): string =>
   style({

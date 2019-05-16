@@ -16,10 +16,8 @@
   }
 
   .configuration-section:not(:first-child) {
-    border-top: $border;
-    margin-bottom: $xxl-space;
+    border-top: $divider;
     margin-top: $xl-space;
     padding-top: $xl-space;
   }
-
 }

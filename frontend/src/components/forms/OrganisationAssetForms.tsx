@@ -8,6 +8,7 @@ import {
   OrganisationAssetType
 } from '../../state/domain-models/organisation/organisationsApiActions';
 import '../../usecases/administration/components/OrganisationForm.scss';
+import {ColorPickersContainer} from '../../usecases/administration/organisation/containers/ColorPickersContainer';
 import {ButtonLinkRed} from '../buttons/ButtonLink';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {ThemeContext} from '../hoc/withThemeProvider';
@@ -60,7 +61,7 @@ const SingleAssetFrom =
     return (
       <Row className="configuration-section">
         <Row className="flex-fill-horizontally">
-          <h3>{firstUpperTranslated(assetType)}</h3>
+          <h3 style={{marginBottom: 16}}>{firstUpperTranslated(assetType)}</h3>
         </Row>
         <Row className="flex-fill-horizontally preview-container">
           <img alt="" style={{...previewBackgroundStyle}} src={assetUrl}/>
@@ -87,7 +88,15 @@ export const OrganisationAssetForms = (props: AssetFormProps & ThemeContext) => 
         <p>{firstUpperTranslated('valid file formats: png, jpg, jpeg and gif')}</p>
       </Column>
       <Column className="two-thirds">
+        <Row className="configuration-section">
+          <Row className="flex-fill-horizontally">
+            <h3 style={{marginBottom: 16}}>{firstUpperTranslated('change colors')}</h3>
+          </Row>
+          <ColorPickersContainer/>
+        </Row>
+
         {assetTypeForms}
+
       </Column>
     </Row>
   );

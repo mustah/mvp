@@ -1,0 +1,10 @@
+@import "variables";
+
+/**
+ * Overrides react-color inline css rules
+ */
+.sketch-picker {
+  border: none !important;
+  box-shadow: none !important;
+  padding: 12px 12px 0 12px !important;
+}
