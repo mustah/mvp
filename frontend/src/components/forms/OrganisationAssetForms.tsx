@@ -1,26 +1,35 @@
 import * as React from 'react';
 import {config} from '../../config/config';
 import {firstUpperTranslated} from '../../services/translationService';
+import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {
+  AssetTyped,
   AssetTypeForOrganisation,
   OrganisationAssetType
 } from '../../state/domain-models/organisation/organisationsApiActions';
-import {uuid} from '../../types/Types';
 import '../../usecases/administration/components/OrganisationForm.scss';
 import {ButtonLinkRed} from '../buttons/ButtonLink';
 import {ButtonSave} from '../buttons/ButtonSave';
+import {ThemeContext} from '../hoc/withThemeProvider';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 
-interface Props {
-  uploadAsset: (formData: FormData, parameters: AssetTypeForOrganisation) => void;
+export interface AssetFormProps {
+  organisation: Organisation;
   resetAsset: (parameters: AssetTypeForOrganisation) => void;
-  id: uuid;
-  slug: string;
+  uploadAsset: (formData: FormData, parameters: AssetTypeForOrganisation) => void;
 }
 
 const SingleAssetFrom =
-  ({slug, resetAsset, id: organisationId, uploadAsset, assetType}: Props & {assetType: OrganisationAssetType}) => {
+  ({
+    cssStyles: {primary},
+    organisation: {id: organisationId, slug},
+    resetAsset,
+    uploadAsset,
+    assetType
+  }: AssetFormProps & AssetTyped & ThemeContext) => {
+    const [selectedFile, selectFile] = React.useState<undefined | string | Blob>(undefined);
+
     const apiUrl = config().axios.baseURL;
     const cacheBust = Math.random().toString(36).substr(2);
     const assetUrl = `${apiUrl}/organisations/${slug}/assets/${assetType}?${cacheBust}`;
@@ -29,23 +38,16 @@ const SingleAssetFrom =
 
     const onResetAsset = () => resetAsset({organisationId, assetType});
 
-    const [selectedFile, selectFile] = React.useState<undefined | string | Blob>(undefined);
-
     const onSubmit = () => {
-      if (!selectedFile) {
-        return;
+      if (selectedFile) {
+        const data = new FormData();
+        data.append('asset', selectedFile as Blob);
+        uploadAsset(data, {organisationId, assetType});
       }
-
-      const data = new FormData();
-      data.append('asset', selectedFile as Blob);
-      uploadAsset(data, {organisationId, assetType});
     };
 
-    const previewBackgroundStyle: React.CSSProperties = assetType === OrganisationAssetType.logotype
-      ? {
-        backgroundColor: '#01579b', /* .TopMenu background color */
-      }
-      : {};
+    const previewBackgroundStyle: React.CSSProperties =
+      assetType === OrganisationAssetType.logotype ? {backgroundColor: primary.bgDark} : {};
 
     const uploadSubmit = selectedFile && (
       <Row style={{paddingTop: 32}}>
@@ -74,12 +76,9 @@ const SingleAssetFrom =
     );
   };
 
-export const OrganisationAssetForms = (props: Props) => {
-
+export const OrganisationAssetForms = (props: AssetFormProps & ThemeContext) => {
   const assetTypeForms = Object.keys(OrganisationAssetType)
-    .map((assetType: OrganisationAssetType) =>
-      <SingleAssetFrom {...props} key={assetType} assetType={assetType}/>
-    );
+    .map((assetType: OrganisationAssetType) => <SingleAssetFrom {...props} assetType={assetType} key={assetType}/>);
 
   return (
     <Row className="flex-fill-horizontally configuration-section">

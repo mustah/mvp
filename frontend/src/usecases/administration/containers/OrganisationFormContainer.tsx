@@ -15,17 +15,13 @@ import {getOrganisations} from '../../../state/domain-models/organisation/organi
 import {clearUserSelectionErrors, fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
 import {DispatchToProps, OrganisationForm, StateToProps} from '../components/OrganisationForm';
 
-const mapStateToProps = ({
-  domainModels: {organisations, userSelections},
-  auth: {user},
-}: RootState): StateToProps => ({
+const mapStateToProps = ({domainModels: {organisations, userSelections}}: RootState): StateToProps => ({
   isFetchingOrganisations: organisations.isFetching,
   isFetchingUserSelections: userSelections.isFetching,
   organisationsError: getError(organisations),
   userSelectionsError: getError(userSelections),
   organisations: getOrganisations(organisations),
   selections: getEntitiesDomainModels(userSelections),
-  user: user!,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

@@ -2,10 +2,13 @@ import {find, values} from 'lodash';
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {RouteComponentProps} from 'react-router';
+import {compose} from 'recompose';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {paperStyle} from '../../../app/themes';
-import {OrganisationAssetForms} from '../../../components/forms/OrganisationAssetForms';
+import {AssetFormProps, OrganisationAssetForms} from '../../../components/forms/OrganisationAssetForms';
 import {OrganisationEditForm} from '../../../components/forms/OrganisationEditForm';
+import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
+import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
@@ -15,8 +18,6 @@ import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {AssetTypeForOrganisation} from '../../../state/domain-models/organisation/organisationsApiActions';
-import {User} from '../../../state/domain-models/user/userModels';
-import {isSuperAdmin} from '../../../state/domain-models/user/userSelectors';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {
   CallbackWithData,
@@ -24,6 +25,7 @@ import {
   ClearError,
   ErrorResponse,
   Fetch,
+  Omit,
   uuid
 } from '../../../types/Types';
 import './OrganisationForm.scss';
@@ -35,7 +37,6 @@ export interface StateToProps {
   organisationsError: Maybe<ErrorResponse>;
   userSelectionsError: Maybe<ErrorResponse>;
   selections: ObjectsById<UserSelection>;
-  user: User;
 }
 
 export interface DispatchToProps {
@@ -50,8 +51,12 @@ export interface DispatchToProps {
   resetAsset: (parameters: AssetTypeForOrganisation) => void;
 }
 
-type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{organisationId: uuid}>;
-type Props = OwnProps & StateToProps & DispatchToProps;
+type Props = InjectedAuthRouterProps & RouteComponentProps<{organisationId: uuid}> & StateToProps & DispatchToProps;
+
+const SuperAdminAssetForms = compose<AssetFormProps & ThemeContext, AssetFormProps>(
+  withCssStyles,
+  connectedSuperAdminOnly
+)(OrganisationAssetForms);
 
 export const OrganisationForm = ({
   addOrganisation,
@@ -70,7 +75,6 @@ export const OrganisationForm = ({
   updateOrganisation,
   uploadAsset,
   resetAsset,
-  user,
 }: Props) => {
   React.useEffect(() => {
     fetchUserSelections();
@@ -79,20 +83,10 @@ export const OrganisationForm = ({
 
   const userSelections: UserSelection[] = values(selections);
   const organisation: Organisation | undefined = find(organisations, {id: organisationId});
+  const assetFormProps: Omit<AssetFormProps, 'organisation'> = {uploadAsset, resetAsset};
 
   // TODO what happens if the name/slug of an organisation changes from underneath? :S can we make "edit organisation
   // name" super admin-only? or maybe dev-only?
-  const organisationAssetForm = isSuperAdmin(user) && organisation
-    ? (
-      <OrganisationAssetForms
-        id={organisation.id}
-        slug={organisation.slug}
-        uploadAsset={uploadAsset}
-        resetAsset={resetAsset}
-      />
-    )
-    : null;
-
   return (
     <AdminPageLayout>
       <MainTitle>{organisationId ? translate('edit organisation') : translate('add organisation')}</MainTitle>
@@ -117,7 +111,7 @@ export const OrganisationForm = ({
                 updateOrganisation={updateOrganisation}
                 selections={userSelections}
               />
-              {organisationAssetForm}
+              {organisation && <SuperAdminAssetForms {...assetFormProps} organisation={organisation!}/>}
             </RowIndented>
           </RetryLoader>
         </RetryLoader>

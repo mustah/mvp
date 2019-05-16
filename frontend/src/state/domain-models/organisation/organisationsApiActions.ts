@@ -121,9 +121,12 @@ export enum OrganisationAssetType {
   login_background = 'login_background',
 }
 
-export interface AssetTypeForOrganisation {
-  organisationId: uuid;
+export interface AssetTyped {
   assetType: OrganisationAssetType;
+}
+
+export interface AssetTypeForOrganisation extends AssetTyped {
+  organisationId: uuid;
 }
 
 export const uploadAsset = putFile<AssetTypeForOrganisation>(
