@@ -154,29 +154,3 @@ $pager-number-text: $black;
     }
   }
 }
-
-/* tree view */
-$treeview-item-padding-x: 0;
-$treeview-item-padding-y: 0;
-
-@import '~@progress/kendo-theme-material/scss/treeview.scss';
-
-.k-treeview {
-  .k-in {
-    width: 100%;
-
-    &:hover {
-      border-radius: $menu-item-border-radius;
-    }
-
-    &.k-state-focused {
-      border-radius: $menu-item-border-radius;
-    }
-  }
-}
-
-ul.k-treeview-lines {
-  margin: 0;
-  line-height: 1;
-  padding-left: 36px;
-}
