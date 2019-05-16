@@ -1,7 +1,7 @@
 import {default as i18next} from 'i18next';
 import i18n from '../i18n/i18n';
 
-export const translate = (key: string, options?: i18next.TranslationOptions): string =>
+export const translate = (key: string, options?: i18next.TOptions): string =>
   i18n.t(key, options);
 
 export const onTranslationInitialized = (callback: (options: i18next.InitOptions) => void) =>
@@ -19,7 +19,7 @@ export const firstUpper = (original: string): string =>
 export const capitalized = (original: string): string =>
   original.split(' ').map(firstUpper).join(' ');
 
-export const firstUpperTranslated = (key: string, options?: i18next.TranslationOptions): string =>
+export const firstUpperTranslated = (key: string, options?: i18next.TOptions): string =>
   firstUpper(translate(key, options));
 
 export const getI18nLanguage = (): string => i18n.language;
