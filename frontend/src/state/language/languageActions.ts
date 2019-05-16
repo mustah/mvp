@@ -8,13 +8,20 @@ export const changeLanguageRequest = createStandardAction('CHANGE_LANGUAGE_REQUE
 
 const reloadPage = () => window.location.reload();
 
-export const changeLanguage = (language: LanguageCode, onComplete: Callback = reloadPage) =>
-  (dispatch, getState: GetState) => {
+export const changeLanguage = (language: LanguageCode) => changeLanguageWithRefresh(language, () => {
+  /* ignore */
+});
+
+export const changeLanguageWithRefresh = (language: LanguageCode, onComplete: Callback = reloadPage) =>
+  async (dispatch, getState: GetState) => {
     const {language: stateLanguage} = getState().language;
     if (stateLanguage.code !== language || getI18nLanguage() !== language) {
-      changeTranslationLanguage(language, () => {
-        dispatch(changeLanguageRequest(language));
+      try {
+        await changeTranslationLanguage(language, () => {
+          dispatch(changeLanguageRequest(language));
+        });
+
         onComplete();
-      });
+      } catch (e) {/* ignore */}
     }
   };

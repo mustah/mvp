@@ -8,7 +8,7 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {ErrorResponse, uuid} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
 import {Authorized} from '../../../usecases/auth/authModels';
-import {changeLanguage} from '../../language/languageActions';
+import {changeLanguageWithRefresh} from '../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {
   clearError,
@@ -64,7 +64,7 @@ export const modifyUser = putRequest<User, User>(EndPoints.users, {
 export const modifyProfile = putRequest<User, User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
     dispatch(authSetUser(user));
-    dispatch(changeLanguage(user.language));
+    dispatch(changeLanguageWithRefresh(user.language));
     dispatch(showSuccessMessage(firstUpperTranslated('successfully updated profile', {...user})));
   },
   afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
@@ -81,7 +81,7 @@ export const changePassword = putRequestToUrl<Authorized, Password, uuid>(EndPoi
 
       restClientWith(token);
       dispatch(authSetUser(user));
-      dispatch(changeLanguage(user.language));
+      dispatch(changeLanguageWithRefresh(user.language));
       dispatch(showSuccessMessage(firstUpperTranslated('successfully updated password')));
     },
     afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {

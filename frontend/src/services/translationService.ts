@@ -7,8 +7,9 @@ export const translate = (key: string, options?: i18next.TranslationOptions): st
 export const onTranslationInitialized = (callback: (options: i18next.InitOptions) => void) =>
   i18n.on('initialized', callback);
 
-export const changeTranslationLanguage = (language: string, callback?: i18next.Callback) =>
-  i18n.changeLanguage(language, callback);
+export const changeTranslationLanguage = async (language: string, callback?: i18next.Callback) => {
+  await i18n.changeLanguage(language, callback);
+};
 
 export const firstUpper = (original: string): string =>
   original.length === 0
