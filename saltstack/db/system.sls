@@ -15,3 +15,5 @@ postgresql-configuration:
      - name: systemctl restart postgresql
      - onchanges:
        - file: /etc/postgresql/10/main/postgresql.conf
+     - require:
+       - sysctl_keepalive
