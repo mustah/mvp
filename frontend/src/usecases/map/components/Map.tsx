@@ -1,9 +1,9 @@
-import {FitBoundsOptions, LatLngTuple, LeafletMouseEvent} from 'leaflet';
+import {default as Leaflet, FitBoundsOptions, LatLngBoundsLiteral, LatLngTuple, LeafletMouseEvent} from 'leaflet';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
-import {Map as LeafletMap, MapProps as LeafletMapProps, TileLayer} from 'react-leaflet';
+import {Map as LeafletMap, TileLayer} from 'react-leaflet';
 import {borderRadius} from '../../../app/themes';
 import {Column} from '../../../components/layouts/column/Column';
 import {useResizeWindow} from '../../../hooks/resizeWindowHook';
@@ -48,14 +48,16 @@ const Map = ({
     borderTopRightRadius: 0
   };
 
-  const mapProps: LeafletMapProps = {zoom};
+  let mapCenter: LatLngTuple | undefined;
+  let mapBound: LatLngBoundsLiteral | undefined;
+  let mapBoundOptions: Leaflet.FitBoundsOptions | undefined;
   if (center) {
-    mapProps.center = [center.latitude, center.longitude];
+    mapCenter = [center.latitude, center.longitude];
   } else if (bounds) {
-    mapProps.bounds = bounds;
-    mapProps.boundsOptions = defaultBoundOptions;
+    mapBound = bounds;
+    mapBoundOptions = defaultBoundOptions;
   } else {
-    mapProps.center = defaultCenter;
+    mapCenter = defaultCenter;
   }
 
   const onCenterMapHandler = ({target: {_lastCenter: {lat, lng}, _zoom: zoom}}) =>
@@ -64,15 +66,18 @@ const Map = ({
   return (
     <Column>
       <LeafletMap
+        bounds={mapBound}
+        boundsOptions={mapBoundOptions}
+        center={mapCenter}
+        className="Map"
         maxZoom={maxZoom}
         minZoom={0}
-        className="Map"
         scrollWheelZoom={false}
         onclick={toggleScrollWheelZoom}
         style={style}
         onzoomend={onCenterMapHandler}
         ondragend={onCenterMapHandler}
-        {...mapProps}
+        zoom={zoom}
       >
         <LowConfidenceInfo>{lowConfidenceText}</LowConfidenceInfo>
         <TileLayer url={tilesUrl} ontileerror={updateTilesUrl}/>

@@ -20,7 +20,7 @@ const getZoomBasedRadius = (zoom: number) => {
   }
 };
 
-const handleIconCreate = (cluster: MarkerClusterGroup): Leaflet.DivIcon => {
+const iconCreateFunctionHandler = (cluster: MarkerClusterGroup): Leaflet.DivIcon => {
   const x = getClusterDimensions(cluster.getChildCount());
 
   return Leaflet.divIcon({
@@ -61,7 +61,7 @@ export const MarkerCluster = ({mapMarkers}: MapMarkers) => {
   const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarkers || {});
 
   const markerClusterOptions = {
-    iconCreateFunction: handleIconCreate,
+    iconCreateFunction: iconCreateFunctionHandler,
     chunkedLoading: true,
     showCoverageOnHover: true,
     maxClusterRadius: getZoomBasedRadius,
