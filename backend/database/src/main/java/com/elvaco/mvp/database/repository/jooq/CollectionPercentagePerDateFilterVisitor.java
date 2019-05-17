@@ -35,7 +35,7 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
 
   private FilterPeriod period;
 
-  private Condition orgCondition;
+  private Condition orgCondition = trueCondition();
 
   @Override
   public void visit(CollectionPeriodFilter filter) {
