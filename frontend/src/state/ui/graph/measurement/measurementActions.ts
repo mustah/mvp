@@ -64,7 +64,7 @@ const measurementMeterUri = (
   label: string,
   displayMode: QuantityDisplayMode,
 ): EncodedUriParameters => {
-  const quantityWithParams = quantity + ':' + quantityAttributes[quantity].unit + ':' + displayMode;
+  const quantityWithParams = quantity + '::' + displayMode;
 
   return `${makeReportPeriodParametersOf(dateRange)}&${encodeRequestParameters({
     label,

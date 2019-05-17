@@ -195,7 +195,7 @@ describe('measurementActions', () => {
 
         expect(externalTemperature.pathname).toEqual('/measurements');
         expect(externalTemperature.searchParams.get(RequestParameter.quantity))
-          .toEqual(Quantity.volume + ':' + volumeAttr.unit + ':' + volumeAttr.displayMode);
+          .toEqual(Quantity.volume + '::' + volumeAttr.displayMode);
         expect(externalTemperature.searchParams.get(RequestParameter.logicalMeterId)).toEqual(gasMeter.id);
         expect(externalTemperature.searchParams.get(RequestParameter.reportBefore)).toBeTruthy();
         expect(externalTemperature.searchParams.get(RequestParameter.reportAfter)).toBeTruthy();
@@ -204,7 +204,7 @@ describe('measurementActions', () => {
 
         expect(volume.pathname).toEqual('/measurements');
         expect(volume.searchParams.get(RequestParameter.quantity))
-          .toEqual(Quantity.externalTemperature + ':' + externalTempAttr.unit + ':' + externalTempAttr.displayMode);
+          .toEqual(Quantity.externalTemperature + '::' + externalTempAttr.displayMode);
         expect(volume.searchParams.get(RequestParameter.logicalMeterId)).toEqual(roomSensorMeter.id);
         expect(volume.searchParams.get(RequestParameter.reportBefore)).toBeTruthy();
         expect(volume.searchParams.get(RequestParameter.reportAfter)).toBeTruthy();

@@ -1118,6 +1118,46 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
   }
 
+  @Test
+  public void allowsOverridingDefinitionsDisplayMode() {
+    var date = context().now();
+    var logicalMeter = given(logicalMeter());
+    given(measurementSeries()
+      .forMeter(logicalMeter)
+      .withQuantity(VOLUME)
+      .startingAt(context().now())
+      .withValues(40000.0, 40010.0));
+
+    assertThat(logicalMeter.getQuantity(VOLUME.name).get().storageMode).isEqualTo(CONSUMPTION);
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+      .getList(String.format(
+        "/measurements"
+          + "?reportAfter=" + date
+          + "&reportBefore=" + date.plusHours(1)
+          + "&quantity=" + VOLUME.name + "::" + READOUT.name()
+          + "&logicalMeterId=%s"
+          + "&resolution=hour",
+        logicalMeter.id.toString()
+      ), MeasurementSeriesDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    assertThat(response.getBody())
+      .extracting("quantity")
+      .containsExactly(VOLUME.name);
+
+    assertThat(response.getBody())
+      .extracting(m -> m.quantity, m -> m.values)
+      .containsExactly(tuple(
+        VOLUME.name,
+        List.of(
+          new MeasurementValueDto(date.toInstant(), 40000.0),
+          new MeasurementValueDto(date.plusHours(1).toInstant(), 40010.0)
+        )
+      ));
+  }
+
   public LogicalMeter createMeterWithBothReadoutAndConsumtion(ZonedDateTime date) {
     MeterDefinition customMeterDefinition = new MeterDefinition(
       666L,

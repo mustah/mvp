@@ -63,4 +63,13 @@ public class QuantityParameterTest {
     assertThat(QuantityParameter.of("Energy"))
       .isEqualTo(new QuantityParameter("Energy"));
   }
+
+  @Test
+  public void quantityDisplayModeIsOkay() {
+    assertThat(QuantityParameter.of("Energy::readout")).isEqualTo(new QuantityParameter(
+      "Energy",
+      null,
+      DisplayMode.READOUT
+    ));
+  }
 }

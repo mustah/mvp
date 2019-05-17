@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class QuantityParameter {
     this(name, unit, null);
   }
 
-  public static QuantityParameter of(String quantityUnitPair) {
+  public static QuantityParameter of(@Nonnull String quantityUnitPair) {
     String[] parts = quantityUnitPair.split(QUANTITY_UNIT_DELIMITER);
     String quantityName = parts[0];
     if (quantityName.isEmpty() || parts.length > 3) {
@@ -40,7 +41,7 @@ public class QuantityParameter {
     } else if (parts.length == 3) {
       return new QuantityParameter(
         quantityName,
-        parts[1],
+        "".equals(parts[1]) ? null : parts[1],
         DisplayMode.from(parts[2])
       );
     } else if (parts.length == 2) {
