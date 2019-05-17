@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.RestClient;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.testdata.UrlTemplate;
 
@@ -280,7 +281,16 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   }
 
   @Test
-  public void oneHundredPercent() {
+  public void oneHundredPercentAsUser() {
+    oneHundredPercentAs(asUser());
+  }
+
+  @Test
+  public void oneHundredPercentAsSuperAdmin() {
+    oneHundredPercentAs(asSuperAdmin());
+  }
+
+  public void oneHundredPercentAs(RestClient client) {
     var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
     given(measurementSeries()
@@ -289,7 +299,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(24).toArray()));
 
-    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = client
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(1)),
         CollectionStatsDto.class
@@ -301,7 +311,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .extracting(m -> m.collectionPercentage)
       .contains(100.0);
 
-    var listedPercentage = asUser()
+    var listedPercentage = client
       .getList(
         statsDateUrl(context().now(), context().now().plusDays(2)),
         CollectionStatsPerDateDto.class
