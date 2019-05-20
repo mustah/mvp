@@ -57,8 +57,8 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   return `marker-cluster ${className}`;
 };
 
-export const MarkerCluster = ({mapMarkers}: MapMarkers) => {
-  const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarkers || {});
+export const MarkerCluster = ({mapMarkers = {}}: MapMarkers) => {
+  const leafletMarkers: Marker[] = React.useMemo(() => makeLeafletCompatibleMarkersFrom(mapMarkers), [mapMarkers]);
 
   const markerClusterOptions = {
     iconCreateFunction: iconCreateFunctionHandler,
