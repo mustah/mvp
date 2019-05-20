@@ -16,11 +16,13 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
+  private static final String CUSTOM_ASSET_FILENAME = "logo_to_upload.jpg";
   private static Map<AssetType, byte[]> assetFixtures;
 
   @BeforeClass
@@ -60,15 +62,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   public void user_CanViewAnyAsset() {
     var secretOrganisation = given(organisation());
 
-    var createOneOrganisationsAsset = asSuperAdmin()
-      .putFile(
-        assetPutUrl(secretOrganisation),
-        "asset",
-        "logo_to_upload.jpg",
-        Object.class
-      );
-
-    assertThat(createOneOrganisationsAsset.getStatusCode()).isEqualTo(HttpStatus.OK);
+    putCustomAsset(secretOrganisation);
 
     var anotherOrganisation = given(organisation());
     var userFromOtherOrganisation = given(user().organisation(anotherOrganisation));
@@ -83,15 +77,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   public void loggedOut_CanViewAnyAsset() {
     var secretOrganisation = given(organisation());
 
-    var createOneOrganisationsAsset = asSuperAdmin()
-      .putFile(
-        assetPutUrl(secretOrganisation),
-        "asset",
-        "logo_to_upload.jpg",
-        Object.class
-      );
-
-    assertThat(createOneOrganisationsAsset.getStatusCode()).isEqualTo(HttpStatus.OK);
+    putCustomAsset(secretOrganisation);
 
     var response = asNotLoggedIn()
       .get(assetGetUrl(secretOrganisation.slug), byte[].class);
@@ -113,8 +99,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var response = asUser()
       .get(assetGetUrl("asdf-asdf-invalid-stuff"), byte[].class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).hasSameSizeAs(assetFixtures.get(assetUnderTest()));
+    assertDefaultAsset(response);
   }
 
   @Test
@@ -126,8 +111,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var response = as(userFromOrganisationWithoutCustomAsset)
       .get(assetGetUrl(organisationWithoutCustomAsset.slug), byte[].class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).hasSameSizeAs(assetFixtures.get(assetUnderTest()));
+    assertDefaultAsset(response);
   }
 
   @Test
@@ -210,15 +194,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   public void superAdmin_AnyOrganisation() {
     var organisation = given(organisation());
 
-    var request = asSuperAdmin()
-      .putFile(
-        assetPutUrl(organisation),
-        "asset",
-        "logo_to_upload.jpg",
-        Object.class
-      );
-
-    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
+    putCustomAsset(organisation);
   }
 
   @Test
@@ -262,15 +238,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
     var etag = response.getHeaders().getETag();
 
-    var modified = asSuperAdmin()
-      .putFile(
-        assetPutUrl(organisation),
-        "asset",
-        "logo_to_upload.jpg",
-        Object.class
-      );
-
-    assertThat(modified.getStatusCode()).isEqualTo(HttpStatus.OK);
+    putCustomAsset(organisation);
 
     var headers = new HttpHeaders();
     headers.add("If-None-Match", etag);
@@ -286,15 +254,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void deleteOrganisation_DeletesAssets() {
     var organisation = given(organisation());
-    var modified = asSuperAdmin()
-      .putFile(
-        assetPutUrl(organisation),
-        "asset",
-        "logo_to_upload.jpg",
-        Object.class
-      );
-
-    assertThat(modified.getStatusCode()).isEqualTo(HttpStatus.OK);
+    putCustomAsset(organisation);
 
     var deleted = asSuperAdmin()
       .delete("/organisations/" + organisation.id, OrganisationDto.class);
@@ -308,8 +268,25 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var lookingAtFallback = asUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
 
-    assertThat(lookingAtFallback.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(lookingAtFallback.getBody()).isEqualTo(assetFixtures.get(assetUnderTest()));
+    assertAssetMatches(lookingAtFallback, assetFixtures.get(assetUnderTest()));
+  }
+
+  private void assertAssetMatches(ResponseEntity<byte[]> response, byte[] bytes) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(bytes);
+  }
+
+  private void assertAssetNotMatches(ResponseEntity<byte[]> response, byte[] bytes) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotEqualTo(bytes);
+  }
+
+  private void assertCustomAsset(ResponseEntity<byte[]> response) {
+    assertAssetNotMatches(response, assetFixtures.get(assetUnderTest()));
+  }
+
+  private void assertDefaultAsset(ResponseEntity<byte[]> response) {
+    assertAssetMatches(response, assetFixtures.get(assetUnderTest()));
   }
 
   private void assertCannotUpload(User user, Organisation organisation, HttpStatus expectedStatus) {
@@ -317,7 +294,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
       .putFile(
         assetPutUrl(organisation),
         "asset",
-        "logo_to_upload.jpg",
+        CUSTOM_ASSET_FILENAME,
         ErrorMessageDto.class
       );
 
@@ -325,15 +302,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   }
 
   private void assertCanDelete(User user, Organisation organisation) {
-    var created = asSuperAdmin()
-      .putFile(
-        assetPutUrl(organisation),
-        "asset",
-        "logo_to_upload.jpg",
-        Object.class
-      );
-
-    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+    putCustomAsset(organisation);
 
     var lookingAtNew = asUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
@@ -349,8 +318,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var lookingAtFallback = asUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
 
-    assertThat(lookingAtFallback.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(lookingAtFallback.getBody()).isEqualTo(assetFixtures.get(assetUnderTest()));
+    assertAssetMatches(lookingAtFallback, assetFixtures.get(assetUnderTest()));
   }
 
   private void assertCannotDelete(
@@ -358,15 +326,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     Organisation organisation,
     HttpStatus expectedStatus
   ) {
-    var created = asSuperAdmin()
-      .putFile(
-        assetPutUrl(organisation),
-        "asset",
-        "logo_to_upload.jpg",
-        Object.class
-      );
-
-    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+    putCustomAsset(organisation);
 
     var lookingAtNew = asUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
@@ -384,8 +344,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var lookingAtFallback = asUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
 
-    assertThat(lookingAtFallback.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(lookingAtFallback.getBody()).isEqualTo(newAsset);
+    assertAssetMatches(lookingAtFallback, newAsset);
   }
 
   private Url.UrlBuilder assetDeleteUrl(Organisation organisation) {
@@ -399,5 +358,17 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
   private Url.UrlBuilder assetGetUrl(String slug) {
     return Url.builder().path("/organisations/" + slug + "/assets/" + assetUnderTest());
+  }
+
+  private void putCustomAsset(Organisation organisation) {
+    var created = asSuperAdmin()
+      .putFile(
+        assetPutUrl(organisation),
+        "asset",
+        CUSTOM_ASSET_FILENAME,
+        Object.class
+      );
+
+    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }
