@@ -1,13 +1,14 @@
 package com.elvaco.mvp.database.repository.jooq;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 
 import lombok.experimental.UtilityClass;
 import org.jooq.DSLContext;
+
+import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class FilterVisitors {
@@ -46,7 +47,7 @@ public class FilterVisitors {
         new CollectionPercentageFilterVisitor(dsl),
         new MeasurementLastDataFilterVisitor(dsl)
       )
-    ).collect(Collectors.toList()));
+    ).collect(toList()));
   }
 
   public static FilterAcceptor collectionPercentagePerDate(
@@ -56,7 +57,7 @@ public class FilterVisitors {
     return new LogicalMeterFilterVisitor(Stream.concat(
       filterDecorators(dsl, parser).stream(),
       Stream.of(new CollectionPercentagePerDateFilterVisitor(dsl))
-    ).collect(Collectors.toList()));
+    ).collect(toList()));
   }
 
   public static FilterAcceptor gateway(DSLContext dsl, MeasurementThresholdParser parser) {

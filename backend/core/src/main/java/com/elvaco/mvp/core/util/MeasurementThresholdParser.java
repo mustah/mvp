@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
@@ -17,12 +16,14 @@ import com.elvaco.mvp.core.unitconverter.UnitConverter;
 
 import lombok.RequiredArgsConstructor;
 
+import static java.util.stream.Collectors.toSet;
+
 @RequiredArgsConstructor
 public class MeasurementThresholdParser {
 
   private static final Set<String> VALID_OPERATORS = Arrays.stream(Operator.values())
     .map(Operator::getSymbol)
-    .collect(Collectors.toSet());
+    .collect(toSet());
 
   private static final Pattern THRESHOLD_FILTER_PATTERN = Pattern.compile(
     "(?<quantity>[^<>=]+)"

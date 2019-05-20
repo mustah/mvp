@@ -3,7 +3,6 @@ package com.elvaco.mvp.configuration.config;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -19,6 +18,7 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DataProviderConfigTest extends IntegrationTest {
@@ -103,11 +103,11 @@ public class DataProviderConfigTest extends IntegrationTest {
           saved.quantities.stream()
             .map(displayQuantity -> displayQuantity.quantity)
             .collect(
-              Collectors.toSet()),
+              toSet()),
           unsavedMeterDefinition.quantities.stream()
             .map(displayQuantity -> displayQuantity.quantity)
             .collect(
-              Collectors.toSet())
+              toSet())
         );
       });
   }

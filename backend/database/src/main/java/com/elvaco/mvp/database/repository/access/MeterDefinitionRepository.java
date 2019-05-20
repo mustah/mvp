@@ -3,7 +3,6 @@ package com.elvaco.mvp.database.repository.access;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import com.elvaco.mvp.core.domainmodels.Medium;
@@ -18,6 +17,7 @@ import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @RequiredArgsConstructor
 public class MeterDefinitionRepository implements MeterDefinitions {
@@ -40,7 +40,7 @@ public class MeterDefinitionRepository implements MeterDefinitions {
       meterDefinition).stream()
       .peek(displayQuantity -> displayQuantity.pk.meterDefinitionId = meterDefinitionEntity.id)
       .map(displayQuantityJpaRepository::save)
-      .collect(Collectors.toSet());
+      .collect(toSet());
 
     return meterDefinitionEntityMapper.toDomainModel(meterDefinitionEntity);
   }

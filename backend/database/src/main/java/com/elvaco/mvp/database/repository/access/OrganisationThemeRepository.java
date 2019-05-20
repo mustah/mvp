@@ -49,7 +49,10 @@ public class OrganisationThemeRepository implements OrganisationThemes {
     if (organisation.parent != null) {
       organisationThemeJpaRepository.findByOrganisationThemePkOrganisationId(organisation.parent.id)
         .stream()
-        .forEach(entity -> themeBuilder.property(entity.organisationThemePk.property, entity.value));
+        .forEach(entity -> themeBuilder.property(
+          entity.organisationThemePk.property,
+          entity.value
+        ));
     }
 
     organisationThemeJpaRepository.findByOrganisationThemePkOrganisationId(organisation.id)
