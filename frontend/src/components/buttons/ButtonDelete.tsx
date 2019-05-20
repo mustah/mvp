@@ -9,6 +9,6 @@ export const ButtonDelete = withCssStyles(({onClick, cssStyles: {primary}}: Clic
     hoverColor="inherit"
     icon={<ActionDelete color={primary.bg}/>}
     onClick={onClick}
-    style={{minWidth: 24}}
+    style={{backgroundColor: 'transparent', height: 28, width: 28, minWidth: 28, lineHeight: '28px'}}
   />
 ));
