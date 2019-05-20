@@ -127,17 +127,42 @@ public class OrganisationUseCases {
       return Optional.of(defaultAsset);
     }
 
-    if (matchChecksum.isPresent()
-      && organisationAssets.existsByOrganisationIdAndAssetTypeAndChecksum(
-      organisation.get().id,
-      assetType,
-      matchChecksum.get()
-    )) {
-      return Optional.empty();
+    if (matchChecksum.isPresent()) {
+      String checksum = matchChecksum.get();
+
+      boolean cachedForOrganisation = organisationAssets
+        .existsByOrganisationIdAndAssetTypeAndChecksum(
+          organisation.get().id,
+          assetType,
+          checksum
+        );
+
+      if (cachedForOrganisation) {
+        return Optional.empty();
+      }
+
+      boolean cachedForParentOrganisation = organisation.get()
+        .getParentId()
+        .map(parentId -> organisationAssets.existsByOrganisationIdAndAssetTypeAndChecksum(
+          parentId,
+          assetType,
+          checksum
+        ))
+        .orElse(false);
+
+      if (cachedForParentOrganisation) {
+        return Optional.empty();
+      }
     }
 
     return organisation
       .flatMap(org -> organisationAssets.findByOrganisationIdAndAssetType(org.id, assetType))
+      .or(() -> organisation
+        .flatMap(Organisation::getParentId)
+        .flatMap(parentId ->
+          organisationAssets.findByOrganisationIdAndAssetType(parentId, assetType)
+        )
+      )
       .or(() -> Optional.of(organisationAssets.getDefault(assetType)));
   }
 

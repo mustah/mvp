@@ -76,7 +76,7 @@ public class Organisation implements Identifiable<UUID> {
     return id;
   }
 
-  Optional<UUID> getParentId() {
+  public Optional<UUID> getParentId() {
     return Optional.ofNullable(parent).map(Organisation::getId);
   }
 

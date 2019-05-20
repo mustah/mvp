@@ -23,7 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
   private static final String CUSTOM_ASSET_FILENAME = "logo_to_upload.jpg";
+  private static final String DIFFERENT_CUSTOM_ASSET_FILENAME = "random_numbers.jpg";
   private static Map<AssetType, byte[]> assetFixtures;
+  private static Map<String, byte[]> localFixtures;
 
   @BeforeClass
   public static void setUp() throws IOException {
@@ -35,6 +37,15 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
         .getInputStream()
         .readAllBytes(),
       AssetType.LOGOTYPE, new ClassPathResource("assets/logotype.svg")
+        .getInputStream()
+        .readAllBytes()
+    );
+
+    localFixtures = Map.of(
+      CUSTOM_ASSET_FILENAME, new ClassPathResource("logo_to_upload.jpg")
+        .getInputStream()
+        .readAllBytes(),
+      DIFFERENT_CUSTOM_ASSET_FILENAME, new ClassPathResource("random_numbers.jpg")
         .getInputStream()
         .readAllBytes()
     );
@@ -110,6 +121,61 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     );
     var response = as(userFromOrganisationWithoutCustomAsset)
       .get(assetGetUrl(organisationWithoutCustomAsset.slug), byte[].class);
+
+    assertDefaultAsset(response);
+  }
+
+  @Test
+  public void subOrganisation_Fallbacks_UsesOwnIfExisting() {
+    var parent = given(organisation().name("parent"));
+    var admin = given(user().organisation(parent).asAdmin());
+    var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
+
+    putCustomAsset(subOrganisation);
+
+    var response = asNotLoggedIn()
+      .get(assetGetUrl(subOrganisation.slug), byte[].class);
+
+    assertCustomAsset(response);
+  }
+
+  @Test
+  public void subOrganisation_Fallbacks_UsesOwnIfExistingAndParentExists() {
+    var parent = given(organisation().name("parent"));
+    var admin = given(user().organisation(parent).asAdmin());
+    var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
+
+    putCustomAsset(parent);
+    putDifferentCustomAsset(subOrganisation);
+
+    var response = asNotLoggedIn()
+      .get(assetGetUrl(subOrganisation.slug), byte[].class);
+
+    assertDifferentCustomAsset(response);
+  }
+
+  @Test
+  public void subOrganisation_Fallbacks_ParentOrganisationIfNoOwn() {
+    var parent = given(organisation().name("parent"));
+    var admin = given(user().organisation(parent).asAdmin());
+    var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
+
+    putCustomAsset(parent);
+
+    var response = asNotLoggedIn()
+      .get(assetGetUrl(subOrganisation.slug), byte[].class);
+
+    assertCustomAsset(response);
+  }
+
+  @Test
+  public void subOrganisation_Fallbacks_DefaultAfterOwnAndParent() {
+    var parent = given(organisation().name("parent"));
+    var admin = given(user().organisation(parent).asAdmin());
+    var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
+
+    var response = asNotLoggedIn()
+      .get(assetGetUrl(subOrganisation.slug), byte[].class);
 
     assertDefaultAsset(response);
   }
@@ -276,13 +342,14 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(bytes);
   }
 
-  private void assertAssetNotMatches(ResponseEntity<byte[]> response, byte[] bytes) {
+  private void assertCustomAsset(ResponseEntity<byte[]> response) {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).isNotEqualTo(bytes);
+    assertThat(response.getBody()).isEqualTo(localFixtures.get(CUSTOM_ASSET_FILENAME));
   }
 
-  private void assertCustomAsset(ResponseEntity<byte[]> response) {
-    assertAssetNotMatches(response, assetFixtures.get(assetUnderTest()));
+  private void assertDifferentCustomAsset(ResponseEntity<byte[]> response) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(localFixtures.get(DIFFERENT_CUSTOM_ASSET_FILENAME));
   }
 
   private void assertDefaultAsset(ResponseEntity<byte[]> response) {
@@ -361,14 +428,20 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   }
 
   private void putCustomAsset(Organisation organisation) {
-    var created = asSuperAdmin()
-      .putFile(
-        assetPutUrl(organisation),
-        "asset",
-        CUSTOM_ASSET_FILENAME,
-        Object.class
-      );
+    asSuperAdmin().putFile(
+      assetPutUrl(organisation),
+      "asset",
+      CUSTOM_ASSET_FILENAME,
+      Object.class
+    );
+  }
 
-    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+  private void putDifferentCustomAsset(Organisation organisation) {
+    asSuperAdmin().putFile(
+      assetPutUrl(organisation),
+      "asset",
+      DIFFERENT_CUSTOM_ASSET_FILENAME,
+      Object.class
+    );
   }
 }
