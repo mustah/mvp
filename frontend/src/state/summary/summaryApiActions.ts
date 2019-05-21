@@ -1,5 +1,4 @@
 import {GetState} from '../../reducers/rootReducer';
-import {EndPoints} from '../../services/endPoints';
 import {emptyActionOf, Sectors} from '../../types/Types';
 import {clearAction, fetchIfNeeded, FetchIfNeeded} from '../api/apiActions';
 import {SelectionSummary, SummaryState} from './summaryModels';
@@ -16,13 +15,11 @@ const shouldFetchOrganisationSummary: FetchIfNeeded = (getState: GetState): bool
 
 export const fetchSummary = fetchIfNeeded<SelectionSummary>(
   Sectors.summary,
-  EndPoints.summary,
-  shouldFetchSummary,
+  shouldFetchSummary
 );
 
 export const fetchOrganisationSummary = fetchIfNeeded<SelectionSummary>(
   Sectors.organisationSummary,
-  EndPoints.summary,
   shouldFetchOrganisationSummary,
 );
 

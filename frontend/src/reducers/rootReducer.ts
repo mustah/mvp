@@ -28,7 +28,8 @@ import {collection, meterCollection} from '../usecases/collection/collectionRedu
 import {map, MapState} from '../usecases/map/mapReducer';
 import {MeterDetailState} from '../usecases/meter/measurements/meterDetailModels';
 import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
-import {theme, ThemeState} from '../usecases/theme/themeReducer';
+import {ThemeState} from '../usecases/theme/themeModels';
+import {theme} from '../usecases/theme/themeReducer';
 import {currentVersion, migrations} from './stateMigrations';
 
 export interface RootState {

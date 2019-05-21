@@ -1,60 +1,126 @@
-import {changePrimaryColor, changeSecondaryColor, resetColors} from '../themeActions';
-import {initialState, theme, ThemeState} from '../themeReducer';
+import {Location} from 'history';
+import {routes} from '../../../app/routes';
+import {locationChange} from '../../../state/location/locationActions';
+import {ErrorResponse} from '../../../types/Types';
+import {failureTheme, requestTheme, successTheme} from '../themeActions';
+import {Colors, ThemeState} from '../themeModels';
+import {initialState, theme} from '../themeReducer';
 
 describe('themeReducer', () => {
 
   describe('change colors', () => {
 
     it('changes primary color', () => {
-      const state: ThemeState = theme(initialState, changePrimaryColor('red'));
+      const {color: {secondary}} = initialState;
+      const state: ThemeState = theme(initialState, successTheme({primary: 'red', secondary}));
 
       const expected: ThemeState = {
         ...initialState,
-        color: {
-          ...initialState.color,
-          primary: 'red'
-        }
+        color: {...initialState.color, primary: 'red'},
+        isSuccessfullyFetched: true
       };
       expect(state).toEqual(expected);
     });
 
     it('changes secondary color', () => {
-      const state: ThemeState = theme(initialState, changeSecondaryColor('blue'));
+      const {color: {primary}} = initialState;
+
+      const state: ThemeState = theme(initialState, successTheme({primary, secondary: 'blue'}));
 
       const expected: ThemeState = {
         ...initialState,
-        color: {
-          ...initialState.color,
-          secondary: 'blue'
-        }
+        color: {...initialState.color, secondary: 'blue'},
+        isSuccessfullyFetched: true
       };
       expect(state).toEqual(expected);
     });
 
-    it('changes both colors', () => {
-      let state: ThemeState = theme(initialState, changePrimaryColor('red'));
-      state = theme(state, changeSecondaryColor('blue'));
+    it('changes both primary and secondary colors', () => {
+      const state: ThemeState = theme(initialState, successTheme({primary: 'red', secondary: 'blue'}));
 
       const expected: ThemeState = {
         ...initialState,
-        color: {
-          primary: 'red',
-          secondary: 'blue'
-        }
+        color: {primary: 'red', secondary: 'blue'},
+        isSuccessfullyFetched: true
       };
       expect(state).toEqual(expected);
     });
+  });
 
-    it('reset colors', () => {
+  describe('do fetch theme actions', () => {
+
+    it('can request theme', () => {
+      const state: ThemeState = theme(initialState, requestTheme());
+
+      const expected: ThemeState = {...initialState, isFetching: true};
+      expect(state).toEqual(expected);
+    });
+
+    it('can fail when requesting theme', () => {
+      const message: ErrorResponse = {message: 'failed'};
+
+      const state: ThemeState = theme(initialState, failureTheme(message));
+
+      const expected: ThemeState = {...initialState, error: {...message}};
+      expect(state).toEqual(expected);
+    });
+
+    it('can fail after a request has been made', () => {
+      const message: ErrorResponse = {message: 'failed'};
+
+      const state: ThemeState = theme({...initialState, isFetching: true}, failureTheme(message));
+
+      const expected: ThemeState = {...initialState, isFetching: false, error: {...message}};
+      expect(state).toEqual(expected);
+    });
+
+    it('can fetch handle colors successfully', () => {
+      const color: Colors = {primary: 'red', secondary: 'blue'};
+
+      const state: ThemeState = theme(initialState, successTheme(color));
+
+      const expected: ThemeState = {color, isFetching: false, isSuccessfullyFetched: true};
+      expect(state).toEqual(expected);
+    });
+
+  });
+
+  describe('location change', () => {
+
+    it('will reset state when location is organisation list', () => {
       let state: ThemeState = {
+        color: {primary: 'red', secondary: 'blue'},
+        isFetching: false,
+        isSuccessfullyFetched: true,
+      };
+
+      const payload: Partial<Location> = {pathname: routes.adminOrganisationsModify};
+
+      state = theme(state, locationChange(payload as Location));
+
+      const expected: ThemeState = {
+        color: {primary: 'red', secondary: 'blue'},
+        isFetching: false,
+        isSuccessfullyFetched: false
+      };
+      expect(state).toEqual(expected);
+    });
+
+    it('will not reset state when location is organisation list', () => {
+      const state: ThemeState = {
+        ...initialState,
+        isSuccessfullyFetched: true,
         color: {
           primary: 'red',
           secondary: 'blue'
         }
       };
-      state = theme(state, resetColors());
 
-      expect(state).toBe(initialState);
+      const payload: Partial<Location> = {pathname: routes.adminOrganisationsAdd};
+
+      const newState: ThemeState = theme(state, locationChange(payload as Location));
+
+      expect(state).toBe(newState);
     });
   });
 });

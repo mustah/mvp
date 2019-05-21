@@ -1,6 +1,6 @@
 import {Dictionary, ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {ObjectsById} from '../domain-models/domainModels';
 import {CollectionStatFacilityState} from '../domain-models/collection-stat/collectionStatModels';
+import {ObjectsById, RequestsHttp} from '../domain-models/domainModels';
 import {ApiRequestSortingOptions, ApiResultSortingOptions} from '../ui/pagination/paginationModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
@@ -45,9 +45,6 @@ export interface NormalizedPaginatedState<T extends Identifiable> {
   sort?: ApiRequestSortingOptions[];
 }
 
-interface PaginatedResult {
-  isFetching: boolean;
-  isSuccessfullyFetched: boolean;
+interface PaginatedResult extends RequestsHttp {
   result?: uuid[];
-  error?: ErrorResponse;
 }

@@ -3,32 +3,38 @@ import {Color} from '../../../../app/colors';
 import {ButtonLinkRed} from '../../../../components/buttons/ButtonLink';
 import {ButtonPrimary} from '../../../../components/buttons/ButtonPrimary';
 import {ButtonSecondary} from '../../../../components/buttons/ButtonSecondary';
+import {withWidgetLoader} from '../../../../components/hoc/withLoaders';
 import {ThemeContext} from '../../../../components/hoc/withThemeProvider';
 import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 import {PopoverWrapper} from '../../../../components/popover/PopoverWrapper';
+import {makeThemeUrlOf} from '../../../../helpers/urlFactory';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
-import {OnClick, OnClickWith} from '../../../../types/Types';
-import {Colors} from '../../../theme/themeReducer';
+import {RequestsHttp} from '../../../../state/domain-models/domainModels';
+import {Organisation} from '../../../../state/domain-models/organisation/organisationModels';
+import {Omit, OnClick, OnClickWith, OnFetch} from '../../../../types/Types';
+import {Colors} from '../../../theme/themeModels';
 import {ColorPicker} from './ColorPicker';
 
-export interface StateToProps {
+export interface StateToProps extends RequestsHttp {
+  organisation: Organisation;
   color: Colors;
 }
 
 export interface DispatchToProps {
   changePrimaryColor: OnClickWith<Color>;
   changeSecondaryColor: OnClickWith<Color>;
+  fetchTheme: OnFetch;
   resetColors: OnClick;
 }
 
 export type Props = StateToProps & DispatchToProps & ThemeContext;
 
-export const ColorPickers = ({
+const ColorPickersComponent = ({
   changePrimaryColor,
   changeSecondaryColor,
   resetColors,
   color: {primary, secondary}
-}: Props) => {
+}: StateToProps & Omit<DispatchToProps, 'fetchTheme'>) => {
   const renderPrimaryPicker = _ => <ColorPicker onChange={changePrimaryColor} color={primary}/>;
   const renderSecondaryPicker = _ => <ColorPicker onChange={changeSecondaryColor} color={secondary}/>;
 
@@ -55,4 +61,14 @@ export const ColorPickers = ({
       </RowBottom>
     </Row>
   );
+};
+
+const LoadingColorPicker = withWidgetLoader(ColorPickersComponent);
+
+export const ColorPickers = (props: Props) => {
+  const {fetchTheme, isSuccessfullyFetched, organisation: {slug}} = props;
+  React.useEffect(() => {
+    fetchTheme(makeThemeUrlOf(slug));
+  }, [isSuccessfullyFetched]);
+  return <LoadingColorPicker {...props}/>;
 };

@@ -8,7 +8,7 @@ import {
   fetchSubOrganisations
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {clearOrganisationSummary, fetchOrganisationSummary} from '../../../state/summary/summaryApiActions';
-import {Callback, Fetch, IdNamed, OnClick, uuid} from '../../../types/Types';
+import {Callback, Fetch, IdNamed, OnClick, OnFetch, uuid} from '../../../types/Types';
 import {OrganisationConfirmContent} from '../components/OrganisationConfirmContent';
 
 export interface OwnProps {
@@ -30,7 +30,7 @@ export interface StateToProps {
 }
 
 export interface DispatchToProps {
-  fetchOrganisationSummary: Fetch;
+  fetchOrganisationSummary: OnFetch;
   fetchSubOrganisations: Fetch;
   clearSubOrganisations: Callback;
   clearOrganisationSummary: Callback;

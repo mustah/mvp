@@ -12,7 +12,7 @@ import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menu-items
 import {AdminMainMenuItemsContainer} from '../../usecases/main-menu/containers/AdminMainMenuItemsContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
-import {Colors} from '../../usecases/theme/themeReducer';
+import {Colors} from '../../usecases/theme/themeModels';
 import {AdminPages} from './AdminPages';
 
 interface StateToProps {

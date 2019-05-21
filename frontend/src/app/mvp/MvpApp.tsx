@@ -13,9 +13,11 @@ import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menu-items
 import {MvpMainMenuItemsContainer} from '../../usecases/main-menu/containers/MvpMainMenuItemsContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
+import {Colors} from '../../usecases/theme/themeModels';
 import {MvpPages} from './MvpPages';
 
 interface StateToProps {
+  color: Colors;
   isSideMenuOpen: boolean;
   isReportPage: boolean;
 }
@@ -26,8 +28,8 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
-  <Row>
+const MvpApp = ({color: {primary, secondary}, isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
+  <Row key={`app-${primary}-${secondary}`}>
     <SideMenuContainer className={classNames({isSideMenuOpen})}>
       <MvpMainMenuItemsContainer/>
     </SideMenuContainer>
@@ -37,7 +39,8 @@ const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
   </Row>
 );
 
-const mapStateToProps = ({routing, ui}: RootState): StateToProps => ({
+const mapStateToProps = ({routing, theme: {color}, ui}: RootState): StateToProps => ({
+  color,
   isSideMenuOpen: isSideMenuOpen(ui),
   isReportPage: isReportPage(routing),
 });

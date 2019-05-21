@@ -27,7 +27,9 @@ export type CallbackWithDataAndUrlParameters = (requestData: any, urlParameters:
 export type RenderFunction<T> = (props: T) => Children;
 
 export type Fetch = (parameters?: EncodedUriParameters) => void;
-export type ClearError = () => void;
+export type OnFetch = (url: EndPoints | string, parameters?: EncodedUriParameters) => void;
+export type OnUpdate<T> = (endPoint: EndPoints | string, body: T) => void;
+export type ClearError = Callback;
 
 export type FetchPaginated = (page: number, requestModel?: string, sortingOptions?: ApiRequestSortingOptions[]) => void;
 export type ClearErrorPaginated = (payload: PageNumbered) => void;
@@ -163,6 +165,7 @@ export const enum Sectors {
   summary = 'summary',
   organisationSummary = 'organisationSummary',
   subOrganisations = 'subOrganisations',
+  theme = 'theme',
 }
 
 export type ActionKey = EndPoints | Sectors;

@@ -6,7 +6,7 @@ import {RootState} from '../reducers/rootReducer';
 import {fetchSummary} from '../state/summary/summaryApiActions';
 import {SelectionSummary} from '../state/summary/summaryModels';
 import {getMeterParameters} from '../state/user-selection/userSelectionSelectors';
-import {EncodedUriParameters, Fetch} from '../types/Types';
+import {OnFetch, EncodedUriParameters} from '../types/Types';
 
 export interface StateToProps {
   selectionSummary: SelectionSummary;
@@ -15,7 +15,7 @@ export interface StateToProps {
 }
 
 export interface DispatchToProps {
-  fetchSummary: Fetch;
+  fetchSummary: OnFetch;
 }
 
 const mapStateToProps = ({

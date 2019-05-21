@@ -55,7 +55,7 @@ describe('summaryApiActions', () => {
       const onFetchMeterSummaryWithInvalidToken = async () => {
         mockRestClient.onGet(EndPoints.summary).reply(401, error);
         mockRestClient.onGet(EndPoints.logout).reply(204);
-        return store.dispatch(fetchSummary());
+        return store.dispatch(fetchSummary(EndPoints.summary));
       };
 
       await onFetchMeterSummaryWithInvalidToken();
@@ -76,7 +76,7 @@ describe('summaryApiActions', () => {
       const onFetchMeterSummaryFail = async () => {
         const response: ErrorResponse = {message: 'request failed'};
         mockRestClient.onGet(makeUrl(EndPoints.summary)).reply(401, response);
-        return store.dispatch(fetchSummary());
+        return store.dispatch(fetchSummary(EndPoints.summary));
       };
 
       await onFetchMeterSummaryFail();
@@ -152,7 +152,7 @@ describe('summaryApiActions', () => {
       const fetchSummaryAndTimeout = async () => {
         const parameters: EncodedUriParameters = 'test';
         mockRestClient.onGet(makeUrl(EndPoints.summary, parameters)).timeout();
-        return store.dispatch(fetchSummary(parameters));
+        return store.dispatch(fetchSummary(EndPoints.summary, parameters));
       };
 
       await fetchSummaryAndTimeout();
@@ -167,6 +167,6 @@ describe('summaryApiActions', () => {
   const onFetchMeterSummary = async (parameters?: EncodedUriParameters) => {
     const response: SelectionSummary = {numMeters: 2, numCities: 1, numAddresses: 2};
     mockRestClient.onGet(makeUrl(EndPoints.summary, parameters)).reply(200, response);
-    return store.dispatch(fetchSummary(parameters));
+    return store.dispatch(fetchSummary(EndPoints.summary, parameters));
   };
 });

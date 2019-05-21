@@ -6,6 +6,7 @@ import thunk from 'redux-thunk';
 import {makeUser} from '../../../__tests__/testDataFactory';
 import {routes} from '../../../app/routes';
 import {config} from '../../../config/config';
+import {makeThemeUrlOf} from '../../../helpers/urlFactory';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../services/endPoints';
 import {authenticate} from '../../../services/restClient';
@@ -15,6 +16,9 @@ import {User} from '../../../state/domain-models/user/userModels';
 import {changeLanguageRequest} from '../../../state/language/languageActions';
 import {LanguageState} from '../../../state/language/languageModels';
 import {getCurrentVersion} from '../../../state/ui/notifications/notificationsActions';
+import {makeBody, requestTheme, successTheme} from '../../theme/themeActions';
+import {Colors} from '../../theme/themeModels';
+import {initialState as initialThemeState} from '../../theme/themeReducer';
 import {authSetUser, login, loginFailure, loginRequest, loginSuccess, logout, logoutUser} from '../authActions';
 import {Unauthorized} from '../authModels';
 
@@ -29,10 +33,12 @@ describe('authActions', () => {
       users: {...initialDomain()},
     };
     const initialLanguageState: LanguageState = {language: {code: 'en'}};
+
     store = configureMockStore({
       domainModels: initialState,
       language: initialLanguageState,
       previousSession: {},
+      theme: initialThemeState,
     });
     mockRestClient = new MockAdapter(axios);
     window.location.reload = () => void (0);
@@ -51,6 +57,10 @@ describe('authActions', () => {
   });
 
   const user: User = makeUser();
+
+  const themeBody = makeBody('red', 'green');
+  const color: Colors = {primary: 'red', secondary: 'green'};
+
   let mockRestClient;
   let store;
 
@@ -63,6 +73,7 @@ describe('authActions', () => {
       const password = 'test1234';
 
       mockRestClient.onGet(EndPoints.authenticate).reply(200, {user, token});
+      mockRestClient.onGet(makeThemeUrlOf(user.organisation.slug)).reply(200, themeBody);
       mockRestClient.onGet(EndPoints.logout).reply(204);
 
       return store.dispatch(login(username, password));
@@ -75,6 +86,8 @@ describe('authActions', () => {
         loginRequest(),
         loginSuccess({token, user}),
         getCurrentVersion(version),
+        requestTheme(),
+        successTheme(color)
       ]);
     });
 
@@ -88,6 +101,8 @@ describe('authActions', () => {
         changeLanguageRequest('sv'),
         loginSuccess({token, user}),
         getCurrentVersion(version),
+        requestTheme(),
+        successTheme(color)
       ]);
     });
 

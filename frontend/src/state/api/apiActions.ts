@@ -1,6 +1,7 @@
 import {AxiosPromise} from 'axios';
 import {Dispatch} from 'redux';
 import {InvalidToken} from '../../exceptions/InvalidToken';
+import {identityType} from '../../helpers/commonHelpers';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
@@ -13,7 +14,9 @@ import {
   EncodedUriParameters,
   ErrorResponse,
   OnEmptyAction,
+  OnFetch,
   OnPayloadAction,
+  OnUpdate,
   payloadActionOf,
 } from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
@@ -25,11 +28,12 @@ export interface RequestHandler<P> {
   failure: (error: ErrorResponse) => Action<ErrorResponse>;
 }
 
-interface AsyncRequest<P> extends RequestHandler<P> {
+interface AsyncRequest<P, REQUEST_BODY> extends RequestHandler<P> {
   dispatch: Dispatch<RootState>;
-  onRequest: (parameters?: EncodedUriParameters) => AxiosPromise<P>;
+  onRequest: (body?: REQUEST_BODY) => AxiosPromise<P>;
   formatData?: DataFormatter<P>;
   parameters?: EncodedUriParameters;
+  body?: REQUEST_BODY;
 }
 
 export const responseMessageOrFallback = (response?: any): ErrorResponse => {
@@ -53,18 +57,18 @@ export const requestTimeout = (): ErrorResponse => ({
     'looks like the server is taking to long to respond, please try again in soon'),
 });
 
-const makeAsyncRequest = async <P>({
+const makeAsyncRequest = async <P, REQUEST_BODY>({
   request,
   success,
   failure,
   onRequest,
-  formatData = (id) => id,
-  parameters,
+  formatData = identityType,
   dispatch,
-}: AsyncRequest<P>) => {
+  body,
+}: AsyncRequest<P, REQUEST_BODY>) => {
   try {
     dispatch(request());
-    const {data} = await onRequest(parameters);
+    const {data} = await onRequest(body);
     dispatch(success(formatData(data)));
   } catch (error) {
     if (error instanceof InvalidToken) {
@@ -82,6 +86,7 @@ const makeAsyncRequest = async <P>({
 };
 
 export type FetchIfNeeded = (getState: GetState) => boolean;
+export type ActionsFactory<P> = (actionKey: ActionKey) => RequestHandler<P>;
 
 export const requestAction = (actionKey: ActionKey): string => `REQUEST_${actionKey}`;
 export const successAction = (actionKey: ActionKey): string => `SUCCESS_${actionKey}`;
@@ -96,22 +101,34 @@ export const makeActionsOf = <P>(actionKey: ActionKey): RequestHandler<P> => ({
 
 export const fetchIfNeeded = <P>(
   actionKey: ActionKey,
-  endPoint: EndPoints,
   fetchIfNeeded: FetchIfNeeded,
-  formatData?: DataFormatter<P>
-) =>
-  (parameters?: EncodedUriParameters) =>
+  actionsFactory: ActionsFactory<P> = makeActionsOf,
+  formatData?: DataFormatter<P>,
+): OnFetch =>
+  (endPoint: EndPoints | string, parameters?: EncodedUriParameters) =>
     (dispatch, getState: GetState) => {
       if (fetchIfNeeded(getState)) {
-        const onRequest = (parameters?: EncodedUriParameters): AxiosPromise<P> =>
-          restClient.get(makeUrl(endPoint, parameters));
-        return makeAsyncRequest<P>({
-          ...makeActionsOf<P>(actionKey),
-          onRequest,
+        return makeAsyncRequest<P, P>({
+          ...actionsFactory(actionKey),
+          onRequest: (): AxiosPromise<P> => restClient.get(makeUrl(endPoint, parameters)),
           formatData,
-          parameters,
           dispatch,
         });
       }
       return null;
     };
+
+export const putRequest = <P, REQUEST_BODY>(
+  actionKey: ActionKey,
+  actionsFactory: ActionsFactory<P> = makeActionsOf,
+  formatData?: DataFormatter<P>,
+): OnUpdate<REQUEST_BODY> =>
+  (endPoint: EndPoints | string, body: REQUEST_BODY) =>
+    (dispatch) =>
+      makeAsyncRequest<P, REQUEST_BODY>({
+        ...actionsFactory(actionKey),
+        onRequest: (payload: REQUEST_BODY): AxiosPromise<P> => restClient.put(endPoint, payload),
+        formatData,
+        dispatch,
+        body,
+      });

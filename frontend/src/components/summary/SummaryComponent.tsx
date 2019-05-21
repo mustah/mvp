@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {DispatchToProps, StateToProps} from '../../containers/SummaryContainer';
+import {EndPoints} from '../../services/endPoints';
 import {translate} from '../../services/translationService';
 import {Column} from '../layouts/column/Column';
 import {SmallLoader} from '../loading/SmallLoader';
@@ -14,7 +15,7 @@ export const SummaryComponent = ({
   selectionSummary: {numMeters, numCities, numAddresses}
 }: Props) => {
   React.useEffect(() => {
-    fetchSummary(parameters);
+    fetchSummary(EndPoints.summary, parameters);
   }, [parameters, numMeters, numCities, numAddresses]);
 
   return (

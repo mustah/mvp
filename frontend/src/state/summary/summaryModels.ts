@@ -1,4 +1,4 @@
-import {ErrorResponse} from '../../types/Types';
+import {RequestsHttp} from '../domain-models/domainModels';
 
 export interface SelectionSummary {
   numMeters: number;
@@ -6,9 +6,6 @@ export interface SelectionSummary {
   numAddresses: number;
 }
 
-export interface SummaryState {
-  isFetching: boolean;
-  isSuccessfullyFetched: boolean;
+export interface SummaryState extends RequestsHttp {
   payload: SelectionSummary;
-  error?: ErrorResponse;
 }

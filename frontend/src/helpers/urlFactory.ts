@@ -1,3 +1,4 @@
+import {EndPoints} from '../services/endPoints';
 import {Pagination} from '../state/ui/pagination/paginationModels';
 import {
   isValidThreshold,
@@ -253,3 +254,7 @@ export const absoluteUrlFromPath = (path: string): string => {
 export const slugOfHostname = (hostname: string): Maybe<string> =>
   Maybe.maybe(hostname.match(/^([^.]+)\.(evo|evo-staging)\.elvaco\.se$/))
     .map(matches => matches[1]);
+
+export const makeThemeUrlOf = (slug: string): string => `${EndPoints.organisations}/${slug}/theme`;
+
+export const makeUpdateThemeUrlOf = (id: uuid): string => `${EndPoints.organisations}/${id}/theme`;

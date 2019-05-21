@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {RequestParameter} from '../../../helpers/urlFactory';
-import {OwnProps, StateToProps, DispatchToProps} from '../containers/OrganisationConfirmContainer';
+import {EndPoints} from '../../../services/endPoints';
+import {DispatchToProps, OwnProps, StateToProps} from '../containers/OrganisationConfirmContainer';
 
 type Props = OwnProps & StateToProps & DispatchToProps;
 
@@ -22,7 +23,7 @@ export const OrganisationConfirmContent = ({
   React.useEffect(() => {
     if (id && isOpen) {
       fetchSubOrganisations(`${RequestParameter.organisation}=${id}`);
-      fetchOrganisationSummary(`${RequestParameter.organisation}=${id}`);
+      fetchOrganisationSummary(EndPoints.organisations, `${RequestParameter.organisation}=${id}`);
     }
   }, [id, isOpen]);
 

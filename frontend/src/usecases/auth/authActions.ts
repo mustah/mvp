@@ -3,6 +3,7 @@ import {createAction, createStandardAction} from 'typesafe-actions';
 import {routes} from '../../app/routes';
 import {config} from '../../config/config';
 import {translatedErrorMessage} from '../../helpers/translations';
+import {makeThemeUrlOf} from '../../helpers/urlFactory';
 import {GetState} from '../../reducers/rootReducer';
 import {makeToken} from '../../services/authService';
 import {EndPoints} from '../../services/endPoints';
@@ -11,6 +12,7 @@ import {User} from '../../state/domain-models/user/userModels';
 import {changeLanguage} from '../../state/language/languageActions';
 import {getCurrentVersion} from '../../state/ui/notifications/notificationsActions';
 import {uuid} from '../../types/Types';
+import {fetchTheme} from '../theme/themeActions';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 import {getOrganisationSlug} from './authSelectors';
 
@@ -45,6 +47,7 @@ export const login = (username: string, password: string) =>
       await dispatch(changeLanguage(user.language));
       dispatch(loginSuccess({token, user}));
       dispatch(getCurrentVersion(config().frontendVersion));
+      await dispatch(fetchTheme(makeThemeUrlOf(user.organisation.slug)));
       if (previousUserId && previousUserId !== user.id) {
         // cannot dispatch resetSelection() here when running tests (running application in browser is fine).
         // reason: unknown, possibly related to circular imports in non-bundled modes, such as yarn test
