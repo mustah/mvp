@@ -135,6 +135,8 @@ public class MeasurementStatTest extends IntegrationTest {
 
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
 
+    waitForMeasurementStat();
+
     MeasurementStatDto stat = fetchMeasurementStats().get(0);
 
     assertThat(stat).isEqualTo(
@@ -185,6 +187,8 @@ public class MeasurementStatTest extends IntegrationTest {
     );
 
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
+
+    waitForMeasurementStat();
 
     assertThat(dsl.select()
       .from(statData)
@@ -288,6 +292,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .readoutTime(UTC_TIME.plusDays(2))
         .build(),
       meter.logicalMeter);
+
     result = fetchConsumptionMeasurementStats();
 
     assertThat(result).hasSize(3);
@@ -319,6 +324,8 @@ public class MeasurementStatTest extends IntegrationTest {
         .build(),
       meter.logicalMeter);
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
+
+    waitForMeasurementStat();
 
     assertThat(fetchConsumptionMeasurementStats()).hasSize(0);
   }
@@ -363,6 +370,7 @@ public class MeasurementStatTest extends IntegrationTest {
   }
 
   private List<MeasurementStatDto> fetchConsumptionMeasurementStats() {
+    waitForMeasurementStat();
     return dsl.select()
       .from(statData)
       .where(statData.IS_CONSUMPTION.isTrue())
@@ -371,6 +379,7 @@ public class MeasurementStatTest extends IntegrationTest {
   }
 
   private List<MeasurementStatDto> fetchMeasurementStats() {
+    waitForMeasurementStat();
     return dsl.select()
       .from(statData).orderBy(statData.STAT_DATE.asc())
       .fetchInto(MeasurementStatDto.class);

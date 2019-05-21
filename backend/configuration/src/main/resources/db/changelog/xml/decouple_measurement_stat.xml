@@ -1,0 +1,47 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="create measurement_stat_job table" author="erimel">
+    <createTable tableName="measurement_stat_job">
+      <column name="organisation_id" type="uuid">
+        <constraints nullable="false" referencedTableName="organisation" referencedColumnNames="id" deleteCascade="true"
+                     foreignKeyName="measurement_stat_job_organisation_fk"/>
+      </column>
+      <column name="physical_meter_id" type="uuid">
+        <constraints nullable="false" referencedTableName="physical_meter" referencedColumnNames="id" deleteCascade="true"
+                     foreignKeyName="measurement_stat_job_physical_meter_fk"/>
+      </column>
+      <column name="quantity_id" type="int">
+        <constraints nullable="false" referencedTableName="quantity" referencedColumnNames="id" deleteCascade="true"
+                     foreignKeyName="measurement_stat_job_quantity_fk"/>
+      </column>
+      <column name="stat_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="read_interval_minutes" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="posix_offset" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="is_consumption" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="modified" type="TIMESTAMP WITH TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+
+    </createTable>
+    <addPrimaryKey tableName="measurement_stat_job" columnNames="organisation_id,physical_meter_id,quantity_id,stat_date"/>
+  </changeSet>
+  <changeSet id="add shard_key to measurement_stat" author="erimel">
+    <addColumn tableName="measurement_stat_job">
+      <column name="shard_key" type="integer">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

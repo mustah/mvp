@@ -270,6 +270,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .parameter(RequestParameter.THRESHOLD_BEFORE, now.plusHours(1))
       .build();
 
+    waitForMeasurementStat();
+
     ResponseEntity<MapMarkersDto> response = asUser()
       .get(url, MapMarkersDto.class);
 
@@ -302,6 +304,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .parameter(RequestParameter.THRESHOLD_AFTER, now.minusHours(1))
       .parameter(RequestParameter.THRESHOLD_BEFORE, now.plusHours(1))
       .build();
+
+    waitForMeasurementStat();
 
     ResponseEntity<MapMarkersDto> response = asUser()
       .get(url, MapMarkersDto.class);

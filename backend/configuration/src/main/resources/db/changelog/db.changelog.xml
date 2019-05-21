@@ -92,6 +92,7 @@
   <include file="xml/cascade_delete_organisation_assets.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_checksum_to_organisation_assets.xml" relativeToChangelogFile="true"/>
   <include file="xml/refactor_measurements.xml" relativeToChangelogFile="true"/>
+  <include file="xml/decouple_measurement_stat.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>
