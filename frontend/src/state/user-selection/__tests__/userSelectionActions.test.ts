@@ -451,12 +451,12 @@ describe('userSelectionActions', () => {
       (_, currentThresholdQuery, newThreshold, shouldTriggerAction) => {
         store = configureMockStore({
           ...rootStateNoSaved,
-          userSelection: userSelectionStateFromThreshold(currentThresholdQuery)
+          userSelection: userSelectionStateFromThreshold(currentThresholdQuery as ThresholdQuery)
         });
 
-        store.dispatch(onChangeThreshold(newThreshold));
+        store.dispatch(onChangeThreshold(newThreshold as ThresholdQuery));
 
-        expect(store.getActions()).toEqual(shouldTriggerAction ? [setThreshold(newThreshold)] : []);
+        expect(store.getActions()).toEqual(shouldTriggerAction ? [setThreshold(newThreshold as ThresholdQuery)] : []);
       }
     );
   });

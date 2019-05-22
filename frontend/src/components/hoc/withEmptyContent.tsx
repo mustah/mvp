@@ -10,7 +10,7 @@ export const withEmptyContentComponent =
     EmptyContentComponent: React.ComponentType<P>,
   ): React.SFC<P & HasContent> =>
     ({hasContent, ...props}: HasContent) =>
-      hasContent ? <Component {...props}/> : <EmptyContentComponent {...props}/>;
+      hasContent ? <Component {...props as P}/> : <EmptyContentComponent {...props as P}/>;
 
 export const withEmptyContent =
   <P extends WithEmptyContentProps>(Component: React.ComponentType<P>): React.SFC<P> =>
