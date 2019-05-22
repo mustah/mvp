@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.jooq.tables.MeasurementStatData;
@@ -121,7 +122,9 @@ public class MeasurementStatTest extends IntegrationTest {
   public void deleteUpdatesStats() {
     Meters meter = newConnectedMeter();
     Measurement measurement = measurements.save(
-      powerMeasurementFor(meter.physicalMeter).readoutTime(TIME).value(1.0).build(),
+      powerMeasurementFor(meter.physicalMeter)
+        .readoutTime(TIME)
+        .value(1.0).build(),
       meter.logicalMeter
     );
 
@@ -132,7 +135,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .build(),
       meter.logicalMeter
     );
-
+    waitForMeasurementStat();
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
 
     waitForMeasurementStat();
@@ -412,6 +415,7 @@ public class MeasurementStatTest extends IntegrationTest {
       .address("1234")
       .logicalMeterId(logicalMeterId)
       .readIntervalMinutes(60)
+      .activePeriod(PeriodRange.from(UTC_TIME.minusHours(1)))
       .build());
     return meters;
   }
@@ -441,6 +445,7 @@ public class MeasurementStatTest extends IntegrationTest {
       .address("1234")
       .logicalMeterId(logicalMeterId)
       .readIntervalMinutes(readIntervalMinutes)
+      .activePeriod(PeriodRange.from(TIME))
       .build());
     return meters;
   }

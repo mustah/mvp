@@ -672,7 +672,7 @@ public class MeasurementRepository implements Measurements {
     if (measurement.physicalMeter.readIntervalMinutes == 0
       || !measurement.physicalMeter.isActive(measurement.readoutTime)
     ) {
-      return null;
+      return measurement.readoutTime;
     }
     var instant = measurement.readoutTime.toInstant()
       .atOffset(ZoneOffset.of(utcOffset));

@@ -49,22 +49,20 @@ begin
                                         '1 day'::interval) at time zone
                         current_tz as date) as d2) as gen
              left join
-           (select (m.readout_time at time zone current_tz)::date as date1,
-                   min(value),
-                   max(value),
+           (select (m.expected_time at time zone current_tz)::date as date1,
+                   min(m.value),
+                   max(m.value),
                    coalesce(60 * 24 / nullif(read_interval, 0), 0) as expected_count,
-                   count(value)::int as received_count,
-                   avg(value) as average
-            from generate_series(p_stat_date::timestamp at time zone current_tz,
-                                 (stop_date::timestamp + interval '1 day') at time zone current_tz,
-                                 read_interval_interval(read_interval)) as date_serie
-                   join measurement m on (m.readout_time = date_serie)
+                   count(m.value)::int as received_count,
+                   avg(m.value) as average
+            from measurement m
             where m.physical_meter_id = p_meter_id and
                   m.organisation_id = p_organisation_id and
                   m.quantity_id = p_quantity_id and
-                  m.readout_time >= p_stat_date::timestamp
+                  m.expected_time is not null and
+                  m.expected_time >= p_stat_date::timestamp
                     at time zone current_tz and
-                  m.readout_time < (stop_date::timestamp + interval '1 day')
+                  m.expected_time < (stop_date::timestamp + interval '1 day')
                     at time zone current_tz
             group by date1, m.physical_meter_id, m.quantity_id) as mg on mg.date1 = gen.d2);
   else
