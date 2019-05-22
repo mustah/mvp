@@ -87,6 +87,7 @@ class LogicalMeterJooqJpaRepository
 
   private final DSLContext dsl;
   private final FilterAcceptor logicalMeterFilters;
+  private final FilterAcceptor displayQuantityFilters;
   private final MeasurementThresholdParser measurementThresholdParser;
 
   @Autowired
@@ -94,11 +95,13 @@ class LogicalMeterJooqJpaRepository
     EntityManager entityManager,
     DSLContext dsl,
     FilterAcceptor logicalMeterFilters,
+    FilterAcceptor displayQuantityFilters,
     MeasurementThresholdParser measurementThresholdParser
   ) {
     super(entityManager, LogicalMeterEntity.class);
     this.dsl = dsl;
     this.logicalMeterFilters = logicalMeterFilters;
+    this.displayQuantityFilters = displayQuantityFilters;
     this.measurementThresholdParser = measurementThresholdParser;
   }
 
@@ -289,7 +292,7 @@ class LogicalMeterJooqJpaRepository
     ).distinctOn(QUANTITY.NAME)
       .from(LOGICAL_METER);
 
-    FilterVisitors.displayQuantity().accept((toFilters(parameters))).andJoinsOn(query);
+    displayQuantityFilters.accept((toFilters(parameters))).andJoinsOn(query);
 
     var orderedQuery = query.groupBy(
       QUANTITY.NAME,

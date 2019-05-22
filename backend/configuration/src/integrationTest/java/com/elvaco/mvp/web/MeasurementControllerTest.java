@@ -10,7 +10,6 @@ import java.util.stream.IntStream;
 
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
@@ -1158,46 +1157,6 @@ public class MeasurementControllerTest extends IntegrationTest {
       ));
   }
 
-  public LogicalMeter createMeterWithBothReadoutAndConsumtion(ZonedDateTime date) {
-    MeterDefinition customMeterDefinition = new MeterDefinition(
-      666L,
-      context().superAdmin.organisation,
-      "sksksksk",
-      Medium.builder()
-        .id(666L)
-        .name(Medium.DISTRICT_HEATING).build(),
-      true,
-      Set.of(
-        new DisplayQuantity(
-          Quantity.ENERGY,
-          CONSUMPTION,
-          KILOWATT_HOURS
-        ), new DisplayQuantity(
-          Quantity.ENERGY,
-          READOUT,
-          KILOWATT_HOURS
-        ), new DisplayQuantity(
-          Quantity.DIFFERENCE_TEMPERATURE,
-          READOUT,
-          DEGREES_CELSIUS
-        )
-      )
-    );
-
-    customMeterDefinition = meterDefinitions.save(customMeterDefinition);
-
-    LogicalMeter heatMeter = given(logicalMeter()
-      .meterDefinition(customMeterDefinition));
-    given(heatMeter,
-      energyMeasurement(heatMeter, date),
-      energyMeasurement(heatMeter, date.plusHours(1)),
-      diffTempMeasurement(heatMeter, date),
-      diffTempMeasurement(heatMeter, date.plusHours(1))
-    );
-
-    return heatMeter;
-  }
-
   private String logicalMeterIdRequestString(int numberOfMeters) {
     StringBuffer sb = new StringBuffer();
     IntStream.rangeClosed(1, numberOfMeters)
@@ -1205,24 +1164,6 @@ public class MeasurementControllerTest extends IntegrationTest {
       .map(i -> given(logicalMeter()))
       .forEach(lm -> sb.append("&logicalMeterId=").append(lm.id.toString()));
     return sb.toString();
-  }
-
-  private Measurement.MeasurementBuilder energyMeasurement(LogicalMeter meter, ZonedDateTime date) {
-    return measurement(meter)
-      .readoutTime(date)
-      .unit("J")
-      .quantity(ENERGY.name)
-      .value(ENERGY_VALUE);
-  }
-
-  private Measurement.MeasurementBuilder diffTempMeasurement(
-    LogicalMeter meter,
-    ZonedDateTime date
-  ) {
-    return measurement(meter).readoutTime(date)
-      .unit(DEGREES_CELSIUS)
-      .quantity(DIFFERENCE_TEMPERATURE.name)
-      .value(DIFF_TEMP_VALUE_CELSIUS);
   }
 
   private List<MeasurementSeriesDto> getListAsSuperAdmin(String url) {

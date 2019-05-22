@@ -5,14 +5,16 @@ import java.util.Map;
 import java.util.Set;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
-import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.Units;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.mappers.GatewayEntityMapper;
@@ -25,6 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.core.domainmodels.DisplayMode.CONSUMPTION;
+import static com.elvaco.mvp.core.domainmodels.DisplayMode.READOUT;
+import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY;
+import static com.elvaco.mvp.core.domainmodels.Units.MEGAWATT_HOURS;
+import static com.elvaco.mvp.core.domainmodels.Units.WATT;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -129,16 +136,16 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   }
 
   @Test
-  public void getPreferredQuantityParametersForLogicalMeters() {
+  public void getPreferredQuantityParameters_forLogicalMeters() {
     var displayQuantity1 = new DisplayQuantity(
       Quantity.POWER,
-      DisplayMode.READOUT,
+      READOUT,
       2,
-      Units.WATT
+      WATT
     );
     var displayQuantity2 = new DisplayQuantity(
       Quantity.POWER,
-      DisplayMode.READOUT,
+      READOUT,
       2,
       Units.KILOWATT
     );
@@ -158,7 +165,58 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     assertThat(logicalMeterJpaRepository.getPreferredQuantityParameters(parameters))
       .hasSize(1)
       .extracting(qp -> qp.name, qp -> qp.unit, QuantityParameter::isConsumption)
-      .containsExactly(tuple(Quantity.POWER.name, Units.WATT, false));
+      .containsExactly(tuple(Quantity.POWER.name, WATT, false));
+  }
+
+  @Test
+  public void getPreferredQuantityParameters_forOrganisation() {
+    Organisation orgA = given(organisation());
+    Organisation orgB = given(organisation());
+
+    var meterDef1 = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+      .organisation(orgA)
+      .quantities(Set.of(new DisplayQuantity(ENERGY, READOUT, 1, MEGAWATT_HOURS)))
+    );
+
+    var meterDef2 = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+      .organisation(orgA)
+      .quantities(Set.of(new DisplayQuantity(ENERGY, CONSUMPTION, 1, "J")))
+    );
+
+    var meterDef3 = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+      .organisation(orgB)
+      .quantities(Set.of(new DisplayQuantity(ENERGY, READOUT, 1, "Wh")))
+    );
+
+    var defaultMeterDefinition = MeterDefinition.DEFAULT_DISTRICT_HEATING; // kWh
+
+    // Two meters on organisation A with meterDefintion1 => meterDef1 is preferred
+    given(logicalMeter().organisationId(orgA.id).meterDefinition(meterDef1));
+    given(logicalMeter().organisationId(orgA.id).meterDefinition(meterDef1));
+
+    // One meter on organisation A with meterDefintion2
+    given(logicalMeter().organisationId(orgA.id).meterDefinition(meterDef2));
+
+    // Three meters on default organisation with default meterDefintion
+    given(logicalMeter().meterDefinition(defaultMeterDefinition));
+    given(logicalMeter().meterDefinition(defaultMeterDefinition));
+    given(logicalMeter().meterDefinition(defaultMeterDefinition));
+
+    // Three meters on organisation B with meterDefintion3
+    given(logicalMeter().organisationId(orgB.id).meterDefinition(meterDef3));
+    given(logicalMeter().organisationId(orgB.id).meterDefinition(meterDef3));
+    given(logicalMeter().organisationId(orgB.id).meterDefinition(meterDef3));
+
+    RequestParameters parameters = new RequestParametersAdapter()
+      .add(RequestParameter.ORGANISATION, orgA.id.toString());
+
+    assertThat(logicalMeterJpaRepository.getPreferredQuantityParameters(parameters))
+      .hasSize(1)
+      .extracting(qp -> qp.name, qp -> qp.unit, QuantityParameter::isConsumption)
+      .containsExactly(tuple(ENERGY.name, MEGAWATT_HOURS, false));
   }
 
   @Test

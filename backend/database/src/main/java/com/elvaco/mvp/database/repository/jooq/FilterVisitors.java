@@ -25,16 +25,20 @@ public class FilterVisitors {
     return new SelectionFilterVisitor();
   }
 
-  public static FilterAcceptor displayQuantity() {
-    return new DisplayQuantityFilterVisitor();
-  }
-
   public static FilterAcceptor organisation() {
     return new OrganisationFilterVisitor();
   }
 
   public static FilterAcceptor logicalMeter(DSLContext dsl, MeasurementThresholdParser parser) {
     return new LogicalMeterFilterVisitor(filterDecorators(dsl, parser));
+  }
+
+  public static FilterAcceptor displayQuantity(DSLContext dsl, MeasurementThresholdParser parser) {
+    return new LogicalMeterFilterVisitor(Stream.concat(
+      filterDecorators(dsl, parser).stream(),
+      Stream.of(new DisplayQuantityFilterVisitor())
+    ).collect(toList()
+    ));
   }
 
   public static FilterAcceptor logicalMeterWithCollectionPercentageAndLastData(

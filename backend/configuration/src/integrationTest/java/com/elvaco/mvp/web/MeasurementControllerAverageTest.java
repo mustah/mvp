@@ -28,8 +28,6 @@ import static com.elvaco.mvp.core.domainmodels.Quantity.EXTERNAL_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.POWER;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
-import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
-import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -905,45 +903,6 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void findsAverage_ByCity() {
-    var date = context().now();
-
-    var kungsbacka = kungsbacka().build();
-    var kungsbackaLogical = given(logicalMeter().meterDefinition(DEFAULT_ROOM_SENSOR)
-      .location(kungsbacka));
-    given(measurementSeries()
-      .forMeter(kungsbackaLogical)
-      .withQuantity(EXTERNAL_TEMPERATURE)
-      .startingAt(context().now())
-      .withValues(1.0));
-
-    var stockholmLogical = given(logicalMeter().meterDefinition(DEFAULT_ROOM_SENSOR)
-      .location(stockholm().build()));
-    given(measurementSeries()
-      .forMeter(stockholmLogical)
-      .withQuantity(EXTERNAL_TEMPERATURE)
-      .startingAt(context().now())
-      .withValues(2.0));
-
-    var response = asUser()
-      .getList(
-        Url.builder()
-          .path("/measurements/average")
-          .reportPeriod(date, date)
-          .quantity(Quantity.EXTERNAL_TEMPERATURE)
-          .city(kungsbacka)
-          .build(),
-        MeasurementSeriesDto.class
-      ).getBody();
-
-    ZonedDateTime periodStartHour = date.truncatedTo(ChronoUnit.HOURS);
-
-    assertThat(response)
-      .flatExtracting("values")
-      .containsExactly(new MeasurementValueDto(periodStartHour.toInstant(), 1.0));
-  }
-
-  @Test
   public void findsAverage_ByThreshold() {
     var reportStop = context().now().minusSeconds(1);
     var reportStart = context().now().minusWeeks(1).truncatedTo(ChronoUnit.DAYS);
@@ -996,39 +955,6 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         new MeasurementValueDto(reportStart.plusDays(4).toInstant(), 5.0),
         new MeasurementValueDto(reportStart.plusDays(5).toInstant(), 6.0),
         new MeasurementValueDto(reportStart.plusDays(6).toInstant(), 7.0)
-      );
-  }
-
-  @Test
-  public void findsAverageConsumptionForGasMeters_ByMedium() {
-    var date = context().now();
-    var logicalMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
-
-    given(measurementSeries()
-      .forMeter(logicalMeter)
-      .withQuantity(VOLUME)
-      .startingAt(context().now())
-      .withValues(1.0, 2.0, 5.0));
-
-    var response = asUser()
-      .getList(
-        "/measurements/average"
-          + "?reportAfter=" + date
-          + "&reportBefore=" + date.plusHours(3)
-          + "&quantity=" + Quantity.VOLUME.name
-          + "&medium=Gas",
-        MeasurementSeriesDto.class
-      ).getBody();
-
-    ZonedDateTime periodStartHour = date.truncatedTo(ChronoUnit.HOURS);
-
-    assertThat(response)
-      .flatExtracting("values")
-      .containsExactly(
-        new MeasurementValueDto(periodStartHour.toInstant(), 1.0),
-        new MeasurementValueDto(periodStartHour.plusHours(1).toInstant(), 3.0),
-        new MeasurementValueDto(periodStartHour.plusHours(2).toInstant(), null),
-        new MeasurementValueDto(periodStartHour.plusHours(3).toInstant(), null)
       );
   }
 
