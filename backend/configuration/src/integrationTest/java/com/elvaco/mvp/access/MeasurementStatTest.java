@@ -278,14 +278,14 @@ public class MeasurementStatTest extends IntegrationTest {
         .build(),
       meter.logicalMeter)
     );
-
+    waitForMeasurementStat();
     List<MeasurementStatDto> result = fetchConsumptionMeasurementStats();
 
     assertThat(result).hasSize(2);
     assertThat(result.get(0).receivedCount).isEqualTo(23);
     assertThat(result.get(0).date).isEqualTo(UTC_TIME.truncatedTo(ChronoUnit.DAYS).toLocalDate());
-    assertThat(result.get(1).receivedCount).isEqualTo(24);
-    assertThat(result.get(1).max).isEqualTo(26);
+    assertThat(result.get(1).receivedCount).isEqualTo(23);
+    assertThat(result.get(1).max).isEqualTo(1);
     assertThat(result.get(1).date).isEqualTo(UTC_TIME.plusDays(2)
       .truncatedTo(ChronoUnit.DAYS).toLocalDate());
 
@@ -295,19 +295,15 @@ public class MeasurementStatTest extends IntegrationTest {
         .readoutTime(UTC_TIME.plusDays(2))
         .build(),
       meter.logicalMeter);
-
+    waitForMeasurementStat();
     result = fetchConsumptionMeasurementStats();
 
-    assertThat(result).hasSize(3);
+    assertThat(result).hasSize(2);
     assertThat(result.get(0).receivedCount).isEqualTo(23);
     assertThat(result.get(0).date).isEqualTo(UTC_TIME.truncatedTo(ChronoUnit.DAYS).toLocalDate());
-    assertThat(result.get(1).receivedCount).isEqualTo(1);
-    assertThat(result.get(1).max).isEqualTo(25);
-    assertThat(result.get(1).date).isEqualTo(UTC_TIME.plusDays(1)
-      .truncatedTo(ChronoUnit.DAYS).toLocalDate());
-    assertThat(result.get(2).receivedCount).isEqualTo(24);
-    assertThat(result.get(2).max).isEqualTo(1);
-    assertThat(result.get(2).date).isEqualTo(UTC_TIME.plusDays(2)
+    assertThat(result.get(1).receivedCount).isEqualTo(24);
+    assertThat(result.get(1).max).isEqualTo(1);
+    assertThat(result.get(1).date).isEqualTo(UTC_TIME.plusDays(2)
       .truncatedTo(ChronoUnit.DAYS).toLocalDate());
   }
 

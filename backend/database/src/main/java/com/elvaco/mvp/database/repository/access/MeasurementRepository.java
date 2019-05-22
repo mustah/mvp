@@ -326,21 +326,8 @@ public class MeasurementRepository implements Measurements {
       + "          organisation_id,\n"
       + "          quantity_id,\n"
       + "          physical_meter_id,\n"
-      + "          (((stat_date::timestamp at time zone posix_offset) - "
-      + "            cast(\n"
-      + "              (case when read_interval_minutes = 0 then "
-      + "                60 "
-      + "              else "
-      + "                read_interval_minutes "
-      + "               end) "
-      + "             ||' minutes' as interval)) at time zone posix_offset)::date,\n"
-      + "          (select coalesce( "
-      + "            (select min(msd.stat_date) from measurement_stat_data msd where "
-      + "               msd.physical_meter_id = m1.physical_meter_id "
-      + "               and msd.organisation_id = m1.organisation_id "
-      + "               and msd.quantity_id= m1.quantity_id "
-      + "               and msd.stat_date>m1.stat_date),"
-      +  "         stat_date)),\n"
+      + "          stat_date,\n"
+      + "          stat_date,\n"
       + "          posix_offset,\n"
       + "          read_interval_minutes,\n"
       + "          is_consumption)\n"
@@ -669,11 +656,14 @@ public class MeasurementRepository implements Measurements {
   }
 
   private static ZonedDateTime getExpectedTime(Measurement measurement, String utcOffset) {
-    if (measurement.physicalMeter.readIntervalMinutes == 0
-      || !measurement.physicalMeter.isActive(measurement.readoutTime)
-    ) {
+    if (!measurement.physicalMeter.isActive(measurement.readoutTime)) {
+      return null;
+    }
+
+    if (measurement.physicalMeter.readIntervalMinutes == 0) {
       return measurement.readoutTime;
     }
+
     var instant = measurement.readoutTime.toInstant()
       .atOffset(ZoneOffset.of(utcOffset));
     var startOfDay = instant.truncatedTo(ChronoUnit.DAYS);
