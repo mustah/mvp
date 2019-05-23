@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {Dispatch} from 'react-redux';
 import {action} from 'typesafe-actions';
 import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {Maybe} from '../helpers/Maybe';
@@ -12,18 +11,26 @@ export type UnixTimestamp = number;
 
 export type EncodedUriParameters = string;
 
-export type OnClick = () => void;
-export type OnClickEventHandler = (event: any) => void;
-export type OnClickWith<T> = (arg: T) => void;
-export type OnChange = (...args) => void;
-export type OnKeyPress = (...args) => void;
-export type Callback = () => void;
+/**
+ * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.
+ */
+export type Action<P> = PayloadAction<string, P>;
+export type OnPayloadAction<P> = (payload: P) => Action<P>;
+export type OnEmptyAction = () => EmptyAction<string>;
+export type Dispatch = React.Dispatch<any>;
+
 export type CallbackWith<T> = (arg: T) => void;
+export type CallbackAny = (...args: any) => void;
+export type Callback = () => void;
+export type OnClick = Callback;
+export type OnClickEventHandler = (event: any) => void;
+export type OnClickWith<T> = CallbackWith<T>;
+export type OnChange = CallbackAny;
+export type OnKeyPress = CallbackAny;
 export type OnClickWithId = CallbackWith<uuid>;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
 export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) => void;
-export type CallbackWithData = (requestData: any) => Dispatch<any>;
-export type CallbackWithDataAndUrlParameters = (requestData: any, urlParameters: any) => any;
+
 export type RenderFunction<T> = (props: T) => Children;
 
 export type Fetch = (parameters?: EncodedUriParameters) => void;
@@ -42,14 +49,6 @@ export type Children = ItemOrArray<React.ReactNode>;
 
 export type PickValue<T, P extends keyof T> = T[P];
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-/**
- * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.
- */
-export type Action<P> = PayloadAction<string, P>;
-export type OnPayloadAction<P> = (payload: P) => Action<P>;
-export type OnEmptyAction = () => EmptyAction<string>;
-export type Dispatcher = Dispatch<any>;
 
 export const payloadActionOf =
   <P>(type: string): OnPayloadAction<P> => (payload: P) => action<string, P>(type, payload);

@@ -8,7 +8,7 @@ import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {getFirstDomainModel} from '../../../state/domain-models/domainModelsSelectors';
 import {addWidgetToDashboard, deleteWidget, updateWidget} from '../../../state/domain-models/widget/widgetActions';
 import {Widget} from '../../../state/domain-models/widget/widgetModels';
-import {Callback, CallbackWithData} from '../../../types/Types';
+import {Callback, CallbackAny} from '../../../types/Types';
 import {DashboardComponent} from '../components/Dashboard';
 import {onFetchDashboards} from '../dashboardActions';
 import {hasDashboardWidgets} from '../dashboardSelectors';
@@ -22,11 +22,11 @@ export interface StateToProps {
 }
 
 export interface DispatchToProps {
-  addWidgetToDashboard: CallbackWithData;
-  deleteWidget: CallbackWithData;
+  addWidgetToDashboard: CallbackAny;
+  deleteWidget: CallbackAny;
   onFetchDashboards: Callback;
-  updateWidget: CallbackWithData;
-  updateDashboard: CallbackWithData;
+  updateWidget: CallbackAny;
+  updateDashboard: CallbackAny;
 }
 
 const mapStateToProps = ({domainModels: {dashboards, widgets}}: RootState): StateToProps => {

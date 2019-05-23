@@ -1,17 +1,8 @@
-import {Dispatch} from 'react-redux';
-import {routerActions} from 'react-router-redux';
+import {routerActions} from 'connected-react-router';
 import {routes} from '../../../app/routes';
-import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {
-  CallbackWithData,
-  CallbackWithDataAndUrlParameters,
-  emptyActionOf,
-  ErrorResponse,
-  Sectors,
-  uuid
-} from '../../../types/Types';
+import {CallbackAny, CallbackWith, Dispatch, emptyActionOf, ErrorResponse, Sectors, uuid} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {
   clearError,
@@ -49,14 +40,14 @@ export const clearSubOrganisations = emptyActionOf(domainModelsClear(Sectors.sub
 export const fetchOrganisation = fetchEntityIfNeeded(EndPoints.organisations, 'organisations');
 
 export const deleteOrganisation = deleteRequest<Organisation>(EndPoints.organisations, {
-    afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
+    afterSuccess: (organisation: Organisation, dispatch: Dispatch) => {
       const translatedMessage = firstUpperTranslated(
         'deleted the organisation {{name}}',
         {...organisation},
       );
       dispatch(showSuccessMessage(translatedMessage));
     },
-    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch) => {
       const translatedMessage = firstUpperTranslated(
         'failed to delete the organisation: {{error}}',
         {error: message},
@@ -67,7 +58,7 @@ export const deleteOrganisation = deleteRequest<Organisation>(EndPoints.organisa
 );
 
 const createOrganisationCallbacks = {
-  afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
+  afterSuccess: (organisation: Organisation, dispatch: Dispatch) => {
     dispatch(showSuccessMessage(
       firstUpperTranslated(
         'created the organisation {{name}} ({{slug}})',
@@ -76,7 +67,7 @@ const createOrganisationCallbacks = {
     ));
     dispatch(routerActions.push(`${routes.adminOrganisations}`));
   },
-  afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+  afterFailure: ({message}: ErrorResponse, dispatch: Dispatch) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to create organisation: {{error}}',
       {error: message},
@@ -84,21 +75,21 @@ const createOrganisationCallbacks = {
   },
 };
 
-export const addOrganisation: CallbackWithData =
+export const addOrganisation: CallbackWith<OrganisationWithoutId> =
   postRequest<OrganisationWithoutId>(EndPoints.organisations, createOrganisationCallbacks);
 
-export const addSubOrganisation: CallbackWithDataAndUrlParameters =
+export const addSubOrganisation: CallbackAny =
   postRequestToUrl<OrganisationWithoutId, uuid>(
     EndPoints.organisations,
     createOrganisationCallbacks,
     (parentId: uuid) => `${EndPoints.organisations}/${parentId}/sub-organisations`
   );
 
-export const updateOrganisation: CallbackWithData =
+export const updateOrganisation: CallbackAny =
   putRequest<Organisation, Organisation>(
     EndPoints.organisations,
     {
-      afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
+      afterSuccess: (organisation: Organisation, dispatch: Dispatch) => {
         dispatch(showSuccessMessage(
           firstUpperTranslated(
             'updated the organisation {{name}} ({{slug}})',
@@ -106,7 +97,7 @@ export const updateOrganisation: CallbackWithData =
           ),
         ));
       },
-      afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+      afterFailure: ({message}: ErrorResponse, dispatch: Dispatch) => {
         dispatch(showFailMessage(firstUpperTranslated(
           'failed to update organisation: {{error}}',
           {error: message},
@@ -132,10 +123,10 @@ export interface AssetTypeForOrganisation extends AssetTyped {
 export const uploadAsset = putFile<AssetTypeForOrganisation>(
   EndPoints.organisations,
   {
-    afterSuccess: (_, dispatch: Dispatch<RootState>) => {
+    afterSuccess: (_, dispatch: Dispatch) => {
       dispatch(showSuccessMessage(firstUpperTranslated('updated')));
     },
-    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch) => {
       dispatch(showFailMessage(firstUpperTranslated(
         'failed to update: {{error}}',
         {error: firstUpperTranslated(message.toLowerCase())},
@@ -148,10 +139,10 @@ export const uploadAsset = putFile<AssetTypeForOrganisation>(
 export const resetAsset = deleteRequestToUrl<undefined, AssetTypeForOrganisation>(
   EndPoints.organisations,
   {
-    afterSuccess: (_, dispatch: Dispatch<RootState>) => {
+    afterSuccess: (_, dispatch: Dispatch) => {
       dispatch(showSuccessMessage(firstUpperTranslated('now using default')));
     },
-    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch) => {
       dispatch(showFailMessage(firstUpperTranslated(
         'failed to update: {{error}}',
         {error: firstUpperTranslated(message.toLowerCase())},

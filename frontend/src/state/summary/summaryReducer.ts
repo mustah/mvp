@@ -1,4 +1,4 @@
-import {Location} from 'history';
+import {LocationChangePayload} from 'connected-react-router';
 import {ActionType, getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {isOnSearchPage} from '../../app/routes';
@@ -26,56 +26,55 @@ type ActionTypes =
   | Action<SelectionSummary | ErrorResponse>
   | ActionType<typeof locationChange | typeof search>;
 
-export const summaryFor =
-  (sector: Sectors) =>
+export const summaryFor = (sector: Sectors) =>
   (state: SummaryState = initialState, action: ActionTypes): SummaryState => {
-  switch (action.type) {
-    case requestAction(sector):
-      return {
-        ...state,
-        isFetching: true,
-      };
-    case successAction(sector):
-      return {
-        ...state,
-        isFetching: false,
-        isSuccessfullyFetched: true,
-        payload: (action as Action<SelectionSummary>).payload,
-      };
-    case failureAction(sector):
-      return {
-        ...state,
-        isFetching: false,
-        isSuccessfullyFetched: false,
-        error: (action as Action<ErrorResponse>).payload,
-      };
-    case domainModelsPaginatedDeleteRequest(EndPoints.meters):
-      return {
-        ...state,
-        isFetching: true,
-      };
-    case domainModelsPaginatedDeleteSuccess(EndPoints.meters):
-      return {
-        ...state,
-        isFetching: false,
-        isSuccessfullyFetched: true,
-        payload: {...state.payload, numMeters: state.payload.numMeters - 1}
-      };
-    case domainModelsPaginatedDeleteFailure(EndPoints.meters):
-      return {
-        ...state,
-        isFetching: false,
-        isSuccessfullyFetched: false,
-      };
-    case getType(locationChange):
-      return isOnSearchPage((action as Action<Location>).payload) ? state : initialState;
-    case getType(search):
-    case clearAction(sector):
-      return initialState;
-    default:
-      return resetReducer(state, action, initialState);
-  }
-};
+    switch (action.type) {
+      case requestAction(sector):
+        return {
+          ...state,
+          isFetching: true,
+        };
+      case successAction(sector):
+        return {
+          ...state,
+          isFetching: false,
+          isSuccessfullyFetched: true,
+          payload: (action as Action<SelectionSummary>).payload,
+        };
+      case failureAction(sector):
+        return {
+          ...state,
+          isFetching: false,
+          isSuccessfullyFetched: false,
+          error: (action as Action<ErrorResponse>).payload,
+        };
+      case domainModelsPaginatedDeleteRequest(EndPoints.meters):
+        return {
+          ...state,
+          isFetching: true,
+        };
+      case domainModelsPaginatedDeleteSuccess(EndPoints.meters):
+        return {
+          ...state,
+          isFetching: false,
+          isSuccessfullyFetched: true,
+          payload: {...state.payload, numMeters: state.payload.numMeters - 1}
+        };
+      case domainModelsPaginatedDeleteFailure(EndPoints.meters):
+        return {
+          ...state,
+          isFetching: false,
+          isSuccessfullyFetched: false,
+        };
+      case getType(locationChange):
+        return isOnSearchPage((action as Action<LocationChangePayload>).payload.location) ? state : initialState;
+      case getType(search):
+      case clearAction(sector):
+        return initialState;
+      default:
+        return resetReducer(state, action, initialState);
+    }
+  };
 
 export const summary = summaryFor(Sectors.summary);
 

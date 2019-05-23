@@ -1,13 +1,13 @@
 import {AxiosPromise} from 'axios';
-import {Dispatch} from 'react-redux';
 import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
-import {GetState, RootState} from '../../reducers/rootReducer';
+import {GetState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {
   ActionKey,
+  Dispatch,
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
@@ -46,8 +46,8 @@ export const domainModelsClear = (actionKey: ActionKey): string =>
   `DOMAIN_MODELS_CLEAR_${actionKey}`;
 
 export interface RequestCallbacks<ResponseData> {
-  afterSuccess?: (domainModel: ResponseData, dispatch: Dispatch<RootState>) => void;
-  afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;
+  afterSuccess?: (domainModel: ResponseData, dispatch: Dispatch) => void;
+  afterFailure?: (error: ErrorResponse, dispatch: Dispatch) => void;
 }
 
 export type DataFormatter<T> = (data?: any) => T;
@@ -63,7 +63,7 @@ interface AsyncRequest<REQUEST_DATA, T>
   requestFunc: (requestData?: REQUEST_DATA) => any;
   formatData?: DataFormatter<T>;
   requestData?: REQUEST_DATA;
-  dispatch: Dispatch<RootState>;
+  dispatch: Dispatch;
 }
 
 const asyncRequest = async <REQUEST_DATA, T>(
@@ -146,7 +146,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
 ) =>
   (requestData?: EncodedUriParameters) =>
-    (dispatch, getState: GetState) => {
+    (dispatch: Dispatch, getState: GetState): Promise<void> | null => {
       if (shouldFetch(getState().domainModels[entityType])) {
         const requestFunc = (requestData: EncodedUriParameters): AxiosPromise<T> =>
           restClient.get(makeUrl(endPoint, requestData));
@@ -170,7 +170,7 @@ export const fetchEntitiesIfNeeded = <T extends Identifiable>(
   requestDataFactory: (meterIds: uuid[], gatewayId?: uuid) => string,
 ) =>
   (meterIds: uuid[], parameters: EncodedUriParameters, gatewayId?: uuid) =>
-    (dispatch, getState: GetState) => {
+    (dispatch: Dispatch, getState: GetState) => {
       const idsToFetch: uuid[] = meterIds
         .filter((id: uuid) => shouldFetchEntity(id, getState().domainModels[entityType]));
       if (idsToFetch.length) {
@@ -229,7 +229,7 @@ export const postRequestToUrl = <T, P>(
   url: (parameters: P) => string
 ) =>
   (requestData: T, urlParameters: P) =>
-    (dispatch) =>
+    (dispatch: Dispatch) =>
       asyncRequest<T, T>({
         ...postRequestOf<T>(endPoint),
         requestFunc: (requestData: T) => restClient.post(url(urlParameters), requestData),

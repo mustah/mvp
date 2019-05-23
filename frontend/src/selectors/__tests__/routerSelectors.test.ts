@@ -1,5 +1,5 @@
+import {RouterState} from 'connected-react-router';
 import {Pathname} from 'history';
-import {RouterState} from 'react-router-redux';
 import {getPathname, isReportPage, isSelectionPage} from '../routerSelectors';
 
 describe('routerSelectors', () => {
@@ -11,10 +11,6 @@ describe('routerSelectors', () => {
   describe('selectLocation', () => {
     it('will always have a location when getting pathname', () => {
       expect(getPathname(stateWith('/home'))).toEqual('/home');
-    });
-
-    it('throws when unwrapping a null location', () => {
-      expect(() => getPathname({location: null})).toThrow();
     });
   });
 

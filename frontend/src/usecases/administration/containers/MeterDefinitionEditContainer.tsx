@@ -3,7 +3,7 @@ import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
-import {bindActionCreators} from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
 import {MeterDefinitionEditForm} from '../../../components/forms/MeterDefinitionEditForm';
@@ -28,7 +28,7 @@ import {Organisation} from '../../../state/domain-models/organisation/organisati
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {fetchQuantities} from '../../../state/domain-models/quantities/quantitesApiActions';
-import {CallbackWithData, ErrorResponse, Fetch} from '../../../types/Types';
+import {CallbackWith, ErrorResponse, Fetch} from '../../../types/Types';
 
 interface StateToProps {
   meterDefinitions: ObjectsById<MeterDefinition>;
@@ -39,16 +39,16 @@ interface StateToProps {
   quantities: ObjectsById<Quantity>;
 }
 
-interface DispatchToProps {
-  addMeterDefinition: CallbackWithData;
-  updateMeterDefinition: CallbackWithData;
+export interface DispatchToProps {
+  addMeterDefinition: CallbackWith<MeterDefinition>;
+  updateMeterDefinition: CallbackWith<MeterDefinition>;
   fetchMeterDefinitions: Fetch;
   fetchOrganisations: Fetch;
   fetchMediums: Fetch;
   fetchQuantities: Fetch;
 }
 
-type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{meterDefinitionId: number}>;
+type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{meterDefinitionId: string}>;
 type Props = OwnProps & StateToProps & DispatchToProps;
 
 const MeterDefinitionEdit = (props: Props) => {
@@ -117,7 +117,7 @@ const mapStateToProps = (
   });
 };
 
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => bindActionCreators({
   addMeterDefinition,
   updateMeterDefinition,
   fetchMeterDefinitions,

@@ -1,11 +1,10 @@
-import {Dispatch} from 'react-redux';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
-import {GetState, RootState} from '../../reducers/rootReducer';
+import {GetState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
-import {Action, emptyActionOf, ErrorResponse, Identifiable, payloadActionOf, uuid} from '../../types/Types';
+import {Action, Dispatch, emptyActionOf, ErrorResponse, Identifiable, payloadActionOf, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
@@ -43,7 +42,7 @@ interface PaginatedRequestEntityHandler<T> {
 interface AsyncRequestEntity<DATA> extends PaginatedRequestEntityHandler<DATA>, RequestCallbacks<DATA> {
   requestFunc: (id?: uuid) => any;
   formatData?: (response) => any;
-  dispatch: Dispatch<RootState>;
+  dispatch: Dispatch;
   id?: uuid;
   page?: number;
 }

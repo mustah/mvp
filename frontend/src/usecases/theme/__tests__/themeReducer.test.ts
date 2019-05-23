@@ -1,4 +1,4 @@
-import {Location} from 'history';
+import {toLocation} from '../../../__tests__/testDataFactory';
 import {routes} from '../../../app/routes';
 import {locationChange} from '../../../state/location/locationActions';
 import {ErrorResponse} from '../../../types/Types';
@@ -94,9 +94,7 @@ describe('themeReducer', () => {
         isSuccessfullyFetched: true,
       };
 
-      const payload: Partial<Location> = {pathname: routes.adminOrganisationsModify};
-
-      state = theme(state, locationChange(payload as Location));
+      state = theme(state, locationChange(toLocation(routes.adminOrganisationsModify)));
 
       const expected: ThemeState = {
         color: {primary: 'red', secondary: 'blue'},
@@ -116,9 +114,7 @@ describe('themeReducer', () => {
         }
       };
 
-      const payload: Partial<Location> = {pathname: routes.adminOrganisationsAdd};
-
-      const newState: ThemeState = theme(state, locationChange(payload as Location));
+      const newState: ThemeState = theme(state, locationChange(toLocation(routes.adminOrganisationsAdd)));
 
       expect(state).toBe(newState);
     });

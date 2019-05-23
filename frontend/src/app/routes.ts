@@ -1,4 +1,4 @@
-import {createHashHistory, History, Location} from 'history';
+import {createHashHistory, Location} from 'history';
 import {config} from '../config/config';
 
 export const routes = {
@@ -29,7 +29,7 @@ export const routes = {
 
 export const linkToReleaseNotes = 'https://support.elvaco.com/hc/sv/articles/360001339938-Release-notes-EVO';
 
-export const history: History = createHashHistory();
+export const history = createHashHistory();
 
 const searchResultRegExp = new RegExp(`${routes.searchResult}.*`);
 export const isOnSearchPage = ({pathname}: Location): boolean => pathname.match(searchResultRegExp) !== null;

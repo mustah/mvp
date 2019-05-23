@@ -1,5 +1,5 @@
+import {RouterState} from 'connected-react-router';
 import {Location, Pathname} from 'history';
-import {RouterState} from 'react-router-redux';
 import {createSelector} from 'reselect';
 import {routes} from '../app/routes';
 
@@ -23,9 +23,4 @@ export const isMeterPage = createSelector<RouterState, string, boolean>(
 export const isReportPage = createSelector<RouterState, string, boolean>(
   getPathname,
   (pathname) => pathname.match(/\/report$/) !== null || pathname.match(/\/report\/(.*)$/) !== null,
-);
-
-export const isDashboardPage = createSelector<RouterState, string, boolean>(
-  getPathname,
-  (pathname) => ['/', '/dashboard'].includes(pathname),
 );

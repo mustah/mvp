@@ -43,5 +43,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   onCenterMap,
 }, dispatch);
 
-export const MeterTabsContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MeterTabs);
+export const MeterTabsContainer = connect(mapStateToProps, mapDispatchToProps)(MeterTabs);

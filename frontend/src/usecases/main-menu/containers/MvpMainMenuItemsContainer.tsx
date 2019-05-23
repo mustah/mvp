@@ -14,11 +14,11 @@ export interface StateToProps extends PathNamed, ReportPageProps {
   isMeterPage: boolean;
 }
 
-const mapStateToProps = ({routing, report: {savedReports}}: RootState): StateToProps => ({
-  isMeterPage: isMeterPage(routing),
-  isReportPage: isReportPage(routing),
+const mapStateToProps = ({router, report: {savedReports}}: RootState): StateToProps => ({
+  isMeterPage: isMeterPage(router),
+  isReportPage: isReportPage(router),
   numSelectedItems: getLegendItems(savedReports).length,
-  pathName: getPathname(routing),
+  pathName: getPathname(router),
 });
 
 export const MvpMainMenuItemsContainer = connect<StateToProps>(mapStateToProps)(MainMenuItems);

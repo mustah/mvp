@@ -1,7 +1,6 @@
 import {throttle} from 'lodash';
-import {Dispatch} from 'react-redux';
+import {Dispatch} from 'redux';
 import {createStandardAction} from 'typesafe-actions';
-import {RootState} from '../../reducers/rootReducer';
 import {OnPayloadAction} from '../../types/Types';
 import {makeMeterQuery, OnSearch, QueryParameter} from './searchModels';
 
@@ -13,10 +12,10 @@ const throttledSearch = throttle(
 );
 
 const onSearch = (parameter: QueryParameter, searchFunction: OnPayloadAction<QueryParameter>) =>
-  (dispatch: Dispatch<RootState>): OnSearch => throttledSearch(dispatch, parameter, searchFunction);
+  (dispatch: Dispatch): OnSearch => throttledSearch(dispatch, parameter, searchFunction);
 
 const clearSearch = (parameter: QueryParameter, searchFunction: OnPayloadAction<QueryParameter>) =>
-  (dispatch: Dispatch<RootState>) => dispatch(searchFunction(parameter));
+  (dispatch: Dispatch) => dispatch(searchFunction(parameter));
 
 export const validationSearch = (query?: string) => onSearch(makeMeterQuery(query), search);
 

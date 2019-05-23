@@ -2,12 +2,12 @@ import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
 import {actionMenuItemIconStyle, dividerStyle} from '../../../app/themes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {IconReport} from '../../../components/icons/IconReport';
+import {Link} from '../../../components/links/Link';
 import {translate} from '../../../services/translationService';
 import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {Callback, OnClick, OnClickWithId, RenderFunction, uuid} from '../../../types/Types';
@@ -41,7 +41,7 @@ export const SavedSelectionActionsDropdown =
 
       const actionMenuItems = [
         (
-          <Link to={`${routes.selection}`} className="link" key={`edit-user-selection-${id}`}>
+          <Link to={routes.selection} key={`edit-user-selection-${id}`}>
             <ActionMenuItem
               leftIcon={<ImageEdit style={actionMenuItemIconStyle}/>}
               name={translate('edit user selection')}

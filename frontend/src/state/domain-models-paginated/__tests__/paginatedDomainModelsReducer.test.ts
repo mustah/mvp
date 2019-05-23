@@ -1,5 +1,4 @@
-import {Location} from 'history';
-import {makeMeter} from '../../../__tests__/testDataFactory';
+import {makeMeter, toLocation} from '../../../__tests__/testDataFactory';
 import {RequestParameter} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable} from '../../../types/Types';
@@ -401,13 +400,6 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('keeps the sorting but throws out data when user navigates away', () => {
-      const payload: Location = {
-        pathname: 'a',
-        search: '',
-        state: {},
-        hash: '',
-      };
-
       const stateWithResultAndSort: MetersState = {
         ...makeInitialState(),
         result: {
@@ -420,7 +412,10 @@ describe('paginatedDomainModelsReducer', () => {
         sort: [{field: RequestParameter.city}],
       };
 
-      const stateAfterLocationChange: MetersState = meters(stateWithResultAndSort, locationChange(payload));
+      const stateAfterLocationChange: MetersState = meters(
+        stateWithResultAndSort,
+        locationChange(toLocation('a'))
+      );
 
       expect(stateAfterLocationChange).toHaveProperty('sort', [{field: RequestParameter.city}]);
       expect(stateAfterLocationChange).toHaveProperty('result', {});

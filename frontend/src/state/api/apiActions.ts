@@ -1,20 +1,19 @@
 import {AxiosPromise} from 'axios';
-import {Dispatch} from 'redux';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {identityType} from '../../helpers/commonHelpers';
 import {makeUrl} from '../../helpers/urlFactory';
-import {GetState, RootState} from '../../reducers/rootReducer';
+import {GetState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
   Action,
   ActionKey,
+  Dispatch,
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
   OnEmptyAction,
-  OnFetch,
   OnPayloadAction,
   OnUpdate,
   payloadActionOf,
@@ -29,7 +28,7 @@ export interface RequestHandler<P> {
 }
 
 interface AsyncRequest<P, REQUEST_BODY> extends RequestHandler<P> {
-  dispatch: Dispatch<RootState>;
+  dispatch: Dispatch;
   onRequest: (body?: REQUEST_BODY) => AxiosPromise<P>;
   formatData?: DataFormatter<P>;
   parameters?: EncodedUriParameters;
@@ -104,9 +103,9 @@ export const fetchIfNeeded = <P>(
   fetchIfNeeded: FetchIfNeeded,
   actionsFactory: ActionsFactory<P> = makeActionsOf,
   formatData?: DataFormatter<P>,
-): OnFetch =>
+): any =>
   (endPoint: EndPoints | string, parameters?: EncodedUriParameters) =>
-    (dispatch, getState: GetState) => {
+    (dispatch: Dispatch, getState: GetState) => {
       if (fetchIfNeeded(getState)) {
         return makeAsyncRequest<P, P>({
           ...actionsFactory(actionKey),

@@ -1,4 +1,4 @@
-import {Location} from 'history';
+import {LocationChangePayload} from 'connected-react-router';
 import {ActionType, getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {isOnSearchPage} from '../../app/routes';
@@ -8,7 +8,7 @@ import {locationChange} from '../location/locationActions';
 import {
   addParameterToSelection,
   deselectSelection,
-  RESET_SELECTION,
+  resetSelection,
   selectSavedSelectionAction,
   setThreshold,
 } from '../user-selection/userSelectionActions';
@@ -33,7 +33,7 @@ export const search = (state: SearchState = initialState, action: Actions): Sear
     case getType(searchAction):
       return {...state, ...(action as Action<QueryParameter>).payload};
     case getType(locationChange):
-      return isOnSearchPage((action as Action<Location>).payload)
+      return isOnSearchPage((action as Action<LocationChangePayload>).payload.location)
         ? state
         : {validation: {}};
     case getType(setThreshold):
@@ -41,7 +41,7 @@ export const search = (state: SearchState = initialState, action: Actions): Sear
     case getType(deselectSelection):
     case getType(selectSavedSelectionAction):
     case getType(logoutUser):
-    case RESET_SELECTION:
+    case getType(resetSelection):
       return initialState;
     default:
       return state;

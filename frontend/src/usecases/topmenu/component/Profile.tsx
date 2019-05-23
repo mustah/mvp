@@ -2,12 +2,12 @@ import MenuItem from 'material-ui/MenuItem';
 import ActionAccountCircle from 'material-ui/svg-icons/action/account-circle';
 import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import {colors} from '../../../app/colors';
 import {routes} from '../../../app/routes';
 import {iconStyle, topMenuInnerDivStyle, topMenuItemDivStyle, topMenuItemIconStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
+import {Link} from '../../../components/links/Link';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../../../components/popover/PopoverMenu';
 import {translate} from '../../../services/translationService';
 import {User} from '../../../state/domain-models/user/userModels';
@@ -43,7 +43,7 @@ export const Profile = ({user, logout}: Props) => {
 
   const renderPopoverContent: RenderFunction<OnClick> = () => (
     <>
-      <Link to={routes.userProfile} className="link" key="goToProfile">
+      <Link to={routes.userProfile} key="goToProfile">
         <MenuItem
           innerDivStyle={topMenuInnerDivStyle}
           leftIcon={<ActionAccountCircle style={topMenuItemIconStyle}/>}

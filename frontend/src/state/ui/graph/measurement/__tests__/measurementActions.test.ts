@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
+import {routerActions} from 'connected-react-router';
 import {first} from 'lodash';
-import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {getType} from 'typesafe-actions';
@@ -111,7 +111,7 @@ describe('measurementActions', () => {
       it('should not dispatch any actions when nothing is pre-selected', async () => {
         const store = storeWith(initialState);
 
-        await store.dispatch(fetchMeasurementsForReport(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters) as any);
 
         expect(store.getActions()).toEqual([]);
       });
@@ -128,7 +128,7 @@ describe('measurementActions', () => {
 
         const requestedUrls: string[] = onFetchAsync(requestParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
 
         expect(requestedUrls).toHaveLength(1);
       });
@@ -136,7 +136,7 @@ describe('measurementActions', () => {
       it('should not fetch when already fetching', async () => {
         const store = storeWith({...initialState, isFetching: true});
 
-        await store.dispatch(fetchMeasurementsForReport(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters) as any);
 
         expect(store.getActions()).toEqual([]);
       });
@@ -144,7 +144,7 @@ describe('measurementActions', () => {
       it('should not fetch when is has successfully fetched measurements', async () => {
         const store = storeWith({...initialState, isFetching: false, isSuccessfullyFetched: true});
 
-        await store.dispatch(fetchMeasurementsForReport(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters) as any);
 
         expect(store.getActions()).toEqual([]);
       });
@@ -152,7 +152,7 @@ describe('measurementActions', () => {
       it('should not fetch when there is an error that is not cleared yet', async () => {
         const store = storeWith({...initialState, error: Maybe.just({message: 'error'})});
 
-        await store.dispatch(fetchMeasurementsForReport(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters) as any);
 
         expect(store.getActions()).toEqual([]);
       });
@@ -168,7 +168,7 @@ describe('measurementActions', () => {
 
         const requestedUrls = onFetchAsync(requestParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
 
         expect(requestedUrls).toHaveLength(0);
         expect(store.getActions()).toEqual([]);
@@ -183,7 +183,7 @@ describe('measurementActions', () => {
 
         const requestedUrls: string[] = onFetchAsync(requestParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
 
         expect(requestedUrls).toHaveLength(2);
 
@@ -357,7 +357,7 @@ describe('measurementActions', () => {
 
         onFetchAsync(requestParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+        await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
 
         expect(store.getActions()).toEqual([]);
       });
@@ -483,7 +483,7 @@ describe('measurementActions', () => {
     it('dispatches action if no export is ongoing', () => {
       const store = storeWith(initialState);
 
-      store.dispatch(exportReportToExcel());
+      store.dispatch(exportReportToExcel() as any);
 
       expect(store.getActions()).toEqual([exportToExcelAction(ReportSector.report)()]);
     });
@@ -494,7 +494,7 @@ describe('measurementActions', () => {
         isExportingToExcel: true,
       });
 
-      store.dispatch(exportReportToExcel());
+      store.dispatch(exportReportToExcel() as any);
 
       expect(store.getActions()).toEqual([]);
     });

@@ -1,15 +1,16 @@
+import {Dispatch} from 'redux';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../state/api/apiActions';
 import {showFailMessage, showSuccessMessage} from '../../state/ui/message/messageActions';
-import {Dispatcher, uuid} from '../../types/Types';
+import {uuid} from '../../types/Types';
 import {logout} from '../auth/authActions';
 
-const onError = (dispatch: Dispatcher, error): void => {
+const onError = (dispatch: Dispatch, error): void => {
   if (error instanceof InvalidToken) {
-    dispatch(logout(error));
+    dispatch(logout(error) as any);
   } else if (wasRequestCanceled(error)) {
     return;
   } else if (isTimeoutError(error)) {
@@ -22,7 +23,7 @@ const onError = (dispatch: Dispatcher, error): void => {
 };
 
 export const syncWithMetering = (logicalMeterId: uuid) =>
-  async (dispatch: Dispatcher) => {
+  async (dispatch: Dispatch) => {
     try {
       await restClient.post(`${EndPoints.syncMeters}/${logicalMeterId}`);
       const message = firstUpperTranslated('meter will soon be synchronized');
@@ -33,7 +34,7 @@ export const syncWithMetering = (logicalMeterId: uuid) =>
   };
 
 export const syncMeters = (ids: uuid[]) =>
-  async (dispatch: Dispatcher) => {
+  async (dispatch: Dispatch) => {
     try {
       if (ids.length > 0) {
         await restClient.post(`${EndPoints.syncMeters}`, ids);

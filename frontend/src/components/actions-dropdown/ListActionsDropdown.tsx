@@ -2,22 +2,23 @@ import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import * as React from 'react';
-import {DispatchProp} from 'react-redux';
 import {branch, renderNothing} from 'recompose';
 import {actionMenuItemIconStyle, dividerStyle} from '../../app/themes';
 import {isDefined} from '../../helpers/commonHelpers';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {LegendItem} from '../../state/report/reportModels';
-import {OnClick, OnClickWith, OnClickWithId, RenderFunction} from '../../types/Types';
+import {OnClick, OnClickWith, OnClickWithId, RenderFunction, Styled} from '../../types/Types';
 import {toLegendItem} from '../../usecases/report/helpers/legendHelper';
 import {withSuperAdminOnly} from '../hoc/withRoles';
 import {IconReport} from '../icons/IconReport';
+import {StoreProvider} from '../popover/StoreProvider';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 
 const deleteDividerStyle: React.CSSProperties = {
   ...dividerStyle,
+  marginTop: 6,
   marginBottom: 6,
 };
 
@@ -31,16 +32,14 @@ interface Props extends DeleteMeter {
   syncWithMetering?: OnClickWithId;
 }
 
-const MyDivider = ({deleteMeter, dispatch, ...otherProps}: DeleteMeterMenuItemProps) => <Divider {...otherProps}/>;
-
-type DeleteMeterMenuItemProps = ActionMenuItemProps & DeleteMeter & DispatchProp<any>;
+type DeleteMeterMenuItemProps = ActionMenuItemProps & DeleteMeter;
 
 const withDeleteMeterActionButton = branch<DeleteMeterMenuItemProps>(
   ({deleteMeter}) => isDefined(deleteMeter), withSuperAdminOnly, renderNothing);
 
 const SyncWithMeteringMenuItem = withSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 const DeleteMeterActionMenuItem = withDeleteMeterActionButton(ActionMenuItem);
-const DeleteDivider = withDeleteMeterActionButton(MyDivider);
+const DeleteDivider = withDeleteMeterActionButton(({style}: Styled) => <Divider style={style}/>);
 
 export const ListActionsDropdown = ({item, deleteMeter, addToReport, syncWithMetering}: Props) => {
   const {id} = item;
@@ -73,7 +72,9 @@ export const ListActionsDropdown = ({item, deleteMeter, addToReport, syncWithMet
 
     return ([
       (
-        <SyncWithMeteringMenuItem{...syncMenuItemProps} key={`sync-${id}`}/>
+        <StoreProvider key={`sync-${id}`}>
+          <SyncWithMeteringMenuItem{...syncMenuItemProps}/>
+        </StoreProvider>
       ),
       (
         <ActionMenuItem
@@ -84,18 +85,17 @@ export const ListActionsDropdown = ({item, deleteMeter, addToReport, syncWithMet
         />
       ),
       (
-        <DeleteDivider
-          {...deleteMenuItemProps}
-          style={deleteDividerStyle}
-          key={`list-divider-${id}`}
-        />
+        <StoreProvider key={`list-divider-${id}`}>
+          <DeleteDivider {...deleteMenuItemProps} style={deleteDividerStyle}/>
+        </StoreProvider>
       ),
       (
-        <DeleteMeterActionMenuItem
-          leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
-          {...deleteMenuItemProps}
-          key={`delete-meter-${id}`}
-        />
+        <StoreProvider key={`delete-meter-${id}`}>
+          <DeleteMeterActionMenuItem
+            leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
+            {...deleteMenuItemProps}
+          />
+        </StoreProvider>
       ),
     ]);
   };

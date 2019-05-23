@@ -1,3 +1,4 @@
+import {LocationChangePayload} from 'connected-react-router';
 import {Period} from '../components/dates/dateModels';
 import {EventLog, Meter} from '../state/domain-models-paginated/meter/meterModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
@@ -98,4 +99,15 @@ export const makeThreshold = (): ThresholdQuery => ({
   dateRange: {period: Period.latest},
   unit: 'kW',
   value: '3',
+});
+
+export const toLocation = (pathname: string): LocationChangePayload => ({
+  action: 'PUSH',
+  isFirstRendering: true,
+  location: {
+    pathname,
+    search: '',
+    state: {},
+    hash: '',
+  },
 });

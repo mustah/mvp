@@ -1,3 +1,4 @@
+import {LocationChangePayload} from 'connected-react-router';
 import {Location} from 'history';
 import {isEqual, pick} from 'lodash';
 import {combineReducers, Reducer} from 'redux';
@@ -232,7 +233,7 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedDeleteFailure(actionKey):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
       case getType(locationChange):
-        return isOnSearchPage((action as Action<Location>).payload)
+        return isOnSearchPage((action as Action<LocationChangePayload>).payload.location)
           ? state
           : {
             ...makeInitialState<T>(),

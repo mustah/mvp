@@ -41,5 +41,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   setCollectionTimePeriod: setCollectionTimePeriod(Sectors.meterCollection),
 }, dispatch);
 
-export const CollectionToolbarContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionToolbar);
+export const CollectionToolbarContainer = connect(mapStateToProps, mapDispatchToProps)(CollectionToolbar);

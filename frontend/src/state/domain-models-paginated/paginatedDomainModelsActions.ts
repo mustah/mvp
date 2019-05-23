@@ -1,11 +1,18 @@
-import {Dispatch} from 'react-redux';
 import {createStandardAction} from 'typesafe-actions';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
-import {GetState, RootState} from '../../reducers/rootReducer';
+import {GetState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
-import {Action, ActionKey, ErrorResponse, FetchPaginated, Identifiable, payloadActionOf} from '../../types/Types';
+import {
+  Action,
+  ActionKey,
+  Dispatch,
+  ErrorResponse,
+  FetchPaginated,
+  Identifiable,
+  payloadActionOf
+} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestType} from '../domain-models/domainModels';
@@ -47,7 +54,7 @@ interface AsyncRequest<REQUEST_MODEL, DATA> extends PaginatedRequestHandler<DATA
   formatData?: DataFormatter<DATA>;
   requestData?: REQUEST_MODEL;
   page: number;
-  dispatch: Dispatch<RootState>;
+  dispatch: Dispatch;
 }
 
 const asyncRequest = async <REQUEST_MODEL, DATA>(
@@ -109,7 +116,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
   requestCallbacks?: RequestCallbacks<NormalizedPaginated<T>>,
 ): FetchPaginated =>
   (page: number, requestData?: string) =>
-    (dispatch: Dispatch<RootState>, getState: GetState) => {
+    (dispatch: Dispatch, getState: GetState) => {
       const {paginatedDomainModels} = getState();
       if (needAnotherPage(page, paginatedDomainModels[entityType])) {
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));

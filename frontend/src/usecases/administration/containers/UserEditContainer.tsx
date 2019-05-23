@@ -24,7 +24,7 @@ import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
-import {CallbackWithId, ClearError, ErrorResponse, Fetch, OnClickEventHandler, uuid} from '../../../types/Types';
+import {CallbackWithId, ClearError, ErrorResponse, Fetch, OnClickEventHandler} from '../../../types/Types';
 import {getUser} from '../../auth/authSelectors';
 
 interface StateToProps {
@@ -44,7 +44,7 @@ interface DispatchToProps {
   clearError: ClearError;
 }
 
-type OwnProps = RouteComponentProps<{userId: uuid}>;
+type OwnProps = RouteComponentProps<{userId: string}>;
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 

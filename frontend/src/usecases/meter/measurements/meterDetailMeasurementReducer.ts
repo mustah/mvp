@@ -43,7 +43,7 @@ export const meterDetailMeasurement = (
     case getType(meterDetailActions.setTimePeriod):
       return initialState;
     case getType(locationChange):
-      return isOnMeterDetailsPage(action.payload.pathname)
+      return isOnMeterDetailsPage(action.payload.location.pathname)
         ? state
         : initialState;
     default:

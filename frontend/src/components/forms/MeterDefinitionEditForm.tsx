@@ -13,7 +13,7 @@ import {
   noOrganisationId,
   Organisation
 } from '../../state/domain-models/organisation/organisationModels';
-import {CallbackWithData, uuid} from '../../types/Types';
+import {CallbackWith, uuid} from '../../types/Types';
 import {QuantityList} from '../../usecases/administration/components/QuantityList';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {withCssStyles} from '../hoc/withThemeProvider';
@@ -31,8 +31,8 @@ const organisationById = (organisationId: uuid, organisations: Organisation[]): 
     : organisations.find(({id}) => id === organisationId)!;
 
 interface Props {
-  addMeterDefinition: CallbackWithData;
-  updateMeterDefinition: CallbackWithData;
+  addMeterDefinition: CallbackWith<MeterDefinitionMaybeId>;
+  updateMeterDefinition: CallbackWith<MeterDefinitionMaybeId>;
   meterDef?: MeterDefinition;
   organisations: Organisation[];
   mediums: Medium[];

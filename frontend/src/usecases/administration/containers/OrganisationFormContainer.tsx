@@ -36,5 +36,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   resetAsset,
 }, dispatch);
 
-export const OrganisationFormContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(OrganisationForm);
+export const OrganisationFormContainer = connect(mapStateToProps, mapDispatchToProps)(OrganisationForm);

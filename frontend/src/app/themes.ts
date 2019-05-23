@@ -165,7 +165,7 @@ export const selectedMenuItemStyle: React.CSSProperties = {
   fontWeight: 'bold',
 };
 
-export const menuItemStyle: React.CSSProperties = {
+export const menuItemStyle = {
   fontSize: fontSize.normal,
   textStyle: {
     textOverflow: 'ellipsis',

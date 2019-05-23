@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import {getLogoPath, routes} from '../../../app/routes';
+import {Link} from '../../../components/links/Link';
 import {Logo as LogoImg} from '../../../components/logo/Logo';
 import './Logo.scss';
 

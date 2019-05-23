@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {compose} from 'recompose';
 import {RootState} from '../../reducers/rootReducer';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 
@@ -12,5 +13,5 @@ const mapStateToProps = ({ui}: RootState): StateToProps => ({
 });
 
 export const withSideMenu =
-  <OwnProps extends {}>(Component: React.ComponentType<OwnProps & StateToProps>) =>
-    connect<StateToProps, {}, OwnProps>(mapStateToProps)(Component);
+  <P extends {}>(Component: React.ComponentType<P & StateToProps>) =>
+    compose<StateToProps, P>(connect(mapStateToProps))(Component);

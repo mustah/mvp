@@ -1,5 +1,5 @@
-import {Location} from 'history';
 import {getType} from 'typesafe-actions';
+import {toLocation} from '../../../__tests__/testDataFactory';
 import {routes} from '../../../app/routes';
 import {EndPoints} from '../../../services/endPoints';
 import {Sectors} from '../../../types/Types';
@@ -231,8 +231,7 @@ describe('summaryReducer', () => {
         payload: {...initialState.payload, numMeters: 2}
       };
 
-      const payload: Partial<Location> = {pathname: routes.dashboard};
-      state = summary(state, locationChange(payload as Location));
+      state = summary(state, locationChange(toLocation(routes.dashboard)));
 
       expect(state).toEqual(initialState);
     });
@@ -243,8 +242,7 @@ describe('summaryReducer', () => {
         payload: {...initialState.payload, numMeters: 2}
       };
 
-      const payload: Partial<Location> = {pathname: routes.searchResult};
-      const nextState = summary(state, locationChange(payload as Location));
+      const nextState = summary(state, locationChange(toLocation(routes.searchResult)));
 
       expect(nextState).toBe(state);
     });

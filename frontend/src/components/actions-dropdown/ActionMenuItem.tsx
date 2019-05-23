@@ -9,18 +9,15 @@ export interface ActionMenuItemProps extends MenuItemProps {
   onClick: OnClickEventHandler;
 }
 
-export const ActionMenuItem = ({leftIcon, name, onClick}: ActionMenuItemProps) => {
-  const innerDivStyle: React.CSSProperties = leftIcon ? {paddingLeft: 32} : {};
-  return (
-    <MenuItem
-      key={name}
-      leftIcon={leftIcon}
-      style={menuItemInnerDivStyle}
-      innerDivStyle={innerDivStyle}
-      className="first-uppercase"
-      onClick={onClick}
-    >
-      {name}
-    </MenuItem>
-  );
-};
+export const ActionMenuItem = ({leftIcon, name, onClick}: ActionMenuItemProps) => (
+  <MenuItem
+    key={name}
+    leftIcon={leftIcon}
+    style={menuItemInnerDivStyle}
+    innerDivStyle={leftIcon ? {paddingLeft: 32} : {}}
+    className="first-uppercase"
+    onClick={onClick}
+  >
+    {name}
+  </MenuItem>
+);

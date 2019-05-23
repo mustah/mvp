@@ -1,7 +1,7 @@
 import {toArray} from 'lodash';
 import {Paper} from 'material-ui';
 import * as React from 'react';
-import {AxisDomain, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {AxisDomain, Bar, BarChart, CartesianGrid, Margin, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {paperStyle} from '../../../app/themes';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
@@ -21,7 +21,7 @@ interface CollectionStatData {
 }
 
 const ticks: number[] = [0, 20, 40, 60, 80, 100];
-const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
+const lineMargins: Partial<Margin> = {top: 40, right: 0, bottom: 0, left: 0};
 const domains: [AxisDomain, AxisDomain] = ['dataMin - 100000', 'dataMax + 100000'];
 
 const style: React.CSSProperties = {

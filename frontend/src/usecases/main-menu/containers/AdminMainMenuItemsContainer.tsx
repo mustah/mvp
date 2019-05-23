@@ -2,10 +2,10 @@ import ActionSupervisorAccount from 'material-ui/svg-icons/action/supervisor-acc
 import SocialDomain from 'material-ui/svg-icons/social/domain';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
 import {IconMeter} from '../../../components/icons/IconMeter';
 import {Column} from '../../../components/layouts/column/Column';
+import {Link} from '../../../components/links/Link';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
@@ -19,7 +19,7 @@ interface StateToProps {
 }
 
 const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
-  <Link to={routes.adminOrganisations} className="link">
+  <Link to={routes.adminOrganisations}>
     <MainMenuItem
       name={translate('organisations')}
       isSelected={routes.adminOrganisations === pathname}
@@ -30,7 +30,7 @@ const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
 
 const AdminMainMenuItems = (props: StateToProps) => (
   <Column>
-    <Link to={routes.admin} className="link">
+    <Link to={routes.admin}>
       <MainMenuItem
         name={translate('users')}
         isSelected={routes.admin === props.pathname || routes.adminUsers === props.pathname}
@@ -38,7 +38,7 @@ const AdminMainMenuItems = (props: StateToProps) => (
       />
     </Link>
     <AdminOrganisationLinkMenuItem {...props}/>
-    <Link to={routes.adminMeterDefinitions} className="link">
+    <Link to={routes.adminMeterDefinitions}>
       <MainMenuItem
         name={translate('meter definitions')}
         isSelected={routes.adminMeterDefinitions === props.pathname}
@@ -48,8 +48,8 @@ const AdminMainMenuItems = (props: StateToProps) => (
   </Column>
 );
 
-const mapStateToProps = ({routing, auth}: RootState): StateToProps => ({
-  pathname: getPathname(routing),
+const mapStateToProps = ({router, auth}: RootState): StateToProps => ({
+  pathname: getPathname(router),
   user: getUser(auth),
 });
 

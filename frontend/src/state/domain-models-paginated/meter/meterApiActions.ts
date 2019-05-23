@@ -1,8 +1,6 @@
-import {Dispatch} from 'react-redux';
-import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {ErrorResponse, uuid} from '../../../types/Types';
+import {Dispatch, ErrorResponse, uuid} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
@@ -25,14 +23,14 @@ export const fetchMeters = fetchIfNeeded<Meter>(
 export type OnDeleteMeter = (id: uuid, page: number) => void;
 
 export const deleteMeter: OnDeleteMeter = paginatedDeleteRequest<Meter>(EndPoints.meters, {
-    afterSuccess: ({facility}: Meter, dispatch: Dispatch<RootState>) => {
+    afterSuccess: ({facility}: Meter, dispatch: Dispatch) => {
       const translatedMessage = firstUpperTranslated(
         'successfully deleted the meter {{facility}}',
         {facility},
       );
       dispatch(showSuccessMessage(translatedMessage));
     },
-    afterFailure: ({message: error}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    afterFailure: ({message: error}: ErrorResponse, dispatch: Dispatch) => {
       const translatedMessage = firstUpperTranslated(
         'failed to delete the meter: {{error}}',
         {error},

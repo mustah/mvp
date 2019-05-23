@@ -16,9 +16,6 @@ const isSuperAdminSelector = ({auth: {user}}: RootState): boolean =>
 const isAdminAuthenticatedSelector = (state: RootState): boolean =>
   isAuthenticatedSelector(state) && isAdminSelector(state);
 
-const isSuperAdminAuthenticatedSelector = (state: RootState): boolean =>
-  isAuthenticatedSelector(state) && isSuperAdminSelector(state);
-
 export const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: routes.login,
   authenticatedSelector: isAuthenticatedSelector,
@@ -28,12 +25,6 @@ export const userIsAuthenticated = connectedRouterRedirect({
 export const adminIsAuthenticated = connectedRouterRedirect({
   redirectPath: routes.home,
   authenticatedSelector: isAdminAuthenticatedSelector,
-  allowRedirectBack: false,
-});
-
-export const superAdminIsAuthenticated = connectedRouterRedirect({
-  redirectPath: routes.admin,
-  authenticatedSelector: isSuperAdminAuthenticatedSelector,
   allowRedirectBack: false,
 });
 

@@ -7,5 +7,5 @@ import * as React from 'react';
  */
 export const componentOrNothing =
   <P extends {}>(predicate: (props: P) => boolean) =>
-    (Component: React.ComponentType<P>): React.SFC<P> =>
-      (props: P) => predicate(props) ? <Component {...props} /> : null;
+    (Component: React.ComponentType<P>): React.FunctionComponent<P> =>
+      (props: P) => predicate(props) ? <Component {...props}/> : null;

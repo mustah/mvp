@@ -2,11 +2,11 @@ import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
 import {actionMenuItemIconStyle, dividerStyle} from '../../../app/themes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
+import {Link} from '../../../components/links/Link';
 import {translate} from '../../../services/translationService';
 import {OnClick, OnClickWithId, RenderFunction, uuid} from '../../../types/Types';
 
@@ -24,7 +24,7 @@ export const UserActions = ({id, confirmDelete}: Props) => {
     };
     return [
       (
-        <Link to={`${routes.adminUsersModify}/${id}`} className="link" key={`edit-${id}`}>
+        <Link to={`${routes.adminUsersModify}/${id}`} key={`edit-${id}`}>
           <ActionMenuItem
             leftIcon={<ImageEdit style={actionMenuItemIconStyle}/>}
             name={translate('edit user')}

@@ -39,10 +39,10 @@ const MvpApp = ({color: {primary, secondary}, isSideMenuOpen, toggleShowHideSide
   </Row>
 );
 
-const mapStateToProps = ({routing, theme: {color}, ui}: RootState): StateToProps => ({
+const mapStateToProps = ({router, theme: {color}, ui}: RootState): StateToProps => ({
   color,
   isSideMenuOpen: isSideMenuOpen(ui),
-  isReportPage: isReportPage(routing),
+  isReportPage: isReportPage(router),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

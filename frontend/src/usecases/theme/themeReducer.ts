@@ -41,7 +41,7 @@ export const theme = (state: ThemeState = initialState, action: ActionTypes): Th
         isSuccessfullyFetched: false,
       };
     case getType(locationChange):
-      return action.payload.pathname.startsWith(routes.adminOrganisationsModify)
+      return action.payload.location.pathname.startsWith(routes.adminOrganisationsModify)
         ? {...state, isFetching: false, isSuccessfullyFetched: false}
         : state;
     default:

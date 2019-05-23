@@ -43,7 +43,7 @@ const saveInitialDashboard = async (dispatch): Promise<void> => {
 };
 
 export const onFetchDashboards = () =>
-  async (dispatch, getState: GetState) => {
+  async (dispatch, getState: GetState): Promise<void> => {
     const {domainModels: {dashboards}} = getState();
 
     dispatch(fetchDashboards());

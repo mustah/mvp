@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
-import {routerActions} from 'react-router-redux';
+import {routerActions} from 'connected-react-router';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {makeUser} from '../../../__tests__/testDataFactory';

@@ -29,7 +29,7 @@ export const meterDetail = (state: MeterDetailState = initialState, action: Acti
         resolution: action.payload,
       };
     case getType(locationChange):
-      return isOnMeterDetailsPage(action.payload.pathname) ? state : initialState;
+      return isOnMeterDetailsPage(action.payload.location.pathname) ? state : initialState;
     case getType(logoutUser):
       return initialState;
     default:

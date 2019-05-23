@@ -4,7 +4,7 @@ import {TemporalResolution} from '../../components/dates/dateModels';
 import {Maybe} from '../../helpers/Maybe';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
-import {Dispatcher, uuid} from '../../types/Types';
+import {Dispatch, uuid} from '../../types/Types';
 import {allQuantitiesMap, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../ui/message/messageActions';
 import {SelectionInterval, ThresholdQuery} from '../user-selection/userSelectionModels';
@@ -56,7 +56,7 @@ export const setReportTimePeriod = (sector: ReportSector) =>
 export const limit: number = 100;
 
 interface DispatchWithinLimits {
-  dispatch: Dispatcher;
+  dispatch: Dispatch;
   items: LegendItem[];
   reportSection: ReportSector;
 }

@@ -1,6 +1,7 @@
 import {omit} from 'lodash';
 import * as React from 'react';
 import {Overwrite} from 'utility-types';
+import {routes} from '../../app/routes';
 import {absoluteUrlFromPath, slugOfHostname} from '../../helpers/urlFactory';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
@@ -9,12 +10,14 @@ import {
   Organisation
 } from '../../state/domain-models/organisation/organisationModels';
 import {UserSelection} from '../../state/user-selection/userSelectionModels';
-import {CallbackWithData, CallbackWithDataAndUrlParameters, IdNamed, uuid} from '../../types/Types';
+import {CallbackAny, IdNamed, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
+import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
 import {SelectFieldInput} from '../inputs/InputSelectable';
 import {TextFieldInput} from '../inputs/TextFieldInput';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
+import {Link, LinkProps} from '../links/Link';
 
 const organisationById = (organisationId: uuid, organisations: Organisation[]): Organisation =>
   organisationId === noOrganisationId
@@ -24,16 +27,19 @@ const organisationById = (organisationId: uuid, organisations: Organisation[]): 
 const selectionOption = ({id, name}: UserSelection): IdNamed => ({id, name});
 
 interface Props {
-  addOrganisation: CallbackWithData;
-  addSubOrganisation: CallbackWithDataAndUrlParameters;
+  addOrganisation: CallbackAny;
+  addSubOrganisation: CallbackAny;
   organisation?: Organisation;
   organisations: Organisation[];
   selections: UserSelection[];
   selectionId?: uuid;
-  updateOrganisation: CallbackWithData;
+  updateOrganisation: CallbackAny;
 }
 
 type State = Overwrite<Organisation, {id?: uuid, slug?: string}>;
+
+const StyledLink = withCssStyles(({cssStyles: {primary}, ...linkProps}: LinkProps & ThemeContext) =>
+  <Link {...linkProps} style={{color: primary.bg}}/>);
 
 export class OrganisationEditForm extends React.Component<Props, State> {
 
@@ -95,13 +101,13 @@ export class OrganisationEditForm extends React.Component<Props, State> {
     // we assume that super admins never use custom domains to administrate other organisations,
     // if they do, this URL not match the expected behavior
     const loginUrl = slugOfHostname(window.location.hostname)
-      .map((_) => absoluteUrlFromPath(`/#/login/`))
-      .orElseGet(() => absoluteUrlFromPath(`/#/login/${slug}`));
+      .map((_) => absoluteUrlFromPath(`/#${routes.login}/`))
+      .orElseGet(() => absoluteUrlFromPath(`/#${routes.login}/${slug}`));
 
     const customUrl = (
       <>
         <h3 style={{marginBottom: 16}}>{firstUpperTranslated('custom login URL')}</h3>
-        <a href={loginUrl} target="_blank">{loginUrl}</a>
+        <StyledLink to={loginUrl} target="_blank" className="underline">{loginUrl}</StyledLink>
       </>
     );
 

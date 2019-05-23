@@ -1,5 +1,6 @@
 import axios from 'axios';
-import {routerActions} from 'react-router-redux';
+import {default as MockAdapter} from 'axios-mock-adapter';
+import {routerActions} from 'connected-react-router';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../../app/routes';
@@ -11,16 +12,10 @@ import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
 import {changeLanguageRequest} from '../../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
 import {DomainModelsState} from '../../domainModels';
-import {
-  deleteRequestOf,
-  getEntityRequestOf,
-  postRequestOf,
-  putRequestOf,
-} from '../../domainModelsActions';
+import {deleteRequestOf, getEntityRequestOf, postRequestOf, putRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {addUser, deleteUser, fetchUser, modifyProfile, modifyUser} from '../userApiActions';
 import {Role, User} from '../userModels';
-import {default as MockAdapter} from 'axios-mock-adapter';
 
 describe('userApiActions', () => {
 
@@ -59,7 +54,7 @@ describe('userApiActions', () => {
       language: {language: 'en'},
     });
     mockRestClient = new MockAdapter(axios);
-    window.location.reload = () => void(0);
+    window.location.reload = () => void (0);
     authenticate('test');
   });
 

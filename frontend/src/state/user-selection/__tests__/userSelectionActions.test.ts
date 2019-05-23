@@ -187,7 +187,7 @@ describe('userSelectionActions', () => {
       beforeEach(() => {
         const rootStateWithSelectedSelection = {
           ...rootState,
-          routing: {location: {pathname: routes.collection}},
+          router: {location: {pathname: routes.collection}},
         };
         store = configureMockStore(rootStateWithSelectedSelection);
       });

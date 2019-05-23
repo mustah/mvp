@@ -1,4 +1,4 @@
-import {Location} from 'history';
+import {toLocation} from '../../../../__tests__/testDataFactory';
 import {routes} from '../../../../app/routes';
 import {Period, TemporalResolution} from '../../../../components/dates/dateModels';
 import {locationChange} from '../../../../state/location/locationActions';
@@ -12,31 +12,21 @@ describe('meterDetailReducer', () => {
   describe('location change', () => {
 
     it('does not reset state when location is on meter page', () => {
-      const location = makeLocation(`${routes.meter}/${'123'}`);
-
       const state: MeterDetailState = {...initialState, isDirty: true};
 
-      const newState: MeterDetailState = meterDetail(state, locationChange(location));
+      const newState: MeterDetailState = meterDetail(state, locationChange(toLocation(`${routes.meter}/${'123'}`)));
 
       expect(newState).toBe(state);
     });
 
     it('resets state when location is not on meter details page', () => {
-      const location = makeLocation(`${routes.meters}`);
-
       const state: MeterDetailState = {...initialState, isDirty: true};
 
-      const newState: MeterDetailState = meterDetail(state, locationChange(location));
+      const newState: MeterDetailState = meterDetail(state, locationChange(toLocation(routes.meters)));
 
       expect(newState).toEqual(initialState);
     });
 
-    const makeLocation = (pathname: string): Location => ({
-      pathname,
-      search: '',
-      state: {},
-      hash: '',
-    });
   });
 
   describe('setTimePeriod', () => {

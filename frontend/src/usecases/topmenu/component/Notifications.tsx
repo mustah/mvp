@@ -13,8 +13,8 @@ import {Large} from '../../../components/texts/Texts';
 import {config} from '../../../config/config';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {OnClick, OnClickWith, RenderFunction} from '../../../types/Types';
-import {HrefMenuItem} from './LinkMenuItem';
 import {TopMenuItem} from './TopMenuItem';
+import {TopMenuLinkItem} from './TopMenuLinkItem';
 
 const duckIconStyle: React.CSSProperties = {
   padding: '0 0 0 1px',
@@ -55,7 +55,7 @@ export const Notifications = ({hasNotifications, seenNotifications}: Props) => {
 
     return ([
         (
-          <HrefMenuItem
+          <TopMenuLinkItem
             className="Notifications-MenuItem"
             onClick={onClickToReleaseNotes}
             leftIcon={<IconDuck style={duckIconStyle} color={colors.black}/>}
@@ -64,7 +64,7 @@ export const Notifications = ({hasNotifications, seenNotifications}: Props) => {
             key="link-to-release-notes"
           >
             <Large className={classNames({Bold: hasNotifications})}>{translate('what\'s new')}?</Large>
-          </HrefMenuItem>
+          </TopMenuLinkItem>
         ),
       ]
     );

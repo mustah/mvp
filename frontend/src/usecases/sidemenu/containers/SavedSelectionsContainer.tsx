@@ -33,10 +33,10 @@ export interface DispatchToProps {
 }
 
 const mapStateToProps =
-  ({userSelection, domainModels: {userSelections}, routing}: RootState): StateToProps => ({
+  ({userSelection, domainModels: {userSelections}, router}: RootState): StateToProps => ({
     selection: getUserSelection(userSelection),
     savedSelections: userSelections,
-    isMeterPage: isMeterPage(routing),
+    isMeterPage: isMeterPage(router),
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

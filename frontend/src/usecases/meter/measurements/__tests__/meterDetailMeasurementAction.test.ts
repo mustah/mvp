@@ -21,7 +21,7 @@ describe('meterDetailMeasurementAction', () => {
     it('dispatches action if no export is ongoing', () => {
       const store = storeWith(initialState);
 
-      store.dispatch(exportToExcel());
+      store.dispatch(exportToExcel() as any);
 
       expect(store.getActions()).toEqual([meterDetailExportToExcelAction()]);
     });
@@ -32,7 +32,7 @@ describe('meterDetailMeasurementAction', () => {
         isExportingToExcel: true,
       });
 
-      store.dispatch(exportToExcel());
+      store.dispatch(exportToExcel() as any);
 
       expect(store.getActions()).toEqual([]);
     });

@@ -2,7 +2,6 @@ import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import {toArray} from 'lodash';
 import NavigationCheck from 'material-ui/svg-icons/navigation/check';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
 import {makeGridClassName} from '../../../app/themes';
 import {ButtonAdd} from '../../../components/buttons/ButtonAdd';
@@ -11,6 +10,7 @@ import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
+import {Link} from '../../../components/links/Link';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
 import {DispatchToProps, StateToProps} from '../containers/MeterDefinitionsContainer';
@@ -49,7 +49,7 @@ export const MeterDefinitionList = ({
     <RetryLoader isFetching={isFetching} clearError={clearError} error={error}>
       <Column>
         <Row>
-          <Link to={routes.adminMeterDefinitionsAdd} className="link" key={'add meter definition'}>
+          <Link to={routes.adminMeterDefinitionsAdd} key={'add meter definition'}>
             <ButtonAdd label={translate('add meter definition')}/>
           </Link>
         </Row>

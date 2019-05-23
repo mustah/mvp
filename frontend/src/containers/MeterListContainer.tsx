@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import {MeterListContent, MeterListDispatchToProps, MeterListStateToProps} from '../components/meters/MeterListContent';
 import {RootState} from '../reducers/rootReducer';
 import {
@@ -16,7 +16,7 @@ import {
   getPaginatedEntities,
 } from '../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {isSuperAdmin} from '../state/domain-models/user/userSelectors';
-import {addAllToReport, addAllToSelectionReport, addToReport} from '../state/report/reportActions';
+import {addAllToReport, addToReport} from '../state/report/reportActions';
 import {changePage} from '../state/ui/pagination/paginationActions';
 import {EntityTypes, Pagination} from '../state/ui/pagination/paginationModels';
 import {getPagination} from '../state/ui/pagination/paginationSelectors';
@@ -50,7 +50,7 @@ const mapStateToProps = (
   });
 };
 
-const mapDispatchToProps = (dispatch): MeterListDispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch): MeterListDispatchToProps => bindActionCreators({
   deleteMeter,
   addAllToReport,
   addToReport,
@@ -60,7 +60,6 @@ const mapDispatchToProps = (dispatch): MeterListDispatchToProps => bindActionCre
   changePage,
   clearError: clearErrorMeters,
   sortTable: sortTableMeters,
-  addAllToSelectionReport,
 }, dispatch);
 
 export const MeterListContainer =

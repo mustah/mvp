@@ -1,8 +1,8 @@
-import {routerReducer as routing, RouterState} from 'react-router-redux';
-import {Reducer} from 'redux';
+import {connectRouter, RouterState} from 'connected-react-router';
+import {History} from 'history';
 import {createMigrate, MigrationDispatch, persistCombineReducers} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import {PersistConfig, PersistedState} from 'redux-persist/lib/types';
+import {PersistConfig} from 'redux-persist/lib/types';
 import {PaginatedDomainModelsState} from '../state/domain-models-paginated/paginatedDomainModels';
 import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
@@ -45,7 +45,7 @@ export interface RootState {
   paginatedDomainModels: PaginatedDomainModelsState;
   previousSession: PreviousSessionState;
   report: ReportState;
-  routing: RouterState;
+  router: RouterState;
   selectionReport: ReportState;
   selectionMeasurement: MeasurementState;
   search: SearchState;
@@ -81,12 +81,12 @@ const persistConfig: PersistConfig = {
   version: currentVersion,
 };
 
-export const rootReducer: Reducer<undefined | ((AppState | undefined) & PersistedState)> =
+export const rootReducer = (history: History) =>
   persistCombineReducers<AppState>(persistConfig, {
     auth,
     domainModels,
     paginatedDomainModels,
-    routing,
+    router: connectRouter(history),
     report,
     selectionReport,
     measurement,

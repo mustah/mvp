@@ -1,4 +1,4 @@
-import {routerActions} from 'react-router-redux';
+import {routerActions} from 'connected-react-router';
 import {createAction, createStandardAction} from 'typesafe-actions';
 import {routes} from '../../app/routes';
 import {config} from '../../config/config';

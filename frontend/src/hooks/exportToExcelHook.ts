@@ -9,7 +9,7 @@ export interface ExportToExcelProps {
 }
 
 export const useExportToExcel = ({isExportingToExcel, exportToExcelSuccess, save}: ExportToExcelProps) => {
-  const exporter = React.useRef();
+  const exporter = React.useRef(null);
   React.useEffect(() => {
     if (isExportingToExcel) {
       save(exporter);

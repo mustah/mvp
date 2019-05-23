@@ -1,4 +1,4 @@
-import {Location} from 'history';
+import {toLocation} from '../../../__tests__/testDataFactory';
 import {routes} from '../../../app/routes';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {locationChange} from '../../location/locationActions';
@@ -45,8 +45,7 @@ describe('searchReducer', () => {
         ...makeMeterQuery('kam')
       };
 
-      const payload: Partial<Location> = {pathname: routes.selection};
-      state = search(state, locationChange(payload as Location));
+      state = search(state, locationChange(toLocation(routes.selection)));
 
       expect(state).toEqual(initialState);
     });
@@ -57,8 +56,7 @@ describe('searchReducer', () => {
         ...makeMeterQuery('kam')
       };
 
-      const payload: Partial<Location> = {pathname: routes.dashboard};
-      state = search(state, locationChange(payload as Location));
+      state = search(state, locationChange(toLocation(routes.dashboard)));
 
       expect(state).toEqual(initialState);
     });
@@ -69,8 +67,7 @@ describe('searchReducer', () => {
         ...makeMeterQuery('kam')
       };
 
-      const payload: Partial<Location> = {pathname: routes.collection};
-      const newState = search(state, locationChange(payload as Location));
+      const newState = search(state, locationChange(toLocation(routes.collection)));
 
       expect(newState).toEqual(initialState);
     });

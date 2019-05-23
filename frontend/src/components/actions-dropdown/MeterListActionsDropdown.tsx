@@ -6,6 +6,7 @@ import {OnClick, RenderFunction} from '../../types/Types';
 import {withSuperAdminOnly} from '../hoc/withRoles';
 import {IconReport} from '../icons/IconReport';
 import {MeterListActionDropdownProps} from '../meters/MeterListContent';
+import {StoreProvider} from '../popover/StoreProvider';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 
@@ -31,7 +32,9 @@ export const MeterListActionsDropdown =
 
       return ([
         (
-          <SyncWithMeteringMenuItem {...syncMetersProps} key="sync-meters-menu-item"/>
+          <StoreProvider key="sync-meters-menu-item">
+            <SyncWithMeteringMenuItem {...syncMetersProps}/>
+          </StoreProvider>
         ),
         (
           <ActionMenuItem

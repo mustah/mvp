@@ -1,5 +1,4 @@
 import {shallowEqual} from 'recompose';
-import {Dispatch} from 'redux';
 import {createAction, createStandardAction} from 'typesafe-actions';
 import {history, routes} from '../../app/routes';
 import {DateRange, Period} from '../../components/dates/dateModels';
@@ -10,7 +9,7 @@ import {migrateUserSelection, oldParameterNames} from '../../reducers/stateMigra
 import {isMeterPage} from '../../selectors/routerSelectors';
 import {EndPoints} from '../../services/endPoints';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse, uuid} from '../../types/Types';
+import {Dispatch, ErrorResponse, Fetch, uuid} from '../../types/Types';
 import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
 import {
@@ -58,7 +57,7 @@ export const onChangeThreshold = (threshold?: ThresholdQuery) =>
 
 export const clearUserSelectionErrors = clearError(EndPoints.userSelections);
 
-export const fetchUserSelections = fetchIfNeeded<UserSelection>(
+export const fetchUserSelections: Fetch = fetchIfNeeded<UserSelection>(
   EndPoints.userSelections,
   'userSelections',
   userSelectionsDataFormatter,
@@ -111,7 +110,7 @@ export const resetToSavedSelection = (selectedId: uuid) =>
 
 export const selectSelection = (selectionId?: uuid) =>
   (dispatch, getState: GetState) => {
-    if (!isMeterPage(getState().routing)) {
+    if (!isMeterPage(getState().router)) {
       history.push(routes.meters);
     }
 
@@ -136,7 +135,7 @@ export const toggleParameter = (selectionParameter: SelectionParameter) =>
   };
 
 export const saveSelection = postRequest<UserSelection>(EndPoints.userSelections, {
-  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+  afterFailure: (error: ErrorResponse, dispatch: Dispatch) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to create selection: {{error}}',
       {error: error.message},
@@ -145,7 +144,7 @@ export const saveSelection = postRequest<UserSelection>(EndPoints.userSelections
 });
 
 export const updateSelection = putRequest<UserSelection, UserSelection>(EndPoints.userSelections, {
-  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+  afterFailure: (error: ErrorResponse, dispatch: Dispatch) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to update selection: {{error}}',
       {error: error.message},
@@ -154,7 +153,7 @@ export const updateSelection = putRequest<UserSelection, UserSelection>(EndPoint
 });
 
 export const deleteUserSelection = deleteRequest<UserSelection>(EndPoints.userSelections, {
-  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+  afterFailure: (error: ErrorResponse, dispatch: Dispatch) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to delete selection: {{error}}',
       {error: error.message},

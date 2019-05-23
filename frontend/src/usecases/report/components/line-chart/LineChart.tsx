@@ -9,6 +9,7 @@ import {
   LegendPayload,
   Line,
   LineChart as ReChartLineChart,
+  Margin,
   ReferenceLine,
   ReferenceLineProps,
   ResponsiveContainer,
@@ -25,7 +26,7 @@ import {Children, OnClickEventHandler, uuid} from '../../../../types/Types';
 import {ActiveDotReChartProps} from './ActiveDot';
 import {LineChartProps} from './LineChart';
 
-const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
+const lineMargins: Partial<Margin> = {top: 40, right: 0, bottom: 0, left: 0};
 const domains: [AxisDomain, AxisDomain] = ['dataMin', 'dataMax'];
 
 interface LinesProps {

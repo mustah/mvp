@@ -11,9 +11,8 @@ import {RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {uuid} from '../../../types/Types';
 
-type Props = RouteComponentProps<{id: uuid, collectionPeriod: string}> & ThemeContext;
+type Props = RouteComponentProps<{id: string, collectionPeriod: string}> & ThemeContext;
 
 const backButtonStyle: React.CSSProperties = {
   ...iconStyle,

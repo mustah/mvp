@@ -19,15 +19,7 @@ import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {AssetTypeForOrganisation} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
-import {
-  CallbackWithData,
-  CallbackWithDataAndUrlParameters,
-  ClearError,
-  ErrorResponse,
-  Fetch,
-  Omit,
-  uuid
-} from '../../../types/Types';
+import {CallbackAny, ClearError, ErrorResponse, Fetch, Omit} from '../../../types/Types';
 import './OrganisationForm.scss';
 
 export interface StateToProps {
@@ -40,18 +32,18 @@ export interface StateToProps {
 }
 
 export interface DispatchToProps {
-  addOrganisation: CallbackWithData;
-  addSubOrganisation: CallbackWithDataAndUrlParameters;
+  addOrganisation: CallbackAny;
+  addSubOrganisation: CallbackAny;
   fetchOrganisations: Fetch;
   fetchUserSelections: Fetch;
   clearOrganisationErrors: ClearError;
   clearUserSelectionErrors: ClearError;
-  updateOrganisation: CallbackWithData;
+  updateOrganisation: CallbackAny;
   uploadAsset: (formData: FormData, parameters: AssetTypeForOrganisation) => void;
   resetAsset: (parameters: AssetTypeForOrganisation) => void;
 }
 
-type Props = InjectedAuthRouterProps & RouteComponentProps<{organisationId: uuid}> & StateToProps & DispatchToProps;
+type Props = InjectedAuthRouterProps & RouteComponentProps<{organisationId: string}> & StateToProps & DispatchToProps;
 
 const SuperAdminAssetForms = compose<AssetFormProps & ThemeContext, AssetFormProps>(
   withCssStyles,
