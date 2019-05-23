@@ -261,7 +261,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     PhysicalMeter physicalMeter = savePhysicalMeterWith(meter, StatusType.OK);
 
-    ZonedDateTime now = ZonedDateTime.parse("2018-02-01T01:00:00+01");
+    ZonedDateTime now = ZonedDateTime.parse("2018-02-01T02:00:00+01");
     addMeasurementsForMeterQuantities(physicalMeter, meter, singleton(Quantity.POWER), now, 10.0);
 
     Url url = Url.builder().path("/map-markers/gateways")
