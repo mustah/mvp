@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
+import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -30,6 +31,8 @@ public interface LogicalMeters {
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
   Page<CollectionStatsDto> findAllCollectionStats(RequestParameters parameters, Pageable pageable);
+
+  List<LegendDto> findAllLegendsBy(RequestParameters parameters);
 
   List<LogicalMeter> findAllBy(RequestParameters parameters);
 

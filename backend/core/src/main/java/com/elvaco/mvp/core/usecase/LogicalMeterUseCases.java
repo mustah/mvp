@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
+import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -23,6 +24,10 @@ public class LogicalMeterUseCases {
 
   private final AuthenticatedUser currentUser;
   private final LogicalMeters logicalMeters;
+
+  public List<LegendDto> findAllLegendsBy(RequestParameters parameters) {
+    return logicalMeters.findAllLegendsBy(parameters.ensureOrganisationFilters(currentUser));
+  }
 
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
     return logicalMeters.findAllBy(parameters.ensureOrganisationFilters(currentUser));

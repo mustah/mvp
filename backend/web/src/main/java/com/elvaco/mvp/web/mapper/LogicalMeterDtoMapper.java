@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.AlarmDto;
@@ -137,5 +138,13 @@ public class LogicalMeterDtoMapper {
 
     events.sort(comparing((EventLogDto eventLogDto) -> eventLogDto.start).reversed());
     return events;
+  }
+
+  public static LegendDto toLegendDto(LogicalMeter logicalMeter) {
+    return new LegendDto(
+      logicalMeter.id,
+      logicalMeter.getMedium().name,
+      logicalMeter.externalId
+    );
   }
 }

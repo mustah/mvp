@@ -18,6 +18,7 @@ import lombok.Builder;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
@@ -154,6 +155,10 @@ public class Url implements UrlTemplate {
 
     public UrlBuilder filter(String filter) {
       return parameter(Q, filter);
+    }
+
+    public UrlBuilder facility(String facility) {
+      return parameter(FACILITY, facility);
     }
   }
 }

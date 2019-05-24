@@ -14,12 +14,16 @@ import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.web.dto.MeasurementRequestDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
@@ -81,23 +85,53 @@ public class MeasurementController {
       .collect(toList());
   }
 
+  @PostMapping
+  public List<MeasurementSeriesDto> measurementsPost(
+    @JsonProperty @RequestBody MeasurementRequestDto measurementRequestDto
+  ) {
+    return measurements(
+      RequestParametersAdapter.of(null),
+      Optional.ofNullable(measurementRequestDto.quantity),
+      measurementRequestDto.reportAfter,
+      measurementRequestDto.reportBefore,
+      measurementRequestDto.resolution
+    );
+  }
+
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
-  public List<MeasurementSeriesDto> measurements(
+  public List<MeasurementSeriesDto> measurementsGet(
     @RequestParam MultiValueMap<String, String> requestParams,
     @RequestParam(name = "quantity") Optional<Set<QuantityParameter>> optionalQuantityParameters,
     @RequestParam(name = "reportAfter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportStart,
 
-    @RequestParam(required = false, name = "reportBefore")
-    @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
+    @RequestParam(required = false)
+    @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportBefore,
 
     @RequestParam(required = false) TemporalResolution resolution
+  ) {
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
+
+    return measurements(
+      parameters,
+      optionalQuantityParameters,
+      reportStart,
+      reportBefore,
+      resolution
+    );
+  }
+
+  public List<MeasurementSeriesDto> measurements(
+    RequestParameters parameters,
+    Optional<Set<QuantityParameter>> optionalQuantityParameters,
+    ZonedDateTime reportStart,
+    ZonedDateTime before,
+    TemporalResolution resolution
   ) {
     // TODO: We need to limit the amount of measurements here. Even if we're only fetching
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
     Map<String, QuantityParameter> quantityMap = getMappedQuantities(
       optionalQuantityParameters.orElse(emptySet()),
       parameters

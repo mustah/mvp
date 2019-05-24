@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
@@ -15,12 +16,14 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.domainmodels.Units;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
+import com.elvaco.mvp.web.dto.MeasurementRequestDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 
@@ -178,41 +181,25 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void fetchMeasurementsForMeterByQuantityInPeriod() {
-    ZonedDateTime date = context().now();
-
-    var heatMeter = given(logicalMeter()
-      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
-    given(heatMeter,
-      measurement(heatMeter).readoutTime(date.minusHours(1))
-        .unit(DEGREES_CELSIUS)
-        .quantity(DIFFERENCE_TEMPERATURE.name)
-        .value(DIFF_TEMP_VALUE_CELSIUS),
-      measurement(heatMeter).readoutTime(date.plusHours(1))
-        .unit(DEGREES_CELSIUS)
-        .quantity(DIFFERENCE_TEMPERATURE.name)
-        .value(DIFF_TEMP_VALUE_CELSIUS),
-      measurement(heatMeter)
-        .readoutTime(date.plusHours(1))
-        .unit("J")
-        .quantity(ENERGY.name)
-        .value(ENERGY_VALUE)
-    );
-
-    List<MeasurementSeriesDto> contents =
-      getListAsSuperAdmin("/measurements?"
+  public void fetchMeasurementsForMeterByQuantityInPeriodGet() {
+    fetchMeasurementsForMeterByQuantityInPeriod(
+      (measurementRequestDto) -> getListAsSuperAdmin("/measurements?"
         + "quantity=Difference+temperature"
-        + "&logicalMeterId=" + heatMeter.id
-        + "&reportAfter=" + date
-        + "&reportBefore=" + date.plusHours(1)
-        + "&resolution=hour");
+        + "&logicalMeterId=" + measurementRequestDto.logicalMeterId.get(0)
+        + "&reportAfter=" + measurementRequestDto.reportAfter
+        + "&reportBefore=" + measurementRequestDto.reportBefore
+        + "&resolution=" + measurementRequestDto.resolution.name())
+    );
+  }
 
-    assertThat(contents).hasSize(1);
-    MeasurementSeriesDto dto = contents.get(0);
-    assertThat(dto.quantity).isEqualTo("Difference temperature");
-    assertThat(dto.values).hasSize(2);
-    assertThat(dto.values.get(0).value).isNull();
-    assertThat(dto.values.get(1).value).isEqualTo(DIFF_TEMP_VALUE_KELVIN, OFFSET);
+  @Test
+  public void fetchMeasurementsForMeterByQuantityInPeriodPost() {
+    fetchMeasurementsForMeterByQuantityInPeriod(
+      (measurementRequestDto) -> asSuperAdmin().postList(
+        "/measurements",
+        measurementRequestDto,
+        MeasurementSeriesDto.class
+      ).getBody());
   }
 
   @Test
@@ -1155,6 +1142,47 @@ public class MeasurementControllerTest extends IntegrationTest {
           new MeasurementValueDto(date.plusHours(1).toInstant(), 40010.0)
         )
       ));
+  }
+
+  public void fetchMeasurementsForMeterByQuantityInPeriod(
+    Function<MeasurementRequestDto, List<MeasurementSeriesDto>> requestFunction
+  ) {
+    ZonedDateTime date = context().now();
+
+    var heatMeter = given(logicalMeter()
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
+    given(
+      measurement(heatMeter).created(date.minusHours(1))
+        .unit(DEGREES_CELSIUS)
+        .quantity(DIFFERENCE_TEMPERATURE.name)
+        .value(DIFF_TEMP_VALUE_CELSIUS),
+      measurement(heatMeter).created(date.plusHours(1))
+        .unit(DEGREES_CELSIUS)
+        .quantity(DIFFERENCE_TEMPERATURE.name)
+        .value(DIFF_TEMP_VALUE_CELSIUS),
+      measurement(heatMeter)
+        .created(date.plusHours(1))
+        .unit("J")
+        .quantity(ENERGY.name)
+        .value(ENERGY_VALUE)
+    );
+
+    MeasurementRequestDto measurementRequestDto = new MeasurementRequestDto(
+      List.of(heatMeter.id),
+      date,
+      date.plusHours(1),
+      Set.of(QuantityParameter.of(DIFFERENCE_TEMPERATURE.name)),
+      TemporalResolution.hour
+    );
+
+    List<MeasurementSeriesDto> contents = requestFunction.apply(measurementRequestDto);
+
+    assertThat(contents).hasSize(1);
+    MeasurementSeriesDto dto = contents.get(0);
+    assertThat(dto.quantity).isEqualTo("Difference temperature");
+    assertThat(dto.values).hasSize(2);
+    assertThat(dto.values.get(0).value).isNull();
+    assertThat(dto.values.get(1).value).isEqualTo(DIFF_TEMP_VALUE_KELVIN, OFFSET);
   }
 
   private String logicalMeterIdRequestString(int numberOfMeters) {

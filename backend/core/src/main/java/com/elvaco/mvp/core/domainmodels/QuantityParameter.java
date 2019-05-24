@@ -3,32 +3,39 @@ package com.elvaco.mvp.core.domainmodels;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import static com.elvaco.mvp.core.domainmodels.DisplayMode.CONSUMPTION;
 
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-@AllArgsConstructor
 @Builder
 public class QuantityParameter {
 
   private static final String QUANTITY_UNIT_DELIMITER = ":";
-  public final String name;
+  public String name;
   @Nullable
-  public final String unit;
+  public String unit;
   @Nullable
-  public final DisplayMode displayMode;
+  public DisplayMode displayMode;
 
-  QuantityParameter(String name) {
-    this(name, null, null);
+  public QuantityParameter(String name) {
+    this(name, null);
   }
 
-  QuantityParameter(String name, String unit) {
+  public QuantityParameter(String name, String unit) {
     this(name, unit, null);
+  }
+
+  public QuantityParameter(String name, String unit, DisplayMode displayMode) {
+    this.name = name;
+    this.unit = unit;
+    this.displayMode = displayMode;
   }
 
   public static QuantityParameter of(@Nonnull String quantityUnitPair) {
@@ -45,7 +52,7 @@ public class QuantityParameter {
         DisplayMode.from(parts[2])
       );
     } else if (parts.length == 2) {
-      return new QuantityParameter(quantityName, parts[1], null);
+      return new QuantityParameter(quantityName, parts[1]);
     } else {
       return new QuantityParameter(quantityName);
     }
@@ -59,6 +66,7 @@ public class QuantityParameter {
     );
   }
 
+  @JsonIgnore
   public boolean isConsumption() {
     return CONSUMPTION.equals(displayMode);
   }

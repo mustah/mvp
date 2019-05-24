@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -40,6 +41,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.oslo;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,6 +57,46 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     meterAlarmLogJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
+  }
+
+  @Test
+  public void findAllLegends() {
+    given(logicalMeter());
+    given(logicalMeter());
+
+    List<LegendDto> legends = asUser()
+      .getList(legendsUrl(), LegendDto.class)
+      .getBody();
+
+    assertThat(legends).hasSize(2);
+  }
+
+  @Test
+  public void findAllLegends_with_facility() {
+    given(logicalMeter().externalId("1"));
+    given(logicalMeter().externalId("2"));
+
+    List<LegendDto> legends = asUser()
+      .getList(legendsUrl().facility("2"), LegendDto.class)
+      .getBody();
+
+    assertThat(legends)
+      .extracting(m -> m.facility)
+      .containsExactly("2");
+  }
+
+  @Test
+  public void findAllLegends_with_location() {
+    given(logicalMeter().externalId("1").location(kungsbacka().build()));
+    given(logicalMeter().externalId("2").location(oslo().build()));
+
+    List<LegendDto> legends = asUser()
+      .getList(legendsUrl().city(kungsbacka().build()), LegendDto.class)
+      .getBody();
+
+    assertThat(legends)
+      .extracting(m -> m.facility)
+      .containsExactly("1");
   }
 
   @Test
@@ -1043,6 +1085,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     return Url.builder()
       .path("/meters")
       .build();
+  }
+
+  private static Url.UrlBuilder legendsUrl() {
+    return Url.builder().path("/meters/legends");
   }
 
   private static void assertThatStatusIsNotFound(ResponseEntity<ErrorMessageDto> response) {

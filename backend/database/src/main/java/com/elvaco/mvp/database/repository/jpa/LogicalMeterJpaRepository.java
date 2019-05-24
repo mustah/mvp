@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
+import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
@@ -28,6 +29,8 @@ public interface LogicalMeterJpaRepository {
   Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable);
 
   Page<String> findFacilities(RequestParameters parameters, Pageable pageable);
+
+  List<LegendDto> findAllLegends(RequestParameters parameters);
 
   Set<LogicalMeterEntity> findAll(RequestParameters parameters);
 

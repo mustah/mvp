@@ -15,6 +15,7 @@ import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
+import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -134,6 +135,25 @@ class LogicalMeterJooqJpaRepository
   @Override
   public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
     return fetchAllBy(parameters, pageable, LOGICAL_METER.EXTERNAL_ID, noCondition());
+  }
+
+  @Override
+  public List<LegendDto> findAllLegends(RequestParameters parameters) {
+    var query = dsl.select(
+      PHYSICAL_METER.LOGICAL_METER_ID,
+      PHYSICAL_METER.EXTERNAL_ID,
+      PHYSICAL_METER.MEDIUM
+    ).from(LOGICAL_METER);
+
+    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
+
+    return query.fetch()
+      .stream()
+      .map(record -> new LegendDto(
+        record.get(PHYSICAL_METER.LOGICAL_METER_ID),
+        record.get(PHYSICAL_METER.EXTERNAL_ID),
+        record.get(PHYSICAL_METER.MEDIUM)
+      )).collect(toList());
   }
 
   @Override

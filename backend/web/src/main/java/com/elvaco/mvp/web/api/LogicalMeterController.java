@@ -7,6 +7,7 @@ import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
+import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
@@ -75,6 +76,13 @@ public class LogicalMeterController {
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
     return logicalMeterUseCases.findAllCollectionStatsPerDate(
+      RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID)
+    );
+  }
+
+  @GetMapping("/legends")
+  public List<LegendDto> legends(@RequestParam MultiValueMap<String, String> requestParams) {
+    return logicalMeterUseCases.findAllLegendsBy(
       RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID)
     );
   }

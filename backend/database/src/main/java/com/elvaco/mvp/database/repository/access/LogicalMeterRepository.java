@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
+import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -120,6 +121,11 @@ public class LogicalMeterRepository implements LogicalMeters {
         )
       )
     );
+  }
+
+  @Override
+  public List<LegendDto> findAllLegendsBy(RequestParameters parameters) {
+    return logicalMeterJpaRepository.findAllLegends(parameters);
   }
 
   @Override
