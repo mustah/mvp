@@ -12,9 +12,10 @@ import {MeterDetails} from '../../state/domain-models/meter-details/meterDetails
 import {addToReport} from '../../state/report/reportActions';
 import {LegendItem} from '../../state/report/reportModels';
 import {CallbackWithId, OnClickWith, uuid} from '../../types/Types';
+import {emptyClusters, makeLeafletCompatibleMarkersFrom} from '../../usecases/map/helper/clusterHelper';
 import {onCenterMap} from '../../usecases/map/mapActions';
 import {fetchMeterMapMarker as fetchMapMarker} from '../../usecases/map/mapMarkerActions';
-import {MapMarker, OnCenterMapEvent, SelectedId} from '../../usecases/map/mapModels';
+import {MapMarker, MapMarkerClusters, OnCenterMapEvent, SelectedId} from '../../usecases/map/mapModels';
 import {syncWithMetering} from '../../usecases/meter/meterActions';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfoContainer';
@@ -23,7 +24,7 @@ import {MeterDetailsTabs} from './MeterDetailsTabs';
 interface StateToProps {
   isFetching: boolean;
   meter: Maybe<MeterDetails>;
-  meterMapMarker: Maybe<MapMarker>;
+  mapMarkerClusters: MapMarkerClusters;
 }
 
 interface DispatchToProps extends OnCenterMapEvent {
@@ -81,10 +82,10 @@ const mapStateToProps = (
 ): StateToProps =>
   ({
     isFetching: meters.isFetching,
-    meter: selectedId
-      .flatMap((id: uuid) => getDomainModelById<MeterDetails>(id)(meters)),
-    meterMapMarker: selectedId
-      .flatMap((id: uuid) => getDomainModelById<MapMarker>(id)(meterMapMarkers)),
+    meter: selectedId.flatMap((id: uuid) => getDomainModelById<MeterDetails>(id)(meters)),
+    mapMarkerClusters: selectedId.flatMap((id: uuid) => getDomainModelById<MapMarker>(id)(meterMapMarkers))
+      .map(makeLeafletCompatibleMarkersFrom)
+      .orElseGet(() => emptyClusters),
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

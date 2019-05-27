@@ -1,6 +1,6 @@
 import {Dictionary, Status} from '../../../types/Types';
 import {isMapMarker, makeLeafletCompatibleMarkersFrom} from '../helper/clusterHelper';
-import {MapMarker, Marker} from '../mapModels';
+import {MapMarker, MapMarkerClusters} from '../mapModels';
 
 describe('clusterHelper', () => {
 
@@ -18,7 +18,7 @@ describe('clusterHelper', () => {
     longitude: 12.069374,
   };
 
-  const markers: Dictionary<MapMarker> = {
+  const mapMarkers: Dictionary<MapMarker> = {
     1: mapMarker1,
     2: mapMarker2,
   };
@@ -26,9 +26,9 @@ describe('clusterHelper', () => {
   describe('makeLeafletCompatibleMarkersFrom', () => {
 
     it('should handle single marker', () => {
-      const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarker1);
+      const {markers}: MapMarkerClusters = makeLeafletCompatibleMarkersFrom(mapMarker1);
 
-      expect(leafletMarkers).toEqual([
+      expect(markers).toEqual([
         {
           position: [57.505402, 12.069364],
           options: {
@@ -49,15 +49,15 @@ describe('clusterHelper', () => {
 
     it('can have no map markers', () => {
       const mapMarkers = undefined;
-      const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarkers || {});
+      const {markers}: MapMarkerClusters = makeLeafletCompatibleMarkersFrom(mapMarkers || {});
 
-      expect(leafletMarkers).toEqual([]);
+      expect(markers).toEqual([]);
     });
 
     it('should handle array of markers', () => {
-      const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(markers);
+      const {markers}: MapMarkerClusters = makeLeafletCompatibleMarkersFrom(mapMarkers);
 
-      expect(leafletMarkers).toEqual([
+      expect(markers).toEqual([
         {
           options: {
             icon: {

@@ -2,11 +2,12 @@ import {createSelector} from 'reselect';
 import {identity} from '../../helpers/commonHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
-import {DomainModel, NormalizedState} from '../../state/domain-models/domainModels';
+import {DomainModel, Normalized, NormalizedState, ObjectsById} from '../../state/domain-models/domainModels';
 import {getDomainModel} from '../../state/domain-models/domainModelsSelectors';
 import {uuid} from '../../types/Types';
+import {makeLeafletCompatibleMarkersFrom} from './helper/clusterHelper';
 import {boundsFromMarkers, gatewayLowConfidenceTextInfo, meterLowConfidenceTextInfo} from './helper/mapHelper';
-import {Bounds, MapMarker, MapZoomSettings} from './mapModels';
+import {Bounds, MapMarker, MapMarkerClusters, MapZoomSettings} from './mapModels';
 import {MapState} from './mapReducer';
 
 export const getBounds =
@@ -54,3 +55,13 @@ export const getMapZoomSettings = (id: uuid) =>
     state => state[id],
     settings => Maybe.maybe<MapZoomSettings>(settings).map(identity).orElse({})
   );
+
+export const getMapMarkers = createSelector<NormalizedState<MapMarker>, ObjectsById<MapMarker>, MapMarkerClusters>(
+  state => getDomainModel(state).entities,
+  mapMarkers => makeLeafletCompatibleMarkersFrom(mapMarkers)
+);
+
+export const getWidgetMapMarkers = createSelector<Normalized<MapMarker>, ObjectsById<MapMarker>, MapMarkerClusters>(
+  ({entities: {meterMapMarkers}}) => meterMapMarkers,
+  mapMarkers => makeLeafletCompatibleMarkersFrom(mapMarkers)
+);

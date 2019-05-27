@@ -47,8 +47,13 @@ export interface SelectedId {
   selectedId: Maybe<uuid>;
 }
 
-export interface MapMarkers {
-  mapMarkers?: Dictionary<MapMarker> | MapMarker;
+export interface MapMarkerClusters {
+  readonly markers: Marker[];
+  readonly faults: number;
+}
+
+export interface MapMarkersProps {
+  mapMarkerClusters: MapMarkerClusters;
 }
 
 export interface MapZoomSettings {
@@ -65,10 +70,9 @@ export interface OnCenterMapEvent {
 export interface MapComponentProps extends WithChildren, Partial<MapZoomSettings>, Id {
   bounds?: Bounds;
   height?: number;
-  key?: string;
   lowConfidenceText?: string;
   paddingBottom?: number;
   width?: number;
 }
 
-export type MapProps = MapComponentProps & MapMarkers & OnCenterMapEvent;
+export type MapProps = MapComponentProps & MapMarkersProps & OnCenterMapEvent;

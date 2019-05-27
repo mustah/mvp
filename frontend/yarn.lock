@@ -723,7 +723,7 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@^7.4.3":
+"@babel/runtime@^7.4.3", "@babel/runtime@^7.4.4":
   version "7.4.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.4.5.tgz#582bb531f5f9dc67d2fcb682979894f75e253f12"
   integrity sha512-TuI4qpWZP6lGOGIuGWtp9sPluqYICmbk8T/1vpSysqJxRPkudh/ofFWyqdcMsDf2s7KvDL4/YHgKyvcS3g9CJQ==
@@ -1416,10 +1416,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-leaflet@1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@types/react-leaflet/-/react-leaflet-1.9.0.tgz#3d702b8ad1e38c25e2b5ecdf79fa53c7705cc2da"
-  integrity sha512-acYURhWtURZR+A60wkzhz1Eu7DkMpbONVXHEynVgntVLwXclbZG+ZZ+qvtq92ZvPE4DC+Rm9b4K0JQIAuC769w==
+"@types/react-leaflet@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@types/react-leaflet/-/react-leaflet-2.2.1.tgz#21ec6c0995c0da9089c2ec2f257c1fd50eee646a"
+  integrity sha512-oH0+nGoDuzSyPIm0FLK6UBgIhugBLDkjtdwe+VDoefjRLpTXBz4Y4BRXEfSU2Qpen+fh48IEhTwJe4Z5FPi/CQ==
   dependencies:
     "@types/leaflet" "*"
     "@types/react" "*"
@@ -4115,6 +4115,11 @@ fast-deep-equal@^1.0.0:
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-1.1.0.tgz#c053477817c86b51daa853c81e059b733d023614"
   integrity sha1-wFNHeBfIa1HaqFPIHgWbcz0CNhQ=
 
+fast-deep-equal@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-2.0.1.tgz#7b05218ddf9667bf7f370bf7fdb2cb15fdd0aa49"
+  integrity sha1-ewUhjd+WZ79/Nwv3/bLLFf3Qqkk=
+
 fast-glob@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-2.2.2.tgz#71723338ac9b4e0e2fff1d6748a2a13d5ed352bf"
@@ -6324,11 +6329,6 @@ locate-path@^3.0.0:
   dependencies:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
-
-lodash-es@^4.0.0:
-  version "4.17.11"
-  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.11.tgz#145ab4a7ac5c5e52a3531fb4f310255a152b4be0"
-  integrity sha512-DHb1ub+rMjjrxqlB3H56/6MXtm1lSksDp2rA2cNWjG8mlDUYFhUj3Di2Zn5IwSU87xLv8tNIQ7sSwE/YOX/D/Q==
 
 lodash-es@^4.2.1:
   version "4.17.4"
@@ -8694,28 +8694,25 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.4.tgz#90f336a68c3a29a096a3d648ab80e87ec61482a2"
   integrity sha512-PVadd+WaUDOAciICm/J1waJaSvgq+4rHE/K70j0PFqKhkTBsPv/82UGQJNXAngz1fOQLLxI6z1sEDmJDQhCTAA==
 
-react-leaflet-control@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/react-leaflet-control/-/react-leaflet-control-1.4.1.tgz#5da234621682d9c50657b65af042398512bda0fb"
-  integrity sha512-7Nd3b5/v0sPIEh4hAWGT3R7y7TeFqQtqTMJ5o6RPHTsDFBEdHN1nuvdUTjjLJ9ckjMGp4sMNZ5EuuF/bcmtMpA==
-  dependencies:
-    prop-types "^15.5.7"
+react-leaflet-control@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-leaflet-control/-/react-leaflet-control-2.1.1.tgz#ed90006c9d285872a2788fe15c11fc30ad14cdb0"
+  integrity sha512-3fx4uSRFtDaFNa1yq62DCxdc9kR3Lk4V7R0lHqbKfPTEIOvPR7VFvk3xzcSnSB/0LAYO8R96Pwcs1c6knyL/Hw==
 
-react-leaflet-markercluster@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/react-leaflet-markercluster/-/react-leaflet-markercluster-1.1.8.tgz#ba72acb2ae07a47a45b5f7287b73a9c2b26cc316"
-  integrity sha512-REOnc8+QPO3V+vUHIkJ2Dnlw6lNBY+L7p3PBG3+Q1t8Idy9yXTjZ0hEJKSRrcU6HSPALiVyZgbDxIpd2j/HbqA==
-  dependencies:
-    deep-equal "^1.0.1"
+react-leaflet-markercluster@^2.0.0-rc3:
+  version "2.0.0-rc3"
+  resolved "https://registry.yarnpkg.com/react-leaflet-markercluster/-/react-leaflet-markercluster-2.0.0-rc3.tgz#8cadfa62eca88fe1fa7b404a81a5b171e6be60f6"
+  integrity sha512-9Z02sZTte8UPqXdm2R5HnLs24MGQgVc1Fdy2R8KPiZQv+sgUCDoFwMUxiVxyqLjGB643RI33MOQVif8kQCkELg==
 
-react-leaflet@^1.7.1:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-1.9.1.tgz#0a282d8d26f66ea2d719ebb8f4a5fa156b33b8c8"
-  integrity sha512-QiYpjyf1DHy0gLAR2958Mo5Wlu2u7FubIjapPpuUAQNFmjkVSteiDLlEdDpGswTHTyNAfKLS+u9PqvfipMDZKA==
+react-leaflet@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-2.3.0.tgz#a6792f66f05de2121a182190f495f53827f443ee"
+  integrity sha512-LaTkopN3rpMWzg2/ev/Ryn5K528ORrf3BdpnH7Qz2HYj+c9pw331wMOQPp6ILV3PYz0T1G6Foz+B2GDz59C10Q==
   dependencies:
-    lodash "^4.0.0"
-    lodash-es "^4.0.0"
-    warning "^3.0.0"
+    "@babel/runtime" "^7.4.4"
+    fast-deep-equal "^2.0.1"
+    hoist-non-react-statics "^3.3.0"
+    warning "^4.0.3"
 
 react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
@@ -11020,6 +11017,13 @@ warning@^4.0.1:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/warning/-/warning-4.0.2.tgz#aa6876480872116fa3e11d434b0d0d8d91e44607"
   integrity sha512-wbTp09q/9C+jJn4KKJfJfoS6VleK/Dti0yqWSm6KMvJ4MRCXFQNapHuJXutJIrWV0Cf4AhTdeIe4qdKHR1+Hug==
+  dependencies:
+    loose-envify "^1.0.0"
+
+warning@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/warning/-/warning-4.0.3.tgz#16e9e077eb8a86d6af7d64aa1e05fd85b4678ca3"
+  integrity sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==
   dependencies:
     loose-envify "^1.0.0"
 

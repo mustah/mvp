@@ -9,7 +9,7 @@ import {Column} from '../../../components/layouts/column/Column';
 import {useResizeWindow} from '../../../hooks/resizeWindowHook';
 import {useFallbackTilesUrl} from '../helper/fallbackTilesUrlHook';
 import {maxZoom} from '../helper/mapHelper';
-import {MapComponentProps, MapMarkers, MapProps, OnCenterMapEvent} from '../mapModels';
+import {MapComponentProps, MapMarkersProps, MapProps, OnCenterMapEvent} from '../mapModels';
 import {defaultZoomLevel} from '../mapReducer';
 import {LowConfidenceInfo} from './LowConfidenceInfo';
 import './Map.scss';
@@ -96,14 +96,14 @@ export const ResponsiveMap = (props: Props) => {
   return <Map height={height <= minHeight ? minHeight : height} {...props}/>;
 };
 
-export const MapMarkerCluster = ({mapMarkers, ...mapProps}: Props & MapMarkers) => (
+export const MapMarkerCluster = ({mapMarkerClusters, ...mapProps}: Props & MapMarkersProps) => (
   <Map {...mapProps}>
-    <MarkerCluster mapMarkers={mapMarkers}/>
+    <MarkerCluster mapMarkerClusters={mapMarkerClusters}/>
   </Map>
 );
 
-export const ResponsiveMapMarkerClusters = ({mapMarkers, ...mapProps}: MapProps) => (
+export const ResponsiveMapMarkerClusters = ({mapMarkerClusters, ...mapProps}: MapProps) => (
   <ResponsiveMap {...mapProps} paddingBottom={270}>
-    <MarkerCluster mapMarkers={mapMarkers}/>
+    <MarkerCluster mapMarkerClusters={mapMarkerClusters}/>
   </ResponsiveMap>
 );

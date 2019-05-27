@@ -62,8 +62,4 @@ const mapDispatchToProps = (dispatch: Dispatch): MeterListDispatchToProps => bin
   sortTable: sortTableMeters,
 }, dispatch);
 
-export const MeterListContainer =
-  connect<MeterListStateToProps, MeterListDispatchToProps>(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(MeterListContent);
+export const MeterListContainer = connect(mapStateToProps, mapDispatchToProps)(MeterListContent);

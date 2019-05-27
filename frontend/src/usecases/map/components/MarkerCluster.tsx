@@ -1,16 +1,11 @@
 import * as Leaflet from 'leaflet';
 import * as React from 'react';
+import {Marker as LeafletMarker} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {history, routes} from '../../../app/routes';
-import {isDefined} from '../../../helpers/commonHelpers';
-import {
-  isAlarmIconUrl,
-  isErrorIconUrl,
-  isWarningIconUrl,
-  makeLeafletCompatibleMarkersFrom,
-} from '../helper/clusterHelper';
+import {Callback} from '../../../types/Types';
 import {maxZoom} from '../helper/mapHelper';
-import {MapMarkers, Marker} from '../mapModels';
+import {MapMarkersProps, Marker} from '../mapModels';
 
 const getZoomBasedRadius = (zoom: number) => {
   if (zoom < maxZoom) {
@@ -20,15 +15,17 @@ const getZoomBasedRadius = (zoom: number) => {
   }
 };
 
-const iconCreateFunctionHandler = (cluster: MarkerClusterGroup): Leaflet.DivIcon => {
-  const x = getClusterDimensions(cluster.getChildCount());
+const iconCreateFunctionHandler = (faults: number) =>
+  (cluster: MarkerClusterGroup): Leaflet.DivIcon => {
+    const childCount: number = cluster.getChildCount();
+    const x = getClusterDimensions(childCount);
 
-  return Leaflet.divIcon({
-    html: `<span>${cluster.getChildCount()}</span>`,
-    className: getClusterCssClass(cluster),
-    iconSize: Leaflet.point(x, x, true),
-  });
-};
+    return Leaflet.divIcon({
+      html: `<span>${childCount}</span>`,
+      className: `marker-cluster ${childCount === faults ? 'error' : faults ? 'warning' : 'ok'}`,
+      iconSize: Leaflet.point(x, x, true),
+    });
+  };
 
 const getClusterDimensions = (clusterCount: number): number => {
   let x = clusterCount / 9;
@@ -42,41 +39,38 @@ const getClusterDimensions = (clusterCount: number): number => {
   return x;
 };
 
-const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
-  const faults = cluster.getAllChildMarkers()
-    .map(({options: {icon}}: Leaflet.Marker) => icon)
-    .filter(isDefined)
-    .filter((icon) => isErrorIconUrl(icon.options.iconUrl)
-                      || isAlarmIconUrl(icon.options.iconUrl)
-                      || isWarningIconUrl(icon.options.iconUrl))
-    .length;
+interface WithLeafletElement {
+  leafletElement: {
+    clearLayers: Callback;
+  };
+}
 
-  const numChildren = cluster.getChildCount();
-  const className = numChildren === faults ? 'error' : faults ? 'warning' : 'ok';
+export const MarkerCluster = ({mapMarkerClusters: {markers, faults}}: MapMarkersProps) => {
+  const leafletMarkers = React.useMemo(() =>
+    markers.map(({position, options: {icon, mapMarkerItem}}: Marker) =>
+      <LeafletMarker meterId={mapMarkerItem} position={position} key={'marker-' + mapMarkerItem} icon={icon}/>
+    ), [markers]);
 
-  return `marker-cluster ${className}`;
-};
+  const markerClusterGroupElement = React.useRef<WithLeafletElement>(null);
 
-export const MarkerCluster = ({mapMarkers = {}}: MapMarkers) => {
-  const leafletMarkers: Marker[] = React.useMemo(() => makeLeafletCompatibleMarkersFrom(mapMarkers), [mapMarkers]);
-
-  const markerClusterOptions = {
-    iconCreateFunction: iconCreateFunctionHandler,
-    chunkedLoading: true,
-    showCoverageOnHover: true,
-    maxClusterRadius: getZoomBasedRadius,
+  const onClickMeter = ({type, layer: {options: {meterId}}}) => {
+    const current = markerClusterGroupElement.current;
+    if (type === 'click' && current !== null) {
+      current.leafletElement.clearLayers();
+      history.push(`${routes.meter}/${meterId}`);
+    }
   };
 
-  const toMeterDetails = ({options: {mapMarkerItem}}: Marker) =>
-    history.push(`${routes.meter}/${mapMarkerItem}`);
-
-  return leafletMarkers.length > 0
-    ? (
-      <MarkerClusterGroup
-        markers={leafletMarkers}
-        onMarkerClick={toMeterDetails}
-        options={markerClusterOptions}
-      />
-    )
-    : null;
+  return (
+    <MarkerClusterGroup
+      chunkedLoading={true}
+      iconCreateFunction={iconCreateFunctionHandler(faults)}
+      maxClusterRadius={getZoomBasedRadius}
+      showCoverageOnHover={true}
+      onclick={onClickMeter}
+      ref={markerClusterGroupElement}
+    >
+      {leafletMarkers}
+    </MarkerClusterGroup>
+  );
 };

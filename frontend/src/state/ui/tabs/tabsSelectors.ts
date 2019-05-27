@@ -1,3 +1,4 @@
-import {SelectedTabs, TabName} from './tabsModels';
+import {UiState} from '../uiReducer';
+import {TabName} from './tabsModels';
 
-export const getSelectedTab = (state: SelectedTabs): TabName => state.selectedTab;
+export const getSelectedTab = (state: UiState): TabName => state.tabs.validation.selectedTab;

@@ -18,11 +18,12 @@ import {fetchMapWidget, WidgetRequestParameters} from '../../../state/widget/wid
 import {WidgetData} from '../../../state/widget/widgetReducer';
 import {CallbackWith, ClearError, ErrorResponse, HasContent} from '../../../types/Types';
 import {MapMarkerCluster} from '../../map/components/Map';
+import {emptyClusters} from '../../map/helper/clusterHelper';
 import {boundsFromMarkers} from '../../map/helper/mapHelper';
 import {onCenterMap} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers} from '../../map/mapMarkerActions';
-import {MapComponentProps, MapMarkers, MapProps, OnCenterMapEvent} from '../../map/mapModels';
-import {getMapZoomSettings} from '../../map/mapSelectors';
+import {MapComponentProps, MapMarkersProps, MapProps, OnCenterMapEvent} from '../../map/mapModels';
+import {getMapZoomSettings, getWidgetMapMarkers} from '../../map/mapSelectors';
 import {WidgetWithTitle} from '../components/Widget';
 import {WidgetDispatchers} from '../dashboardModels';
 
@@ -32,7 +33,7 @@ interface OwnProps extends WidgetDispatchers {
   widget: MapWidget;
 }
 
-interface StateToProps extends MapComponentProps, HasContent, MapMarkers {
+interface StateToProps extends MapComponentProps, HasContent, MapMarkersProps {
   model: WidgetData & RequestsHttp;
   error: Maybe<ErrorResponse>;
   isFetching: boolean;
@@ -57,20 +58,20 @@ const MapWidget = ({
   center,
   clearError,
   error,
+  fetchMapWidget,
   hasContent,
   height,
   id,
   isFetching,
-  mapMarkers,
-  lowConfidenceText,
-  title,
   isUserSelectionsSuccessfullyFetched,
-  fetchMapWidget,
+  lowConfidenceText,
+  mapMarkerClusters,
   onEdit,
-  widget,
-  parameters,
   onDelete,
   onCenterMap,
+  parameters,
+  title,
+  widget,
   width: calculatedWidth,
   zoom,
 }: Props) => {
@@ -89,7 +90,7 @@ const MapWidget = ({
     height,
     id,
     lowConfidenceText,
-    mapMarkers,
+    mapMarkerClusters,
     noContentText: firstUpperTranslated('no meters'),
     onCenterMap,
     width,
@@ -157,7 +158,7 @@ const mapStateToProps = (
     isUserSelectionsSuccessfullyFetched: userSelections.isSuccessfullyFetched,
     hasContent,
     lowConfidenceText: hasContent ? getInformationText(widget) : undefined,
-    mapMarkers: hasContent ? widget.data.entities.meterMapMarkers : undefined,
+    mapMarkerClusters: hasContent ? getWidgetMapMarkers(widget.data) : emptyClusters,
     model: widget,
     parameters,
     title,

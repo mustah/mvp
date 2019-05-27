@@ -16,7 +16,6 @@ import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
-import {Maybe} from '../../helpers/Maybe';
 import {useForceUpdate} from '../../hooks/forceUpdateHook';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
@@ -28,7 +27,7 @@ import {TabName} from '../../state/ui/tabs/tabsModels';
 import {OnClickWith, OnClickWithId} from '../../types/Types';
 import {ResponsiveMap} from '../../usecases/map/components/Map';
 import {MarkerCluster} from '../../usecases/map/components/MarkerCluster';
-import {MapMarker, OnCenterMapEvent} from '../../usecases/map/mapModels';
+import {MapMarkerClusters, OnCenterMapEvent} from '../../usecases/map/mapModels';
 import {CollectionContentContainer} from '../../usecases/meter/collection/containers/CollectionContentContainer';
 import {MeterMeasurementsContentContainer} from '../../usecases/meter/measurements/containers/MeterMeasurementsContentContainer';
 import {OwnProps} from '../../usecases/meter/measurements/meterDetailModels';
@@ -44,7 +43,7 @@ interface MeterGatewayProps {
 
 interface MapProps extends OnCenterMapEvent {
   meter: MeterDetails;
-  meterMapMarker: Maybe<MapMarker>;
+  mapMarkerClusters: MapMarkerClusters;
 }
 
 interface Props extends MapProps {
@@ -68,9 +67,9 @@ const renderStatus = ({dataItem: {status: {name}}}) => <td><Status label={name}/
 const renderStatusChange = ({dataItem: {statusChanged}}) =>
   <td><WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/></td>;
 
-const MapContent = ({meter: {location: {position}, id}, meterMapMarker, onCenterMap}: MapProps) => (
+const MapContent = ({meter: {location: {position}, id}, mapMarkerClusters, onCenterMap}: MapProps) => (
   <ResponsiveMap center={position} id={'meterDetails'} key={`meterDetails-${id}`} onCenterMap={onCenterMap} zoom={17}>
-    {meterMapMarker.isJust() && <MarkerCluster mapMarkers={meterMapMarker.get()}/>}
+    <MarkerCluster mapMarkerClusters={mapMarkerClusters}/>
   </ResponsiveMap>
 );
 
@@ -146,7 +145,7 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
 
   render() {
     const {selectedTab} = this.state;
-    const {meter, meterMapMarker, addToReport, onCenterMap, syncWithMetering, useCollectionPeriod} = this.props;
+    const {meter, mapMarkerClusters, addToReport, onCenterMap, syncWithMetering, useCollectionPeriod} = this.props;
 
     const gateways: GatewayMandatory[] = meter.gateway ? [meter.gateway] : [];
 
@@ -154,11 +153,9 @@ export class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> 
 
     const mapWrapperProps: MapProps & WithEmptyContentProps = {
       meter,
-      meterMapMarker,
+      mapMarkerClusters,
       noContentText: firstUpperTranslated('no reliable position'),
-      hasContent: meterMapMarker
-        .filter(({status}: MapMarker) => status !== undefined)
-        .isJust(),
+      hasContent: mapMarkerClusters.markers.length > 0,
       onCenterMap,
     };
 
