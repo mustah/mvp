@@ -619,7 +619,7 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
   }
 
   private Organisation saveDefaultOrganisation() {
-    return organisations.save(ORGANISATION);
+    return organisations.saveAndFlush(ORGANISATION);
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(double value) {

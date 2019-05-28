@@ -363,7 +363,7 @@ public class UserControllerTest extends IntegrationTest {
       .selection(selection)
       .build();
 
-    organisations.save(organisation);
+    organisations.saveAndFlush(organisation);
 
     UserWithPasswordDto user = createUserDto("superman@dailyplanet.us", organisation);
 

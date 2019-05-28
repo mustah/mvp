@@ -486,7 +486,8 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
   @Test
   public void addsSecondPhysicalMeterToExistingLogicalMeter() {
-    Organisation organisation = organisations.save(Organisation.of(ORGANISATION_EXTERNAL_ID));
+    Organisation organisation =
+      organisations.saveAndFlush(Organisation.of(ORGANISATION_EXTERNAL_ID));
     UUID logicalMeterId = randomUUID();
     physicalMeters.save(
       physicalMeter()
@@ -516,7 +517,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
   @Test
   public void duplicateIdentityAndExternalIdForOtherOrganisation() {
-    Organisation organisation = organisations.save(Organisation.of("Organisation code"));
+    Organisation organisation = organisations.saveAndFlush(Organisation.of("Organisation code"));
     physicalMeters.save(physicalMeter().organisationId(organisation.id).build());
 
     messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
@@ -974,7 +975,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
   }
 
   private Organisation saveDefaultOrganisation() {
-    return organisations.save(Organisation.of(ORGANISATION_EXTERNAL_ID));
+    return organisations.saveAndFlush(Organisation.of(ORGANISATION_EXTERNAL_ID));
   }
 
   private LogicalMeter findLogicalMeter() {

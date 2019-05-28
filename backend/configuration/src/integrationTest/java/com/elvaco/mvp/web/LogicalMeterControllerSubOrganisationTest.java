@@ -74,7 +74,7 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
       .selectionParameters(toJsonNode(parentOrganisationsSelection))
       .build());
 
-    var subOrganisation = organisations.save(Organisation.builderFrom("sub-org")
+    var subOrganisation = organisations.saveAndFlush(Organisation.builderFrom("sub-org")
       .parent(context().defaultOrganisation())
       .selection(userSelection)
       .build()

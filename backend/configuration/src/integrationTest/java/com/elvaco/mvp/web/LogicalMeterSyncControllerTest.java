@@ -59,7 +59,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   @Before
   public void setUp() {
     meterSyncJobService.removeAllJobs();
-    otherOrganisation = organisations.save(Organisation.of("Other Organisation"));
+    otherOrganisation = organisations.saveAndFlush(Organisation.of("Other Organisation"));
   }
 
   @After

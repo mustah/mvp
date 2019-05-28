@@ -18,6 +18,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -655,6 +657,7 @@ public class MeasurementRepository implements Measurements {
     return iso8600Offset.cast(Integer.class).neg().cast(String.class);
   }
 
+  @Nullable
   private static ZonedDateTime getExpectedTime(Measurement measurement, String utcOffset) {
     if (!measurement.physicalMeter.isActive(measurement.readoutTime)) {
       return null;

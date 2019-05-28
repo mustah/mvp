@@ -700,7 +700,7 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   private Organisation createSubOrganisation(UserSelection userSelection) {
-    return organisations.save(Organisation.subOrganisation(
+    return organisations.saveAndFlush(Organisation.subOrganisation(
       "sub-org",
       context().defaultOrganisation(),
       userSelection

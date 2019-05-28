@@ -70,7 +70,7 @@ class UserDatabaseLoader implements CommandLineRunner {
 
     log.info("Loading demo users");
 
-    organisations.save(WAYNE_INDUSTRIES);
+    organisations.saveAndFlush(WAYNE_INDUSTRIES);
 
     AuthenticatedUser authenticatedUser = new MvpUserDetails(
       new User(

@@ -78,7 +78,7 @@ public class IntegrationTestFixtureContext implements TestFixtures {
       userSelections.save(organisation.selection);
     }
 
-    return organisations.save(
+    return organisations.saveAndFlush(
       organisation
     );
   }
