@@ -100,11 +100,11 @@ public class InfrastructureMessageConsumerTest extends MessageConsumerTest {
   }
 
   private Organisation saveDefaultOrganisation() {
-    return organisations.save(Organisation.of(ORGANISATION_EXTERNAL_ID));
+    return organisations.saveAndFlush(Organisation.of(ORGANISATION_EXTERNAL_ID));
   }
 
   private Organisation saveOtherOrganisation() {
     var uuid = randomUUID();
-    return organisations.save(Organisation.of(uuid.toString(), uuid));
+    return organisations.saveAndFlush(Organisation.of(uuid.toString(), uuid));
   }
 }

@@ -156,7 +156,7 @@ public class OrganisationUseCases {
 
   private Organisation persist(Organisation organisation, Permission permission) {
     if (organisationPermissions.isAllowed(currentUser, organisation, permission)) {
-      return organisations.save(organisation);
+      return organisations.saveAndFlush(organisation);
     } else {
       throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to save "
         + "this organisation");

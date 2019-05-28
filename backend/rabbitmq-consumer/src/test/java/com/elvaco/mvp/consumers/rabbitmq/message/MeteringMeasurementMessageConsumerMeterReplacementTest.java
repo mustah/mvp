@@ -354,7 +354,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
   }
 
   private Organisation saveDefaultOrganisation() {
-    return organisations.save(ORGANISATION);
+    return organisations.saveAndFlush(ORGANISATION);
   }
 
   private Gateway newGateway(UUID organisationId) {

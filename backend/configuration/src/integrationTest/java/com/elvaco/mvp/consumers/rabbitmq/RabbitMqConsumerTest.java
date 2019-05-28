@@ -17,6 +17,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.elvaco.mvp.producers.rabbitmq.MessageSerializer.toJson;
@@ -133,6 +134,31 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
     assertThat(waitForCondition(() -> physicalMeterStatusLogJpaRepository.findAll().size() == 1))
       .as("Just one status log has been created").isTrue();
+  }
+
+  @Test
+  @Ignore("Takes too long time to run for every day use...-")
+  public void newOrganisationInParalell() throws Exception {
+    for (int org = 0; org < 1000; org++) {
+      for (int id = 0; id < 10; id++) {
+        MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
+          new GatewayIdDto("gateway-123-" + org + "-" + id),
+          new MeterIdDto("meter-123-" + org + "-" + id),
+          new FacilityIdDto("facility-123-" + org + "-" + id),
+          "organisation-" + org,
+          "test",
+          List.of(new ValueDto(LocalDateTime.now(), 0.659, "°C", "Return temp."))
+        );
+
+        publishMessage(toJson(message).getBytes(StandardCharsets.UTF_8));
+      }
+
+    }
+    waitFor(60000);
+
+    for (int org = 0; org < 1000; org++) {
+      assertOrganisationWithSlugWasCreated("organisation-" + org);
+    }
   }
 
   private MeteringReferenceInfoMessageDto getMeteringReferenceInfoMessageDto() {

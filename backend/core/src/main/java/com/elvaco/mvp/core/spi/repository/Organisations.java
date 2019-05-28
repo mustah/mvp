@@ -21,7 +21,7 @@ public interface Organisations {
 
   Optional<Organisation> findById(UUID id);
 
-  Organisation save(Organisation organisation);
+  Organisation saveAndFlush(Organisation organisation);
 
   void deleteById(UUID id);
 

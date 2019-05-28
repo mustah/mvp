@@ -195,11 +195,11 @@ class DataProviderConfig {
 
   @Bean
   Organisations organisations(ProductionDataProvider productionDataProvider) {
-    var organisations = new OrganisationRepository(organisationJpaRepository);
+    var organisations = new OrganisationRepository(organisationJpaRepository, entityManager);
 
     productionDataProvider.organisations().stream()
       .filter(organisation -> organisations.findBySlug(organisation.slug).isEmpty())
-      .forEach(organisations::save);
+      .forEach(organisations::saveAndFlush);
 
     return organisations;
   }

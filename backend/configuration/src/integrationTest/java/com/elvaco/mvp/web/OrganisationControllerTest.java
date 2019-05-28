@@ -30,9 +30,9 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    secretService = organisations.save(secretService);
-    wayneIndustries = organisations.save(wayneIndustries);
-    theBeatles = organisations.save(theBeatles);
+    secretService = organisations.saveAndFlush(secretService);
+    wayneIndustries = organisations.saveAndFlush(wayneIndustries);
+    theBeatles = organisations.saveAndFlush(theBeatles);
   }
 
   @Test
@@ -113,7 +113,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     var parent = context().admin.organisation;
     var subOrganisation = Organisation.subOrganisation("Scooter", parent, selection).build();
 
-    organisations.save(subOrganisation);
+    organisations.saveAndFlush(subOrganisation);
 
     ResponseEntity<List<OrganisationDto>> request = asAdmin()
       .getList("/organisations", OrganisationDto.class);

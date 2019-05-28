@@ -50,7 +50,7 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
   }
 
   @Override
-  public Organisation save(Organisation organisation) {
+  public Organisation saveAndFlush(Organisation organisation) {
     return saveMock(organisation);
   }
 

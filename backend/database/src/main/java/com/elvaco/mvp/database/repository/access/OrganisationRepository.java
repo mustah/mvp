@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -18,6 +20,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper.toDomainModel;
 import static com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper.toEntity;
@@ -28,6 +31,7 @@ import static java.util.stream.Collectors.toList;
 public class OrganisationRepository implements Organisations {
 
   private final OrganisationJpaRepository organisationJpaRepository;
+  private final EntityManager entityManager;
 
   @Override
   public List<Organisation> findAll() {
@@ -80,8 +84,11 @@ public class OrganisationRepository implements Organisations {
       @CacheEvict(cacheNames = "organisation.externalId", key = "#result.externalId"),
     }
   )
-  public Organisation save(Organisation organisation) {
-    return toDomainModel(organisationJpaRepository.save(toEntity(organisation)));
+  @Transactional
+  public Organisation saveAndFlush(Organisation organisation) {
+    var org = organisationJpaRepository.save(toEntity(organisation));
+    entityManager.flush();
+    return toDomainModel(org);
   }
 
   @Override
