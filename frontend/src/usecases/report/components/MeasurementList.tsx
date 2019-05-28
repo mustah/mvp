@@ -28,7 +28,7 @@ const formatReadoutValueCell = (cell: WorkbookSheetRowCell) => {
 };
 
 const formatDateCell = (cell: WorkbookSheetRowCell) => {
-  cell.format = 'YYYY-MM-DD HH:MM:SS';
+  cell.format = 'yyyy-mm-dd hh:mm';
   cell.value = new Date(cell.value!.toString());
 };
 
