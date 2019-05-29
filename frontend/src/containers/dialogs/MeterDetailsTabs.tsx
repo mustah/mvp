@@ -101,7 +101,7 @@ const GatewayContent = ({cssStyles, gateways}: MeterGatewayProps & ThemeContext)
 
   const onExpandChange = (ev) => {
     ev.dataItem.expanded = !ev.dataItem.expanded;
-    forceUpdate(null);
+    forceUpdate();
   };
 
   return (
