@@ -58,10 +58,10 @@ export const getMapZoomSettings = (id: uuid) =>
 
 export const getMapMarkers = createSelector<NormalizedState<MapMarker>, ObjectsById<MapMarker>, MapMarkerClusters>(
   state => getDomainModel(state).entities,
-  mapMarkers => makeLeafletCompatibleMarkersFrom(mapMarkers)
+  mapMarkers => makeLeafletCompatibleMarkersFrom(mapMarkers || {})
 );
 
 export const getWidgetMapMarkers = createSelector<Normalized<MapMarker>, ObjectsById<MapMarker>, MapMarkerClusters>(
   ({entities: {meterMapMarkers}}) => meterMapMarkers,
-  mapMarkers => makeLeafletCompatibleMarkersFrom(mapMarkers)
+  mapMarkers => makeLeafletCompatibleMarkersFrom(mapMarkers || {})
 );
