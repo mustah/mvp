@@ -1,5 +1,6 @@
 import {Color} from '../../app/colors';
 import {RequestsHttp} from '../../state/domain-models/domainModels';
+import {uuid} from '../../types/Types';
 
 export interface Colors {
   primary: Color;
@@ -14,3 +15,5 @@ export interface ThemeRequestModel {
   key: keyof Colors;
   value: Color;
 }
+
+export type OnChangeColor = (color: Color, organisationId: uuid) => void;

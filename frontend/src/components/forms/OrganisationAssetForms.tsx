@@ -92,7 +92,7 @@ export const OrganisationAssetForms = (props: AssetFormProps & ThemeContext) => 
           <Row className="flex-fill-horizontally">
             <h3 style={{marginBottom: 16}}>{firstUpperTranslated('change colors')}</h3>
           </Row>
-          <ColorPickersContainer/>
+          <ColorPickersContainer organisation={props.organisation}/>
         </Row>
 
         {assetTypeForms}

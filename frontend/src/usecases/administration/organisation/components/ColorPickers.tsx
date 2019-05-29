@@ -11,32 +11,39 @@ import {makeThemeUrlOf} from '../../../../helpers/urlFactory';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {RequestsHttp} from '../../../../state/domain-models/domainModels';
 import {Organisation} from '../../../../state/domain-models/organisation/organisationModels';
-import {Omit, OnClick, OnClickWith, OnFetch} from '../../../../types/Types';
-import {Colors} from '../../../theme/themeModels';
+import {Omit, OnClick, OnFetch} from '../../../../types/Types';
+import {Colors, OnChangeColor} from '../../../theme/themeModels';
 import {ColorPicker} from './ColorPicker';
 
 export interface StateToProps extends RequestsHttp {
-  organisation: Organisation;
   color: Colors;
 }
 
 export interface DispatchToProps {
-  changePrimaryColor: OnClickWith<Color>;
-  changeSecondaryColor: OnClickWith<Color>;
+  changePrimaryColor: OnChangeColor;
+  changeSecondaryColor: OnChangeColor;
   fetchTheme: OnFetch;
   resetColors: OnClick;
 }
 
-export type Props = StateToProps & DispatchToProps & ThemeContext;
+export interface OwnProps {
+  organisation: Organisation;
+}
+
+export type Props = StateToProps & DispatchToProps & OwnProps & ThemeContext;
 
 const ColorPickersComponent = ({
   changePrimaryColor,
   changeSecondaryColor,
+  organisation: {id},
   resetColors,
   color: {primary, secondary}
-}: StateToProps & Omit<DispatchToProps, 'fetchTheme'>) => {
-  const renderPrimaryPicker = _ => <ColorPicker onChange={changePrimaryColor} color={primary}/>;
-  const renderSecondaryPicker = _ => <ColorPicker onChange={changeSecondaryColor} color={secondary}/>;
+}: StateToProps & OwnProps & Omit<DispatchToProps, 'fetchTheme'>) => {
+  const changePrimaryColorHandler = (color: Color) => changePrimaryColor(color, id);
+  const changeSecondaryColorHandler = (color: Color) => changeSecondaryColor(color, id);
+
+  const renderPrimaryPicker = _ => <ColorPicker onChange={changePrimaryColorHandler} color={primary}/>;
+  const renderSecondaryPicker = _ => <ColorPicker onChange={changeSecondaryColorHandler} color={secondary}/>;
 
   return (
     <Row>
