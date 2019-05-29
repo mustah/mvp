@@ -1,6 +1,7 @@
 import {ActionType, getType} from 'typesafe-actions';
 import {routes} from '../../app/routes';
 import {locationChange} from '../../state/location/locationActions';
+import {logoutUser} from '../auth/authActions';
 import {failureTheme, requestTheme, successTheme} from './themeActions';
 import {ThemeState} from './themeModels';
 
@@ -16,7 +17,8 @@ export const initialState: ThemeState = {
 type ActionTypes = ActionType<typeof locationChange
   | typeof requestTheme
   | typeof successTheme
-  | typeof failureTheme>;
+  | typeof failureTheme
+  | typeof logoutUser>;
 
 export const theme = (state: ThemeState = initialState, action: ActionTypes): ThemeState => {
   switch (action.type) {
@@ -44,6 +46,8 @@ export const theme = (state: ThemeState = initialState, action: ActionTypes): Th
       return action.payload.location.pathname.startsWith(routes.adminOrganisationsModify)
         ? {...state, isFetching: false, isSuccessfullyFetched: false}
         : state;
+    case getType(logoutUser):
+      return {...state, isFetching: false, isSuccessfullyFetched: false};
     default:
       return state;
   }

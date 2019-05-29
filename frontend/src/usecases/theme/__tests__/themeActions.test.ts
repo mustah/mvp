@@ -139,7 +139,7 @@ describe('themeActions', () => {
       const {color: {secondary}} = initialState;
       const response: ThemeRequestModel[] = makeBody('blue', secondary);
 
-      await onUpdate(response, () => changePrimaryColor('blue'));
+      await onUpdate(response, () => changePrimaryColor('blue', 1));
 
       expect(store.getActions()).toEqual([
         requestTheme(),
@@ -151,7 +151,7 @@ describe('themeActions', () => {
       const {color: {primary}} = initialState;
       const response: ThemeRequestModel[] = makeBody(primary, 'red');
 
-      await onUpdate(response, () => changeSecondaryColor('red'));
+      await onUpdate(response, () => changeSecondaryColor('red', 1));
 
       expect(store.getActions()).toEqual([
         requestTheme(),

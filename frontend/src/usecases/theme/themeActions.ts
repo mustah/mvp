@@ -4,7 +4,7 @@ import {makeUpdateThemeUrlOf} from '../../helpers/urlFactory';
 import {GetState} from '../../reducers/rootReducer';
 import {ActionsFactory, fetchIfNeeded, FetchIfNeeded, putRequest} from '../../state/api/apiActions';
 import {DataFormatter} from '../../state/domain-models/domainModelsActions';
-import {ErrorResponse, Sectors} from '../../types/Types';
+import {ErrorResponse, Sectors, uuid} from '../../types/Types';
 import {getOrganisation} from '../auth/authSelectors';
 import {Colors, ThemeRequestModel, ThemeState} from './themeModels';
 import {initialState} from './themeReducer';
@@ -60,16 +60,14 @@ export const resetColors = () =>
     await dispatch(updateTheme(makeUpdateThemeUrlOf(id), makeBody(primary, secondary)));
   };
 
-export const changePrimaryColor = (color: Color) =>
+export const changePrimaryColor = (color: Color, organisationId: uuid) =>
   async (dispatch, getState: GetState) => {
-    const {auth, theme: {color: {secondary}}} = getState();
-    const {id} = getOrganisation(auth);
-    await dispatch(updateTheme(makeUpdateThemeUrlOf(id), makeBody(color, secondary)));
+    const {theme: {color: {secondary}}} = getState();
+    await dispatch(updateTheme(makeUpdateThemeUrlOf(organisationId), makeBody(color, secondary)));
   };
 
-export const changeSecondaryColor = (color: Color) =>
+export const changeSecondaryColor = (color: Color, organisationId: uuid) =>
   async (dispatch, getState: GetState) => {
-    const {auth, theme: {color: {primary}}} = getState();
-    const {id} = getOrganisation(auth);
-    await dispatch(updateTheme(makeUpdateThemeUrlOf(id), makeBody(primary, color)));
+    const {theme: {color: {primary}}} = getState();
+    await dispatch(updateTheme(makeUpdateThemeUrlOf(organisationId), makeBody(primary, color)));
   };
