@@ -31,7 +31,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 
 public class MeasurementStatTest extends IntegrationTest {
 
-  private static final ZonedDateTime TIME = ZonedDateTime.parse("2018-11-22T01:00:00+01")
+  private static final ZonedDateTime TIME = ZonedDateTime.parse("2018-11-22T00:00:00+01")
     .truncatedTo(ChronoUnit.HOURS);
 
   private static final ZonedDateTime UTC_TIME = ZonedDateTime.parse("2018-11-23T00:00:00+00")

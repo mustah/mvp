@@ -41,7 +41,7 @@ begin
              p_quantity_id,
              mg.min,
              mg.max,
-             mg.expected_count,
+             coalesce(mg.expected_count,0),
              mg.received_count,
              mg.average,
              false
@@ -53,10 +53,15 @@ begin
            (select (m.expected_time at time zone current_tz)::date as date1,
                    min(m.value),
                    max(m.value),
-                   coalesce(60 * 24 / nullif(read_interval, 0), 0) as expected_count,
+                   min((extract(epoch from (
+              upper(p.active_period * tstzrange((expected_time at time zone current_tz)::date,
+                                               ((expected_time at time zone current_tz)+('1 day'::interval))::date,'[)'))
+              -lower(p.active_period * tstzrange((expected_time at time zone current_tz)::date,
+                                                ((expected_time at time zone current_tz)+('1 day'::interval))::date,'[)'))))/60)/nullif(read_interval_minutes,0))::int as expected_count,
                    count(m.value)::int as received_count,
                    avg(m.value) as average
             from measurement m
+            join physical_meter p on m.physical_meter_id = p.id and m.organisation_id = p.organisation_id
             where m.physical_meter_id = p_meter_id and
                   m.organisation_id = p_organisation_id and
                   m.quantity_id = p_quantity_id and
@@ -76,7 +81,7 @@ select
         p_quantity_id,
         mg.min,
         mg.max,
-        mg.expected_count,
+        COALESCE(mg.expected_count,0),
         mg.received_count,
         mg.average,
         true
@@ -111,7 +116,7 @@ select
               upper(p.active_period * tstzrange((expected_time at time zone current_tz)::date,
                                                ((expected_time at time zone current_tz)+('1 day'::interval))::date,'[)'))
               -lower(p.active_period * tstzrange((expected_time at time zone current_tz)::date,
-                                                ((expected_time at time zone current_tz)+('1 day'::interval))::date,'[)'))))/60)/read_interval_minutes as ec
+                                                ((expected_time at time zone current_tz)+('1 day'::interval))::date,'[)'))))/60)/nullif(read_interval_minutes,0) as ec
 
          from  measurement m
          join physical_meter p on m.physical_meter_id = p.id and m.organisation_id = p.organisation_id

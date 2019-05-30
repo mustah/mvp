@@ -44,4 +44,9 @@
       </column>
     </addColumn>
   </changeSet>
+  <changeSet id="add indec to measurement_stat_job table" author="erimel">
+    <sql>
+      create index on measurement_stat_job (modified, shard_key)
+    </sql>
+  </changeSet>
 </databaseChangeLog>
