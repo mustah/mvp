@@ -29,10 +29,10 @@ before_script:
   - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
 # === Templates ===
-.no_cache: &no_cache
+.no_cache:
   cache: {}
 
-.cache_gradle: &cache_gradle
+.cache_gradle:
   cache:
     key: "$CI_COMMIT_REF_NAME-gradle"
     paths:
@@ -40,17 +40,17 @@ before_script:
       - .yarn
       - frontend/node_modules
 
-.cache_gradle_read_only: &cache_gradle_read_only
-  <<: *cache_gradle
+.cache_gradle_read_only:
+  extends: .cache_gradle
   cache:
     policy: pull
 
-.deploy:autodeploy: &auto_deploy
-  <<: *no_cache
+.auto_deploy:
+  extends: .no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
 
-.acceptance_test: &acceptance_test
-  <<: *cache_gradle_read_only
+.acceptance_test:
+  extends: .cache_gradle_read_only
   services:
     - name: selenium/standalone-chrome
       alias: selenium_chrome_container_url
@@ -65,7 +65,7 @@ before_script:
 
 # === Jobs ===
 docker:postgresql:
-  <<: *no_cache
+  extends: .no_cache
   stage: docker
   dependencies: []
   tags:
@@ -76,7 +76,7 @@ docker:postgresql:
     - docker push $DOCKER_REGISTRY_URL/postgresql:latest
 
 docker:test-upgrade:
-  <<: *no_cache
+  extends: .no_cache
   stage: docker
   dependencies: []
   tags:
@@ -87,7 +87,7 @@ docker:test-upgrade:
     - docker push $DOCKER_REGISTRY_URL/test-upgrade:latest
 
 docker:acceptance-test:
-  <<: *no_cache
+  extends: .no_cache
   stage: docker
   dependencies: []
   tags:
@@ -98,7 +98,7 @@ docker:acceptance-test:
     - docker push $DOCKER_REGISTRY_URL/acceptance-test:latest
 
 docker:ci-utils:
-  <<: *no_cache
+  extends: .no_cache
   stage: docker
   dependencies: []
   tags:
@@ -109,7 +109,7 @@ docker:ci-utils:
     - docker push $DOCKER_REGISTRY_URL/ci-utils:latest
 
 docker:gradle-jdk:
-  <<: *no_cache
+  extends: .no_cache
   stage: docker
   dependencies: []
   tags:
@@ -120,7 +120,7 @@ docker:gradle-jdk:
     - docker push $DOCKER_REGISTRY_URL/gradle-jdk11:latest
 
 prepare:gradle-clean:
-  <<: *cache_gradle
+  extends: .cache_gradle
   stage: prepare
   dependencies: []
   script:
@@ -132,7 +132,7 @@ prepare:gradle-clean:
     - tags
 
 prepare:version:
-  <<: *no_cache
+  extends: .no_cache
   stage: prepare
   dependencies: []
   image:
@@ -147,7 +147,7 @@ prepare:version:
     expire_in: 7 days
 
 prepare:update-salt:
-  <<: *no_cache
+  extends: .no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
   dependencies: []
   stage: prepare
@@ -158,7 +158,7 @@ prepare:update-salt:
     - pepper --fail-any -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 build:
-  <<: *cache_gradle
+  extends: .cache_gradle
   image: $DOCKER_REGISTRY_URL/gradle-jdk11:latest
   stage: build
   services:
@@ -182,7 +182,7 @@ build:
 
 
 pre-test:docker-mvp-app:
-  <<: *no_cache
+  extends: .no_cache
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
     APM_VERSION: 1.1.0
@@ -203,7 +203,7 @@ pre-test:docker-mvp-app:
     - docker push ${DOCKER_IMAGE_NAME}
 
 pre-test:docker-geoservice-app:
-  <<: *no_cache
+  extends: .no_cache
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
     APM_VERSION: 1.1.0
@@ -279,7 +279,7 @@ test:acceptance:
     MVP_WEB_PORT: 8080
 
 test:system:
-  <<: *cache_gradle_read_only
+  extends: .cache_gradle_read_only
   stage: test
   dependencies:
     - build
@@ -298,7 +298,7 @@ test:system:
     expire_in: 2 days
 
 test:jira_script:
-  <<: *no_cache
+  extends: .no_cache
   image: frolvlad/alpine-python3
   stage: test
   dependencies: []
@@ -310,7 +310,7 @@ test:jira_script:
     - nose2 --with-coverage --verbose
 
 test:upgrade:
-  <<: *no_cache
+  extends: .no_cache
   image: $DOCKER_REGISTRY_URL/test-upgrade:latest
   variables:
     DOCKER_DRIVER: overlay2
@@ -334,7 +334,7 @@ test:upgrade:
     - ./scripts/upgrade-test.sh $MVP_UPGRADE_FROM_TAG $MVP_UPGRADE_TO_TAG $TEST_HOST $APM_ENV
 
 deploy:staging:
-  <<: *auto_deploy
+  extends: .auto_deploy
   stage: deploy-staging
   dependencies:
     - prepare:version
@@ -362,7 +362,7 @@ deploy:staging:
     - while [ 1 ]; do curl --fail --silent --user "$API_USER:$API_PASSWORD" "$API_URL/actuator/health" >/dev/null && exit 0; echo "Waiting for application to start"; sleep 1; done
 
 post-staging:acceptance:
-  <<: *acceptance_test
+  extends: .acceptance_test
   stage: post-staging
   dependencies:
     - build
@@ -392,7 +392,7 @@ post-staging:performance:
     - python scripts/performance/time_requests.py
 
 deploy:production:
-  <<: *auto_deploy
+  extends: .auto_deploy
   stage: deploy-prod
   dependencies:
     - prepare:version
@@ -422,7 +422,7 @@ deploy:production:
     - while [ 1 ]; do curl --fail --silent --user "$API_USER:$API_PASSWORD" "$API_URL/actuator/health" >/dev/null && exit 0; echo "Waiting for application to start"; sleep 1; done
 
 post-prod:acceptance:
-  <<: *acceptance_test
+  extends: .acceptance_test
   stage: post-prod
   dependencies:
     - build
@@ -437,7 +437,7 @@ post-prod:acceptance:
     MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 
 finalize:tag-production-mvp-docker:
-  <<: *no_cache
+  extends: .no_cache
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
   stage: finalize
@@ -456,7 +456,7 @@ finalize:tag-production-mvp-docker:
     - docker push ${DOCKER_REGISTRY_URL}/mvp:production
 
 finalize:tag-production-geoservice-docker:
-  <<: *no_cache
+  extends: .no_cache
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
   stage: finalize
@@ -475,7 +475,7 @@ finalize:tag-production-geoservice-docker:
     - docker push ${DOCKER_REGISTRY_URL}/geoservice:production
 
 finalize:create-jira-version:
-  <<: *no_cache
+  extends: .no_cache
   image: frolvlad/alpine-python3
   dependencies:
     - prepare:version
