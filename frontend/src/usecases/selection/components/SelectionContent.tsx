@@ -10,7 +10,7 @@ import {withSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {Foldable} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
-import {MeterListContainer} from '../../../containers/MeterListContainer';
+import {MeterListContentContainer} from '../../../containers/MeterListContentContainer';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';
@@ -159,7 +159,7 @@ export const SelectionContent = ({
         />
       </Foldable>
 
-      <MeterListContainer/>
+      <MeterListContentContainer paddingBottom={416}/>
     </Column>
   );
 };

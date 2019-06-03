@@ -167,7 +167,7 @@ describe('meterApiActions', () => {
             isFetchingSingle: false,
             nonExistingSingles: {},
             entities: {},
-            result: {[existingPage]: {isFetching: true, isSuccessfullyFetched: false}},
+            result: {[existingPage]: {isFetching: true, isSuccessfullyFetched: false, result: []}},
           },
           gateways: {
             isFetchingSingle: false,
@@ -209,6 +209,7 @@ describe('meterApiActions', () => {
                 isFetching: false,
                 isSuccessfullyFetched: false,
                 error: {message: 'an error'},
+                result: [],
               },
             },
           },

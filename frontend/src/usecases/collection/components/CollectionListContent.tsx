@@ -38,8 +38,8 @@ export const CollectionListContent = (props: CollectionListProps & WithChildren)
 
   const wrapperProps: WrapperProps = {
     ...otherProps,
-    noContentText: firstUpperTranslated('no meters'),
     hasContent,
+    noContentText: firstUpperTranslated('no meters'),
   };
 
   return (

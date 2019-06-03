@@ -41,6 +41,7 @@
       "react-grid-layout",
       "react-resizable",
       "redux-persist",
+      "react-virtualized",
       "moment",
       "typesafe-actions"
     ],

@@ -1,3 +1,4 @@
+import {SortDescriptor} from '@progress/kendo-data-query';
 import {ExcelExport} from '@progress/kendo-react-excel-export';
 import {
   Grid,
@@ -11,14 +12,21 @@ import {
 import * as React from 'react';
 import {gridStyle, makeGridClassName} from '../../../app/themes';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
-import {MeterListItem} from '../../../components/meters/MeterListItem';
+import {MeterLink} from '../../../components/meters/MeterLink';
 
 import {formatCollectionPercentage, formatReadInterval} from '../../../helpers/formatters';
+import {RequestParameter} from '../../../helpers/urlFactory';
 import {useExportToExcel} from '../../../hooks/exportToExcelHook';
 import {translate} from '../../../services/translationService';
-import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
+import {SortOption} from '../../../state/ui/pagination/paginationModels';
 import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
 import {CollectionListProps} from './CollectionListContent';
+
+interface SortProps {
+  sortable?: GridSortSettings;
+  onSortChange?: (event: GridSortChangeEvent) => void;
+  sort?: SortDescriptor[];
+}
 
 const pageable: GridPagerSettings = {
   buttonCount: 5,
@@ -33,14 +41,25 @@ const sortable: GridSortSettings = {
   mode: 'single'
 };
 
-const renderMeterListItem = ({dataItem}: GridCellProps) =>
-  <td><MeterListItem meter={dataItem} subPath={'/collection-period'}/></td>;
+const renderMeterListItem = ({dataItem: {id, facility}}: GridCellProps) =>
+  <td><MeterLink id={id} facility={facility} subPath={'/collection-period'}/></td>;
 
 const renderReadInterval = ({dataItem: {readInterval}}) =>
   <td>{formatReadInterval(readInterval)}</td>;
 
 const renderCollectionPercentage = ({dataItem: {collectionPercentage, readInterval}}) =>
   <td>{formatCollectionPercentage(collectionPercentage, readInterval)}</td>;
+
+const toSortDescriptor = (sortOption: SortOption): SortDescriptor =>
+  ({...sortOption, dir: sortOption.dir === 'ASC' ? 'asc' : 'desc'});
+
+const toSortOption = ({field, dir}: SortDescriptor): SortOption =>
+  ({field: field as RequestParameter, dir: dir === 'asc' ? 'ASC' : 'DESC'});
+
+const toSortOptions = (sort: SortDescriptor[]): SortOption[] => sort.map(toSortOption);
+
+const toSortDescriptors = (sort): SortDescriptor[] | undefined =>
+  sort && sort.length ? sort.map(toSortDescriptor) : undefined;
 
 export const CollectionStatList = ({
   cssStyles,
@@ -63,9 +82,13 @@ export const CollectionStatList = ({
   const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
     changePage({entityType, page: skip / paginationPageSize});
 
-  const handleSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
+  const scrollProps: SortProps = {
+    onSortChange: ({sort}: GridSortChangeEvent) => sortTable(toSortOptions(sort)),
+    sort: toSortDescriptors(sort),
+    sortable
+  };
 
-  const data = result.map((key) => entities[key]);
+  const data = result.map(key => entities[key]);
 
   const gridData = {data, total};
 
@@ -74,19 +97,14 @@ export const CollectionStatList = ({
       <Grid
         className={makeGridClassName(cssStyles)}
         data={gridData}
-
         pageable={total > size ? pageable : undefined}
         pageSize={size}
         take={size}
         skip={page * size}
         onPageChange={handlePageChange}
-
-        sortable={sortable}
-        onSortChange={handleSortChange}
-        sort={sort}
-
         scrollable="none"
         style={gridStyle}
+        {...scrollProps}
       >
         <GridColumn
           field="facility"

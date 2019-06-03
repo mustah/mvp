@@ -3,8 +3,7 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {isMetersPageFetching} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
-import {addAllToReport} from '../../../state/report/reportActions';
-import {LegendItem, ReportSector} from '../../../state/report/reportModels';
+import {ReportSector} from '../../../state/report/reportModels';
 import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 import {
   exportToExcelSuccess,
@@ -25,7 +24,7 @@ import {
   getThreshold,
   getUserSelectionId
 } from '../../../state/user-selection/userSelectionSelectors';
-import {Callback, CallbackWith, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
+import {Callback, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
 
@@ -44,7 +43,6 @@ export interface StateToProps {
 }
 
 export interface DispatchToProps {
-  addAllToReport: CallbackWith<LegendItem[]>;
   clearError: OnClick;
   exportToExcelSuccess: Callback;
   fetchMeasurements: FetchMeasurements;
@@ -76,7 +74,6 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  addAllToReport,
   clearError: measurementClearError(ReportSector.report),
   exportToExcelSuccess: exportToExcelSuccess(ReportSector.report),
   fetchMeasurements: fetchMeasurementsForReport,

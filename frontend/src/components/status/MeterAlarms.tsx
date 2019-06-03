@@ -56,10 +56,12 @@ export const MeterAlarms = ({items}: MeterAlarmProps) => {
   );
 };
 
-export const AlarmStatus = ({hasAlarm}: AlarmStatusProps) => (
-  hasAlarm ? (<StatusComponent label={translate('yes')} status={Status.error}/>) : (<Bold>-</Bold>)
-);
+export const AlarmStatus = ({hasAlarm}: AlarmStatusProps) =>
+  hasAlarm
+    ? <StatusComponent label={translate('yes')} status={Status.error}/>
+    : <Bold>-</Bold>;
 
-export const MeteringStatus = ({isReported, label}: MeteringStatusProps) => (
-  isReported ? (<StatusComponent label={label || translate('yes')} status={Status.error}/>) : (<Bold>-</Bold>)
-);
+export const MeteringStatus = ({isReported, label}: MeteringStatusProps) =>
+  isReported
+    ? <StatusComponent label={label || translate('yes')} status={Status.error}/>
+    : <Bold>-</Bold>;

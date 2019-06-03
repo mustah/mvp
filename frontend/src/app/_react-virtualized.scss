@@ -1,0 +1,20 @@
+@import 'variables';
+
+.ReactVirtualized__Table__Grid {
+  border-radius: $border-radius;
+
+  &:focus {
+    outline: none !important;
+  }
+}
+
+.ReactVirtualized__Table__headerRow {
+  border-bottom: 1px solid $border-color;
+
+  .ReactVirtualized__Table__headerColumn {
+    &.left-most {
+      margin-left: $space;
+      margin-right: 4px;
+    }
+  }
+}

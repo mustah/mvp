@@ -4,12 +4,11 @@ import {Maybe} from '../../../helpers/Maybe';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {UseCases} from '../../../types/Types';
 import {search} from '../../search/searchActions';
-import {Query} from '../../search/searchModels';
 import {resetSelection} from '../../user-selection/userSelectionActions';
 import {changePage, updatePageMetaData} from './paginationActions';
 import {ChangePagePayload, Pagination, PaginationMetadataPayload, PaginationState} from './paginationModels';
 
-export const paginationPageSize = 20;
+export const paginationPageSize = 50;
 
 const initialPagination: Pagination = {
   page: 0,
@@ -41,8 +40,6 @@ const updateMetaData = (
   [entityType]: {...state[entityType], size: paginationPageSize, totalElements, totalPages},
 });
 
-const hasQuery = ({query}: Query) => isDefined(query);
-
 const resetSearchResultPage: ChangePagePayload = {
   entityType: 'meters',
   page: 0,
@@ -60,8 +57,9 @@ export const pagination = (
     case getType(updatePageMetaData):
       return updateMetaData(state, action.payload);
     case getType(search):
-      return Maybe.maybe(action.payload[UseCases.collection])
-        .filter(hasQuery)
+      const payload = action.payload[UseCases.validation] || action.payload[UseCases.collection];
+      return Maybe.maybe(payload)
+        .filter(isDefined)
         .map(_ => onChangePage(state, resetSearchResultPage))
         .orElse(state);
     default:

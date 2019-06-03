@@ -58,8 +58,7 @@ interface RequestHandler<T> {
   failure: (payload: ErrorResponse) => PayloadAction<string, ErrorResponse>;
 }
 
-interface AsyncRequest<REQUEST_DATA, T>
-  extends RequestHandler<T>, RequestCallbacks<T> {
+interface AsyncRequest<REQUEST_DATA, T> extends RequestHandler<T>, RequestCallbacks<T> {
   requestFunc: (requestData?: REQUEST_DATA) => any;
   formatData?: DataFormatter<T>;
   requestData?: REQUEST_DATA;

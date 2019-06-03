@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {isMetersPageFetching} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {addAllToReport} from '../../../state/report/reportActions';
 import {ReportSector} from '../../../state/report/reportModels';
 import {getHiddenLines, getSelectionMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
 import {
@@ -47,7 +46,6 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  addAllToReport,
   clearError: measurementClearError(ReportSector.selectionReport),
   exportToExcelSuccess: exportSelectionReportToExcel,
   fetchMeasurements: fetchMeasurementsForSelectionReport,

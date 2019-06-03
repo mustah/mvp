@@ -13,11 +13,9 @@ import {
 import {
   getPageError,
   getPageIsFetching,
-  getPageResult,
-  getPaginatedEntities
+  getPaginatedResult
 } from '../../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {collectionStatClearError} from '../../../../state/domain-models/collection-stat/collectionStatActions';
-import {CollectionStat} from '../../../../state/domain-models/collection-stat/collectionStatModels';
 import {changePage} from '../../../../state/ui/pagination/paginationActions';
 import {EntityTypes, Pagination} from '../../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../../state/ui/pagination/paginationSelectors';
@@ -58,14 +56,14 @@ const mapStateToProps = (
   ]);
 
   return ({
-    entities: getPaginatedEntities<CollectionStat>(meterCollectionStatFacilities),
-    result: getPageResult(meterCollectionStatFacilities, page),
+    entities: meterCollectionStatFacilities.entities,
+    result: getPaginatedResult(meterCollectionStatFacilities, page),
     parameters,
     sort,
     isExportingToExcel,
     isFetching: getPageIsFetching(meterCollectionStatFacilities, page),
     pagination,
-    error: getPageError<CollectionStat>(meterCollectionStatFacilities, page),
+    error: getPageError({page, state: meterCollectionStatFacilities}),
     entityType,
     timePeriod,
   });

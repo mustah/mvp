@@ -1,7 +1,7 @@
 import {Dictionary, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {CollectionStatFacilityState} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById, RequestsHttp} from '../domain-models/domainModels';
-import {ApiRequestSortingOptions, ApiResultSortingOptions} from '../ui/pagination/paginationModels';
+import {ApiResultSortingOptions, SortOption} from '../ui/pagination/paginationModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
 
@@ -42,9 +42,9 @@ export interface NormalizedPaginatedState<T extends Identifiable> {
     [page: number]: PaginatedResult;
   };
   nonExistingSingles: Dictionary<SingleEntityFailure>;
-  sort?: ApiRequestSortingOptions[];
+  sort?: SortOption[];
 }
 
-interface PaginatedResult extends RequestsHttp {
-  result?: uuid[];
+export interface PaginatedResult extends RequestsHttp {
+  result: uuid[];
 }

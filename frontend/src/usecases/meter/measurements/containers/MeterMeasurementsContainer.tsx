@@ -3,7 +3,6 @@ import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {RootState} from '../../../../reducers/rootReducer';
 import {MeterDetails} from '../../../../state/domain-models/meter-details/meterDetailsModels';
-import {addAllToReport} from '../../../../state/report/reportActions';
 import {ReportSector} from '../../../../state/report/reportModels';
 import {
   fetchMeasurementsForMeterDetails as fetchMeasurements,
@@ -58,7 +57,6 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  addAllToReport,
   clearError: measurementClearError(ReportSector.meterDetailsReport),
   exportToExcelSuccess,
   fetchMeasurements,

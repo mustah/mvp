@@ -5,7 +5,7 @@ import {ErrorResponse, Identifiable} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
 import {locationChange} from '../../location/locationActions';
-import {ApiRequestSortingOptions} from '../../ui/pagination/paginationModels';
+import {SortOption} from '../../ui/pagination/paginationModels';
 import {resetSelection} from '../../user-selection/userSelectionActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters, sortTableMeters} from '../meter/meterApiActions';
@@ -36,6 +36,7 @@ describe('paginatedDomainModelsReducer', () => {
       country: 'sverige',
       position: {latitude: 10, longitude: 10},
     };
+
     const normalizedMeters: NormalizedPaginated<Meter> = {
       page,
       entities: {
@@ -84,7 +85,7 @@ describe('paginatedDomainModelsReducer', () => {
       const expected: MetersState = {
         ...initialState,
         result: {
-          [page]: {isFetching: true, isSuccessfullyFetched: false},
+          [page]: {isFetching: true, isSuccessfullyFetched: false, result: []},
         },
       };
       expect(stateAfterRequestInitiation).toEqual(expected);
@@ -157,8 +158,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('appends entities if payload is an array', () => {
       const getMeterEntitiesRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
-      const populatedState: MetersState =
-        meters(initialState, getRequest.success(normalizedMeters));
+      const populatedState: MetersState = meters(initialState, getRequest.success(normalizedMeters));
 
       const payload: Array<Partial<Meter>> = [
         {id: 1},
@@ -190,6 +190,7 @@ describe('paginatedDomainModelsReducer', () => {
             error: {message: payload.message},
             isFetching: false,
             isSuccessfullyFetched: false,
+            result: [],
           },
         },
       };
@@ -282,7 +283,7 @@ describe('paginatedDomainModelsReducer', () => {
 
       const expected: MetersState = {
         ...errorState,
-        result: {[payload.page]: {isFetching: false, isSuccessfullyFetched: false}},
+        result: {[payload.page]: {isFetching: false, isSuccessfullyFetched: false, result: []}},
       };
       expect(meters(errorState, clearErrorMeters(payload))).toEqual(expected);
     });
@@ -324,7 +325,7 @@ describe('paginatedDomainModelsReducer', () => {
     it('can start sorting', () => {
       const state: MetersState = makeInitialState();
 
-      const payload: ApiRequestSortingOptions[] = [{field: RequestParameter.city}];
+      const payload: SortOption[] = [{field: RequestParameter.city}];
       const newState: MetersState = meters(state, sortTableMeters(payload));
 
       expect(newState).toHaveProperty('sort', payload);
@@ -339,7 +340,7 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('keeps the result when the sorting is unchanged', () => {
-      const payload: ApiRequestSortingOptions[] = [{field: RequestParameter.city}];
+      const payload: SortOption[] = [{field: RequestParameter.city}];
       const state: MetersState = meters(
         {
           ...makeInitialState(),
@@ -361,8 +362,8 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('throws out the result when the sorting changes', () => {
-      const payload: ApiRequestSortingOptions[] = [{field: RequestParameter.city}];
-      const differentPayload: ApiRequestSortingOptions[] = [{field: RequestParameter.city, dir: 'desc'}];
+      const payload: SortOption[] = [{field: RequestParameter.city}];
+      const differentPayload: SortOption[] = [{field: RequestParameter.city, dir: 'DESC'}];
       const state: MetersState = meters(
         {
           ...makeInitialState(),
