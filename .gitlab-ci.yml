@@ -108,6 +108,17 @@ docker:ci-utils:
     - docker build -t $DOCKER_REGISTRY_URL/ci-utils:latest -f docker/Dockerfile-ci-utils .
     - docker push $DOCKER_REGISTRY_URL/ci-utils:latest
 
+docker:gradle-jdk:
+  <<: *no_cache
+  stage: docker
+  dependencies: []
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/gradle-jdk11:latest -f docker/Dockerfile-gradle-jdk11 .
+    - docker push $DOCKER_REGISTRY_URL/gradle-jdk11:latest
+
 prepare:gradle-clean:
   <<: *cache_gradle
   stage: prepare
@@ -148,6 +159,7 @@ prepare:update-salt:
 
 build:
   <<: *cache_gradle
+  image: $DOCKER_REGISTRY_URL/gradle-jdk11:latest
   stage: build
   services:
     - name: $DOCKER_REGISTRY_URL/postgresql:latest
