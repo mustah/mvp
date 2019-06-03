@@ -72,19 +72,20 @@ public class PhysicalMeterUseCases {
       .filter(this::hasTenantAccess)
       .ifPresent(orgId -> physicalMeters.findBy(orgId, physicalMeter.externalId).stream()
         .filter(p -> !p.id.equals(physicalMeter.id))
-        .filter(p -> p.activePeriod.isRightOpen())
+        .filter(p -> p.activePeriod.contains(measurementTimestamp))
         .map(p -> p.deactivate(measurementTimestamp))
         .forEach(this::saveAndFlush));
   }
 
   public Optional<PhysicalMeter> getActiveMeterAtTimestamp(
-    PhysicalMeter physicalMeter,
+    UUID organisationId,
+    String externalId,
     ZonedDateTime newStartTime
   ) {
-    return Optional.of(physicalMeter.organisationId)
+    return Optional.of(organisationId)
       .filter(this::hasTenantAccess)
       .flatMap(orgId ->
-        physicalMeters.findBy(orgId, physicalMeter.externalId)
+        physicalMeters.findBy(orgId, externalId)
           .stream()
           .filter(p -> p.activePeriod.contains(newStartTime))
           .findFirst());

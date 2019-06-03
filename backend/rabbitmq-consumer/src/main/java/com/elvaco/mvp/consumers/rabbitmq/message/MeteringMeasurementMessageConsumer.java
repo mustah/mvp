@@ -119,16 +119,20 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       })
       .orElse(logicalMeter);
 
+    // Update start time for measurement before current start time
     physicalMeter.activePeriod.getStartDateTime()
-      .filter(start -> zonedMeasurementTimestamp.isBefore(start))
+      .filter(zonedMeasurementTimestamp::isBefore)
       .ifPresent(start -> {
-        physicalMeterUseCases.getActiveMeterAtTimestamp(physicalMeter, zonedMeasurementTimestamp)
-          .ifPresent(otherActive -> {
-            otherActive.activePeriod = otherActive.activePeriod.toBuilder()
-              .stop(PeriodBound.exclusiveOf(zonedMeasurementTimestamp))
-              .build();
-            physicalMeterUseCases.save(otherActive);
-          });
+        physicalMeterUseCases.getActiveMeterAtTimestamp(
+          physicalMeter.organisationId,
+          physicalMeter.externalId,
+          zonedMeasurementTimestamp
+        ).ifPresent(otherActive -> {
+          otherActive.activePeriod = otherActive.activePeriod.toBuilder()
+            .stop(PeriodBound.exclusiveOf(zonedMeasurementTimestamp))
+            .build();
+          physicalMeterUseCases.save(otherActive);
+        });
 
         physicalMeter.activePeriod = physicalMeter.activePeriod.toBuilder()
           .start(PeriodBound.inclusiveOf(zonedMeasurementTimestamp))
@@ -142,19 +146,32 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         physicalMeter.activePeriod = PeriodRange.from(PeriodBound.inclusiveOf(
           zonedMeasurementTimestamp));
       }
+
+      // Set stop time if this is a new meter in between two existing
+      physicalMeterUseCases.getActiveMeterAtTimestamp(
+        physicalMeter.organisationId,
+        physicalMeter.externalId,
+        zonedMeasurementTimestamp
+      ).filter(p -> !p.isActive(ZonedDateTime.now()))
+        .map(p -> p.activePeriod.stop)
+        .ifPresent(stop ->
+          physicalMeter.activePeriod = physicalMeter.activePeriod.toBuilder()
+            .stop(stop)
+            .build());
+
       physicalMeterUseCases.deactivatePreviousPhysicalMeter(
         physicalMeter,
         zonedMeasurementTimestamp
       );
       return physicalMeterUseCases.save(physicalMeter);
     });
+
     ZonedDateTime now = ZonedDateTime.now();
     measurementMessage.values
       .forEach(value -> createMeasurement(value, now, physicalMeter)
         .ifPresent(
-          (measurement) -> measurementUseCases.createOrUpdate(measurement,connectedLogicalMeter)
-        )
-    );
+          (measurement) -> measurementUseCases.createOrUpdate(measurement, connectedLogicalMeter)
+        ));
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
       || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
@@ -175,9 +192,11 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         "MeteringMeasurementMessage without timestamp " + measurementMessage));
   }
 
-  private Optional<Measurement> createMeasurement(ValueDto value,
-                                                  ZonedDateTime receivedTime,
-                                                  PhysicalMeter physicalMeter) {
+  private Optional<Measurement> createMeasurement(
+    ValueDto value,
+    ZonedDateTime receivedTime,
+    PhysicalMeter physicalMeter
+  ) {
     Optional<Quantity> quantity = mappedQuantity(value.quantity);
     if (!quantity.isPresent()) {
       log.warn(

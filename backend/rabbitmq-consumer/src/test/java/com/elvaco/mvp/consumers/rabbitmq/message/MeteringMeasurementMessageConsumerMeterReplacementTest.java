@@ -36,8 +36,9 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
 
   private static final String QUANTITY = "Energy";
   private static final String GATEWAY_EXTERNAL_ID = "123";
-  private static final String ADDRESS = "1234";
-  private static final String SECOND_METER_ADDRESS = "9876";
+  private static final String ADDRESS = "firstMeter";
+  private static final String SECOND_METER_ADDRESS = "secondMeter";
+  private static final String THIRD_METER_ADDRESS = "thirdMeter";
 
   private static final String EXTERNAL_ID = "ABC-123";
   private static final LocalDateTime MEASUREMENT_TIMESTAMP = LocalDateTime.parse(
@@ -242,7 +243,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
       .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.minusDays(1))
     );
 
-    // Measurement atminusDays(1) for this meter will now be outside active period
+    // Measurement at minusDays(1) for this meter will now be outside active period
     assertThat(physicalMeters.findAll())
       .hasSize(2)
       .filteredOn(p -> p.address.equals(ADDRESS))
@@ -300,6 +301,54 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
       .extracting(p -> p.activePeriod)
       .containsExactlyInAnyOrder(
         PeriodRange.from(ZONED_MEASUREMENT_TIMESTAMP.plusDays(1))
+      );
+  }
+
+  @Test
+  public void activePeriodUpdatedForMeterReplacementNotInSequence() {
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
+    message(measurement()
+      .meterId(THIRD_METER_ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(2))
+    );
+    message(measurement()
+      .meterId(SECOND_METER_ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(1))
+    );
+
+    assertThat(physicalMeters.findAll()).hasSize(3);
+    assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> p.address.equals(ADDRESS))
+      .extracting(p -> p.activePeriod)
+      .containsExactly(
+        PeriodRange.halfOpenFrom(
+          ZONED_MEASUREMENT_TIMESTAMP,
+          ZONED_MEASUREMENT_TIMESTAMP.plusDays(1)
+        )
+      );
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> p.address.equals(THIRD_METER_ADDRESS))
+      .extracting(p -> p.activePeriod)
+      .containsExactly(
+        PeriodRange.from(
+          ZONED_MEASUREMENT_TIMESTAMP.plusDays(2)
+        )
+      );
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> p.address.equals(SECOND_METER_ADDRESS))
+      .extracting(p -> p.activePeriod)
+      .containsExactly(
+        PeriodRange.halfOpenFrom(
+          ZONED_MEASUREMENT_TIMESTAMP.plusDays(1),
+          ZONED_MEASUREMENT_TIMESTAMP.plusDays(2)
+        )
       );
   }
 
