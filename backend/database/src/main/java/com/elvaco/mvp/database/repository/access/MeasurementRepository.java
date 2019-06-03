@@ -338,7 +338,7 @@ public class MeasurementRepository implements Measurements {
       + "    end\n"
       + "from measurement_stat_job m1\n"
       + "         where modified <(now()- (({0}||' ms')::interval)) "
-      + "               and shard_key % {1} = {2} "
+      + "               and mod(shard_key, {1}) = {2} "
       + "          order by modified asc\n"
       + "          limit 1 for update skip locked ) as a);\n",
       val(ageMillis),

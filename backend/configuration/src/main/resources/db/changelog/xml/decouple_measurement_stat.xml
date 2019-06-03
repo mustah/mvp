@@ -49,4 +49,12 @@
       create index on measurement_stat_job (modified, shard_key)
     </sql>
   </changeSet>
+  <changeSet id="add modulo 4 shard_key index to measurement_stat_job table" author="erimel">
+    <sql>
+      create index measurement_stat_job_worker_id_modified on measurement_stat_job (mod(shard_key,4), modified)
+    </sql>
+  </changeSet>
+  <changeSet id="drop index" author="erimel">
+    <dropIndex tableName="measurement_stat_job" indexName="measurement_stat_job_modified_shard_key_idx"/>
+  </changeSet>
 </databaseChangeLog>
