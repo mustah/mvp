@@ -3,7 +3,6 @@ export const enum Period {
   yesterday = 'yesterday',
   currentMonth = 'current_month',
   previousMonth = 'previous_month',
-  currentWeek = 'current_week',
   previous7Days = 'previous_7_days',
   custom = 'custom',
 }

@@ -249,19 +249,6 @@ describe('urlFactory', () => {
       ]);
     });
 
-    it('knows about current week', () => {
-      const currentWeekApiParameters = toPeriodApiParameters({
-        start: now,
-        period: Period.currentWeek,
-        customDateRange: Maybe.nothing(),
-      });
-
-      expect(currentWeekApiParameters).toEqual([
-        'after=2018-01-29T00%3A00%3A00.000%2B01%3A00',
-        'before=2018-02-05T00%3A00%3A00.000%2B01%3A00',
-      ]);
-    });
-
     it('knows about current month', () => {
       const currentMonthApiParameters = toPeriodApiParameters({
         start: now,

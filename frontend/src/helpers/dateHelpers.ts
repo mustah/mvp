@@ -24,11 +24,6 @@ const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRan
         start: zonedDate.startOf('month').startOf('day').toDate(),
         end: zonedDate.clone().endOf('month').add(1, 'days').startOf('day').toDate(),
       };
-    case Period.currentWeek:
-      return {
-        start: zonedDate.startOf('isoWeek').toDate(),
-        end: zonedDate.clone().endOf('isoWeek').add(1, 'days').startOf('day').toDate(),
-      };
     case Period.previous7Days:
       return {
         start: zonedDate.clone().startOf('day').subtract(7, 'days').toDate(),

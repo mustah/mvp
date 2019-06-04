@@ -32,7 +32,7 @@ describe('meterDetailReducer', () => {
   describe('setTimePeriod', () => {
 
     it('marks state as dirty', () => {
-      const timePeriod: SelectionInterval = {period: Period.currentWeek};
+      const timePeriod: SelectionInterval = {period: Period.yesterday};
 
       const state: MeterDetailState = meterDetail(initialState, setTimePeriod(timePeriod));
 
@@ -56,7 +56,7 @@ describe('meterDetailReducer', () => {
 
       const state: MeterDetailState = meterDetail(initialState, selectResolution(resolution));
 
-      const timePeriod: SelectionInterval = {period: Period.currentWeek};
+      const timePeriod: SelectionInterval = {period: Period.yesterday};
 
       const newState: MeterDetailState = meterDetail(state, setTimePeriod(timePeriod));
 

@@ -95,7 +95,7 @@ describe('temporal', () => {
 
     const thresholdQuery: ThresholdQuery = {
       ...makeThreshold(),
-      dateRange: {period: Period.currentWeek},
+      dateRange: {period: Period.yesterday},
     };
 
     const userSelection: UserSelection = userSelectionState.userSelection;
@@ -103,7 +103,7 @@ describe('temporal', () => {
     describe('setThreshold', () => {
 
       it('will set time period from threshold payload', () => {
-        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.currentWeek}};
+        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.yesterday}};
         expect(temporal(initialState, setThreshold(thresholdQuery))).toEqual(expected);
       });
 
@@ -124,7 +124,7 @@ describe('temporal', () => {
             threshold: thresholdQuery
           }
         };
-        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.currentWeek}};
+        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.yesterday}};
 
         expect(temporal(initialState, selectSavedSelectionAction(payload))).toEqual(expected);
       });

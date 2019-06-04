@@ -41,12 +41,6 @@ export class PeriodSelection extends React.Component<Props, State> {
         onClick: () => this.onSelectPeriod(Period.yesterday),
       },
       {
-        value: Period.currentWeek,
-        label: prettyRange({period: Period.currentWeek, customDateRange}),
-        primaryText: translate('current week'),
-        onClick: () => this.onSelectPeriod(Period.currentWeek),
-      },
-      {
         value: Period.previous7Days,
         label: prettyRange({period: Period.previous7Days, customDateRange}),
         primaryText: translate('last 7 days'),
