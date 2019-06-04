@@ -128,7 +128,7 @@
     "lodash": "^4.17.11",
     "material-ui": "^0.20.2",
     "moment-timezone": "^0.5.25",
-    "normalizr": "^3.3.0",
+    "normalizr": "^3.4.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
     "react": "16.8.6",
