@@ -29,12 +29,12 @@ describe('temporal', () => {
     });
 
     it('can change its time period', () => {
-      const action = setReportTimePeriod(ReportSector.report)({period: Period.currentMonth});
+      const timePeriod: SelectionInterval = {period: Period.currentMonth};
 
-      const afterChange: TemporalReportState = temporal(initialState, action);
+      const state: TemporalReportState = temporal(initialState, setReportTimePeriod(ReportSector.report)(timePeriod));
 
-      const expected: SelectionInterval = {period: Period.currentMonth};
-      expect(afterChange.timePeriod).toEqual(expected);
+      const expected: TemporalReportState = {...initialState, timePeriod, resolution: TemporalResolution.day};
+      expect(state).toEqual(expected);
     });
   });
 

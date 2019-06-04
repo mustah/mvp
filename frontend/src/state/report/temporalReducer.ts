@@ -1,6 +1,6 @@
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
-import {Period, TemporalResolution} from '../../components/dates/dateModels';
+import {defaultPeriodResolution, Period, TemporalResolution} from '../../components/dates/dateModels';
 import {Maybe} from '../../helpers/Maybe';
 import {Action} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
@@ -28,7 +28,8 @@ export const temporalReducerFor = (sector: ReportSector) =>
   (state: TemporalReportState = initialState, action: ActionTypes): TemporalReportState => {
     switch (action.type) {
       case getType(setReportTimePeriod(sector)):
-        return {...state, timePeriod: {...(action as Action<SelectionInterval>).payload}};
+        const timePeriod = (action as Action<SelectionInterval>).payload;
+        return {...state, timePeriod, resolution: defaultPeriodResolution[timePeriod.period]};
       case getType(selectResolution(sector)):
         return {...state, resolution: (action as Action<TemporalResolution>).payload};
       case getType(toggleComparePeriod(sector)):

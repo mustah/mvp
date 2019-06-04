@@ -147,14 +147,15 @@ export const displayDateNoHours = (input: moment.MomentInput): string =>
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>
   momentAtUtcPlusOneFrom(input).format(format);
 
-export const readIntervalToTemporal = (interval?: number): TemporalResolution => {
-  if (interval === 60) {
-    return TemporalResolution.hour;
-  } else if (interval === 1440) {
-    return TemporalResolution.day;
-  } else if (interval !== undefined && interval >= 1440) {
-    return TemporalResolution.month;
-  } else {
-    return TemporalResolution.hour;
-  }
-};
+export const readIntervalToTemporal =
+  (interval: number | undefined, fallback?: TemporalResolution): TemporalResolution => {
+    if (interval === 60) {
+      return TemporalResolution.hour;
+    } else if (interval === 1440) {
+      return TemporalResolution.day;
+    } else if (interval !== undefined && interval >= 1440) {
+      return TemporalResolution.month;
+    } else {
+      return fallback || TemporalResolution.hour;
+    }
+  };

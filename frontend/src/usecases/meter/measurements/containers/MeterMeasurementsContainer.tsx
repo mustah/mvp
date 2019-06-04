@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {RootState} from '../../../../reducers/rootReducer';
 import {MeterDetails} from '../../../../state/domain-models/meter-details/meterDetailsModels';
 import {ReportSector} from '../../../../state/report/reportModels';
@@ -16,7 +15,7 @@ import {getUserSelectionId} from '../../../../state/user-selection/userSelection
 import {Measurements} from '../../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../../report/containers/MeasurementsContainer';
 import {meterDetailExportToExcelSuccess as exportToExcelSuccess} from '../meterDetailMeasurementActions';
-import {getMeasurementParameters, getResolution, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
+import {getMeasurementParameters, getMeterResolution, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
 
 export interface OwnProps {
   meter: MeterDetails;
@@ -37,7 +36,7 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     ? collection.timePeriod
     : meterDetail.timePeriod;
 
-  const resolution: TemporalResolution = getResolution({meterDetail, meter});
+  const resolution = getMeterResolution({meterDetail, meter, period: timePeriod.period});
 
   return {
     hasLegendItems: true,

@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
-import {TemporalResolution} from '../../../components/dates/dateModels';
 import {withContent} from '../../../components/hoc/withContent';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {RootState} from '../../../reducers/rootReducer';
@@ -20,6 +19,7 @@ import {
   QuantityId,
   QuantityLegendType,
   ReportSector,
+  ResolutionAware,
   SavedReportsState,
   SelectedQuantities
 } from '../../../state/report/reportModels';
@@ -33,10 +33,9 @@ import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../..
 import {Legend} from '../../report/components/Legend';
 import {makeColumnQuantities} from '../../report/helpers/legendHelper';
 
-export interface StateToProps extends HasContent, ColumnQuantities {
+export interface StateToProps extends HasContent, ColumnQuantities, ResolutionAware {
   legendItems: LegendItem[];
   mediumViewOptions: LegendViewOptions;
-  resolution: TemporalResolution;
   savedReports: SavedReportsState;
   selectedQuantitiesMap: SelectedQuantities;
 }

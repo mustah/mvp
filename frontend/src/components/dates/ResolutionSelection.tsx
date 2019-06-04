@@ -1,14 +1,14 @@
 import * as React from 'react';
 import {popoverStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
+import {ResolutionAware} from '../../state/report/reportModels';
 import {CallbackWith} from '../../types/Types';
 import {DropdownMenu, MenuItemProps} from '../dropdown-selector/DropdownMenu';
 import {IconTemporalResolution} from '../icons/IconTemporalResolution';
 import {TemporalResolution} from './dateModels';
 
-export interface ResolutionProps {
+export interface ResolutionProps extends ResolutionAware {
   disabled?: boolean;
-  resolution: TemporalResolution;
   selectResolution: CallbackWith<TemporalResolution>;
 }
 

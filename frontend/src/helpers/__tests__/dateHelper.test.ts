@@ -225,5 +225,9 @@ describe('dateHelper', () => {
     it('defaults to month for intervals higher than day', () => {
       expect(readIntervalToTemporal(1441)).toBe(TemporalResolution.month);
     });
+
+    it('uses fallback', () => {
+      expect(readIntervalToTemporal(undefined, TemporalResolution.hour)).toBe(TemporalResolution.hour);
+    });
   });
 });
