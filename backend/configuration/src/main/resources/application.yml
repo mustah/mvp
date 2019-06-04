@@ -63,7 +63,7 @@ spring:
 ehcache:
   token:
     heap-entries: 1000
-    idle-time: 60
+    idle-time: 240
   metering:
     heap-entries: 1000
     idle-time: 10
