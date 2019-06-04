@@ -11,7 +11,7 @@ import {CollectionState} from './collectionModels';
 
 const initialState: CollectionState = {
   isExportingToExcel: false,
-  timePeriod: {period: Period.latest},
+  timePeriod: {period: Period.yesterday},
 };
 
 type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>

@@ -174,7 +174,7 @@ export const Thresholds = ({query, onChange, className}: Props) => {
         <Medium className="label">{translate('within')}</Medium>
         <PeriodSelection
           customDateRange={dateRange ? Maybe.maybe(dateRange.customDateRange) : Maybe.nothing()}
-          period={dateRange ? dateRange.period : Period.latest}
+          period={dateRange ? dateRange.period : Period.yesterday}
           selectPeriod={selectPeriod}
           setCustomDateRange={selectCustomDateRange}
           style={{marginBottom: 0}}

@@ -16,7 +16,7 @@ describe('dateHelper', () => {
     it('defaults to no limits if no start/end time is given', () => {
       expect(toPeriodApiParameters({
         start: momentAtUtcPlusOneFrom('2018-03-23 11:00:00').toDate(),
-        period: Period.latest,
+        period: Period.yesterday,
         customDateRange: Maybe.nothing(),
       })).toEqual([
         'after=2018-03-22T00%3A00%3A00.000%2B01%3A00',
@@ -101,7 +101,7 @@ describe('dateHelper', () => {
       it('knows about last 24 h', () => {
         const currentDayApiParameters = prettyRange({
           start: momentAtUtcPlusOneFrom('2013-03-13T00:00:00Z').toDate(),
-          period: Period.latest,
+          period: Period.yesterday,
           customDateRange: Maybe.nothing(),
         });
         expect(currentDayApiParameters).toEqual('2013-03-12 - 2013-03-13');
@@ -169,8 +169,8 @@ describe('dateHelper', () => {
         expect(displayDate(actual.end)).toBe('2019-03-04 00:00');
       });
 
-      it('has date range for latest period ', () => {
-        const period = Period.latest;
+      it('has date range for yesterday', () => {
+        const period = Period.yesterday;
         const start = momentAtUtcPlusOneFrom('2019-03-05 10:00:00').toDate();
         const actual: DateRange = makeCompareDateRange(period, start);
 

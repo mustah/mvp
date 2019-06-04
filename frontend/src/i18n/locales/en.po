@@ -225,8 +225,8 @@ msgstr "start date"
 msgid "end date"
 msgstr "end date"
 
-msgid "last 24h"
-msgstr "last 24h"
+msgid "yesterday"
+msgstr "yesterday"
 
 msgid "current week"
 msgstr "current week"

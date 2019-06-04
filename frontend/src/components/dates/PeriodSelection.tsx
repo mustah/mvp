@@ -35,10 +35,10 @@ export class PeriodSelection extends React.Component<Props, State> {
 
     const timePeriods: MenuItemProps[] = [
       {
-        value: Period.latest,
-        label: firstUpperTranslated('last 24h'),
-        primaryText: translate('last 24h'),
-        onClick: () => this.onSelectPeriod(Period.latest),
+        value: Period.yesterday,
+        label: firstUpperTranslated('yesterday'),
+        primaryText: translate('yesterday'),
+        onClick: () => this.onSelectPeriod(Period.yesterday),
       },
       {
         value: Period.currentWeek,

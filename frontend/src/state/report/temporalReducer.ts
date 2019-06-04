@@ -15,7 +15,7 @@ type ActionTypes =
 export const initialState: TemporalReportState = {
   resolution: TemporalResolution.hour,
   shouldComparePeriod: false,
-  timePeriod: {period: Period.latest},
+  timePeriod: {period: Period.yesterday},
 };
 
 const fromThreshold = (state: TemporalReportState, threshold?: ThresholdQuery): TemporalReportState =>

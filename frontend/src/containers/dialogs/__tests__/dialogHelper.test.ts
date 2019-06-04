@@ -100,7 +100,7 @@ describe('dialogHelper', () => {
     const oneHourInSeconds: number = 60 * 60;
 
     const start = momentAtUtcPlusOneFrom('2018-01-01T00:00:00Z').toDate();
-    const dateRange = newDateRange(Period.latest, Maybe.nothing(), start);
+    const dateRange = newDateRange(Period.yesterday, Maybe.nothing(), start);
     const startHour: UnixTimestamp = dateRange.start.valueOf() / 1000;
 
     const missingReadouts24h = {

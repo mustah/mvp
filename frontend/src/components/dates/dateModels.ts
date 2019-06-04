@@ -1,6 +1,6 @@
 export const enum Period {
   now = 'now',
-  latest = 'latest',
+  yesterday = 'yesterday',
   currentMonth = 'current_month',
   previousMonth = 'previous_month',
   currentWeek = 'current_week',

@@ -9,7 +9,7 @@ import {MeterDetailState} from './meterDetailModels';
 export const initialState: MeterDetailState = {
   isDirty: false,
   resolution: TemporalResolution.hour,
-  timePeriod: {period: Period.latest},
+  timePeriod: {period: Period.yesterday},
 };
 
 type ActionTypes = ActionType<typeof actions | typeof logoutUser | typeof locationChange>;
