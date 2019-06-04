@@ -16,7 +16,7 @@ import {
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters, uuid} from '../../types/Types';
-import {ApiRequestSortingOptions, Pagination} from '../ui/pagination/paginationModels';
+import {SortOption, Pagination} from '../ui/pagination/paginationModels';
 import {
   ParameterName,
   SelectedParameters,
@@ -82,10 +82,10 @@ const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
   }
 };
 
-const toSortParameters = (sort: ApiRequestSortingOptions[] | undefined): EncodedUriParameters[] =>
+const toSortParameters = (sort: SortOption[] | undefined): EncodedUriParameters[] =>
   sort
     ? sort.map(
-    ({field, dir}: ApiRequestSortingOptions) =>
+    ({field, dir}: SortOption) =>
       `sort=${encodeURIComponent(field)}${dir ? ',' + dir : ''}`
     )
     : [];
@@ -119,7 +119,7 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
   createSelector<UriLookupStatePaginated,
     string,
     Pagination,
-    ApiRequestSortingOptions[] | undefined,
+    SortOption[] | undefined,
     SelectedParameters,
     CurrentPeriod,
     EncodedUriParameters>(

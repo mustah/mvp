@@ -122,6 +122,14 @@ export const makeGridClassName = ({primary}: CssStyles): string =>
     },
   });
 
+export const makeVirtualizedGridClassName = ({primary}: CssStyles): string =>
+  style({
+    $nest: {
+      '.ReactVirtualized__Table__row.even': {backgroundColor: important(colors.alternate)},
+      '.ReactVirtualized__Table__row:hover': {backgroundColor: important(primary.bgHover)},
+    },
+  });
+
 export const topMenuHeight: number = 60;
 
 export const drawerContainerStyle: React.CSSProperties = {

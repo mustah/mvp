@@ -1,5 +1,5 @@
 import {ObjectsById} from '../state/domain-models/domainModels';
-import {Identifiable, IdNamed, uuid} from '../types/Types';
+import {Identifiable, uuid} from '../types/Types';
 
 export const toggle = <T>(item: T, list: T[]): T[] => {
   const asSet = new Set(list);
@@ -16,7 +16,7 @@ export const removeAtIndex = <T>(items: T[], index: number): T[] => {
   return items;
 };
 
-export const getId = (item: IdNamed | Identifiable): uuid => item.id;
+export const getId = <T extends Identifiable>({id}: T): uuid => id;
 
 export const groupById = <T extends Identifiable>(items: T[]): ObjectsById<T> =>
   items.reduce(

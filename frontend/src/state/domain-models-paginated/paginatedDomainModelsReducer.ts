@@ -14,7 +14,7 @@ import {CollectionStat} from '../domain-models/collection-stat/collectionStatMod
 import {ObjectsById} from '../domain-models/domainModels';
 import {locationChange} from '../location/locationActions';
 import {search} from '../search/searchActions';
-import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
+import {SortOption} from '../ui/pagination/paginationModels';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
 import {
@@ -54,7 +54,7 @@ const setRequest = <T extends Identifiable>(
   ...state,
   result: {
     ...state.result,
-    [page]: {isFetching: true, isSuccessfullyFetched: false},
+    [page]: {isFetching: true, isSuccessfullyFetched: false, result: []},
   },
 });
 
@@ -64,14 +64,14 @@ const setEntities = <T extends Identifiable>(
   payload: NormalizedPaginated<T>,
 ): NormalizedPaginatedState<T> => {
   const page: number = payload.page;
-  const content: uuid[] = payload.result.content;
+  const result: uuid[] = payload.result.content;
   const entities: ObjectsById<T> = payload.entities[entity];
   return {
     ...state,
     entities: {...state.entities, ...entities},
     result: {
       ...state.result,
-      [page]: {result: content, isFetching: false, isSuccessfullyFetched: true},
+      [page]: {isFetching: false, isSuccessfullyFetched: true, result},
     },
   };
 };
@@ -83,7 +83,7 @@ const setError = <T extends Identifiable>(
   ...state,
   result: {
     ...state.result,
-    [page]: {isSuccessfullyFetched: false, isFetching: false, error},
+    [page]: {isSuccessfullyFetched: false, isFetching: false, error, result: []},
   },
 });
 
@@ -94,7 +94,7 @@ const clearError = <T extends Identifiable>(
   ...state,
   result: {
     ...state.result,
-    [page]: {isSuccessfullyFetched: false, isFetching: false},
+    [page]: {isSuccessfullyFetched: false, isFetching: false, result: []},
   },
 });
 
@@ -128,17 +128,14 @@ const removePagedEntity = <T extends Identifiable>(
 ): NormalizedPaginatedState<T> => {
   const entities = {...state.entities};
   delete entities[id];
-  const uuids = state.result[page].result || [];
+  const result = state.result[page].result.filter(it => it !== id);
   return ({
     ...state,
     isFetchingSingle: false,
     entities,
     result: {
       ...state.result,
-      [page]: {
-        ...state.result[page],
-        result: uuids.filter((it) => it !== id)
-      },
+      [page]: {...state.result[page], result}
     }
   });
 };
@@ -162,11 +159,11 @@ type ActionTypes<T extends Identifiable> = EmptyAction<string> |
     | T | T[]
     | SingleEntityFailure
     | Location
-    | ApiRequestSortingOptions[]>;
+    | SortOption[]>;
 
 const sortTable = <T extends Identifiable = Identifiable>(
   state: NormalizedPaginatedState<T>,
-  sortingOptions: ApiRequestSortingOptions[] | undefined
+  sortingOptions: SortOption[] | undefined
 ): NormalizedPaginatedState<T> => {
   if (isEqual(state.sort!, sortingOptions)) {
     return state;
@@ -187,7 +184,7 @@ const makeSortableReducer = <T extends Identifiable>(actionKey: ActionKey) =>
     action: ActionTypes<T>,
   ): NormalizedPaginatedState<T> =>
     action.type === getType(sortTableAction(actionKey))
-      ? sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload)
+      ? sortTable(state, (action as Action<SortOption[]>).payload)
       : resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
 
 const meterCollectionStatFacilitiesReducer = <T extends Identifiable>(
@@ -196,7 +193,7 @@ const meterCollectionStatFacilitiesReducer = <T extends Identifiable>(
 ): NormalizedPaginatedState<T> => {
   switch (action.type) {
     case getType(sortTableAction(Sectors.meterCollectionStatFacilities)):
-      return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
+      return sortTable(state, (action as Action<SortOption[]>).payload);
     case getType(setCollectionTimePeriod(Sectors.meterCollection)):
       return makeInitialState<T>();
     default:

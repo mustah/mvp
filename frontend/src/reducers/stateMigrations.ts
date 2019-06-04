@@ -1,4 +1,3 @@
-import {PersistedState} from 'redux-persist';
 import {Omit} from 'utility-types';
 import {Period} from '../components/dates/dateModels';
 import {mapSelectedIdToAddress, mapSelectedIdToCity} from '../state/domain-models/selections/selectionsApiActions';
@@ -17,13 +16,6 @@ const toolbarState: Omit<ToolbarState, 'meterMeasurement'> = {
   collection: {view: ToolbarView.graph},
   meterCollection: {view: ToolbarView.graph},
   selectionReport: {view: ToolbarView.graph},
-};
-
-const paginationState = {
-  page: 0,
-  size: 20,
-  totalElements: -1,
-  totalPages: -1,
 };
 
 export const oldParameterNames: Array<keyof OldSelectionParameters> = [
@@ -54,7 +46,7 @@ export const migrateUserSelection = (oldUserSelection): UserSelection => {
 };
 
 export const migrations = {
-  1: (state: PersistedState | any) => ({
+  1: (state) => ({
     ...state,
     ui: {
       ...state.ui,
@@ -65,7 +57,7 @@ export const migrations = {
       },
     },
   }),
-  2: (state: PersistedState | any) => {
+  2: (state) => {
     const selectedQuantities = [...state.ui.measurements.selectedQuantities];
     const newUiState = {...state.ui};
     delete newUiState.measurements;
@@ -80,7 +72,7 @@ export const migrations = {
       },
     };
   },
-  3: (state: PersistedState | any) => {
+  3: (state) => {
     const {userSelection: {userSelection}} = state;
     return {
       ...state,
@@ -89,7 +81,7 @@ export const migrations = {
       },
     };
   },
-  4: (state: PersistedState | any) =>
+  4: (state) =>
     ({
       ...state,
       ui: {
@@ -100,7 +92,7 @@ export const migrations = {
         },
       },
     }),
-  5: (state: PersistedState | any) => {
+  5: (state) => {
     const {userSelection: {userSelection}} = state;
     const selectionParameters = userSelection.selectionParameters;
     return {
@@ -118,7 +110,7 @@ export const migrations = {
       },
     };
   },
-  6: (state: PersistedState | any) => {
+  6: (state) => {
     const {userSelection: {userSelection}} = state;
     const selectionParameters = userSelection.selectionParameters;
     return {
@@ -134,7 +126,7 @@ export const migrations = {
       },
     };
   },
-  7: (state: PersistedState | any) => {
+  7: (state) => {
     const {ui} = state;
     const toolbar = ui.toolbar;
     return {
@@ -148,7 +140,7 @@ export const migrations = {
       }
     };
   },
-  8: (state: PersistedState | any) => {
+  8: (state) => {
     const {ui} = state;
     const toolbar = ui.toolbar || toolbarState;
     return {
@@ -162,7 +154,7 @@ export const migrations = {
       }
     };
   },
-  9: (state: PersistedState | any) => {
+  9: (state) => {
     const {ui} = state;
     const toolbar = ui.toolbar || toolbarState;
     return {
@@ -176,7 +168,7 @@ export const migrations = {
       }
     };
   },
-  10: (state: PersistedState | any) => {
+  10: (state) => {
     const {ui} = state;
     const toolbar = ui.toolbar;
     return {
@@ -190,8 +182,16 @@ export const migrations = {
       }
     };
   },
-  11: (state: PersistedState | any) => {
+  11: (state) => {
+    const paginationState = {
+      page: 0,
+      size: 20,
+      totalElements: -1,
+      totalPages: -1,
+    };
+
     const {ui} = state;
+
     return {
       ...state,
       ui: {
@@ -204,7 +204,30 @@ export const migrations = {
         }
       }
     };
-  }
+  },
+  12: (state) => {
+    const paginationState = {
+      page: 0,
+      size: 50,
+      totalElements: -1,
+      totalPages: -1,
+    };
+
+    const {ui} = state;
+
+    return {
+      ...state,
+      ui: {
+        ...ui,
+        pagination: {
+          meters: {...paginationState},
+          gateways: {...paginationState},
+          collectionStatFacilities: {...paginationState},
+          meterCollectionStatFacilities: {...paginationState},
+        }
+      }
+    };
+  },
 };
 
-export const currentVersion: number = 11;
+export const currentVersion: number = 12;

@@ -10,15 +10,14 @@ import {
 import {
   getPageError,
   getPageIsFetching,
-  getPageResult,
-  getPaginatedEntities
+  getPaginatedResult
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {collectionStatClearError} from '../../../state/domain-models/collection-stat/collectionStatActions';
 import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {changePage} from '../../../state/ui/pagination/paginationActions';
 import {
-  ApiRequestSortingOptions,
+  SortOption,
   EntityTypes,
   OnChangePage,
   Pagination
@@ -45,7 +44,7 @@ export interface StateToProps {
   isExportingToExcel: boolean;
   isFetching: boolean;
   parameters: EncodedUriParameters;
-  sort?: ApiRequestSortingOptions[];
+  sort?: SortOption[];
   pagination: Pagination;
   error: Maybe<ErrorResponse>;
   entityType: EntityTypes;
@@ -57,7 +56,7 @@ export interface DispatchToProps {
   clearError: ClearErrorPaginated;
   exportToExcelSuccess: Callback;
   fetchCollectionStatsFacilityPaged: FetchPaginated;
-  sortTable: CallbackWith<ApiRequestSortingOptions[]>;
+  sortTable: CallbackWith<SortOption[]>;
 }
 
 const mapStateToProps = (
@@ -75,8 +74,8 @@ const mapStateToProps = (
   const {sort} = collectionStatFacilities;
 
   return ({
-    entities: getPaginatedEntities(collectionStatFacilities),
-    result: getPageResult(collectionStatFacilities, page),
+    entities: collectionStatFacilities.entities,
+    result: getPaginatedResult(collectionStatFacilities, page),
     parameters: `${makeCollectionPeriodParametersOf(timePeriod)}&${getPaginatedCollectionStatParameters({
       sort,
       pagination,
@@ -87,7 +86,7 @@ const mapStateToProps = (
     isExportingToExcel,
     isFetching: getPageIsFetching(collectionStatFacilities, page),
     pagination,
-    error: getPageError<CollectionStat>(collectionStatFacilities, page),
+    error: getPageError({page, state: collectionStatFacilities}),
     entityType,
     timePeriod,
   });

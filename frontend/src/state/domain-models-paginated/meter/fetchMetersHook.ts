@@ -1,19 +1,16 @@
 import * as React from 'react';
 import {EncodedUriParameters, FetchPaginated} from '../../../types/Types';
-import {ObjectsById} from '../../domain-models/domainModels';
-import {ApiRequestSortingOptions} from '../../ui/pagination/paginationModels';
-import {Meter} from './meterModels';
+import {SortOption} from '../../ui/pagination/paginationModels';
 
 interface FetchMetersProps {
   fetchMeters: FetchPaginated;
   page: number;
   parameters: EncodedUriParameters;
-  sort?: ApiRequestSortingOptions[];
-  entities: ObjectsById<Meter>;
+  sortOptions?: SortOption[];
 }
 
-export const useFetchMeters = ({fetchMeters, page, parameters, sort, entities}: FetchMetersProps) => {
+export const useFetchMeters = ({fetchMeters, page, parameters, sortOptions}: FetchMetersProps) => {
   React.useEffect(() => {
-    fetchMeters(page, parameters, sort);
-  }, [parameters, sort, page, entities]);
+    fetchMeters(page, parameters, sortOptions);
+  }, [page, parameters, sortOptions]);
 };

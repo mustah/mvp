@@ -1,11 +1,10 @@
 import {shallowEqual} from 'recompose';
 import {DateRange, Period} from '../../components/dates/dateModels';
-import {CurrentPeriod} from '../../helpers/dateHelpers';
 import {IdNamed, Selected, uuid} from '../../types/Types';
 import {Address, City} from '../domain-models/location/locationModels';
 import {Query} from '../search/searchModels';
 import {Quantity} from '../ui/graph/measurement/measurementModels';
-import {ApiRequestSortingOptions, Pagination} from '../ui/pagination/paginationModels';
+import {SortOption, Pagination} from '../ui/pagination/paginationModels';
 
 export const enum ParameterName {
   addresses = 'addresses',
@@ -120,11 +119,7 @@ export interface UriLookupState extends UserSelectionState, Query {
 
 export interface UriLookupStatePaginated extends UriLookupState {
   pagination: Pagination;
-  sort?: ApiRequestSortingOptions[];
-}
-
-export interface UriLookupStatePaginatedWithPeriod extends UriLookupStatePaginated {
-  period?: CurrentPeriod;
+  sort?: SortOption[];
 }
 
 export type SelectionListItem = SelectionItem & Selected;

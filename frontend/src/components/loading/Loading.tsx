@@ -1,6 +1,7 @@
 import CircularProgress from 'material-ui/CircularProgress';
 import * as React from 'react';
 import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
+import {Styled} from '../../types/Types';
 
 const loadingStyle: React.CSSProperties = {
   marginTop: 100,
@@ -10,21 +11,17 @@ const loadingStyle: React.CSSProperties = {
 export const LoadingLarge = withCssStyles(({cssStyles: {primary}}: ThemeContext) => (
   <CircularProgress
     size={60}
-    thickness={4}
     style={loadingStyle}
+    thickness={4}
     color={primary.bg}
   />
 ));
 
-const smallLoadingStyle: React.CSSProperties = {
-  marginBottom: 4,
-};
-
-export const LoadingSmall = withCssStyles(({cssStyles: {primary}}: ThemeContext) => (
+export const LoadingSmall = withCssStyles(({cssStyles: {primary}, style}: Styled & ThemeContext) => (
   <CircularProgress
     size={24}
+    style={{marginBottom: 4, ...style}}
     thickness={2}
-    style={smallLoadingStyle}
     color={primary.bg}
   />
 ));

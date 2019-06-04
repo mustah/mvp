@@ -17,7 +17,7 @@ import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestType} from '../domain-models/domainModels';
 import {DataFormatter, RequestCallbacks} from '../domain-models/domainModelsActions';
-import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
+import {SortOption} from '../ui/pagination/paginationModels';
 import {
   NormalizedPaginated,
   NormalizedPaginatedState,
@@ -38,7 +38,7 @@ export const domainModelPaginatedClearError = (actionKey: ActionKey) =>
   `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR_${actionKey}`;
 
 export const sortTableAction = (actionKey: ActionKey) =>
-  createStandardAction(`SORT_TABLE_${actionKey}`)<ApiRequestSortingOptions[] | undefined>();
+  createStandardAction(`SORT_TABLE_${actionKey}`)<SortOption[] | undefined>();
 
 export const clearError = (endPoint: EndPoints) =>
   payloadActionOf<PageNumbered>(domainModelPaginatedClearError(endPoint));

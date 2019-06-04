@@ -277,7 +277,7 @@ describe('userSelectionSelectors', () => {
       const state: UriLookupStatePaginated = {
         ...initialUriLookupState,
         sort: [
-          {dir: 'asc', field: RequestParameter.city},
+          {dir: 'ASC', field: RequestParameter.city},
         ],
       };
 
@@ -285,7 +285,7 @@ describe('userSelectionSelectors', () => {
 
       const url: URL = urlFromParameters(parameters);
 
-      expect(url.searchParams.get(RequestParameter.sort)).toEqual('city,asc');
+      expect(url.searchParams.get(RequestParameter.sort)).toEqual('city,ASC');
     });
 
   });

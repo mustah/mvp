@@ -1,10 +1,9 @@
 import * as React from 'react';
 import {MainContentTabs, MainContentTabsProps} from '../../../components/tabs/components/MainContentTabs';
-import {MeterListContainer} from '../../../containers/MeterListContainer';
-import './MeterTabs.scss';
+import {MeterListContentContainer} from '../../../containers/MeterListContentContainer';
 
 export const MeterTabs = (props: MainContentTabsProps) => (
-  <MainContentTabs {...props} className="MeterTabs">
-    <MeterListContainer/>
+  <MainContentTabs {...props}>
+    <MeterListContentContainer/>
   </MainContentTabs>
 );

@@ -7,7 +7,6 @@ import {
   meterCollectionStatClearError
 } from '../../../../state/domain-models/collection-stat/collectionStatActions';
 import {getError} from '../../../../state/domain-models/domainModelsSelectors';
-import {addAllToReport} from '../../../../state/report/reportActions';
 import {Sectors, uuid} from '../../../../types/Types';
 import {exportToExcelSuccess} from '../../../collection/collectionActions';
 import {CollectionStatBarChart} from '../../../collection/components/CollectionStatBarChart';
@@ -39,7 +38,6 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  addAllToReport,
   clearError: meterCollectionStatClearError,
   exportToExcelSuccess: exportToExcelSuccess(Sectors.meterCollection),
   fetchCollectionStats,

@@ -1,4 +1,3 @@
-import {SortDescriptor} from '@progress/kendo-data-query';
 import {RequestParameter} from '../../../helpers/urlFactory';
 import {
   NormalizedPaginatedResult,
@@ -31,12 +30,15 @@ export type PaginationState = {
   [entityType in keyof PaginatedDomainModelsState]: PaginationMetaData & PageNumbered;
 };
 
-export interface ApiRequestSortingOptions extends SortDescriptor {
+export interface SortOption {
   field: RequestParameter;
+  dir?: SortDirection;
 }
 
+export type SortDirection = 'ASC' | 'DESC';
+
 export interface ApiResultSortingOptions {
-  direction: 'ASC' | 'DESC';
+  direction: SortDirection;
   property: string;
   ignoreCase: boolean;
   nullHandling: string;

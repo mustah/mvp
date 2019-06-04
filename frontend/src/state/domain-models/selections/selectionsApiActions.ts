@@ -82,7 +82,7 @@ const makeRequestParameters = (...parameters: string[]): string => parameters
 
 const queryParameter = (query?: string): string => query ? `q=${query}` : ``;
 
-const sortParameter = (sort?: string): string => sort ? `sort=${sort},asc` : ``;
+const sortParameter = (sort?: string): string => sort ? `sort=${sort},ASC` : ``;
 
 const pageParameter = (page: number): string => `page=${page}`;
 
