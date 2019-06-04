@@ -225,6 +225,9 @@ msgstr "start date"
 msgid "end date"
 msgstr "end date"
 
+msgid "today"
+msgstr "today"
+
 msgid "yesterday"
 msgstr "yesterday"
 

@@ -258,6 +258,9 @@ msgstr "startdatum"
 msgid "end date"
 msgstr "slutdatum"
 
+msgid "today"
+msgstr "idag"
+
 msgid "yesterday"
 msgstr "igår"
 

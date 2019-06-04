@@ -214,6 +214,17 @@ describe('urlFactory', () => {
   describe('toPeriodApiParameters', () => {
     const now: Date = momentAtUtcPlusOneFrom('2018-02-02T00:00:00Z').toDate();
 
+    it('know about the today', () => {
+      expect(toPeriodApiParameters({
+        start: momentAtUtcPlusOneFrom('2018-02-02T13:00:00Z').toDate(),
+        period: Period.today,
+        customDateRange: Maybe.nothing(),
+      })).toEqual([
+        'after=2018-02-02T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-02-03T00%3A00%3A00.000%2B01%3A00',
+      ]);
+    });
+
     it('know about the yesterday', () => {
       expect(toPeriodApiParameters({
         start: now,

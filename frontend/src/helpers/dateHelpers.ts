@@ -16,7 +16,7 @@ export const changeLocale = (language: string): string => moment.locale(language
 /**
  * Calculate absolute start- and end dates based on an input date and a relative time period.
  */
-const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>): DateRange => {
+const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange> = Maybe.nothing()): DateRange => {
   const zonedDate = momentAtUtcPlusOneFrom(now);
   switch (period) {
     case Period.currentMonth:
@@ -49,6 +49,11 @@ const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRan
         start: yesterday.startOf('day').toDate(),
         end: zonedDate.clone().startOf('day').toDate(),
       };
+    case Period.today:
+      return {
+        start: zonedDate.clone().startOf('day').toDate(),
+        end: zonedDate.clone().add(1, 'day').startOf('day').toDate(),
+      };
     case Period.now:
     default:
       return {
@@ -59,12 +64,12 @@ const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRan
 };
 
 export const makeCompareDateRange = (period: Period, start: Date = momentAtUtcPlusOneFrom().toDate()): DateRange => {
-  const dateRange = makeDateRange(start, period, Maybe.nothing());
+  const dateRange = makeDateRange(start, period);
   if (period === Period.previousMonth) {
-    return makeDateRange(dateRange.start, period, Maybe.nothing());
+    return makeDateRange(dateRange.start, period);
   } else {
-    const startBefore = momentAtUtcPlusOneFrom(dateRange.start).subtract(1, 'days');
-    return makeDateRange(startBefore.toDate(), period, Maybe.nothing());
+    const startDate = momentAtUtcPlusOneFrom(dateRange.start).subtract(1, 'days').toDate();
+    return makeDateRange(startDate, period);
   }
 };
 
