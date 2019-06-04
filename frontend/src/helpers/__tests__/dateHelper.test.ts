@@ -80,7 +80,7 @@ describe('dateHelper', () => {
         expect(prevWeek).toEqual('2013-03-07 - 2013-03-14');
       });
 
-      it('knows about current month', () => {
+      it('knows about this month', () => {
         const currentMonthApiParameters = prettyRange({
           start: momentAtUtcPlusOneFrom('2017-11-23T00:00:00Z').toDate(),
           period: Period.currentMonth,
@@ -133,7 +133,7 @@ describe('dateHelper', () => {
 
     describe('compare period is yesterday', () => {
 
-      it('has date range for current month period ', () => {
+      it('has date range for this month period ', () => {
         const period = Period.currentMonth;
         const start = momentAtUtcPlusOneFrom('2019-03-05 10:00:00').toDate();
         const actual: DateRange = makeCompareDateRange(period, start);

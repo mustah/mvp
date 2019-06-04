@@ -267,7 +267,7 @@ msgstr "denna vecka"
 msgid "last 7 days"
 msgstr "senaste 7 dagarna"
 
-msgid "current month"
+msgid "this month"
 msgstr "denna månad"
 
 msgid "previous month"

@@ -49,7 +49,7 @@ export class PeriodSelection extends React.Component<Props, State> {
       {
         value: Period.currentMonth,
         label: prettyRange({period: Period.currentMonth, customDateRange}),
-        primaryText: translate('current month'),
+        primaryText: translate('this month'),
         onClick: () => this.onSelectPeriod(Period.currentMonth),
       },
       {

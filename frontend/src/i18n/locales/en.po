@@ -234,8 +234,8 @@ msgstr "current week"
 msgid "last 7 days"
 msgstr "last 7 days"
 
-msgid "current month"
-msgstr "current month"
+msgid "this month"
+msgstr "this month"
 
 msgid "previous month"
 msgstr "previous month"

@@ -249,7 +249,7 @@ describe('urlFactory', () => {
       ]);
     });
 
-    it('knows about current month', () => {
+    it('knows about this month', () => {
       const currentMonthApiParameters = toPeriodApiParameters({
         start: now,
         period: Period.currentMonth,
