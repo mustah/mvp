@@ -17,6 +17,7 @@ import {OwnProps} from '../usecases/meter/components/MeterList';
 import {syncWithMetering} from '../usecases/meter/meterActions';
 
 const mapStateToProps = ({
+  meterDetail: {selectedMeterId},
   paginatedDomainModels: {meters},
   search: {validation: {query}},
   summary: {payload: {numMeters}},
@@ -35,6 +36,7 @@ const mapStateToProps = ({
     meters: allMeters,
     pagination,
     parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),
+    selectedMeterId,
     sortOptions: sort,
   });
 };

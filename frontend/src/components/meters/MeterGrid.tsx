@@ -5,7 +5,7 @@ import {useFetchMeters} from '../../state/domain-models-paginated/meter/fetchMet
 import {OnDeleteMeter} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {LegendItem} from '../../state/report/reportModels';
-import {SortOption, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
+import {OnChangePage, Pagination, SortOption} from '../../state/ui/pagination/paginationModels';
 import {
   CallbackWith,
   EncodedUriParameters,
@@ -13,7 +13,8 @@ import {
   FetchPaginated,
   HasContent,
   OnClickWith,
-  OnClickWithId
+  OnClickWithId,
+  uuid
 } from '../../types/Types';
 import {MeterList, Props} from '../../usecases/meter/components/MeterList';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
@@ -24,6 +25,7 @@ export interface StateToProps extends Fetching, HasContent {
   pagination: Pagination;
   parameters: EncodedUriParameters;
   sortOptions?: SortOption[];
+  selectedMeterId?: uuid;
 }
 
 export interface DispatchToProps {

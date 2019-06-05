@@ -1,3 +1,4 @@
+import {last} from 'lodash';
 import {ActionType, getType} from 'typesafe-actions';
 import {isOnMeterDetailsPage} from '../../../app/routes';
 import {defaultPeriodResolution, Period, TemporalResolution} from '../../../components/dates/dateModels';
@@ -31,7 +32,9 @@ export const meterDetail = (state: MeterDetailState = initialState, action: Acti
         resolution: action.payload,
       };
     case getType(locationChange):
-      return isOnMeterDetailsPage(action.payload.location.pathname) ? state : initialState;
+      return isOnMeterDetailsPage(action.payload.location.pathname)
+        ? {...state, selectedMeterId: last(action.payload.location.pathname.split('/'))}
+        : {...initialState, selectedMeterId: state.selectedMeterId};
     case getType(logoutUser):
       return initialState;
     default:
