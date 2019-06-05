@@ -116,15 +116,15 @@ export const ReportToolbar = withCssStyles(({
             style={{maxWidth: 200, marginRight: 4}}
           />
         </Row>
-        <ResolutionSelection disabled={!hasLegendItems} resolution={resolution} selectResolution={selectResolution}/>
         <PeriodSelection
           disabled={!hasLegendItems}
           customDateRange={customDateRange}
           period={timePeriod.period}
           selectPeriod={selectPeriod}
           setCustomDateRange={setCustomDateRange}
-          style={{marginBottom: 0, marginLeft: 0}}
+          style={{marginBottom: 0, marginLeft: 16}}
         />
+        <ResolutionSelection disabled={!hasLegendItems} resolution={resolution} selectResolution={selectResolution}/>
         <LegendActionButton
           color={hasLegendItems ? primary.fg : colors.borderColor}
           onClick={showHideLegend}

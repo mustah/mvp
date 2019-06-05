@@ -413,7 +413,7 @@ describe('userSelectionActions', () => {
       quantity: Quantity.power,
       relationalOperator: '>=' as RelationalOperator,
       dateRange: {
-        period: Period.latest,
+        period: Period.yesterday,
       },
     };
     const anotherOk: ThresholdQuery = {...ok, value: '3', duration: '2'};

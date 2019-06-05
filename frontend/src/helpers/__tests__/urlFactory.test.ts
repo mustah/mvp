@@ -36,12 +36,12 @@ describe('urlFactory', () => {
       const facilityId: string = idGenerator.uuid().toString();
       const selectedParameters: SelectedParameters = {
         dateRange: {
-          period: Period.latest,
+          period: Period.yesterday,
         },
         threshold: {
           quantity: Quantity.power,
           unit: 'kW',
-          dateRange: {period: Period.latest},
+          dateRange: {period: Period.yesterday},
           value: '3',
           relationalOperator: '<' as RelationalOperator,
         },
@@ -64,7 +64,7 @@ describe('urlFactory', () => {
     it('does not include parameters that does not have values', () => {
       const selectedParameters: SelectedParameters = {
         dateRange: {
-          period: Period.latest,
+          period: Period.yesterday,
         },
         facilities: []
       };
@@ -214,10 +214,21 @@ describe('urlFactory', () => {
   describe('toPeriodApiParameters', () => {
     const now: Date = momentAtUtcPlusOneFrom('2018-02-02T00:00:00Z').toDate();
 
-    it('know about the last 24h', () => {
+    it('know about the today', () => {
+      expect(toPeriodApiParameters({
+        start: momentAtUtcPlusOneFrom('2018-02-02T13:00:00Z').toDate(),
+        period: Period.today,
+        customDateRange: Maybe.nothing(),
+      })).toEqual([
+        'after=2018-02-02T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-02-03T00%3A00%3A00.000%2B01%3A00',
+      ]);
+    });
+
+    it('know about the yesterday', () => {
       expect(toPeriodApiParameters({
         start: now,
-        period: Period.latest,
+        period: Period.yesterday,
         customDateRange: Maybe.nothing(),
       })).toEqual([
         'after=2018-02-01T00%3A00%3A00.000%2B01%3A00',
@@ -249,20 +260,7 @@ describe('urlFactory', () => {
       ]);
     });
 
-    it('knows about current week', () => {
-      const currentWeekApiParameters = toPeriodApiParameters({
-        start: now,
-        period: Period.currentWeek,
-        customDateRange: Maybe.nothing(),
-      });
-
-      expect(currentWeekApiParameters).toEqual([
-        'after=2018-01-29T00%3A00%3A00.000%2B01%3A00',
-        'before=2018-02-05T00%3A00%3A00.000%2B01%3A00',
-      ]);
-    });
-
-    it('knows about current month', () => {
+    it('knows about this month', () => {
       const currentMonthApiParameters = toPeriodApiParameters({
         start: now,
         period: Period.currentMonth,

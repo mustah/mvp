@@ -96,7 +96,7 @@ export const makeUser = (): User => ({
 export const makeThreshold = (): ThresholdQuery => ({
   relationalOperator: '>=' as RelationalOperator,
   quantity: Quantity.power,
-  dateRange: {period: Period.latest},
+  dateRange: {period: Period.yesterday},
   unit: 'kW',
   value: '3',
 });

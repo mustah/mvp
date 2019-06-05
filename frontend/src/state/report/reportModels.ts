@@ -41,8 +41,11 @@ export interface SavedReportsState {
   meterPage: Report;
 }
 
-export interface TemporalReportState {
+export interface ResolutionAware {
   resolution: TemporalResolution;
+}
+
+export interface TemporalReportState extends ResolutionAware {
   shouldComparePeriod: boolean;
   timePeriod: SelectionInterval;
 }

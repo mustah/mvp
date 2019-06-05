@@ -32,11 +32,20 @@ describe('meterDetailReducer', () => {
   describe('setTimePeriod', () => {
 
     it('marks state as dirty', () => {
-      const timePeriod: SelectionInterval = {period: Period.currentWeek};
+      const timePeriod: SelectionInterval = {period: Period.yesterday};
 
       const state: MeterDetailState = meterDetail(initialState, setTimePeriod(timePeriod));
 
       const expected: MeterDetailState = {...initialState, timePeriod, isDirty: true};
+      expect(state).toEqual(expected);
+    });
+
+    it('will use default resolution for the selected period', () => {
+      const timePeriod: SelectionInterval = {period: Period.currentMonth};
+
+      const state: MeterDetailState = meterDetail(initialState, setTimePeriod(timePeriod));
+
+      const expected: MeterDetailState = {timePeriod, isDirty: true, resolution: TemporalResolution.day};
       expect(state).toEqual(expected);
     });
   });
@@ -52,13 +61,13 @@ describe('meterDetailReducer', () => {
     });
 
     it('has state marked as dirty when changing between resolution and period', () => {
+      const timePeriod: SelectionInterval = {period: Period.yesterday};
+
+      const state: MeterDetailState = meterDetail(initialState, setTimePeriod(timePeriod));
+
       const resolution = TemporalResolution.month;
 
-      const state: MeterDetailState = meterDetail(initialState, selectResolution(resolution));
-
-      const timePeriod: SelectionInterval = {period: Period.currentWeek};
-
-      const newState: MeterDetailState = meterDetail(state, setTimePeriod(timePeriod));
+      const newState: MeterDetailState = meterDetail(state, selectResolution(resolution));
 
       const expected: MeterDetailState = {...initialState, resolution, timePeriod, isDirty: true};
       expect(newState).toEqual(expected);

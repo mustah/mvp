@@ -8,7 +8,7 @@ import {
   toggleComparePeriod,
   toggleShowAverage
 } from '../../../state/report/reportActions';
-import {ReportSector} from '../../../state/report/reportModels';
+import {ReportSector, ResolutionAware} from '../../../state/report/reportModels';
 import {getMeterLegendItems, hasLegendItems} from '../../../state/report/reportSelectors';
 import {exportReportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
@@ -17,11 +17,10 @@ import {SelectionInterval} from '../../../state/user-selection/userSelectionMode
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {ReportToolbar} from '../components/ReportToolbar';
 
-interface StateToProps extends ToolbarViewSettings {
+interface StateToProps extends ResolutionAware, ToolbarViewSettings {
   canShowAverage: boolean;
   hasLegendItems: boolean;
   hasMeasurements: boolean;
-  resolution: TemporalResolution;
   isFetching: boolean;
   isExportingToExcel: boolean;
   timePeriod: SelectionInterval;

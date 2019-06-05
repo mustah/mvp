@@ -7,7 +7,7 @@ describe('userSelectionModels', () => {
     it('accepts valid threshold query', () => {
       const validThresholdQuery: ThresholdQuery = {
         value: '0',
-        dateRange: {period: Period.latest},
+        dateRange: {period: Period.yesterday},
         quantity: Quantity.differenceTemperature,
         relationalOperator: RelationalOperator.gt,
         unit: '°C'
@@ -19,7 +19,7 @@ describe('userSelectionModels', () => {
     it('accepts valid threshold query with duration', () => {
       const validThresholdQuery: ThresholdQuery = {
         value: '0',
-        dateRange: {period: Period.latest},
+        dateRange: {period: Period.yesterday},
         quantity: Quantity.differenceTemperature,
         relationalOperator: RelationalOperator.gt,
         duration: '4',

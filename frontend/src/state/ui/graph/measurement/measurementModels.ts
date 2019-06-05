@@ -1,9 +1,8 @@
 import {Overwrite} from 'utility-types';
-import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
-import {LegendItem, LegendType} from '../../../report/reportModels';
+import {LegendItem, LegendType, ResolutionAware} from '../../../report/reportModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
 import {MeasurementsApiResponse, MeasurementValue} from './measurementModels';
 
@@ -24,10 +23,9 @@ export interface MeasurementState {
 
 export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>;
 
-export interface MeasurementParameters {
+export interface MeasurementParameters extends ResolutionAware {
   legendItems: LegendItem[];
   reportDateRange: SelectionInterval;
-  resolution: TemporalResolution;
   shouldComparePeriod: boolean;
   shouldShowAverage: boolean;
   displayMode?: QuantityDisplayMode;

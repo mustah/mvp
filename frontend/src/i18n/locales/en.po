@@ -225,8 +225,11 @@ msgstr "start date"
 msgid "end date"
 msgstr "end date"
 
-msgid "last 24h"
-msgstr "last 24h"
+msgid "today"
+msgstr "today"
+
+msgid "yesterday"
+msgstr "yesterday"
 
 msgid "current week"
 msgstr "current week"
@@ -234,8 +237,8 @@ msgstr "current week"
 msgid "last 7 days"
 msgstr "last 7 days"
 
-msgid "current month"
-msgstr "current month"
+msgid "this month"
+msgstr "this month"
 
 msgid "previous month"
 msgstr "previous month"

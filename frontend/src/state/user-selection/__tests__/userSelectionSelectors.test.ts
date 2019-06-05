@@ -220,10 +220,9 @@ describe('userSelectionSelectors', () => {
         query,
       });
 
-      const latestUrlParameters =
-        'after=2018-02-02T01%3A00%3A00.000%2B01%3A00&before=2018-02-02T01%3A00%3A00.000%2B01%3A00';
+      const dateRange = 'after=2018-02-02T01%3A00%3A00.000%2B01%3A00&before=2018-02-02T01%3A00%3A00.000%2B01%3A00';
 
-      expect(parameters).toEqual(`${latestUrlParameters}&size=${paginationPageSize}&page=0&w=${query}`);
+      expect(parameters).toEqual(`${dateRange}&size=${paginationPageSize}&page=0&w=${query}`);
       expect(urlFromParameters(parameters).searchParams.get('threshold')).toBeNull();
     });
 

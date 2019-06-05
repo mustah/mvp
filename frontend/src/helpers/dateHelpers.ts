@@ -16,18 +16,13 @@ export const changeLocale = (language: string): string => moment.locale(language
 /**
  * Calculate absolute start- and end dates based on an input date and a relative time period.
  */
-const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>): DateRange => {
+const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange> = Maybe.nothing()): DateRange => {
   const zonedDate = momentAtUtcPlusOneFrom(now);
   switch (period) {
     case Period.currentMonth:
       return {
         start: zonedDate.startOf('month').startOf('day').toDate(),
         end: zonedDate.clone().endOf('month').add(1, 'days').startOf('day').toDate(),
-      };
-    case Period.currentWeek:
-      return {
-        start: zonedDate.startOf('isoWeek').toDate(),
-        end: zonedDate.clone().endOf('isoWeek').add(1, 'days').startOf('day').toDate(),
       };
     case Period.previous7Days:
       return {
@@ -48,11 +43,16 @@ const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRan
         start: zonedDate.clone().startOf('day').toDate(),
         end: zonedDate.clone().startOf('day').toDate()
       });
-    case Period.latest:
+    case Period.yesterday:
       const yesterday = zonedDate.clone().subtract(1, 'days');
       return {
         start: yesterday.startOf('day').toDate(),
         end: zonedDate.clone().startOf('day').toDate(),
+      };
+    case Period.today:
+      return {
+        start: zonedDate.clone().startOf('day').toDate(),
+        end: zonedDate.clone().add(1, 'day').startOf('day').toDate(),
       };
     case Period.now:
     default:
@@ -64,12 +64,12 @@ const makeDateRange = (now: Date, period: Period, customDateRange: Maybe<DateRan
 };
 
 export const makeCompareDateRange = (period: Period, start: Date = momentAtUtcPlusOneFrom().toDate()): DateRange => {
-  const dateRange = makeDateRange(start, period, Maybe.nothing());
+  const dateRange = makeDateRange(start, period);
   if (period === Period.previousMonth) {
-    return makeDateRange(dateRange.start, period, Maybe.nothing());
+    return makeDateRange(dateRange.start, period);
   } else {
-    const startBefore = momentAtUtcPlusOneFrom(dateRange.start).subtract(1, 'days');
-    return makeDateRange(startBefore.toDate(), period, Maybe.nothing());
+    const startDate = momentAtUtcPlusOneFrom(dateRange.start).subtract(1, 'days').toDate();
+    return makeDateRange(startDate, period);
   }
 };
 
@@ -147,14 +147,15 @@ export const displayDateNoHours = (input: moment.MomentInput): string =>
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>
   momentAtUtcPlusOneFrom(input).format(format);
 
-export const readIntervalToTemporal = (interval?: number): TemporalResolution => {
-  if (interval === 60) {
-    return TemporalResolution.hour;
-  } else if (interval === 1440) {
-    return TemporalResolution.day;
-  } else if (interval !== undefined && interval >= 1440) {
-    return TemporalResolution.month;
-  } else {
-    return TemporalResolution.hour;
-  }
-};
+export const readIntervalToTemporal =
+  (interval: number | undefined, fallback?: TemporalResolution): TemporalResolution => {
+    if (interval === 60) {
+      return TemporalResolution.hour;
+    } else if (interval === 1440) {
+      return TemporalResolution.day;
+    } else if (interval !== undefined && interval >= 1440) {
+      return TemporalResolution.month;
+    } else {
+      return fallback || TemporalResolution.hour;
+    }
+  };

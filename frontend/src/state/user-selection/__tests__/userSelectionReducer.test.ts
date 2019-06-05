@@ -29,7 +29,7 @@ describe('userSelectionReducer', () => {
     selectionParameters: {
       cities: [{...gothenburg}, {...stockholm}],
       addresses: [toIdNamed('1'), toIdNamed('2'), toIdNamed('3')],
-      dateRange: {period: Period.latest},
+      dateRange: {period: Period.yesterday},
     },
   };
 
@@ -132,7 +132,7 @@ describe('userSelectionReducer', () => {
           selectionParameters: {
             cities: [stockholm],
             addresses: [toIdNamed('1'), toIdNamed('2'), toIdNamed('3')],
-            dateRange: {period: Period.latest},
+            dateRange: {period: Period.yesterday},
           },
         },
       };

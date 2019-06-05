@@ -44,7 +44,7 @@ export interface ThresholdQuery {
 
 export type ThresholdQueryProps = Partial<ThresholdQuery>;
 
-export const defaultDateRange: SelectionInterval = {period: Period.latest};
+export const defaultDateRange: SelectionInterval = {period: Period.yesterday};
 
 export const emptyThreshold: ThresholdQueryProps = {
   value: '',

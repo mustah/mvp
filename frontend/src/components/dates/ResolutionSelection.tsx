@@ -1,21 +1,18 @@
 import * as React from 'react';
 import {popoverStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
+import {ResolutionAware} from '../../state/report/reportModels';
 import {CallbackWith} from '../../types/Types';
 import {DropdownMenu, MenuItemProps} from '../dropdown-selector/DropdownMenu';
 import {IconTemporalResolution} from '../icons/IconTemporalResolution';
 import {TemporalResolution} from './dateModels';
 
-export interface ResolutionProps {
+export interface ResolutionProps extends ResolutionAware {
   disabled?: boolean;
-  resolution: TemporalResolution;
   selectResolution: CallbackWith<TemporalResolution>;
 }
 
 const width = 124;
-const style: React.CSSProperties = {marginRight: 16, marginBottom: 0, marginLeft: 16, width};
-const labelStyle: React.CSSProperties = {width};
-const listStyle: React.CSSProperties = {width, ...popoverStyle};
 
 export const ResolutionSelection = ({disabled, resolution, selectResolution}: ResolutionProps) => {
 
@@ -50,10 +47,10 @@ export const ResolutionSelection = ({disabled, resolution, selectResolution}: Re
     <DropdownMenu
       disabled={disabled}
       IconButton={IconTemporalResolution}
-      labelStyle={labelStyle}
-      listStyle={listStyle}
+      labelStyle={{width}}
+      listStyle={{...popoverStyle, width}}
       menuItems={resolutions}
-      style={style}
+      style={{marginRight: 0, marginBottom: 0, marginLeft: 16, width}}
       value={resolution}
     />
   );

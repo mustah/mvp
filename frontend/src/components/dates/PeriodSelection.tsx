@@ -35,16 +35,16 @@ export class PeriodSelection extends React.Component<Props, State> {
 
     const timePeriods: MenuItemProps[] = [
       {
-        value: Period.latest,
-        label: firstUpperTranslated('last 24h'),
-        primaryText: translate('last 24h'),
-        onClick: () => this.onSelectPeriod(Period.latest),
+        value: Period.today,
+        label: firstUpperTranslated('today'),
+        primaryText: translate('today'),
+        onClick: () => this.onSelectPeriod(Period.today),
       },
       {
-        value: Period.currentWeek,
-        label: prettyRange({period: Period.currentWeek, customDateRange}),
-        primaryText: translate('current week'),
-        onClick: () => this.onSelectPeriod(Period.currentWeek),
+        value: Period.yesterday,
+        label: firstUpperTranslated('yesterday'),
+        primaryText: translate('yesterday'),
+        onClick: () => this.onSelectPeriod(Period.yesterday),
       },
       {
         value: Period.previous7Days,
@@ -55,7 +55,7 @@ export class PeriodSelection extends React.Component<Props, State> {
       {
         value: Period.currentMonth,
         label: prettyRange({period: Period.currentMonth, customDateRange}),
-        primaryText: translate('current month'),
+        primaryText: translate('this month'),
         onClick: () => this.onSelectPeriod(Period.currentMonth),
       },
       {

@@ -62,7 +62,6 @@ export const MeterMeasurementsToolbar = ({
       </ToolbarLeftPane>
 
       <ToolbarRightPane>
-        <ResolutionSelection resolution={resolution} selectResolution={selectResolution}/>
         <PeriodSelection
           customDateRange={Maybe.maybe(timePeriod.customDateRange)}
           period={timePeriod.period}
@@ -70,6 +69,7 @@ export const MeterMeasurementsToolbar = ({
           setCustomDateRange={setCustomDateRange}
           style={{marginBottom: 0, marginLeft: 0}}
         />
+        <ResolutionSelection resolution={resolution} selectResolution={selectResolution}/>
       </ToolbarRightPane>
     </Toolbar>
   );

@@ -1,6 +1,6 @@
 import {ActionType, getType} from 'typesafe-actions';
 import {isOnMeterDetailsPage} from '../../../app/routes';
-import {Period, TemporalResolution} from '../../../components/dates/dateModels';
+import {defaultPeriodResolution, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {locationChange} from '../../../state/location/locationActions';
 import {logoutUser} from '../../auth/authActions';
 import * as actions from './meterDetailActions';
@@ -9,7 +9,7 @@ import {MeterDetailState} from './meterDetailModels';
 export const initialState: MeterDetailState = {
   isDirty: false,
   resolution: TemporalResolution.hour,
-  timePeriod: {period: Period.latest},
+  timePeriod: {period: Period.yesterday},
 };
 
 type ActionTypes = ActionType<typeof actions | typeof logoutUser | typeof locationChange>;
@@ -17,10 +17,12 @@ type ActionTypes = ActionType<typeof actions | typeof logoutUser | typeof locati
 export const meterDetail = (state: MeterDetailState = initialState, action: ActionTypes): MeterDetailState => {
   switch (action.type) {
     case getType(actions.setTimePeriod):
+      const timePeriod = action.payload;
       return {
         ...state,
         isDirty: true,
-        timePeriod: action.payload,
+        timePeriod,
+        resolution: defaultPeriodResolution[timePeriod.period],
       };
     case getType(actions.selectResolution):
       return {

@@ -29,12 +29,12 @@ describe('temporal', () => {
     });
 
     it('can change its time period', () => {
-      const action = setReportTimePeriod(ReportSector.report)({period: Period.currentMonth});
+      const timePeriod: SelectionInterval = {period: Period.currentMonth};
 
-      const afterChange: TemporalReportState = temporal(initialState, action);
+      const state: TemporalReportState = temporal(initialState, setReportTimePeriod(ReportSector.report)(timePeriod));
 
-      const expected: SelectionInterval = {period: Period.currentMonth};
-      expect(afterChange.timePeriod).toEqual(expected);
+      const expected: TemporalReportState = {...initialState, timePeriod, resolution: TemporalResolution.day};
+      expect(state).toEqual(expected);
     });
   });
 
@@ -95,7 +95,7 @@ describe('temporal', () => {
 
     const thresholdQuery: ThresholdQuery = {
       ...makeThreshold(),
-      dateRange: {period: Period.currentWeek},
+      dateRange: {period: Period.yesterday},
     };
 
     const userSelection: UserSelection = userSelectionState.userSelection;
@@ -103,7 +103,7 @@ describe('temporal', () => {
     describe('setThreshold', () => {
 
       it('will set time period from threshold payload', () => {
-        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.currentWeek}};
+        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.yesterday}};
         expect(temporal(initialState, setThreshold(thresholdQuery))).toEqual(expected);
       });
 
@@ -124,15 +124,15 @@ describe('temporal', () => {
             threshold: thresholdQuery
           }
         };
-        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.currentWeek}};
+        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.yesterday}};
 
         expect(temporal(initialState, selectSavedSelectionAction(payload))).toEqual(expected);
       });
 
-      it('will reset time period to latest when selected saved selection without threshold', () => {
+      it('will reset time period to yesterday when selected saved selection without threshold', () => {
         const state: TemporalReportState = {...initialState, timePeriod: {period: Period.currentMonth}};
 
-        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.latest}};
+        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.yesterday}};
 
         expect(temporal(state, selectSavedSelectionAction(userSelection))).toEqual(expected);
       });

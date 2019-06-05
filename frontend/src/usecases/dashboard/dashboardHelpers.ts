@@ -15,7 +15,7 @@ export const makeCollectionWidget = (id: uuid, dashboardId: uuid): CollectionSta
   dashboardId,
   settings: {
     selectionInterval: {
-      period: Period.latest,
+      period: Period.yesterday,
     },
   },
   type: WidgetType.COLLECTION,

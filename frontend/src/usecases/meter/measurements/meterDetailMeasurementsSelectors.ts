@@ -1,27 +1,28 @@
 import {createSelector} from 'reselect';
-import {TemporalResolution} from '../../../components/dates/dateModels';
+import {defaultPeriodResolution, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {identity} from '../../../helpers/commonHelpers';
 import {readIntervalToTemporal} from '../../../helpers/dateHelpers';
 import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
+import {ResolutionAware} from '../../../state/report/reportModels';
 import {MeasurementParameters, MeasurementResponse} from '../../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {toLegendItemAllQuantities} from '../../report/helpers/legendHelper';
 import {MeterDetailState} from './meterDetailModels';
 
 interface ResolutionState {
-  meterDetail: MeterDetailState;
   meter: MeterDetails;
+  meterDetail: MeterDetailState;
+  period: Period;
 }
 
-export const getResolution = createSelector<ResolutionState, ResolutionState, TemporalResolution>(
+export const getMeterResolution = createSelector<ResolutionState, ResolutionState, TemporalResolution>(
   identity,
-  ({meter: {readIntervalMinutes}, meterDetail: {isDirty, resolution}}) =>
-    isDirty ? resolution : readIntervalToTemporal(readIntervalMinutes)
+  ({meter: {readIntervalMinutes}, meterDetail: {isDirty, resolution}, period}) =>
+    isDirty ? resolution : readIntervalToTemporal(readIntervalMinutes, defaultPeriodResolution[period])
 );
 
-interface State {
+interface State extends ResolutionAware {
   meter: MeterDetails;
-  resolution: TemporalResolution;
   timePeriod: SelectionInterval;
 }
 

@@ -258,8 +258,11 @@ msgstr "startdatum"
 msgid "end date"
 msgstr "slutdatum"
 
-msgid "last 24h"
-msgstr "senaste dygnet"
+msgid "today"
+msgstr "idag"
+
+msgid "yesterday"
+msgstr "igår"
 
 msgid "current week"
 msgstr "denna vecka"
@@ -267,7 +270,7 @@ msgstr "denna vecka"
 msgid "last 7 days"
 msgstr "senaste 7 dagarna"
 
-msgid "current month"
+msgid "this month"
 msgstr "denna månad"
 
 msgid "previous month"
