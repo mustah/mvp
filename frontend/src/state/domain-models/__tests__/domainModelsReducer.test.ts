@@ -8,6 +8,7 @@ import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {search} from '../../search/searchActions';
 import {makeMeterQuery} from '../../search/searchModels';
 import {initialState as initialMeasurementState} from '../../ui/graph/measurement/measurementReducer';
+import {unknownAction} from '../../ui/tabs/tabsActions';
 import {resetSelection} from '../../user-selection/userSelectionActions';
 import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
 import {
@@ -57,7 +58,7 @@ describe('domainModelsReducer', () => {
     };
 
     it('has initial state', () => {
-      expect(users(initialState, {type: 'unknown'})).toEqual({...initialState});
+      expect(users(initialState, unknownAction())).toEqual({...initialState});
     });
 
     it('requests users', () => {

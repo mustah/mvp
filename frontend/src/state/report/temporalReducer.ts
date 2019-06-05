@@ -1,4 +1,4 @@
-import {ActionType, getType} from 'typesafe-actions';
+import {ActionType, EmptyAction, getType} from 'typesafe-actions';
 import {defaultPeriodResolution, Period, TemporalResolution} from '../../components/dates/dateModels';
 import {Maybe} from '../../helpers/Maybe';
 import {Action} from '../../types/Types';
@@ -10,7 +10,8 @@ import {ReportSector, TemporalReportState} from './reportModels';
 
 type ActionTypes =
   ActionType<typeof selectSavedSelectionAction | typeof setThreshold | typeof logoutUser>
-  | Action<TemporalResolution | SelectionInterval>;
+  | Action<TemporalResolution | SelectionInterval>
+  | EmptyAction<string>;
 
 export const initialState: TemporalReportState = {
   resolution: TemporalResolution.hour,

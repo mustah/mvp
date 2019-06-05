@@ -1,4 +1,4 @@
-import {changeTabGateway, changeTabMeter, changeTabReport} from '../tabsActions';
+import {changeTabGateway, changeTabMeter, changeTabReport, unknownAction} from '../tabsActions';
 import {TabName, TabsState} from '../tabsModels';
 import {initialState, tabs} from '../tabsReducer';
 
@@ -66,7 +66,7 @@ describe('tabsReducer', () => {
   describe('initial state for report view', () => {
 
     it('is graph tab', () => {
-      const state: TabsState = tabs(initialState, {type: 'unknown'});
+      const state: TabsState = tabs(initialState, unknownAction());
 
       const expected: TabsState = {
         ...initialState,
