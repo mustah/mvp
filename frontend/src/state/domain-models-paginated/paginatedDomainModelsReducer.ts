@@ -1,10 +1,8 @@
-import {LocationChangePayload} from 'connected-react-router';
 import {Location} from 'history';
-import {isEqual, pick} from 'lodash';
+import {isEqual} from 'lodash';
 import {combineReducers, Reducer} from 'redux';
 import {ActionType, getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
-import {isOnSearchPage} from '../../app/routes';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ActionKey, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
@@ -230,15 +228,8 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityFailure(actionKey):
       case domainModelsPaginatedDeleteFailure(actionKey):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
-      case getType(locationChange):
-        return isOnSearchPage((action as Action<LocationChangePayload>).payload.location)
-          ? state
-          : {
-            ...makeInitialState<T>(),
-            ...pick(state, ['sort']),
-          };
       case getType(search):
-        return {...makeInitialState<T>()};
+        return makeInitialState<T>();
       default:
         return additionalReducers
           ? additionalReducers(state, action)

@@ -1,10 +1,12 @@
 import {makeMeter, toLocation} from '../../../__tests__/testDataFactory';
+import {routes} from '../../../app/routes';
 import {RequestParameter} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
 import {locationChange} from '../../location/locationActions';
+import {search} from '../../search/searchActions';
 import {SortOption} from '../../ui/pagination/paginationModels';
 import {resetSelection} from '../../user-selection/userSelectionActions';
 import {Gateway} from '../gateway/gatewayModels';
@@ -292,38 +294,34 @@ describe('paginatedDomainModelsReducer', () => {
   describe('clear paginatedDomainModels', () => {
 
     it('clears a cached data', () => {
-      const expextedState: PaginatedDomainModelsState = {
-        meters: makeInitialState<Meter>(),
+      const expectedState: PaginatedDomainModelsState = {
+        meters: initialState,
         gateways: makeInitialState<Gateway>(),
         collectionStatFacilities: makeInitialState<CollectionStat>(),
         meterCollectionStatFacilities: makeInitialState<CollectionStat>(),
       };
 
-      expect(paginatedDomainModels(
+      const state: PaginatedDomainModelsState = paginatedDomainModels(
         {
           meters: {
-            ...makeInitialState<Meter>(),
+            ...initialState,
             entities: {1: {...makeMeter(1, 'stockholm', 'king street')}},
           },
-          gateways: {
-            ...makeInitialState<Gateway>(),
-          },
-          collectionStatFacilities: {
-            ...makeInitialState<CollectionStat>(),
-          },
-          meterCollectionStatFacilities: {
-            ...makeInitialState<CollectionStat>(),
-          },
+          gateways: makeInitialState<Gateway>(),
+          collectionStatFacilities: makeInitialState<CollectionStat>(),
+          meterCollectionStatFacilities: makeInitialState<CollectionStat>()
         },
-        resetSelection(),
-      )).toEqual(expextedState);
+        resetSelection()
+      );
+
+      expect(state).toEqual(expectedState);
     });
   });
 
   describe('sortTable', () => {
 
     it('can start sorting', () => {
-      const state: MetersState = makeInitialState();
+      const state: MetersState = initialState;
 
       const payload: SortOption[] = [{field: RequestParameter.city}];
       const newState: MetersState = meters(state, sortTableMeters(payload));
@@ -332,7 +330,7 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('can remove sorting', () => {
-      const state: MetersState = meters(makeInitialState(), sortTableMeters([{field: RequestParameter.city}]));
+      const state: MetersState = meters(initialState, sortTableMeters([{field: RequestParameter.city}]));
 
       const newState: MetersState = meters(state, sortTableMeters(undefined));
 
@@ -343,7 +341,7 @@ describe('paginatedDomainModelsReducer', () => {
       const payload: SortOption[] = [{field: RequestParameter.city}];
       const state: MetersState = meters(
         {
-          ...makeInitialState(),
+          ...initialState,
           result: {
             1: {
               isFetching: false,
@@ -366,7 +364,7 @@ describe('paginatedDomainModelsReducer', () => {
       const differentPayload: SortOption[] = [{field: RequestParameter.city, dir: 'DESC'}];
       const state: MetersState = meters(
         {
-          ...makeInitialState(),
+          ...initialState,
           result: {
             1: {
               isFetching: false,
@@ -384,7 +382,7 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('can replace sorting', () => {
-      const state: MetersState = meters(makeInitialState(), sortTableMeters([{field: RequestParameter.city}]));
+      const state: MetersState = meters(initialState, sortTableMeters([{field: RequestParameter.city}]));
 
       const newState: MetersState = meters(
         state,
@@ -400,9 +398,26 @@ describe('paginatedDomainModelsReducer', () => {
       );
     });
 
-    it('keeps the sorting but throws out data when user navigates away', () => {
-      const stateWithResultAndSort: MetersState = {
-        ...makeInitialState(),
+    it('resets state when user makes a new search', () => {
+      const state: MetersState = {
+        ...initialState,
+        result: {
+          1: {
+            isFetching: false,
+            isSuccessfullyFetched: true,
+            result: [123, 456],
+          },
+        },
+      };
+
+      const newState: MetersState = meters(state, search({validation: {query: 'evo'}}));
+
+      expect(newState).toEqual(initialState);
+    });
+
+    it('keeps state when user navigates to another page than search page', () => {
+      const state: MetersState = {
+        ...initialState,
         result: {
           1: {
             isFetching: false,
@@ -413,13 +428,9 @@ describe('paginatedDomainModelsReducer', () => {
         sort: [{field: RequestParameter.city}],
       };
 
-      const stateAfterLocationChange: MetersState = meters(
-        stateWithResultAndSort,
-        locationChange(toLocation('a'))
-      );
+      const newState: MetersState = meters(state, locationChange(toLocation(routes.dashboard)));
 
-      expect(stateAfterLocationChange).toHaveProperty('sort', [{field: RequestParameter.city}]);
-      expect(stateAfterLocationChange).toHaveProperty('result', {});
+      expect(newState).toBe(state);
     });
 
   });
@@ -427,33 +438,21 @@ describe('paginatedDomainModelsReducer', () => {
   describe('logout user', () => {
 
     it('resets state to initial state', () => {
-      let state: PaginatedDomainModelsState = {
-        meters: {
-          ...makeInitialState<Meter>(),
-          isFetchingSingle: true,
-        },
-        gateways: {
-          ...makeInitialState<Gateway>(),
-          isFetchingSingle: true,
-        },
-        collectionStatFacilities: {
-          ...makeInitialState<CollectionStat>(),
-          isFetchingSingle: true,
-        },
-        meterCollectionStatFacilities: {
-          ...makeInitialState<CollectionStat>(),
-          isFetchingSingle: true,
-        },
+      const prevState: PaginatedDomainModelsState = {
+        meters: {...initialState, isFetchingSingle: true},
+        gateways: {...makeInitialState<Gateway>(), isFetchingSingle: true},
+        collectionStatFacilities: {...makeInitialState<CollectionStat>(), isFetchingSingle: true},
+        meterCollectionStatFacilities: {...makeInitialState<CollectionStat>(), isFetchingSingle: true},
       };
 
       const expected: PaginatedDomainModelsState = {
-        meters: {...makeInitialState<Meter>()},
-        gateways: {...makeInitialState<Gateway>()},
-        collectionStatFacilities: {...makeInitialState<CollectionStat>()},
-        meterCollectionStatFacilities: {...makeInitialState<CollectionStat>()},
+        meters: initialState,
+        gateways: makeInitialState<Gateway>(),
+        collectionStatFacilities: makeInitialState<CollectionStat>(),
+        meterCollectionStatFacilities: makeInitialState<CollectionStat>(),
       };
 
-      state = paginatedDomainModels(state, logoutUser(undefined));
+      const state = paginatedDomainModels(prevState, logoutUser(undefined));
 
       expect(state).toEqual(expected);
     });
