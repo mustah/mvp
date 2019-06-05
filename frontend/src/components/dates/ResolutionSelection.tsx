@@ -13,9 +13,6 @@ export interface ResolutionProps extends ResolutionAware {
 }
 
 const width = 124;
-const style: React.CSSProperties = {marginRight: 16, marginBottom: 0, marginLeft: 16, width};
-const labelStyle: React.CSSProperties = {width};
-const listStyle: React.CSSProperties = {width, ...popoverStyle};
 
 export const ResolutionSelection = ({disabled, resolution, selectResolution}: ResolutionProps) => {
 
@@ -50,10 +47,10 @@ export const ResolutionSelection = ({disabled, resolution, selectResolution}: Re
     <DropdownMenu
       disabled={disabled}
       IconButton={IconTemporalResolution}
-      labelStyle={labelStyle}
-      listStyle={listStyle}
+      labelStyle={{width}}
+      listStyle={{...popoverStyle, width}}
       menuItems={resolutions}
-      style={style}
+      style={{marginRight: 0, marginBottom: 0, marginLeft: 16, width}}
       value={resolution}
     />
   );
