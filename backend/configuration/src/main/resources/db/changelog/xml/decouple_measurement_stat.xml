@@ -57,4 +57,14 @@
   <changeSet id="drop index" author="erimel">
     <dropIndex tableName="measurement_stat_job" indexName="measurement_stat_job_modified_shard_key_idx"/>
   </changeSet>
+
+  <changeSet id="autovacuum settings for measurement_stat_data and measurement" author="erimel">
+    <sql>
+      ALTER TABLE measurement SET (autovacuum_vacuum_scale_factor = 0);
+      ALTER TABLE measurement SET (autovacuum_vacuum_threshold = 100000);
+      ALTER TABLE measurement_stat_data SET (autovacuum_vacuum_scale_factor = 0);
+      ALTER TABLE measurement_stat_data SET (autovacuum_vacuum_threshold = 10000);
+
+    </sql>
+  </changeSet>
 </databaseChangeLog>
