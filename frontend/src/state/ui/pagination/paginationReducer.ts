@@ -4,6 +4,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {UseCases} from '../../../types/Types';
 import {search} from '../../search/searchActions';
+import {Query} from '../../search/searchModels';
 import {resetSelection} from '../../user-selection/userSelectionActions';
 import {changePage, updatePageMetaData} from './paginationActions';
 import {ChangePagePayload, Pagination, PaginationMetadataPayload, PaginationState} from './paginationModels';
@@ -57,8 +58,7 @@ export const pagination = (
     case getType(updatePageMetaData):
       return updateMetaData(state, action.payload);
     case getType(search):
-      const payload = action.payload[UseCases.validation] || action.payload[UseCases.collection];
-      return Maybe.maybe(payload)
+      return Maybe.maybe<Query>(action.payload[UseCases.collection])
         .filter(isDefined)
         .map(_ => onChangePage(state, resetSearchResultPage))
         .orElse(state);
