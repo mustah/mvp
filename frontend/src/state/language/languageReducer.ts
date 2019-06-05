@@ -1,23 +1,18 @@
-import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
-import {Action} from '../../types/Types';
+import {ActionType, getType} from 'typesafe-actions';
+import {unknownAction} from '../ui/tabs/tabsActions';
 import {changeLanguageRequest} from './languageActions';
-import {LanguageCode, languages, LanguageState} from './languageModels';
+import {languages, LanguageState} from './languageModels';
 
 const initialState: LanguageState = {
   language: {code: languages.en.code},
 };
 
-type ActionTypes = Action<LanguageCode> | EmptyAction<string>;
+type ActionTypes = ActionType<typeof changeLanguageRequest | typeof unknownAction>;
 
 export const language = (state: LanguageState = initialState, action: ActionTypes) => {
-  switch (action.type) {
-    case getType(changeLanguageRequest):
-      return {
-        ...state,
-        language: {code: (action as Action<LanguageCode>).payload},
-      };
-    default:
-      return state;
+  if (action.type === getType(changeLanguageRequest)) {
+    return {...state, language: {code: action.payload}};
+  } else {
+    return state;
   }
 };

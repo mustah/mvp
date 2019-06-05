@@ -4,7 +4,7 @@ import {IdNamed, Selected, uuid} from '../../types/Types';
 import {Address, City} from '../domain-models/location/locationModels';
 import {Query} from '../search/searchModels';
 import {Quantity} from '../ui/graph/measurement/measurementModels';
-import {SortOption, Pagination} from '../ui/pagination/paginationModels';
+import {Pagination, SortOption} from '../ui/pagination/paginationModels';
 
 export const enum ParameterName {
   addresses = 'addresses',
@@ -96,7 +96,6 @@ export interface OldSelectionParameters {
   secondaryAddresses: uuid[];
 }
 
-// TODO specify that customDateRange needs to exist if period === Period.custom
 export interface SelectionInterval {
   period: Period;
   customDateRange?: DateRange;

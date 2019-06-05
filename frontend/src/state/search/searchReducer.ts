@@ -1,8 +1,5 @@
-import {LocationChangePayload} from 'connected-react-router';
 import {ActionType, getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {isOnSearchPage} from '../../app/routes';
-import {Action} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
 import {locationChange} from '../location/locationActions';
 import {
@@ -13,7 +10,7 @@ import {
   setThreshold,
 } from '../user-selection/userSelectionActions';
 import {search as searchAction} from './searchActions';
-import {Query, QueryParameter} from './searchModels';
+import {Query} from './searchModels';
 
 export interface SearchState {
   validation: Query;
@@ -23,17 +20,21 @@ export const initialState: SearchState = {
   validation: {}
 };
 
-type Actions =
-  | Action<QueryParameter>
-  | ActionType<typeof locationChange>
-  | EmptyAction<string>;
+type Actions = ActionType<typeof locationChange
+  | typeof searchAction
+  | typeof setThreshold
+  | typeof addParameterToSelection
+  | typeof deselectSelection
+  | typeof selectSavedSelectionAction
+  | typeof logoutUser
+  | typeof resetSelection>;
 
 export const search = (state: SearchState = initialState, action: Actions): SearchState => {
   switch (action.type) {
     case getType(searchAction):
-      return {...state, ...(action as Action<QueryParameter>).payload};
+      return {...state, ...action.payload};
     case getType(locationChange):
-      return isOnSearchPage((action as Action<LocationChangePayload>).payload.location)
+      return isOnSearchPage(action.payload.location)
         ? state
         : {validation: {}};
     case getType(setThreshold):

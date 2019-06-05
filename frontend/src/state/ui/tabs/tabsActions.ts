@@ -1,6 +1,8 @@
-import {createStandardAction} from 'typesafe-actions';
+import {createAction, createStandardAction} from 'typesafe-actions';
 import {UseCases} from '../../../types/Types';
 import {TabName, TabSelection} from './tabsModels';
+
+export const unknownAction = createAction('unknown');
 
 export const changeTab = createStandardAction('CHANGE_TAB')<TabSelection>();
 

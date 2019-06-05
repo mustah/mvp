@@ -15,7 +15,8 @@ const initialState: CollectionState = {
 };
 
 type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>
-  | Action<Maybe<ErrorResponse> | SelectionInterval>;
+  | Action<Maybe<ErrorResponse>
+  | SelectionInterval>;
 
 const collectionReducer = (sector: Sectors) =>
   (state: CollectionState = initialState, action: ActionTypes): CollectionState => {

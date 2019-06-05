@@ -10,7 +10,7 @@ import {
 import {
   addParameterToSelection,
   deselectSelection,
-  RESET_SELECTION,
+  resetSelection,
   selectSavedSelectionAction,
   setCustomDateRange,
 } from '../userSelectionActions';
@@ -104,7 +104,7 @@ describe('userSelectionReducer', () => {
 
       expect(state).not.toEqual(initialState);
 
-      state = userSelection(state, {type: RESET_SELECTION});
+      state = userSelection(state, resetSelection());
 
       expect(state).toEqual(initialState);
     });

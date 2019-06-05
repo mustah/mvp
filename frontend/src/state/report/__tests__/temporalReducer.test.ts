@@ -1,32 +1,17 @@
 import {makeThreshold} from '../../../__tests__/testDataFactory';
 import {Period, TemporalResolution} from '../../../components/dates/dateModels';
-import {Medium} from '../../ui/graph/measurement/measurementModels';
-import {selectPeriod, selectSavedSelectionAction, setThreshold} from '../../user-selection/userSelectionActions';
+import {selectSavedSelectionAction, setThreshold} from '../../user-selection/userSelectionActions';
 import {SelectionInterval, ThresholdQuery, UserSelection} from '../../user-selection/userSelectionModels';
 import {initialState as userSelectionState} from '../../user-selection/userSelectionReducer';
-import {addLegendItems, selectResolution, setReportTimePeriod, toggleComparePeriod} from '../reportActions';
-import {LegendItem, ReportSector, TemporalReportState} from '../reportModels';
+import {selectResolution, setReportTimePeriod, toggleComparePeriod} from '../reportActions';
+import {ReportSector, TemporalReportState} from '../reportModels';
 import {initialState, temporalReducerFor} from '../temporalReducer';
 
 describe('temporal', () => {
 
   const temporal = temporalReducerFor(ReportSector.report);
 
-  const legendItems: LegendItem[] = [
-    {id: 1, label: 'a', type: Medium.gas, isHidden: false, quantities: []},
-    {id: 2, label: 'b', type: Medium.water, isHidden: false, quantities: []}
-  ];
-
   describe('change period', () => {
-
-    it('should not clear selected list items when changing global period', () => {
-      const state: TemporalReportState = temporal(initialState, addLegendItems(ReportSector.report)(legendItems));
-
-      expect(state).toEqual(initialState);
-
-      const newState: TemporalReportState = temporal(state, selectPeriod(Period.currentMonth));
-      expect(newState).toBe(state);
-    });
 
     it('can change its time period', () => {
       const timePeriod: SelectionInterval = {period: Period.currentMonth};

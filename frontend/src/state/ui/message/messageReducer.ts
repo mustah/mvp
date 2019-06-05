@@ -1,5 +1,4 @@
-import {getType} from 'typesafe-actions';
-import {Action} from '../../../types/Types';
+import {ActionType, getType} from 'typesafe-actions';
 import {hideMessage, showFailMessage, showSuccessMessage} from './messageActions';
 import {MessageState} from './messageModels';
 
@@ -8,7 +7,9 @@ const initialState: MessageState = {
   message: '',
 };
 
-export const message = (state: MessageState = initialState, action: Action<string>): MessageState => {
+type ActionTypes = ActionType<typeof showSuccessMessage | typeof showFailMessage | typeof hideMessage>;
+
+export const message = (state: MessageState = initialState, action: ActionTypes): MessageState => {
   switch (action.type) {
     case getType(showSuccessMessage):
       return {
