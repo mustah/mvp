@@ -5,7 +5,6 @@ import {combineReducers, Reducer} from 'redux';
 import {ActionType, getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {isOnSearchPage} from '../../app/routes';
-import {Maybe} from '../../helpers/Maybe';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ActionKey, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
@@ -149,7 +148,9 @@ const entityFailure = <T extends Identifiable>(
   nonExistingSingles: {...state.nonExistingSingles, [payload.id]: payload},
 });
 
-type ActionTypes<T extends Identifiable> = EmptyAction<string> |
+type ActionTypes<T extends Identifiable> =
+  ActionType<typeof locationChange> |
+  EmptyAction<string> |
   Action<NormalizedPaginated<T>
     | Meter & PageNumbered
     | number
@@ -208,7 +209,7 @@ const reducerFor = <T extends Identifiable>(
 ) =>
   (
     state: NormalizedPaginatedState<T> = makeInitialState<T>(),
-    action: ActionTypes<T> | ActionType<typeof locationChange>,
+    action: ActionTypes<T>
   ): NormalizedPaginatedState<T> => {
     switch (action.type) {
       case domainModelsPaginatedRequest(actionKey):
@@ -239,9 +240,9 @@ const reducerFor = <T extends Identifiable>(
       case getType(search):
         return {...makeInitialState<T>()};
       default:
-        return Maybe.maybe(additionalReducers)
-          .map((reducer: Reducer<NormalizedPaginatedState<T>>) => reducer(state, action))
-          .orElse(resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>()));
+        return additionalReducers
+          ? additionalReducers(state, action)
+          : resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
     }
   };
 

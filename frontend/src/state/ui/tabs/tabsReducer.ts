@@ -1,5 +1,4 @@
-import {getType} from 'typesafe-actions';
-import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
+import {ActionType, getType} from 'typesafe-actions';
 import {Action} from '../../../types/Types';
 import {changeTab as changeTabAction} from './tabsActions';
 import {TabName, TabSelection, TabsState} from './tabsModels';
@@ -10,7 +9,7 @@ export const initialState: TabsState = {
   report: {selectedTab: TabName.graph},
 };
 
-type ActionType = Action<TabSelection> | EmptyAction<string>;
+type ActionTypes = ActionType<typeof changeTabAction>;
 
 const changeTab = (state: TabsState = initialState, action: Action<TabSelection>): TabsState => {
   const {payload: {useCase, tab: selectedTab}} = action;
@@ -23,11 +22,10 @@ const changeTab = (state: TabsState = initialState, action: Action<TabSelection>
   };
 };
 
-export const tabs = (state: TabsState = initialState, action: ActionType): TabsState => {
-  switch (action.type) {
-    case getType(changeTabAction):
-      return changeTab(state, (action as Action<TabSelection>));
-    default:
-      return state;
+export const tabs = (state: TabsState = initialState, action: ActionTypes): TabsState => {
+  if (action.type === getType(changeTabAction)) {
+    return changeTab(state, action);
+  } else {
+    return state;
   }
 };

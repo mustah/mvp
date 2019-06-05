@@ -13,7 +13,7 @@ import {makeMeterQuery} from '../../search/searchModels';
 import {
   addParameterToSelection,
   deselectSelection,
-  RESET_SELECTION,
+  resetSelection,
   selectSavedSelectionAction,
 } from '../../user-selection/userSelectionActions';
 import {SelectionSummary, SummaryState} from '../summaryModels';
@@ -109,7 +109,7 @@ describe('summaryReducer', () => {
         getType(selectSavedSelectionAction),
         getType(addParameterToSelection),
         getType(deselectSelection),
-        RESET_SELECTION,
+        getType(resetSelection),
       ].forEach((actionThatResets: string) => {
         expect(summary(state, {type: actionThatResets})).toEqual(initialState);
       });

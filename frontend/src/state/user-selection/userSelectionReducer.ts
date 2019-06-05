@@ -11,7 +11,7 @@ import {
 import {
   addParameterToSelection,
   deselectSelection,
-  RESET_SELECTION,
+  resetSelection,
   selectPeriod,
   selectSavedSelectionAction,
   setCustomDateRange,
@@ -158,12 +158,9 @@ type ActionTypes =
   | Action<DateRange>
   | Action<ThresholdQuery>;
 
-export const userSelection = (
-  state: UserSelectionState = initialState,
-  action: ActionTypes,
-): UserSelectionState => {
+export const userSelection = (state: UserSelectionState = initialState, action: ActionTypes): UserSelectionState => {
   switch (action.type) {
-    case RESET_SELECTION:
+    case getType(resetSelection):
       return initialState;
     case getType(addParameterToSelection):
       return addSelected(state, action as Action<SelectionParameter>);

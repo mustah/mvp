@@ -3,7 +3,7 @@ import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {
   addParameterToSelection,
   deselectSelection,
-  RESET_SELECTION,
+  resetSelection,
   selectSavedSelectionAction,
   setThreshold
 } from '../state/user-selection/userSelectionActions';
@@ -23,7 +23,7 @@ export const resetReducer = <S>(
     case getType(deselectSelection):
     case getType(selectSavedSelectionAction):
     case getType(logoutUser):
-    case RESET_SELECTION:
+    case getType(resetSelection):
       return initialState;
     default:
       return state;
