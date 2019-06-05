@@ -16,7 +16,18 @@ describe('meterDetailReducer', () => {
 
       const newState: MeterDetailState = meterDetail(state, locationChange(toLocation(`${routes.meter}/${'123'}`)));
 
-      expect(newState).toBe(state);
+      const expected: MeterDetailState = {...initialState, isDirty: true, selectedMeterId: '123'};
+      expect(newState).toEqual(expected);
+    });
+
+    it('will keep last selected meter id but reset reset of the state', () => {
+      let state: MeterDetailState = {...initialState, resolution: TemporalResolution.month, isDirty: true};
+
+      state = meterDetail(state, locationChange(toLocation(`${routes.meter}/${'123'}`)));
+      state = meterDetail(state, locationChange(toLocation(routes.meters)));
+
+      const expected: MeterDetailState = {...initialState, selectedMeterId: '123'};
+      expect(state).toEqual(expected);
     });
 
     it('resets state when location is not on meter details page', () => {
