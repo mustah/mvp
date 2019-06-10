@@ -87,9 +87,10 @@ export const MeterList = ({
   sortTable,
   syncWithMetering,
 }: Props & ThemeContext) => {
+  const scrollToIndex = meters.findIndex(it => it && it.id === selectedMeterId) + 1;
   const [scrollProps, setScrollProps] = React.useState<TableScrollProps>({
     scrollToAlignment: 'center',
-    scrollToIndex: selectedMeterId ? meters.findIndex(it => it.id === selectedMeterId) : page * size
+    scrollToIndex: selectedMeterId ? scrollToIndex : page * size
   });
   const [pageState, setCurrentPage] = React.useState<PageState>({currentPage: 0, prevPage: page});
   const {height} = useResizeWindow();
