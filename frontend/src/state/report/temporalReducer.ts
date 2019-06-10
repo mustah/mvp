@@ -1,6 +1,5 @@
 import {ActionType, EmptyAction, getType} from 'typesafe-actions';
 import {defaultPeriodResolution, Period, TemporalResolution} from '../../components/dates/dateModels';
-import {Maybe} from '../../helpers/Maybe';
 import {Action} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
 import {selectSavedSelectionAction, setThreshold} from '../user-selection/userSelectionActions';
@@ -19,11 +18,13 @@ export const initialState: TemporalReportState = {
   timePeriod: {period: Period.yesterday},
 };
 
-const fromThreshold = (state: TemporalReportState, threshold?: ThresholdQuery): TemporalReportState =>
-  Maybe.maybe(threshold)
-    .filter(it => it.value !== '')
-    .map(({dateRange: timePeriod}) => ({...state, timePeriod}))
-    .orElse(initialState);
+const fromThreshold = (state: TemporalReportState, threshold?: ThresholdQuery): TemporalReportState => {
+  if (threshold) {
+    return threshold.value !== '' ? {...state, timePeriod: threshold.dateRange} : initialState;
+  } else {
+    return state;
+  }
+};
 
 export const temporalReducerFor = (sector: ReportSector) =>
   (state: TemporalReportState = initialState, action: ActionTypes): TemporalReportState => {

@@ -114,15 +114,16 @@ describe('temporal', () => {
         expect(temporal(initialState, selectSavedSelectionAction(payload))).toEqual(expected);
       });
 
-      it('will reset time period to yesterday when selected saved selection without threshold', () => {
+      it('will use old time period when selected selection does not have a threshold time period set', () => {
         const state: TemporalReportState = {...initialState, timePeriod: {period: Period.currentMonth}};
 
-        const expected: TemporalReportState = {...initialState, timePeriod: {period: Period.yesterday}};
+        const nextState = temporal(state, selectSavedSelectionAction(userSelection));
 
-        expect(temporal(state, selectSavedSelectionAction(userSelection))).toEqual(expected);
+        expect(nextState).toBe(state);
       });
 
       it('will reset to initial state when threshold is cleared', () => {
+        const state: TemporalReportState = {...initialState, timePeriod: {period: Period.currentMonth}};
         const emptyThresholdQuery: ThresholdQuery = {...thresholdQuery, value: ''};
 
         const payload: UserSelection = {
@@ -133,7 +134,7 @@ describe('temporal', () => {
           }
         };
 
-        expect(temporal(initialState, selectSavedSelectionAction(payload))).toEqual(initialState);
+        expect(temporal(state, selectSavedSelectionAction(payload))).toBe(initialState);
       });
     });
   });
