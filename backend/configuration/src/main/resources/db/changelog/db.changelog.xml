@@ -94,6 +94,7 @@
   <include file="xml/refactor_measurements.xml" relativeToChangelogFile="true"/>
   <include file="xml/decouple_measurement_stat.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_organisation_theme.xml" relativeToChangelogFile="true"/>
+  <include file="xml/update_jsonb_period_values.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

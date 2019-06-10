@@ -45,6 +45,21 @@ export const migrateUserSelection = (oldUserSelection): UserSelection => {
   };
 };
 
+export const toNewPeriod = (period: string): string => {
+  switch (period) {
+    case 'current_month':
+      return Period.currentMonth;
+    case 'previous_month':
+      return Period.previousMonth;
+    case 'previous_7_days':
+      return Period.previous7Days;
+    case 'current_week':
+    case 'latest':
+    default:
+      return Period.yesterday;
+  }
+};
+
 export const migrations = {
   1: (state) => ({
     ...state,
@@ -228,6 +243,25 @@ export const migrations = {
       }
     };
   },
+  13: (state) => {
+    const {userSelection: {userSelection}} = state;
+    const selectionParameters = userSelection.selectionParameters;
+    const {collectionDateRange, dateRange, reportDateRange} = selectionParameters;
+    return {
+      ...state,
+      userSelection: {
+        userSelection: {
+          ...userSelection,
+          selectionParameters: {
+            ...selectionParameters,
+            collectionDateRange: {...collectionDateRange, period: toNewPeriod(collectionDateRange.period)},
+            dateRange: {...dateRange, period: toNewPeriod(dateRange.period)},
+            reportDateRange: {...reportDateRange, period: toNewPeriod(reportDateRange.period)},
+          }
+        }
+      },
+    };
+  },
 };
 
-export const currentVersion: number = 12;
+export const currentVersion: number = 13;
