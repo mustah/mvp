@@ -60,7 +60,7 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
 
   @Override
   public Optional<Measurement> firstForPhysicalMeterWithinDateRange(
-    UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEqual
+    UUID organisationId,UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEqual
   ) {
     return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
       .sorted(Comparator.comparing(o -> o.readoutTime))

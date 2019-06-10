@@ -27,6 +27,7 @@ public interface Measurements {
   Map<String, List<MeasurementValue>> findAverageAllForPeriod(MeasurementParameter parameter);
 
   Optional<Measurement> firstForPhysicalMeterWithinDateRange(
+    UUID organisationId,
     UUID physicalMeterId,
     ZonedDateTime after,
     ZonedDateTime beforeOrEqual

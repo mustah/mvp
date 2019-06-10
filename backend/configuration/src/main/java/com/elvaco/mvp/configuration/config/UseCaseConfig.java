@@ -145,7 +145,7 @@ class UseCaseConfig {
 
   @Bean
   MeterAlarmUseCases meterAlarmUseCases() {
-    return new MeterAlarmUseCases(measurements, meterAlarmLogs);
+    return new MeterAlarmUseCases(meterAlarmLogs);
   }
 
   @Bean

@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterAlarmLogs;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisationAssets;
@@ -38,12 +39,14 @@ public class MeteringAlarmMessageConsumerTest {
   private PhysicalMeterUseCases physicalMeterUseCases;
   private AlarmMessageConsumer messageConsumer;
   private MockMeterAlarmLogs meterAlarmLogs;
+  private MockMeasurements mockMeasurements;
   private Organisation organisation;
 
   @Before
   public void setUp() {
     MockAuthenticatedUser authenticatedUser = MockAuthenticatedUser.superAdmin();
-    meterAlarmLogs = new MockMeterAlarmLogs();
+    mockMeasurements = new MockMeasurements();
+    meterAlarmLogs = new MockMeterAlarmLogs(mockMeasurements);
     physicalMeterUseCases = new PhysicalMeterUseCases(
       authenticatedUser,
       new MockPhysicalMeters(),

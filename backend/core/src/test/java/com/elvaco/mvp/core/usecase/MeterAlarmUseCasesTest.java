@@ -29,10 +29,10 @@ public class MeterAlarmUseCasesTest extends DefaultTestFixture {
   @Before
   public void before() {
     measurements = new MockMeasurements();
-    meterAlarmLogs = new MockMeterAlarmLogs();
+    meterAlarmLogs = new MockMeterAlarmLogs(measurements);
     physicalMeter = physicalMeter().build();
     logicalMeter = logicalMeter().physicalMeter(physicalMeter).build();
-    meterAlarmUseCases = new MeterAlarmUseCases(measurements, meterAlarmLogs);
+    meterAlarmUseCases = new MeterAlarmUseCases(meterAlarmLogs);
   }
 
   @Test
