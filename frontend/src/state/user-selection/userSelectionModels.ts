@@ -74,8 +74,8 @@ export interface SelectionParameter {
 export interface SelectedParameters {
   addresses?: SelectionItem[];
   cities?: SelectionItem[];
-  dateRange?: SelectionInterval;
   collectionDateRange?: SelectionInterval;
+  dateRange?: SelectionInterval;
   facilities?: IdNamed[];
   gatewaySerials?: IdNamed[];
   media?: IdNamed[];

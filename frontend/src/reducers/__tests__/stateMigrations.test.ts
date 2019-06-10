@@ -1,4 +1,5 @@
-import {migrateFromUuidToIdNamed, migrateUserSelection} from '../stateMigrations';
+import {Period} from '../../components/dates/dateModels';
+import {migrateFromUuidToIdNamed, migrateUserSelection, toNewPeriod} from '../stateMigrations';
 
 describe('rootReducer', () => {
 
@@ -159,6 +160,20 @@ describe('rootReducer', () => {
       };
 
       expect(migrateUserSelection(selection)).toEqual(expected);
+    });
+  });
+
+  describe('new period', () => {
+
+    it('maps to new period from already saved ones', () => {
+      expect(toNewPeriod('current_month')).toBe(Period.currentMonth);
+      expect(toNewPeriod('previous_month')).toBe(Period.previousMonth);
+      expect(toNewPeriod('previous_7_days')).toBe(Period.previous7Days);
+      expect(toNewPeriod('latest')).toBe(Period.yesterday);
+    });
+
+    it('maps to new period from a non-existing period', () => {
+      expect(toNewPeriod('current_week')).toBe(Period.yesterday);
     });
   });
 
