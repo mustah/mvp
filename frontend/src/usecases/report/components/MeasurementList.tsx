@@ -46,9 +46,8 @@ const formatCell = (cell: WorkbookSheetRowCell, index: number) => {
 
 const skipHeaderRow = (_, index) => index > 0;
 
-const save = (exporter: React.Ref<{}>) => {
-  // TODO[!must!]: Our types for React's hooks are wrong. It is solved in the newest version of react.
-  const component = ((exporter as any).current as ExcelExport);
+const save = (exporter: React.RefObject<ExcelExport>): void => {
+  const component = exporter.current!;
   const options = component.workbookOptions();
 
   Maybe.maybe<WorkbookSheet>(first(options.sheets))

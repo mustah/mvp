@@ -34,11 +34,9 @@ export const CollectionListContent = (props: CollectionListProps & WithChildren)
   }, [page, parameters, sort]);
 
   const {children, ...otherProps} = props;
-  const hasContent = result.length > 0;
-
   const wrapperProps: WrapperProps = {
     ...otherProps,
-    hasContent,
+    hasContent: result.length > 0,
     noContentText: firstUpperTranslated('no meters'),
   };
 
