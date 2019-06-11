@@ -2,11 +2,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {DispatchToProps, MeterGrid, StateToProps} from '../components/meters/MeterGrid';
 import {RootState} from '../reducers/rootReducer';
-import {
-  deleteMeter,
-  fetchMeters,
-  sortTableMeters as sortTable
-} from '../state/domain-models-paginated/meter/meterApiActions';
+import {deleteMeter, fetchMeters} from '../state/domain-models-paginated/meter/meterApiActions';
+import {sortMeters} from '../state/domain-models-paginated/paginatedDomainModelsActions';
 import {getAllMeters, getPageIsFetching} from '../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {addToReport} from '../state/report/reportActions';
 import {changePage} from '../state/ui/pagination/paginationActions';
@@ -46,7 +43,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changePage,
   deleteMeter,
   fetchMeters,
-  sortTable,
+  sortMeters,
   syncWithMetering,
 }, dispatch);
 

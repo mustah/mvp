@@ -10,7 +10,7 @@ import {search} from '../../search/searchActions';
 import {SortOption} from '../../ui/pagination/paginationModels';
 import {resetSelection} from '../../user-selection/userSelectionActions';
 import {Gateway} from '../gateway/gatewayModels';
-import {clearErrorMeters, sortTableMeters} from '../meter/meterApiActions';
+import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
 import {
   NormalizedPaginated,
@@ -19,7 +19,7 @@ import {
   PaginatedDomainModelsState,
   SingleEntityFailure,
 } from '../paginatedDomainModels';
-import {makeRequestActionsOf} from '../paginatedDomainModelsActions';
+import {makeRequestActionsOf, sortMeters} from '../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf, makePaginatedDeleteRequestActions} from '../paginatedDomainModelsEntityActions';
 import {makeInitialState, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
 
@@ -318,21 +318,21 @@ describe('paginatedDomainModelsReducer', () => {
     });
   });
 
-  describe('sortTable', () => {
+  describe('sortMeters', () => {
 
     it('can start sorting', () => {
       const state: MetersState = initialState;
 
       const payload: SortOption[] = [{field: RequestParameter.city}];
-      const newState: MetersState = meters(state, sortTableMeters(payload));
+      const newState: MetersState = meters(state, sortMeters(payload));
 
       expect(newState).toHaveProperty('sort', payload);
     });
 
     it('can remove sorting', () => {
-      const state: MetersState = meters(initialState, sortTableMeters([{field: RequestParameter.city}]));
+      const state: MetersState = meters(initialState, sortMeters([{field: RequestParameter.city}]));
 
-      const newState: MetersState = meters(state, sortTableMeters(undefined));
+      const newState: MetersState = meters(state, sortMeters(undefined));
 
       expect(newState).not.toHaveProperty('sort');
     });
@@ -351,7 +351,7 @@ describe('paginatedDomainModelsReducer', () => {
           },
           sort: [...payload],
         },
-        sortTableMeters(payload)
+        sortMeters(payload)
       );
 
       expect(state).toHaveProperty('result');
@@ -374,7 +374,7 @@ describe('paginatedDomainModelsReducer', () => {
           },
           sort: [...payload],
         },
-        sortTableMeters(differentPayload)
+        sortMeters(differentPayload)
       );
 
       expect(state).toHaveProperty('result');
@@ -382,11 +382,11 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('can replace sorting', () => {
-      const state: MetersState = meters(initialState, sortTableMeters([{field: RequestParameter.city}]));
+      const state: MetersState = meters(initialState, sortMeters([{field: RequestParameter.city}]));
 
       const newState: MetersState = meters(
         state,
-        sortTableMeters([{field: RequestParameter.city}, {field: RequestParameter.address}])
+        sortMeters([{field: RequestParameter.city}, {field: RequestParameter.address}])
       );
 
       expect(newState).toHaveProperty(

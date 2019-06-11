@@ -18,3 +18,9 @@
     }
   }
 }
+
+.ReactVirtualized__Table__sortableHeaderColumn {
+  &:focus {
+    outline: none !important;
+  }
+}

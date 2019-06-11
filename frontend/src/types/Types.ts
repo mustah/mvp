@@ -29,7 +29,6 @@ export type OnChange = CallbackAny;
 export type OnKeyPress = CallbackAny;
 export type OnClickWithId = CallbackWith<uuid>;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
-export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) => void;
 
 export type RenderFunction<T> = (props: T) => Children;
 
