@@ -300,9 +300,10 @@ public class MeasurementRepository implements Measurements {
 
   @Override
   public Optional<Measurement> firstForPhysicalMeterWithinDateRange(
-    UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEquals
+    UUID organisationId, UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEquals
   ) {
-    return measurementJpaRepository.firstForPhysicalMeter(physicalMeterId, after, beforeOrEquals)
+    return measurementJpaRepository.firstForPhysicalMeter(organisationId,
+      physicalMeterId, after, beforeOrEquals)
       .map(measurementEntityMapper::toDomainModel);
   }
 

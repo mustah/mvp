@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.PrimaryKey;
+import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 
 import static java.util.stream.Collectors.toList;
@@ -15,6 +16,12 @@ import static java.util.stream.Collectors.toList;
 public class MockMeterAlarmLogs
   extends MockRepository<Long, AlarmLogEntry>
   implements MeterAlarmLogs {
+
+  public MockMeterAlarmLogs(Measurements measurements) {
+    this.measurements = measurements;
+  }
+
+  private Measurements measurements;
 
   @Override
   public AlarmLogEntry save(AlarmLogEntry alarm) {
@@ -45,6 +52,22 @@ public class MockMeterAlarmLogs
   public Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when) {
     return allMocks().stream().filter(alarm -> alarm.stop == null)
       .filter(alarm -> alarm.start.isBefore(when));
+  }
+
+  @Override
+  public void closeAlarmIfNewMeasurementsArrived(AlarmLogEntry alarm, ZonedDateTime toDate) {
+    measurements.firstForPhysicalMeterWithinDateRange(
+      alarm.primaryKey.getOrganisationId(), alarm.primaryKey.getId(),alarm.lastSeen,toDate)
+      .ifPresent(firstMeasurementAfterLastSeen -> {
+        save(AlarmLogEntry.builder()
+          .id(alarm.id)
+          .primaryKey(alarm.primaryKey)
+          .mask(alarm.mask)
+          .start(alarm.start)
+          .lastSeen(alarm.lastSeen)
+          .stop(firstMeasurementAfterLastSeen.readoutTime)
+          .build());
+      });
   }
 
   public Set<AlarmLogEntry> findAll() {

@@ -20,4 +20,7 @@ public interface MeterAlarmLogs {
   );
 
   Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when);
+
+  void closeAlarmIfNewMeasurementsArrived(AlarmLogEntry alarm, ZonedDateTime toDate);
+
 }

@@ -24,13 +24,15 @@ public interface MeasurementJpaRepository
     + "     measurement.quantity_id,"
     + "     physical_meter_id"
     + " FROM measurement"
-    + " WHERE physical_meter_id = :physical_meter_id"
+    + " WHERE organisation_id = :organisation_id"
+    + " AND physical_meter_id = :physical_meter_id"
     + " AND readout_time > :from"
     + " AND readout_time <= :to"
     + " ORDER BY readout_time ASC"
     + " LIMIT 1"
   )
   Optional<MeasurementEntity> firstForPhysicalMeter(
+    @Param("organisation_id") UUID organisationId,
     @Param("physical_meter_id") UUID logicalMeterId,
     @Param("from") ZonedDateTime after,
     @Param("to") ZonedDateTime beforeOrEquals

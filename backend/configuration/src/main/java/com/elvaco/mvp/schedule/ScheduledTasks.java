@@ -18,7 +18,11 @@ public class ScheduledTasks {
   @Scheduled(cron = "0 0 7 * * *")
   public void closeAlarms() {
     log.info("Closing alarms");
-    meterAlarmUseCases.closeAlarms();
+    try {
+      meterAlarmUseCases.closeAlarms();
+    } catch (RuntimeException re) {
+      log.error("Exception occurred during alarm closing. ", re);
+    }
   }
 
 }

@@ -8,10 +8,13 @@ import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterAlarmLogEntityMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -19,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 public class MeterAlarmLogsRepository implements MeterAlarmLogs {
 
   private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
+  private final MeasurementJpaRepository measurements;
 
   @Override
   public AlarmLogEntry save(AlarmLogEntry alarm) {
@@ -54,4 +58,23 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
     return meterAlarmLogJpaRepository.findActiveAlarmsOlderThan(when).stream()
       .map(MeterAlarmLogEntityMapper::toDomainModel);
   }
+
+  @Transactional
+  public void closeAlarmIfNewMeasurementsArrived(AlarmLogEntry alarm, ZonedDateTime toDate) {
+    measurements.firstForPhysicalMeter(
+      alarm.primaryKey.getOrganisationId(),
+      alarm.primaryKey.getId(),
+      alarm.lastSeen,
+      toDate
+    ).ifPresent(firstMeasurementAfterLastSeen ->
+      meterAlarmLogJpaRepository.save(MeterAlarmLogEntity.builder()
+        .id(alarm.id)
+        .pk(new PhysicalMeterPk(alarm.primaryKey.getId(),alarm.primaryKey.getOrganisationId()))
+        .mask(alarm.mask)
+        .start(alarm.start)
+        .lastSeen(alarm.lastSeen)
+        .stop(firstMeasurementAfterLastSeen.id.readoutTime)
+        .build()));
+  }
+
 }

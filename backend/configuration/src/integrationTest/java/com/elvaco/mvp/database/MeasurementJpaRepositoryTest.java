@@ -49,6 +49,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     var firstEnergy = measurementJpaRepository
       .firstForPhysicalMeter(
+        meter.getOrganisationId(),
         meter.id,
         START_TIME.minusDays(1).toZonedDateTime(),
         START_TIME.plusHours(3).toZonedDateTime()
@@ -59,6 +60,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     firstEnergy = measurementJpaRepository
       .firstForPhysicalMeter(
+        meter.getOrganisationId(),
         meter.id,
         START_TIME.plusHours(1).plusMinutes(59).toZonedDateTime(),
         START_TIME.plusHours(2).toZonedDateTime()

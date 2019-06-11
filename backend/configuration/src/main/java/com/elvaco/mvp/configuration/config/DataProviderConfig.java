@@ -320,7 +320,7 @@ class DataProviderConfig {
 
   @Bean
   MeterAlarmLogs meterAlarmLogs() {
-    return new MeterAlarmLogsRepository(meterAlarmLogJpaRepository);
+    return new MeterAlarmLogsRepository(meterAlarmLogJpaRepository, measurementJpaRepository);
   }
 
   @Bean
