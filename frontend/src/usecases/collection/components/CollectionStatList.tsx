@@ -61,6 +61,8 @@ const toSortOptions = (sort: SortDescriptor[]): SortOption[] => sort.map(toSortO
 const toSortDescriptors = (sort): SortDescriptor[] | undefined =>
   sort && sort.length ? sort.map(toSortDescriptor) : undefined;
 
+const save = (exporter: React.RefObject<ExcelExport>) => exporter.current!.save();
+
 export const CollectionStatList = ({
   cssStyles,
   changePage,
@@ -73,11 +75,7 @@ export const CollectionStatList = ({
   sort,
   sortTable,
 }: CollectionListProps & ThemeContext) => {
-  const exporter = useExportToExcel({
-    exportToExcelSuccess,
-    isExportingToExcel,
-    save: exporter => (exporter as any).current.save()
-  });
+  const exporter = useExportToExcel({exportToExcelSuccess, isExportingToExcel, save});
 
   const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
     changePage({entityType, page: skip / paginationPageSize});

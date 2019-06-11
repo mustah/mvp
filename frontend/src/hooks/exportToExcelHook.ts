@@ -1,15 +1,19 @@
+import {ExcelExport} from '@progress/kendo-react-excel-export';
 import * as React from 'react';
 import {Callback} from '../types/Types';
 
 export interface ExportToExcelProps {
   isExportingToExcel: boolean;
   exportToExcelSuccess: Callback;
-  // TODO[!must!]: Our types for React's hooks are wrong. It is solved in the newest version of react.
-  save: (exporter: React.Ref<{}>) => void;
+  save: (exporter: React.RefObject<ExcelExport>) => void;
 }
 
-export const useExportToExcel = ({isExportingToExcel, exportToExcelSuccess, save}: ExportToExcelProps) => {
-  const exporter = React.useRef(null);
+export const useExportToExcel = ({
+  isExportingToExcel,
+  exportToExcelSuccess,
+  save,
+}: ExportToExcelProps): React.RefObject<ExcelExport> => {
+  const exporter = React.useRef<ExcelExport>(null);
   React.useEffect(() => {
     if (isExportingToExcel) {
       save(exporter);
