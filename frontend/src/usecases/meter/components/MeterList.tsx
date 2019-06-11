@@ -55,6 +55,11 @@ interface SortTableProps extends SortProps {
   sort: CallbackWith<SortProps>;
 }
 
+const defaultSortProps: SortProps = {
+  sortBy: RequestParameter.facility,
+  sortDirection: 'ASC'
+};
+
 interface PageState {
   currentPage: number;
   prevPage: number;
@@ -84,7 +89,7 @@ export const MeterList = ({
   pagination: {page, size, totalPages},
   selectedMeterId,
   sortOptions,
-  sortTable,
+  sortMeters,
   syncWithMetering,
 }: Props & ThemeContext) => {
   const scrollToIndex = meters.findIndex(it => it && it.id === selectedMeterId) + 1;
@@ -140,11 +145,11 @@ export const MeterList = ({
         </Row>
       );
 
-  const sortOption = Maybe.maybe(first(sortOptions));
   const sortTableProps: SortTableProps = {
-    sort: ({sortDirection: dir, sortBy: field}) => sortTable([{dir, field: field as RequestParameter}]),
-    ...sortOption.map(({field, dir}) => ({sortBy: field, sortDirection: dir || 'ASC'}))
-      .orElseGet(() => ({sortBy: RequestParameter.facility, sortDirection: 'ASC'})),
+    sort: ({sortDirection: dir, sortBy: field}) => sortMeters([{dir, field: field as RequestParameter}]),
+    ...Maybe.maybe(first(sortOptions))
+      .map(({field: sortBy, dir}): SortProps => ({sortBy, sortDirection: dir || 'ASC'}))
+      .orElse(defaultSortProps),
   };
 
   const renderTable = ({onRowsRendered, registerChild}: InfiniteLoaderChildProps) =>

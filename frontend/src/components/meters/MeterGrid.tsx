@@ -33,7 +33,7 @@ export interface DispatchToProps {
   changePage: OnChangePage;
   deleteMeter: OnDeleteMeter;
   fetchMeters: FetchPaginated;
-  sortTable: CallbackWith<SortOption[]>;
+  sortMeters: CallbackWith<SortOption[]>;
   syncWithMetering: OnClickWithId;
 }
 

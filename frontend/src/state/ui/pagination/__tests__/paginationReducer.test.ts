@@ -1,9 +1,11 @@
+import {RequestParameter} from '../../../../helpers/urlFactory';
+import {sortMeters} from '../../../domain-models-paginated/paginatedDomainModelsActions';
 import {search} from '../../../search/searchActions';
 import {makeMeterQuery} from '../../../search/searchModels';
 import {resetSelection} from '../../../user-selection/userSelectionActions';
 import {changePage, updatePageMetaData} from '../paginationActions';
-import {ChangePagePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
-import {initialState, pagination, paginationPageSize} from '../paginationReducer';
+import {ChangePagePayload, PaginationMetadataPayload, PaginationState, SortOption} from '../paginationModels';
+import {initialPagination, initialState, pagination, paginationPageSize} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
@@ -112,31 +114,37 @@ describe('paginationReducer', () => {
       expect(pagination(paginatedState, changePage(payload))).toEqual(expectedState);
     });
 
-    it('changes page when wildcard search is performed', () => {
-      const expectedState: PaginationState = {
-        ...paginatedState,
-        meters: {
-          ...paginatedState.meters,
-          page: 0,
-        },
-      };
+    it('resets meters pagination state when meters search is performed', () => {
+      const expectedState: PaginationState = {...paginatedState, meters: initialPagination};
+
       expect(pagination(paginatedState, search(makeMeterQuery('ok')))).toEqual(expectedState);
+    });
+
+    it('does not change page when there is nothing to search for', () => {
+      expect(pagination(paginatedState, search(makeMeterQuery(undefined)))).toBe(paginatedState);
     });
   });
 
   describe('reset pagination', () => {
-    it('sets pagination to initialState when getting the reset action', () => {
-      const paginatedState: PaginationState = {
-        ...initialState,
-        meters: {
-          size: paginationPageSize,
-          totalPages: 1,
-          totalElements: 1,
-          page: 1,
-        },
-      };
 
-      expect(pagination(paginatedState, resetSelection())).toEqual(initialState);
+    const paginatedState: PaginationState = {
+      ...initialState,
+      meters: {
+        size: paginationPageSize,
+        totalPages: 1,
+        totalElements: 1,
+        page: 1,
+      },
+    };
+
+    it('sets pagination to initial state when selection is reset', () => {
+      expect(pagination(paginatedState, resetSelection())).toBe(initialState);
+    });
+
+    it('set pagination to initial state when meter table is sorted', () => {
+      const payload: SortOption[] = [{field: RequestParameter.facility, dir: 'ASC'}];
+
+      expect(pagination(paginatedState, sortMeters(payload))).toEqual(initialState);
     });
   });
 });

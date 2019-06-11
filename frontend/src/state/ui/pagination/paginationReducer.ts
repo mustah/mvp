@@ -3,15 +3,21 @@ import {isDefined} from '../../../helpers/commonHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {UseCases} from '../../../types/Types';
+import {sortMeters} from '../../domain-models-paginated/paginatedDomainModelsActions';
 import {search} from '../../search/searchActions';
-import {Query} from '../../search/searchModels';
 import {resetSelection} from '../../user-selection/userSelectionActions';
 import {changePage, updatePageMetaData} from './paginationActions';
-import {ChangePagePayload, Pagination, PaginationMetadataPayload, PaginationState} from './paginationModels';
+import {
+  ChangePagePayload,
+  EntityTyped,
+  Pagination,
+  PaginationMetadataPayload,
+  PaginationState
+} from './paginationModels';
 
 export const paginationPageSize = 50;
 
-const initialPagination: Pagination = {
+export const initialPagination: Pagination = {
   page: 0,
   size: paginationPageSize,
   totalElements: -1,
@@ -25,12 +31,14 @@ export const initialState: PaginationState = {
   meterCollectionStatFacilities: {...initialPagination},
 };
 
-const onChangePage = (
-  state: PaginationState,
-  {entityType, page}: ChangePagePayload,
-): PaginationState => ({
+const updatePage = (state: PaginationState, {entityType, page}: ChangePagePayload): PaginationState => ({
   ...state,
   [entityType]: {...state[entityType], page},
+});
+
+const resetStateForEntityType = (state: PaginationState, {entityType}: EntityTyped): PaginationState => ({
+  ...state,
+  [entityType]: initialPagination
 });
 
 const updateMetaData = (
@@ -41,27 +49,26 @@ const updateMetaData = (
   [entityType]: {...state[entityType], size: paginationPageSize, totalElements, totalPages},
 });
 
-const resetSearchResultPage: ChangePagePayload = {
-  entityType: 'meters',
-  page: 0,
-};
+type ActionTypes = ActionType<typeof changePage
+  | typeof updatePageMetaData
+  | typeof search
+  | typeof resetSelection
+  | typeof sortMeters>;
 
-type ActionTypes = ActionType<typeof changePage | typeof updatePageMetaData | typeof search | typeof resetSelection>;
-
-export const pagination = (
-  state: PaginationState = initialState,
-  action: ActionTypes,
-): PaginationState => {
+export const pagination = (state: PaginationState = initialState, action: ActionTypes): PaginationState => {
   switch (action.type) {
     case getType(changePage):
-      return onChangePage(state, action.payload);
+      return updatePage(state, action.payload);
     case getType(updatePageMetaData):
       return updateMetaData(state, action.payload);
     case getType(search):
-      return Maybe.maybe<Query>(action.payload[UseCases.collection])
+      return Maybe.maybe(action.payload[UseCases.validation])
+        .map(it => it.query)
         .filter(isDefined)
-        .map(_ => onChangePage(state, resetSearchResultPage))
+        .map(_ => resetStateForEntityType(state, {entityType: 'meters'}))
         .orElse(state);
+    case getType(sortMeters):
+      return resetStateForEntityType(state, {entityType: 'meters'});
     default:
       return resetReducer<PaginationState>(state, action, initialState);
   }

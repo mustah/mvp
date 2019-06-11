@@ -40,6 +40,8 @@ export const domainModelPaginatedClearError = (actionKey: ActionKey) =>
 export const sortTableAction = (actionKey: ActionKey) =>
   createStandardAction(`SORT_TABLE_${actionKey}`)<SortOption[] | undefined>();
 
+export const sortMeters = createStandardAction(`SORT_METERS`)<SortOption[] | undefined>();
+
 export const clearError = (endPoint: EndPoints) =>
   payloadActionOf<PageNumbered>(domainModelPaginatedClearError(endPoint));
 

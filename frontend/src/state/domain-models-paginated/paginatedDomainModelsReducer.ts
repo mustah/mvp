@@ -12,6 +12,7 @@ import {ObjectsById} from '../domain-models/domainModels';
 import {locationChange} from '../location/locationActions';
 import {search} from '../search/searchActions';
 import {SortOption} from '../ui/pagination/paginationModels';
+import {sortTableMeterCollectionStats} from './collection-stat/collectionStatActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
 import {
@@ -26,6 +27,7 @@ import {
   domainModelsPaginatedFailure,
   domainModelsPaginatedGetSuccess,
   domainModelsPaginatedRequest,
+  sortMeters,
   sortTableAction,
 } from './paginatedDomainModelsActions';
 import {
@@ -147,7 +149,7 @@ const entityFailure = <T extends Identifiable>(
 });
 
 type ActionTypes<T extends Identifiable> =
-  ActionType<typeof locationChange> |
+  ActionType<typeof locationChange | typeof sortMeters> |
   EmptyAction<string> |
   Action<NormalizedPaginated<T>
     | Meter & PageNumbered
@@ -182,7 +184,7 @@ const makeSortableReducer = <T extends Identifiable>(actionKey: ActionKey) =>
     state: NormalizedPaginatedState<T> = makeInitialState<T>(),
     action: ActionTypes<T>,
   ): NormalizedPaginatedState<T> =>
-    action.type === getType(sortTableAction(actionKey))
+    action.type === getType(sortTableAction(actionKey)) || action.type === getType(sortMeters)
       ? sortTable(state, (action as Action<SortOption[]>).payload)
       : resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
 
@@ -191,7 +193,7 @@ const meterCollectionStatFacilitiesReducer = <T extends Identifiable>(
   action: ActionTypes<T>,
 ): NormalizedPaginatedState<T> => {
   switch (action.type) {
-    case getType(sortTableAction(Sectors.meterCollectionStatFacilities)):
+    case getType(sortTableMeterCollectionStats):
       return sortTable(state, (action as Action<SortOption[]>).payload);
     case getType(setCollectionTimePeriod(Sectors.meterCollection)):
       return makeInitialState<T>();
