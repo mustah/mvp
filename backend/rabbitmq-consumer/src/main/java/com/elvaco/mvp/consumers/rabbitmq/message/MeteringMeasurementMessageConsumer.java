@@ -2,7 +2,6 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeasurementMessageResponseBuilder;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
@@ -13,8 +12,6 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.PeriodBound;
-import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
@@ -33,6 +30,7 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.DE
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantity;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMedium;
+import static com.elvaco.mvp.core.domainmodels.PeriodRange.from;
 import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
@@ -66,123 +64,88 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     Organisation organisation =
       organisationUseCases.findOrCreate(measurementMessage.organisationId);
 
-    MeasurementMessageResponseBuilder responseBuilder =
-      new MeasurementMessageResponseBuilder(measurementMessage.organisationId);
-
-    AlreadyCreated existing = new AlreadyCreated();
-
+    State logicalMeterState = new State();
     LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
-      .map(existing::setLogicalMeter)
-      .orElseGet(() -> LogicalMeter.builder()
-        .externalId(facilityId)
-        .organisationId(organisation.id)
-        .meterDefinition(meterDefinitionUseCases.getAutoApplied(
-          organisation,
-          mediumProvider.getByNameOrThrow(resolveMedium(measurementMessage.values))
-        ))
-        .build());
+      .orElseGet(() ->
+        logicalMeterState.setModified(
+          LogicalMeter.builder()
+            .externalId(facilityId)
+            .organisationId(organisation.id)
+            .meterDefinition(meterDefinitionUseCases.getAutoApplied(
+              organisation,
+              mediumProvider.getByNameOrThrow(resolveMedium(measurementMessage.values))
+            ))
+            .build())
+      );
 
-    String address = measurementMessage.meter.id;
-    ZonedDateTime zonedMeasurementTimestamp = getEarliestTimestamp(measurementMessage);
-
-    PhysicalMeter physicalMeter =
-      physicalMeterUseCases.findBy(organisation.id, facilityId, address)
-        .map(existing::setPhysicalMeter)
-        .orElseGet(() -> PhysicalMeter.builder()
-          .organisationId(organisation.id)
-          .address(address)
-          .externalId(facilityId)
-          .medium(Medium.UNKNOWN_MEDIUM)
-          .logicalMeterId(logicalMeter.id)
-          .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
-          .activePeriod(PeriodRange.halfOpenFrom(zonedMeasurementTimestamp, null))
-          .build()
-        );
-
-    LogicalMeter connectedLogicalMeter = measurementMessage.gateway()
+    Optional<Gateway> gateway = measurementMessage.gateway()
       .map(gatewayIdDto -> gatewayIdDto.id)
       .map(serial -> gatewayUseCases.findBy(organisation.id, serial)
-        .orElseGet(() -> gatewayUseCases.save(Gateway.builder()
-          .organisationId(organisation.id)
-          .serial(serial)
-          .productModel("")
-          .meter(logicalMeter)
-          .build()
-        )))
-      .map(gateway -> {
-        if (gatewayValidator().isIncomplete(gateway)) {
-          responseBuilder.setGatewayExternalId(gateway.serial);
-          responseBuilder.setFacilityId(facilityId);
-        }
-        return logicalMeter.toBuilder()
-          .gateway(gateway).build();
-      })
-      .orElse(logicalMeter);
+        .orElseGet(() -> gatewayUseCases.save(
+          Gateway.builder()
+            .organisationId(organisation.id)
+            .serial(serial)
+            .productModel("")
+            .build()
+          )
+        ));
 
-    // Update start time for measurement before current start time
-    physicalMeter.activePeriod.getStartDateTime()
-      .filter(zonedMeasurementTimestamp::isBefore)
-      .ifPresent(start -> {
-        physicalMeterUseCases.getActiveMeterAtTimestamp(
-          physicalMeter.organisationId,
-          physicalMeter.externalId,
-          zonedMeasurementTimestamp
-        ).ifPresent(otherActive -> {
-          otherActive.activePeriod = otherActive.activePeriod.toBuilder()
-            .stop(PeriodBound.exclusiveOf(zonedMeasurementTimestamp))
-            .build();
-          physicalMeterUseCases.save(otherActive);
-        });
-
-        physicalMeter.activePeriod = physicalMeter.activePeriod.toBuilder()
-          .start(PeriodBound.inclusiveOf(zonedMeasurementTimestamp))
-          .build();
-        existing.setPhysicalMeterUpdated(physicalMeter);
-      });
-
-    existing.shouldSaveLogicalMeter(() -> logicalMeterUseCases.save(connectedLogicalMeter));
-    existing.shouldSavePhysicalMeter(() -> {
-      if (physicalMeter.activePeriod.isEmpty()) {
-        physicalMeter.activePeriod = PeriodRange.from(PeriodBound.inclusiveOf(
-          zonedMeasurementTimestamp));
-      }
-
-      // Set stop time if this is a new meter in between two existing
-      physicalMeterUseCases.getActiveMeterAtTimestamp(
-        physicalMeter.organisationId,
-        physicalMeter.externalId,
-        zonedMeasurementTimestamp
-      ).filter(p -> !p.isActive(ZonedDateTime.now()))
-        .map(p -> p.activePeriod.stop)
-        .ifPresent(stop ->
-          physicalMeter.activePeriod = physicalMeter.activePeriod.toBuilder()
-            .stop(stop)
-            .build());
-
-      physicalMeterUseCases.deactivatePreviousPhysicalMeter(
-        physicalMeter,
-        zonedMeasurementTimestamp
+    if (logicalMeterState.modified) {
+      gateway.ifPresentOrElse(
+        gw -> logicalMeterUseCases.save(logicalMeter.toBuilder().gateway(gw).build()),
+        () -> logicalMeterUseCases.save(logicalMeter)
       );
-      return physicalMeterUseCases.save(physicalMeter);
-    });
+    }
+
+    String address = measurementMessage.meter.id;
+    ZonedDateTime zonedDateTime = getEarliestTimestamp(measurementMessage);
+
+    State physicalMeterState = new State();
+    PhysicalMeter physicalMeter =
+      physicalMeterUseCases.findBy(organisation.id, facilityId, address)
+        .orElseGet(() ->
+          physicalMeterState.setModified(PhysicalMeter.builder()
+            .organisationId(organisation.id)
+            .address(address)
+            .externalId(facilityId)
+            .medium(Medium.UNKNOWN_MEDIUM)
+            .logicalMeterId(logicalMeter.id)
+            .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
+            .activePeriod(from(zonedDateTime))
+            .build())
+        );
+
+    updateActivePeriods(physicalMeter, physicalMeterState, zonedDateTime);
+
+    if (physicalMeterState.modified) {
+      physicalMeterUseCases.save(physicalMeter);
+    }
 
     ZonedDateTime now = ZonedDateTime.now();
     measurementMessage.values
       .forEach(value -> createMeasurement(value, now, physicalMeter)
-        .ifPresent(
-          (measurement) -> measurementUseCases.createOrUpdate(measurement, connectedLogicalMeter)
-        ));
+        .ifPresent(measurement -> measurementUseCases.createOrUpdate(measurement, logicalMeter)));
+
+    MeasurementMessageResponseBuilder responseBuilder =
+      new MeasurementMessageResponseBuilder(measurementMessage.organisationId);
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
-      || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
-      responseBuilder.setFacilityId(facilityId);
-      responseBuilder.setMeterExternalId(address);
+      || logicalMeterValidator().isIncomplete(logicalMeter)) {
+      responseBuilder
+        .setFacilityId(facilityId)
+        .setMeterExternalId(address);
     }
+
+    gateway
+      .filter(gw -> gatewayValidator().isIncomplete(gw))
+      .map(gw -> responseBuilder
+        .setFacilityId(facilityId)
+        .setGatewayExternalId(gw.serial));
 
     return responseBuilder.build();
   }
 
-  protected ZonedDateTime getEarliestTimestamp(MeteringMeasurementMessageDto measurementMessage)
+  ZonedDateTime getEarliestTimestamp(MeteringMeasurementMessageDto measurementMessage)
     throws IllegalArgumentException {
 
     return measurementMessage.values.stream()
@@ -190,6 +153,49 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .map(dto -> dto.timestamp.atZone(METERING_TIMEZONE))
       .orElseThrow(() -> new IllegalArgumentException(
         "MeteringMeasurementMessage without timestamp " + measurementMessage));
+  }
+
+  private void updateActivePeriods(
+    PhysicalMeter physicalMeter,
+    State state,
+    ZonedDateTime zonedDateTime
+  ) {
+    if (physicalMeter.activePeriod.isEmpty()) {
+      physicalMeter.activePeriod = from(zonedDateTime);
+      state.setModified(physicalMeter);
+    }
+
+    Optional<PhysicalMeter> activeAtTimestamp = physicalMeterUseCases.getActiveMeterAtTimestamp(
+      physicalMeter.organisationId,
+      physicalMeter.externalId,
+      zonedDateTime
+    );
+
+    Optional<ZonedDateTime> oldStopForActiveAtTimestamp =
+      activeAtTimestamp.flatMap(at -> at.activePeriod.getStopDateTime());
+
+    // Close active at timestamp if it's another meter than the incoming measurements
+    // and is not moving stop time forward
+    activeAtTimestamp
+      .filter(at -> !at.id.equals(physicalMeter.id))
+      .filter(at -> physicalMeter.activePeriod.getStopDateTime()
+        .filter(pStop -> zonedDateTime.isAfter(pStop))
+        .isEmpty())
+      .map(at -> physicalMeterUseCases.saveAndFlush(at.deactivate(zonedDateTime)));
+
+    // Move start time back in time if measurement is before current start time
+    boolean movedStartTime = physicalMeter.activePeriod.getStartDateTime()
+      .filter(pStart -> zonedDateTime.isBefore(pStart))
+      .map(pStart -> state.setModified(physicalMeter.activate(zonedDateTime)))
+      .isPresent();
+
+    // Also set stop time if this is a new meter in between two existing
+    if (!movedStartTime) {
+      activeAtTimestamp
+        .filter(at -> !at.id.equals(physicalMeter.id))
+        .flatMap(at -> oldStopForActiveAtTimestamp)
+        .map(atStop -> state.setModified(physicalMeter.deactivate(atStop)));
+    }
   }
 
   private Optional<Measurement> createMeasurement(
@@ -234,38 +240,12 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .build());
   }
 
-  private static final class AlreadyCreated {
+  private static final class State {
+    private boolean modified = false;
 
-    private LogicalMeter logicalMeter;
-    private PhysicalMeter physicalMeter;
-    private boolean physicalMeterUpdate = false;
-
-    private LogicalMeter setLogicalMeter(LogicalMeter logicalMeter) {
-      this.logicalMeter = logicalMeter;
-      return logicalMeter;
-    }
-
-    private PhysicalMeter setPhysicalMeter(PhysicalMeter physicalMeter) {
-      this.physicalMeter = physicalMeter;
-      return physicalMeter;
-    }
-
-    private PhysicalMeter setPhysicalMeterUpdated(PhysicalMeter physicalMeter) {
-      this.physicalMeter = physicalMeter;
-      this.physicalMeterUpdate = true;
-      return physicalMeter;
-    }
-
-    private void shouldSaveLogicalMeter(Supplier<LogicalMeter> supplier) {
-      if (logicalMeter == null || logicalMeter.gateways.isEmpty()) {
-        supplier.get();
-      }
-    }
-
-    private void shouldSavePhysicalMeter(Supplier<PhysicalMeter> supplier) {
-      if (physicalMeter == null || physicalMeterUpdate || physicalMeter.activePeriod.isEmpty()) {
-        supplier.get();
-      }
+    private <T> T setModified(T object) {
+      modified = true;
+      return object;
     }
   }
 }

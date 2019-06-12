@@ -280,7 +280,6 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
       .valuesAtTimestamps(MEASUREMENT_TIMESTAMP.plusDays(2))
     );
 
-    assertThat(physicalMeters.findAll()).hasSize(2);
     assertThat(logicalMeters.findAllBy(new MockRequestParameters())).hasSize(1);
 
     assertThat(physicalMeters.findAll())

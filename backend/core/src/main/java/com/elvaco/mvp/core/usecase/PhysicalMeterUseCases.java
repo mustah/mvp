@@ -64,19 +64,6 @@ public class PhysicalMeterUseCases {
       .flatMap(orgId -> physicalMeters.findBy(orgId, externalId, address));
   }
 
-  public void deactivatePreviousPhysicalMeter(
-    PhysicalMeter physicalMeter,
-    ZonedDateTime measurementTimestamp
-  ) {
-    Optional.of(physicalMeter.organisationId)
-      .filter(this::hasTenantAccess)
-      .ifPresent(orgId -> physicalMeters.findBy(orgId, physicalMeter.externalId).stream()
-        .filter(p -> !p.id.equals(physicalMeter.id))
-        .filter(p -> p.activePeriod.contains(measurementTimestamp))
-        .map(p -> p.deactivate(measurementTimestamp))
-        .forEach(this::saveAndFlush));
-  }
-
   public Optional<PhysicalMeter> getActiveMeterAtTimestamp(
     UUID organisationId,
     String externalId,

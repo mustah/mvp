@@ -19,16 +19,19 @@ public class MeasurementMessageResponseBuilder {
     this.organisationIdExternal = organisationIdExternal;
   }
 
-  public void setMeterExternalId(String meterExternalId) {
+  public MeasurementMessageResponseBuilder setMeterExternalId(String meterExternalId) {
     this.meterExternalId = meterExternalId;
+    return this;
   }
 
-  public void setGatewayExternalId(String gatewayExternalId) {
+  public MeasurementMessageResponseBuilder setGatewayExternalId(String gatewayExternalId) {
     this.gatewayExternalId = gatewayExternalId;
+    return this;
   }
 
-  public void setFacilityId(String facilityId) {
+  public MeasurementMessageResponseBuilder setFacilityId(String facilityId) {
     this.facilityId = facilityId;
+    return this;
   }
 
   public Optional<GetReferenceInfoDto> build() {
@@ -44,5 +47,4 @@ public class MeasurementMessageResponseBuilder {
       ));
     }
   }
-
 }
