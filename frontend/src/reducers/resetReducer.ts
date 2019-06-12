@@ -19,6 +19,7 @@ export const resetReducer = <S>(
   switch (type) {
     case getType(setThreshold):
     case getType(setCollectionTimePeriod(Sectors.collection)):
+    case getType(setCollectionTimePeriod(Sectors.meterCollection)):
     case getType(addParameterToSelection):
     case getType(deselectSelection):
     case getType(selectSavedSelectionAction):

@@ -1,31 +1,50 @@
 import * as React from 'react';
 import {compose} from 'recompose';
-import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
+import {EmptyContentProps} from '../../../components/error-message/EmptyContent';
+import {withEmptyContent} from '../../../components/hoc/withEmptyContent';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
-import {RetryLoader} from '../../../components/loading/Loader';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {WithChildren} from '../../../types/Types';
-import {DispatchToProps, StateToProps} from '../containers/CollectionListContainer';
+import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
+import {EntityTyped, OnChangePage, Pagination, SortOption} from '../../../state/ui/pagination/paginationModels';
+import {
+  Callback,
+  CallbackWith,
+  EncodedUriParameters,
+  Fetching,
+  FetchPaginated,
+  HasContent,
+  uuid
+} from '../../../types/Types';
 import {CollectionStatList} from './CollectionStatList';
 
-export type CollectionListProps = StateToProps & DispatchToProps;
+export interface StateToProps extends EntityTyped, Fetching, HasContent {
+  isExportingToExcel: boolean;
+  items: CollectionStat[];
+  parameters: EncodedUriParameters;
+  pagination: Pagination;
+  selectedItemId?: uuid;
+  sort?: SortOption[];
+}
 
-type WrapperProps = CollectionListProps & WithEmptyContentProps;
+export interface DispatchToProps {
+  changePage: OnChangePage;
+  exportToExcelSuccess: Callback;
+  fetchCollectionStatsFacilityPaged: FetchPaginated;
+  sortTable: CallbackWith<SortOption[]>;
+}
 
-const CollectionListWrapper = compose<WrapperProps & ThemeContext, WrapperProps>(
+export type Props = StateToProps & DispatchToProps;
+
+const CollectionListWrapper = compose<Props & ThemeContext, Props>(
   withCssStyles,
   withEmptyContent
 )(CollectionStatList);
 
-export const CollectionListContent = (props: CollectionListProps & WithChildren) => {
+export const CollectionListContent = (props: Props) => {
   const {
-    error,
-    clearError,
     fetchCollectionStatsFacilityPaged,
-    isFetching,
     pagination: {page},
     parameters,
-    result,
     sort,
   } = props;
 
@@ -33,16 +52,10 @@ export const CollectionListContent = (props: CollectionListProps & WithChildren)
     fetchCollectionStatsFacilityPaged(page, parameters, sort);
   }, [page, parameters, sort]);
 
-  const {children, ...otherProps} = props;
-  const wrapperProps: WrapperProps = {
-    ...otherProps,
-    hasContent: result.length > 0,
+  const wrapperProps: Props & EmptyContentProps = {
+    ...props,
     noContentText: firstUpperTranslated('no meters'),
   };
 
-  return (
-    <RetryLoader isFetching={isFetching} clearError={clearError} error={error}>
-      <CollectionListWrapper {...wrapperProps}/>
-    </RetryLoader>
-  );
+  return <CollectionListWrapper {...wrapperProps}/>;
 };

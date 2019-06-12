@@ -17,15 +17,16 @@ import {
   uuid
 } from '../../types/Types';
 import {MeterList, Props} from '../../usecases/meter/components/MeterList';
-import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
+import {EmptyContentProps} from '../error-message/EmptyContent';
+import {withEmptyContent} from '../hoc/withEmptyContent';
 import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
 
 export interface StateToProps extends Fetching, HasContent {
-  meters: Meter[];
+  items: Meter[];
   pagination: Pagination;
   parameters: EncodedUriParameters;
   sortOptions?: SortOption[];
-  selectedMeterId?: uuid;
+  selectedItemId?: uuid;
 }
 
 export interface DispatchToProps {
@@ -37,7 +38,7 @@ export interface DispatchToProps {
   syncWithMetering: OnClickWithId;
 }
 
-type WrapperProps = Props & WithEmptyContentProps;
+type WrapperProps = Props & EmptyContentProps;
 
 const MeterListWrapper = compose<WrapperProps & ThemeContext, WrapperProps>(
   withCssStyles,
@@ -53,7 +54,7 @@ export const MeterGrid = (props: Props) => {
   } = props;
   useFetchMeters({fetchMeters, parameters, sortOptions, page});
 
-  const wrapperProps: Props & WithEmptyContentProps = {
+  const wrapperProps: Props & EmptyContentProps = {
     ...props,
     noContentText: firstUpperTranslated('no meters'),
   };

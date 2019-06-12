@@ -1,6 +1,7 @@
-import {makeMeter} from '../../../__tests__/testDataFactory';
+import {makeCollectionStat, makeMeter} from '../../../__tests__/testDataFactory';
 import {Maybe} from '../../../helpers/Maybe';
 import {ErrorResponse} from '../../../types/Types';
+import {CollectionStat, CollectionStatFacilityState} from '../../domain-models/collection-stat/collectionStatModels';
 import {paginationPageSize} from '../../ui/pagination/paginationReducer';
 import {Meter, MetersState} from '../meter/meterModels';
 import {PaginatedResult} from '../paginatedDomainModels';
@@ -8,6 +9,7 @@ import {makeInitialState} from '../paginatedDomainModelsReducer';
 import {
   fillWithNull,
   getAllMeters,
+  getCollectionStats,
   getFirstPageError,
   getPageError,
   PageState
@@ -15,8 +17,9 @@ import {
 
 describe('paginatedDomainModelsSelectors', () => {
 
+  const paginatedResult: PaginatedResult = {isFetching: false, isSuccessfullyFetched: true, result: []};
+
   describe('getAllMeters', () => {
-    const paginatedResult: PaginatedResult = {isFetching: false, isSuccessfullyFetched: true, result: []};
     const initialState: MetersState = makeInitialState<Meter>();
 
     const meter1: Meter = makeMeter(1, 'stockholm', 'king street');
@@ -193,4 +196,48 @@ describe('paginatedDomainModelsSelectors', () => {
 
   });
 
+  describe('get all collections', () => {
+    const initialState: CollectionStatFacilityState = makeInitialState<CollectionStat>();
+
+    const collectionStat1: CollectionStat = makeCollectionStat(1, 'a');
+    const collectionStat2: CollectionStat = makeCollectionStat(2, 'b');
+
+    it('has no collections when state is empty', () => {
+      expect(getCollectionStats(initialState)).toEqual([]);
+    });
+
+    it('has one meter', () => {
+      const state: CollectionStatFacilityState = {
+        ...initialState,
+        entities: {[collectionStat1.id]: collectionStat1},
+        result: {
+          [0]: {...paginatedResult, result: [collectionStat1.id]},
+        },
+      };
+
+      expect(getCollectionStats(state)).toEqual([collectionStat1]);
+    });
+
+    it('fills from start to existing page', () => {
+      const meters: CollectionStatFacilityState = {
+        ...initialState,
+        entities: {
+          [collectionStat1.id]: collectionStat1,
+          [collectionStat2.id]: collectionStat2,
+        },
+        result: {
+          [3]: {...paginatedResult, result: [collectionStat1.id]},
+          [4]: {...paginatedResult, result: [collectionStat2.id]},
+        },
+      };
+
+      const expected: Array<CollectionStat | null> = [
+        ...fillWithNull({page: 3, fillSize: paginationPageSize}),
+        collectionStat1,
+        collectionStat2,
+      ];
+
+      expect(getCollectionStats(meters)).toEqual(expected);
+    });
+  });
 });

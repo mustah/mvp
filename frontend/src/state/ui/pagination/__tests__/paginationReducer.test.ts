@@ -1,11 +1,15 @@
 import {RequestParameter} from '../../../../helpers/urlFactory';
-import {sortMeters} from '../../../domain-models-paginated/paginatedDomainModelsActions';
+import {
+  sortCollectionStats,
+  sortMeterCollectionStats,
+  sortMeters
+} from '../../../domain-models-paginated/paginatedDomainModelsActions';
 import {search} from '../../../search/searchActions';
 import {makeMeterQuery} from '../../../search/searchModels';
 import {resetSelection} from '../../../user-selection/userSelectionActions';
 import {changePage, updatePageMetaData} from '../paginationActions';
 import {ChangePagePayload, PaginationMetadataPayload, PaginationState, SortOption} from '../paginationModels';
-import {initialPagination, initialState, pagination, paginationPageSize} from '../paginationReducer';
+import {initialState, pagination, paginationPageSize} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
@@ -102,7 +106,7 @@ describe('paginationReducer', () => {
       expect(pagination(undefined, changePage(payload))).toEqual(expectedState);
     });
 
-    it('only changes requestedPage for the targeted component', () => {
+    it('only changes requested page for the targeted component', () => {
       const expectedState: PaginationState = {
         ...paginatedState,
         meters: {
@@ -115,7 +119,7 @@ describe('paginationReducer', () => {
     });
 
     it('resets meters pagination state when meters search is performed', () => {
-      const expectedState: PaginationState = {...paginatedState, meters: initialPagination};
+      const expectedState: PaginationState = {...initialState, gateways: paginatedState.gateways};
 
       expect(pagination(paginatedState, search(makeMeterQuery('ok')))).toEqual(expectedState);
     });
@@ -126,7 +130,6 @@ describe('paginationReducer', () => {
   });
 
   describe('reset pagination', () => {
-
     const paginatedState: PaginationState = {
       ...initialState,
       meters: {
@@ -145,6 +148,50 @@ describe('paginationReducer', () => {
       const payload: SortOption[] = [{field: RequestParameter.facility, dir: 'ASC'}];
 
       expect(pagination(paginatedState, sortMeters(payload))).toEqual(initialState);
+    });
+  });
+
+  describe('reset state for collections stats', () => {
+    const paginatedState: PaginationState = {
+      ...initialState,
+      collectionStatFacilities: {
+        size: paginationPageSize,
+        totalPages: 1,
+        totalElements: 1,
+        page: 1,
+      },
+    };
+
+    it('sets pagination to initial state when selection is reset', () => {
+      expect(pagination(paginatedState, resetSelection())).toBe(initialState);
+    });
+
+    it('set pagination to initial state when meter table is sorted', () => {
+      const payload: SortOption[] = [{field: RequestParameter.facility, dir: 'ASC'}];
+
+      expect(pagination(paginatedState, sortCollectionStats(payload))).toEqual(initialState);
+    });
+  });
+
+  describe('reset state for collections stats', () => {
+    const paginatedState: PaginationState = {
+      ...initialState,
+      meterCollectionStatFacilities: {
+        size: paginationPageSize,
+        totalPages: 1,
+        totalElements: 1,
+        page: 1,
+      },
+    };
+
+    it('sets pagination to initial state when selection is reset', () => {
+      expect(pagination(paginatedState, resetSelection())).toBe(initialState);
+    });
+
+    it('set pagination to initial state when meter table is sorted', () => {
+      const payload: SortOption[] = [{field: RequestParameter.facility, dir: 'ASC'}];
+
+      expect(pagination(paginatedState, sortMeterCollectionStats(payload))).toEqual(initialState);
     });
   });
 });
