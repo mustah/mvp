@@ -751,6 +751,12 @@ msgstr "{{count}} gateway av ditt ursprungliga urval, visas inte på kartan"
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
+msgid "all meters for organisation will soon be synchronized"
+msgstr "alla mätare för organisationen synkas snart"
+
+msgid "sync all meters for this organisation"
+msgstr "synka alla mätare för organisationen"
+
 msgid "are you sure you want to delete the meter {{facility}}"
 msgstr "är du säkert på att du vill ta bort mätare '{{facility}}'"
 

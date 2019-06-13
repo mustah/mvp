@@ -1,11 +1,9 @@
 import {Grid, GridColumn} from '@progress/kendo-react-grid';
-import {toArray} from 'lodash';
 import * as React from 'react';
 import {makeGridClassName} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
-import {Row} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
 import {OrganisationConfirmContainer} from '../containers/OrganisationConfirmContainer';
@@ -16,13 +14,14 @@ import {OrganisationActions} from './OrganisationActions';
 type Props = StateToProps & DispatchToProps & ThemeContext;
 
 export const OrganisationList = ({
+  clearError,
   cssStyles,
   deleteOrganisation,
-  clearError,
   error,
   fetchOrganisations,
   isFetching,
-  organisations: {entities},
+  organisations,
+  syncMetersOrganisation,
 }: Props) => {
   React.useEffect(() => {
     fetchOrganisations();
@@ -31,9 +30,10 @@ export const OrganisationList = ({
   const {isOpen, openConfirm, id: organisationId, closeConfirm, confirm} = useConfirmDialog(deleteOrganisation);
 
   const parent = ({dataItem}) => <td>{dataItem.parent ? dataItem.parent.name : '-'}</td>;
+
   const actions = ({dataItem: {id, name}}) => (
     <td>
-      <OrganisationActions confirmDelete={openConfirm} id={id}/>
+      <OrganisationActions confirmDelete={openConfirm} id={id} syncMetersOrganisation={syncMetersOrganisation}/>
       <OrganisationConfirmContainer
         isOpen={isOpen && id === organisationId}
         close={closeConfirm}
@@ -44,25 +44,21 @@ export const OrganisationList = ({
   );
 
   return (
-    <>
-      <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-        <Column>
-          <Row>
-            <AddOrganisationButton/>
-          </Row>
-          <Grid
-            className={makeGridClassName(cssStyles)}
-            style={{borderTopWidth: 1}}
-            data={toArray(entities)}
-            scrollable="none"
-          >
-            <GridColumn field="name" title={translate('name')} headerClassName="left-most" className="left-most"/>
-            <GridColumn cell={parent} title={translate('parent organisation')}/>
-            <GridColumn field="slug" title={translate('slug')}/>
-            <GridColumn cell={actions} width={40}/>
-          </Grid>
-        </Column>
-      </RetryLoader>
-    </>
+    <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
+      <Column>
+        <AddOrganisationButton/>
+        <Grid
+          className={makeGridClassName(cssStyles)}
+          style={{borderTopWidth: 1}}
+          data={organisations}
+          scrollable="none"
+        >
+          <GridColumn field="name" title={translate('name')} headerClassName="left-most" className="left-most"/>
+          <GridColumn cell={parent} title={translate('parent organisation')}/>
+          <GridColumn field="slug" title={translate('slug')}/>
+          <GridColumn cell={actions} width={40}/>
+        </Grid>
+      </Column>
+    </RetryLoader>
   );
 };

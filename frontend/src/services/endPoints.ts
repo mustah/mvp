@@ -10,6 +10,7 @@ export const enum EndPoints {
   meters = '/meters',
   meterDetails = '/meters/details',
   syncMeters = '/meters/sync',
+  syncMetersOrganisation = '/meters/sync/organisation',
   meterMapMarkers = '/map-markers/meters',
   gatewayMapMarkers = '/map-markers/gateways',
   summary = '/summary',
