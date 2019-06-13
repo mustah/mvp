@@ -78,7 +78,8 @@ public class LogicalMeterSyncController {
       .add(RequestParameter.ORGANISATION, id.toString());
 
     return logicalMeterUseCases.findAllBy(parameters).stream()
-      .flatMap(logicalMeter -> sync(logicalMeter).stream()).collect(toList());
+      .flatMap(logicalMeter -> sync(logicalMeter).stream())
+      .collect(toList());
   }
 
   @GetMapping
@@ -101,13 +102,13 @@ public class LogicalMeterSyncController {
     String jobId = meteringRequestPublisher.request(logicalMeter);
     propertiesUseCases.forceUpdateGeolocation(logicalMeter.id, logicalMeter.organisationId);
     List<SyncRequestResponseDto> result = new ArrayList<>();
-    result.add(new SyncRequestResponseDto(logicalMeter.id,null, jobId));
+    result.add(new SyncRequestResponseDto(logicalMeter.id, null, jobId));
     result.addAll(logicalMeter.gateways.stream().map(this::syncGateway).collect(toList()));
     return result;
   }
 
   private SyncRequestResponseDto syncGateway(Gateway gateway) {
     String jobId = meteringRequestPublisher.request(gateway);
-    return new SyncRequestResponseDto(gateway.id,null, jobId);
+    return new SyncRequestResponseDto(gateway.id, null, jobId);
   }
 }

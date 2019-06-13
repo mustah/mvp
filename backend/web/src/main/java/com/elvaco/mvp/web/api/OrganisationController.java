@@ -45,6 +45,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @AllArgsConstructor
 @RestApi("/api/v1/organisations")
 public class OrganisationController {
@@ -120,10 +121,9 @@ public class OrganisationController {
     @PathVariable Optional<AssetType> assetTypeOptional,
     @RequestParam("asset") MultipartFile file
   ) throws IOException {
-    var assetType = assetTypeOptional.orElseThrow(() -> InvalidFormat.assetType());
+    var assetType = assetTypeOptional.orElseThrow(InvalidFormat::assetType);
 
-    var organisation = organisationUseCases
-      .findById(id)
+    var organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
 
     organisationUseCases.createAsset(
@@ -141,10 +141,9 @@ public class OrganisationController {
     @PathVariable UUID id,
     @PathVariable Optional<AssetType> assetTypeOptional
   ) {
-    var assetType = assetTypeOptional.orElseThrow(() -> InvalidFormat.assetType());
+    var assetType = assetTypeOptional.orElseThrow(InvalidFormat::assetType);
 
-    var organisation = organisationUseCases
-      .findById(id)
+    var organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
 
     organisationUseCases.deleteAsset(organisation, assetType);
@@ -156,7 +155,7 @@ public class OrganisationController {
     @PathVariable Optional<AssetType> assetTypeOptional,
     @RequestHeader(value = "If-None-Match") Optional<String> ifNoneMatch
   ) {
-    var assetType = assetTypeOptional.orElseThrow(() -> InvalidFormat.assetType());
+    var assetType = assetTypeOptional.orElseThrow(InvalidFormat::assetType);
 
     return organisationUseCases
       .findAssetOrFallback(
@@ -175,9 +174,7 @@ public class OrganisationController {
         var response = ResponseEntity.ok()
           .cacheControl(CacheControl.noCache());
 
-        if (ifNoneMatch.isPresent()) {
-          response.eTag(ifNoneMatch.get());
-        }
+        ifNoneMatch.ifPresent(response::eTag);
 
         return response.build();
       });
@@ -186,8 +183,7 @@ public class OrganisationController {
   @GetMapping("{slug}/theme")
   public List<PropertyDto> themeOfSlug(@PathVariable String slug) {
     return organisationUseCases.findTheme(slug)
-      .map(theme -> theme.properties.entrySet()
-        .stream()
+      .map(theme -> theme.properties.entrySet().stream()
         .map(entry -> new PropertyDto(entry.getKey(), entry.getValue()))
         .collect(toList()))
       .orElse(emptyList());
@@ -198,8 +194,7 @@ public class OrganisationController {
     @PathVariable UUID id,
     @RequestBody List<PropertyDto> properties
   ) {
-    var organisation = organisationUseCases
-      .findById(id)
+    var organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
 
     organisationUseCases.saveTheme(
@@ -207,16 +202,14 @@ public class OrganisationController {
         .properties(properties.stream().collect(toMap(p -> p.key, p -> p.value))).build()
     );
 
-    return organisationUseCases.findTheme(organisation).properties.entrySet()
-      .stream()
+    return organisationUseCases.findTheme(organisation).properties.entrySet().stream()
       .map(entry -> new PropertyDto(entry.getKey(), entry.getValue()))
       .collect(toList());
   }
 
   @DeleteMapping("{id}/theme")
   public void deleteTheme(@PathVariable UUID id) {
-    var organisation = organisationUseCases
-      .findById(id)
+    var organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
 
     organisationUseCases.deleteTheme(organisation);
