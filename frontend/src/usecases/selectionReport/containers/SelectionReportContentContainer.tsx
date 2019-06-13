@@ -6,8 +6,6 @@ import {getPaginatedResult} from '../../../state/domain-models-paginated/paginat
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {addAllToSelectionReport} from '../../../state/report/reportActions';
 import {LegendItem} from '../../../state/report/reportModels';
-import {EntityTypes, Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {ToolbarViewSettings} from '../../../state/ui/toolbar/toolbarModels';
 import {CallbackWith, uuid} from '../../../types/Types';
 import {SelectionReport} from '../components/SelectionReport';
@@ -24,16 +22,12 @@ interface DispatchToProps {
 
 export type Props = StateToProps & DispatchToProps;
 
-const mapStateToProps = (rootState: RootState): StateToProps => {
-  const {
-    ui: {toolbar: {selectionReport: {view}}, pagination: paginationModel},
-    paginatedDomainModels: {meters},
-    selectionReport: {savedReports: {meterPage: {legendItems}}}
-  } = rootState;
-
-  const entityType: EntityTypes = 'meters';
-  const pagination: Pagination = getPagination({entityType, pagination: paginationModel});
-  const {page} = pagination;
+const mapStateToProps = ({
+  ui: {toolbar: {selectionReport: {view}}, pagination: paginationState},
+  paginatedDomainModels: {meters},
+  selectionReport: {savedReports: {meterPage: {legendItems}}}
+}: RootState): StateToProps => {
+  const {page} = paginationState.meters;
 
   return ({
     view,

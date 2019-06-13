@@ -5,14 +5,11 @@ import {ActionType, getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
-import {Action, ActionKey, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
-import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
+import {Action, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
-import {locationChange} from '../location/locationActions';
 import {search} from '../search/searchActions';
 import {SortOption} from '../ui/pagination/paginationModels';
-import {sortTableMeterCollectionStats} from './collection-stat/collectionStatActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
 import {
@@ -27,8 +24,9 @@ import {
   domainModelsPaginatedFailure,
   domainModelsPaginatedGetSuccess,
   domainModelsPaginatedRequest,
+  sortCollectionStats,
+  sortMeterCollectionStats,
   sortMeters,
-  sortTableAction,
 } from './paginatedDomainModelsActions';
 import {
   domainModelsPaginatedDeleteFailure,
@@ -148,8 +146,12 @@ const entityFailure = <T extends Identifiable>(
   nonExistingSingles: {...state.nonExistingSingles, [payload.id]: payload},
 });
 
+type SortActionTypes = ActionType<typeof sortMeters
+  | typeof sortCollectionStats
+  | typeof sortMeterCollectionStats>;
+
 type ActionTypes<T extends Identifiable> =
-  ActionType<typeof locationChange | typeof sortMeters> |
+  SortActionTypes |
   EmptyAction<string> |
   Action<NormalizedPaginated<T>
     | Meter & PageNumbered
@@ -179,28 +181,15 @@ const sortTable = <T extends Identifiable = Identifiable>(
   return newState;
 };
 
-const makeSortableReducer = <T extends Identifiable>(actionKey: ActionKey) =>
-  (
-    state: NormalizedPaginatedState<T> = makeInitialState<T>(),
-    action: ActionTypes<T>,
-  ): NormalizedPaginatedState<T> =>
-    action.type === getType(sortTableAction(actionKey)) || action.type === getType(sortMeters)
-      ? sortTable(state, (action as Action<SortOption[]>).payload)
-      : resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
+const actionCreators = [sortCollectionStats, sortMeterCollectionStats, sortMeters];
 
-const meterCollectionStatFacilitiesReducer = <T extends Identifiable>(
+const makeSortableReducer = <T extends Identifiable>() => (
   state: NormalizedPaginatedState<T>,
-  action: ActionTypes<T>,
-): NormalizedPaginatedState<T> => {
-  switch (action.type) {
-    case getType(sortTableMeterCollectionStats):
-      return sortTable(state, (action as Action<SortOption[]>).payload);
-    case getType(setCollectionTimePeriod(Sectors.meterCollection)):
-      return makeInitialState<T>();
-    default:
-      return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
-  }
-};
+  action: SortActionTypes,
+): NormalizedPaginatedState<T> =>
+  actionCreators.some(actionCreator => getType(actionCreator) === action.type)
+    ? sortTable(state, action.payload)
+    : resetReducer(state, action, makeInitialState());
 
 const reducerFor = <T extends Identifiable>(
   entity: keyof PaginatedDomainModelsState,
@@ -208,7 +197,7 @@ const reducerFor = <T extends Identifiable>(
   additionalReducers?: Reducer<NormalizedPaginatedState<T>>,
 ) =>
   (
-    state: NormalizedPaginatedState<T> = makeInitialState<T>(),
+    state: NormalizedPaginatedState<T> = makeInitialState(),
     action: ActionTypes<T>
   ): NormalizedPaginatedState<T> => {
     switch (action.type) {
@@ -231,11 +220,11 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedDeleteFailure(actionKey):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
       case getType(search):
-        return makeInitialState<T>();
+        return makeInitialState();
       default:
         return additionalReducers
           ? additionalReducers(state, action)
-          : resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
+          : resetReducer(state, action, makeInitialState());
     }
   };
 
@@ -244,19 +233,19 @@ export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
 export const meters = reducerFor<Meter>(
   'meters',
   EndPoints.meters,
-  makeSortableReducer<Meter>(EndPoints.meters)
+  makeSortableReducer(),
 );
 
 export const collectionStatFacilities = reducerFor<CollectionStat>(
   'collectionStatFacilities',
   Sectors.collectionStatFacilities,
-  makeSortableReducer<CollectionStat>(Sectors.collectionStatFacilities)
+  makeSortableReducer(),
 );
 
 export const meterCollectionStatFacilities = reducerFor<CollectionStat>(
   'collectionStatFacilities',
   Sectors.meterCollectionStatFacilities,
-  meterCollectionStatFacilitiesReducer
+  makeSortableReducer(),
 );
 
 export const paginatedDomainModels = combineReducers<PaginatedDomainModelsState>({

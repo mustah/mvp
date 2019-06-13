@@ -4,7 +4,6 @@ import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {meterParameters, RequestParameter} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {initialState as initialPaginationState, paginationPageSize} from '../../ui/pagination/paginationReducer';
-import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {addParameterToSelection} from '../userSelectionActions';
 import {
   ParameterName,
@@ -31,10 +30,7 @@ describe('userSelectionSelectors', () => {
   const start: Date = momentAtUtcPlusOneFrom('2018-02-02T00:00:00Z').toDate();
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialUserSelectionState,
-    pagination: getPagination({
-      entityType: 'meters',
-      pagination: initialPaginationState,
-    }),
+    pagination: initialPaginationState.meters,
     start,
   };
 
@@ -64,10 +60,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
         userSelection: state.userSelection,
-        pagination: getPagination({
-          entityType: 'meters',
-          pagination: initialPaginationState,
-        }),
+        pagination: initialPaginationState.meters,
         start,
       });
 
@@ -84,10 +77,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
         userSelection: state.userSelection,
-        pagination: getPagination({
-          entityType: 'meters',
-          pagination: initialPaginationState,
-        }),
+        pagination: initialPaginationState.meters,
         query,
         start,
       });
@@ -115,10 +105,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
         userSelection: state.userSelection,
-        pagination: getPagination({
-          entityType: 'meters',
-          pagination: initialPaginationState,
-        }),
+        pagination: initialPaginationState.meters,
         start,
       });
 
@@ -135,10 +122,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
         userSelection: state.userSelection,
-        pagination: getPagination({
-          entityType: 'meters',
-          pagination: initialPaginationState,
-        }),
+        pagination: initialPaginationState.meters,
         start,
       });
 
@@ -300,10 +284,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
         userSelection: state.userSelection,
-        pagination: getPagination({
-          entityType: 'gateways',
-          pagination: initialPaginationState,
-        }),
+        pagination: initialPaginationState.gateways,
         start,
       });
 
@@ -319,10 +300,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
         userSelection: state.userSelection,
-        pagination: getPagination({
-          entityType: 'gateways',
-          pagination: initialPaginationState,
-        }),
+        pagination: initialPaginationState.gateways,
         start,
       });
 
@@ -341,10 +319,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
         userSelection: state.userSelection,
-        pagination: getPagination({
-          entityType: 'gateways',
-          pagination: initialPaginationState,
-        }),
+        pagination: initialPaginationState.gateways,
         start,
       });
 

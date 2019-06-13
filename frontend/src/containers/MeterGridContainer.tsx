@@ -7,33 +7,31 @@ import {sortMeters} from '../state/domain-models-paginated/paginatedDomainModels
 import {getAllMeters, getPageIsFetching} from '../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {addToReport} from '../state/report/reportActions';
 import {changePage} from '../state/ui/pagination/paginationActions';
-import {EntityTypes, Pagination} from '../state/ui/pagination/paginationModels';
-import {getPagination} from '../state/ui/pagination/paginationSelectors';
+import {Pagination} from '../state/ui/pagination/paginationModels';
 import {getPaginatedMeterParameters} from '../state/user-selection/userSelectionSelectors';
-import {OwnProps} from '../usecases/meter/components/MeterList';
 import {syncWithMetering} from '../usecases/meter/meterActions';
+import {OwnProps} from '../usecases/meter/meterModels';
 
 const mapStateToProps = ({
   meterDetail: {selectedMeterId},
   paginatedDomainModels: {meters},
   search: {validation: {query}},
   summary: {payload: {numMeters}},
-  ui: {pagination: paginationModel},
+  ui: {pagination: paginationState},
   userSelection: {userSelection}
 }: RootState): StateToProps => {
-  const entityType: EntityTypes = 'meters';
-  const pagination: Pagination = getPagination({entityType, pagination: paginationModel});
+  const pagination: Pagination = paginationState.meters;
   const {page, totalElements} = pagination;
   const {sort} = meters;
   const isFetching = getPageIsFetching(meters, page);
-  const allMeters = getAllMeters(meters);
+
   return ({
     isFetching,
     hasContent: isFetching || totalElements > 0 || numMeters > 0,
-    meters: allMeters,
+    items: getAllMeters(meters),
     pagination,
     parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),
-    selectedMeterId,
+    selectedItemId: selectedMeterId,
     sortOptions: sort,
   });
 };

@@ -4,9 +4,9 @@ import {identity, isDefined} from '../../helpers/commonHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {EntityTypes, Pagination, PaginationState} from '../ui/pagination/paginationModels';
+import {CollectionStat, CollectionStatFacilityState} from '../domain-models/collection-stat/collectionStatModels';
+import {Pagination, PaginationState} from '../ui/pagination/paginationModels';
 import {paginationPageSize} from '../ui/pagination/paginationReducer';
-import {getPagination} from '../ui/pagination/paginationSelectors';
 import {Meter, MetersState} from './meter/meterModels';
 import {NormalizedPaginatedState} from './paginatedDomainModels';
 
@@ -38,8 +38,7 @@ export const getFirstPageError =
   );
 
 export const isMetersPageFetching = (meters: MetersState, pagination: PaginationState): boolean => {
-  const entityType: EntityTypes = 'meters';
-  const {page}: Pagination = getPagination({entityType, pagination});
+  const {page}: Pagination = pagination.meters;
   return getPageIsFetching(meters, page);
 };
 
@@ -51,25 +50,39 @@ interface ArrayFillProps {
 export const fillWithNull = ({page, fillSize}: ArrayFillProps): any[] =>
   page > 0 ? new Array<any>(page * fillSize).fill(null, 0, page * fillSize) : [];
 
+const itemsCombiner = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T>,
+  mapper: (value: T, index: number, array: T[]) => T = identity
+): T[] => {
+  const pageNumbers: string[] = Object.keys(state.result);
+  const ids: uuid[] = pageNumbers.map(page => state.result[page].result).filter(isDefined);
+  const items = flatMap(ids)
+    .map(id => state.entities[id])
+    .map(mapper);
+
+  const page = Number(pageNumbers[0]);
+  return page === 0
+    ? items
+    : [...fillWithNull({page, fillSize: paginationPageSize}), ...items];
+};
+
+const meterMapper = (meter: Meter): Meter => ({
+  ...meter,
+  location: {
+    ...meter.location,
+    city: orUnknown(meter.location.city),
+    address: orUnknown(meter.location.address),
+  },
+  manufacturer: orUnknown(meter.manufacturer),
+});
+
 export const getAllMeters = createSelector<MetersState, MetersState, Meter[]>(
   identity,
-  meters => {
-    const pageNumbers: string[] = Object.keys(meters.result);
-    const ids: uuid[] = pageNumbers.map(page => meters.result[page].result).filter(isDefined);
-    const items = flatMap(ids)
-      .map(id => meters.entities[id])
-      .map(it => ({
-        ...it,
-        location: {
-          ...it.location,
-          city: orUnknown(it.location.city),
-          address: orUnknown(it.location.address),
-        },
-        manufacturer: orUnknown(it.manufacturer),
-      }));
-    const currentPage = Number(pageNumbers[0]);
-    return currentPage === 0
-      ? items
-      : [...fillWithNull({page: currentPage, fillSize: paginationPageSize}), ...items];
-  }
+  state => itemsCombiner(state, meterMapper)
 );
+
+export const getCollectionStats =
+  createSelector<CollectionStatFacilityState, CollectionStatFacilityState, CollectionStat[]>(
+    identity,
+    itemsCombiner
+  );

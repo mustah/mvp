@@ -8,7 +8,7 @@ import {
   syncMetersOnPage
 } from '../state/domain-models-paginated/meter/meterApiActions';
 import {getFirstPageError} from '../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {OwnProps} from '../usecases/meter/components/MeterList';
+import {OwnProps} from '../usecases/meter/meterModels';
 
 const mapStateToProps = ({
   paginatedDomainModels: {meters},

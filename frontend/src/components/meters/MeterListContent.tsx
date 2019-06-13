@@ -3,7 +3,7 @@ import {style} from 'typestyle';
 import {MeterGridContainer} from '../../containers/MeterGridContainer';
 import {Maybe} from '../../helpers/Maybe';
 import {ErrorResponse, HasContent, OnClick} from '../../types/Types';
-import {OwnProps} from '../../usecases/meter/components/MeterList';
+import {OwnProps} from '../../usecases/meter/meterModels';
 import {MeterListActionsDropdown, Props} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
 import {Column} from '../layouts/column/Column';

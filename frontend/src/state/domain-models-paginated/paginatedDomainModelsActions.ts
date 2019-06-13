@@ -37,10 +37,9 @@ export const domainModelsPaginatedFailure = (actionKey: ActionKey) =>
 export const domainModelPaginatedClearError = (actionKey: ActionKey) =>
   `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR_${actionKey}`;
 
-export const sortTableAction = (actionKey: ActionKey) =>
-  createStandardAction(`SORT_TABLE_${actionKey}`)<SortOption[] | undefined>();
-
 export const sortMeters = createStandardAction(`SORT_METERS`)<SortOption[] | undefined>();
+export const sortCollectionStats = createStandardAction(`SORT_COLLECTION_STATS`)<SortOption[] | undefined>();
+export const sortMeterCollectionStats = createStandardAction(`SORT_METER_COLLECTION_STATS`)<SortOption[] | undefined>();
 
 export const clearError = (endPoint: EndPoints) =>
   payloadActionOf<PageNumbered>(domainModelPaginatedClearError(endPoint));

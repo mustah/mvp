@@ -6,24 +6,22 @@ import {
   RequestParameter
 } from '../../../../helpers/urlFactory';
 import {RootState} from '../../../../reducers/rootReducer';
+import {fetchMeterCollectionStatsFacilityPaged} from '../../../../state/domain-models-paginated/collection-stat/collectionStatActions';
+import {sortMeterCollectionStats} from '../../../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
-  fetchMeterCollectionStatsFacilityPaged,
-  sortTableMeterCollectionStats
-} from '../../../../state/domain-models-paginated/collection-stat/collectionStatActions';
-import {
-  getPageError,
-  getPageIsFetching,
-  getPaginatedResult
+  getCollectionStats,
+  getPageIsFetching
 } from '../../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {collectionStatClearError} from '../../../../state/domain-models/collection-stat/collectionStatActions';
 import {changePage} from '../../../../state/ui/pagination/paginationActions';
-import {EntityTypes, Pagination} from '../../../../state/ui/pagination/paginationModels';
-import {getPagination} from '../../../../state/ui/pagination/paginationSelectors';
+import {Pagination} from '../../../../state/ui/pagination/paginationModels';
 import {getPaginatedCollectionStatParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Sectors, uuid} from '../../../../types/Types';
 import {exportToExcelSuccess} from '../../../collection/collectionActions';
-import {CollectionListContent} from '../../../collection/components/CollectionListContent';
-import {DispatchToProps, StateToProps} from '../../../collection/containers/CollectionListContainer';
+import {
+  CollectionListContent,
+  DispatchToProps,
+  StateToProps
+} from '../../../collection/components/CollectionListContent';
 
 interface OwnProps {
   meterId: uuid;
@@ -31,17 +29,18 @@ interface OwnProps {
 
 const mapStateToProps = (
   {
-    userSelection: {userSelection},
+    meterDetail: {selectedMeterId: selectedItemId},
+    meterCollection: {isExportingToExcel, timePeriod},
     paginatedDomainModels: {meterCollectionStatFacilities},
-    ui: {pagination: paginationModel},
     search: {validation: {query}},
-    meterCollection: {isExportingToExcel, timePeriod}
+    summary: {payload: {numMeters}},
+    ui: {pagination: paginationState},
+    userSelection: {userSelection}
   }: RootState,
   {meterId}: OwnProps,
 ): StateToProps => {
-  const entityType: EntityTypes = 'meterCollectionStatFacilities';
-  const pagination: Pagination = getPagination({entityType, pagination: paginationModel});
-  const {page} = pagination;
+  const pagination: Pagination = paginationState.meterCollectionStatFacilities;
+  const {page, totalElements} = pagination;
   const {sort} = meterCollectionStatFacilities;
 
   const parameters: EncodedUriParameters = encodedUriParametersFrom([
@@ -54,27 +53,26 @@ const mapStateToProps = (
       query,
     })
   ]);
+  const isFetching = getPageIsFetching(meterCollectionStatFacilities, page);
 
   return ({
-    entities: meterCollectionStatFacilities.entities,
-    result: getPaginatedResult(meterCollectionStatFacilities, page),
-    parameters,
-    sort,
+    entityType: 'meterCollectionStatFacilities',
+    hasContent: isFetching || totalElements > 0 || numMeters > 0,
     isExportingToExcel,
-    isFetching: getPageIsFetching(meterCollectionStatFacilities, page),
+    isFetching,
+    items: getCollectionStats(meterCollectionStatFacilities),
+    parameters,
     pagination,
-    error: getPageError({page, state: meterCollectionStatFacilities}),
-    entityType,
-    timePeriod,
+    selectedItemId,
+    sort,
   });
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changePage,
-  clearError: collectionStatClearError,
   exportToExcelSuccess: exportToExcelSuccess(Sectors.meterCollection),
   fetchCollectionStatsFacilityPaged: fetchMeterCollectionStatsFacilityPaged,
-  sortTable: sortTableMeterCollectionStats,
+  sortTable: sortMeterCollectionStats,
 }, dispatch);
 
 export const CollectionListContainer =

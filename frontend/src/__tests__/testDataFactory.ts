@@ -1,6 +1,7 @@
 import {LocationChangePayload} from 'connected-react-router';
 import {Period} from '../components/dates/dateModels';
 import {EventLog, Meter} from '../state/domain-models-paginated/meter/meterModels';
+import {CollectionStat} from '../state/domain-models/collection-stat/collectionStatModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
 import {Role, User} from '../state/domain-models/user/userModels';
 import {LegendItem, SavedReportsState} from '../state/report/reportModels';
@@ -110,4 +111,14 @@ export const toLocation = (pathname: string): LocationChangePayload => ({
     state: {},
     hash: '',
   },
+});
+
+export const makeCollectionStat = (id: uuid, facility: string): CollectionStat => ({
+  id,
+  collectionPercentage: 0.1,
+  date: 123123,
+  facility,
+  isExportingToExcel: false,
+  latency: '',
+  readIntervalMinutes: 60,
 });

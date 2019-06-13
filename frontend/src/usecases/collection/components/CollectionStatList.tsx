@@ -1,128 +1,115 @@
-import {SortDescriptor} from '@progress/kendo-data-query';
-import {ExcelExport} from '@progress/kendo-react-excel-export';
-import {
-  Grid,
-  GridCellProps,
-  GridColumn,
-  GridPageChangeEvent,
-  GridPagerSettings,
-  GridSortChangeEvent,
-  GridSortSettings
-} from '@progress/kendo-react-grid';
+import {ExcelExport, ExcelExportColumn} from '@progress/kendo-react-excel-export';
+import {first} from 'lodash';
 import * as React from 'react';
-import {gridStyle, makeGridClassName} from '../../../app/themes';
+import {Column, Size, Table, TableCellProps} from 'react-virtualized';
+import {makeVirtualizedGridClassName} from '../../../app/themes';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
+import {ContentProps, InfiniteList, InfiniteListProps} from '../../../components/infinite-list/InfiniteList';
+import {rowClassName} from '../../../components/infinite-list/infiniteListHelper';
+import {renderLoadingOr} from '../../../components/loading/Loading';
 import {MeterLink} from '../../../components/meters/MeterLink';
-
 import {formatCollectionPercentage, formatReadInterval} from '../../../helpers/formatters';
+import {Maybe} from '../../../helpers/Maybe';
 import {RequestParameter} from '../../../helpers/urlFactory';
 import {useExportToExcel} from '../../../hooks/exportToExcelHook';
 import {translate} from '../../../services/translationService';
-import {SortOption} from '../../../state/ui/pagination/paginationModels';
-import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
-import {CollectionListProps} from './CollectionListContent';
+import {defaultSortProps, SortProps, SortTableProps} from '../../meter/meterModels';
+import {Props} from './CollectionListContent';
 
-interface SortProps {
-  sortable?: GridSortSettings;
-  onSortChange?: (event: GridSortChangeEvent) => void;
-  sort?: SortDescriptor[];
-}
+const renderMeterListItem = ({rowData: {facility, id}}: TableCellProps) =>
+  <MeterLink id={id} facility={facility} subPath={'/collection-period'}/>;
 
-const pageable: GridPagerSettings = {
-  buttonCount: 5,
-  info: false,
-  type: 'numeric',
-  pageSizes: false,
-  previousNext: true,
-};
+const renderReadInterval = ({rowData: {readInterval}}: TableCellProps) =>
+  formatReadInterval(readInterval);
 
-const sortable: GridSortSettings = {
-  allowUnsort: true,
-  mode: 'single'
-};
-
-const renderMeterListItem = ({dataItem: {id, facility}}: GridCellProps) =>
-  <td><MeterLink id={id} facility={facility} subPath={'/collection-period'}/></td>;
-
-const renderReadInterval = ({dataItem: {readInterval}}) =>
-  <td>{formatReadInterval(readInterval)}</td>;
-
-const renderCollectionPercentage = ({dataItem: {collectionPercentage, readInterval}}) =>
-  <td>{formatCollectionPercentage(collectionPercentage, readInterval)}</td>;
-
-const toSortDescriptor = (sortOption: SortOption): SortDescriptor =>
-  ({...sortOption, dir: sortOption.dir === 'ASC' ? 'asc' : 'desc'});
-
-const toSortOption = ({field, dir}: SortDescriptor): SortOption =>
-  ({field: field as RequestParameter, dir: dir === 'asc' ? 'ASC' : 'DESC'});
-
-const toSortOptions = (sort: SortDescriptor[]): SortOption[] => sort.map(toSortOption);
-
-const toSortDescriptors = (sort): SortDescriptor[] | undefined =>
-  sort && sort.length ? sort.map(toSortDescriptor) : undefined;
+const renderCollectionPercentage = ({rowData: {collectionPercentage, readInterval}}: TableCellProps) =>
+  formatCollectionPercentage(collectionPercentage, readInterval);
 
 const save = (exporter: React.RefObject<ExcelExport>) => exporter.current!.save();
 
 export const CollectionStatList = ({
   cssStyles,
   changePage,
+  entityType,
   exportToExcelSuccess,
   isExportingToExcel,
-  result,
-  entities,
-  entityType,
-  pagination: {page, size, totalElements: total},
+  isFetching,
+  items,
+  pagination,
+  selectedItemId,
   sort,
   sortTable,
-}: CollectionListProps & ThemeContext) => {
+}: Props & ThemeContext) => {
   const exporter = useExportToExcel({exportToExcelSuccess, isExportingToExcel, save});
 
-  const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
-    changePage({entityType, page: skip / paginationPageSize});
+  const sortProps: SortProps = Maybe.maybe(first(sort))
+    .map(({field: sortBy, dir}): SortProps => ({sortBy, sortDirection: dir || 'ASC'}))
+    .orElse(defaultSortProps);
 
-  const scrollProps: SortProps = {
-    onSortChange: ({sort}: GridSortChangeEvent) => sortTable(toSortOptions(sort)),
-    sort: toSortDescriptors(sort),
-    sortable
+  const sortTableProps: SortTableProps = {
+    sort: ({sortDirection: dir, sortBy: field}) => sortTable([{dir, field: field as RequestParameter}]),
+    ...sortProps,
   };
 
-  const data = result.map(key => entities[key]);
+  const renderContent = ({hasItem, scrollProps, rowHeight, ...props}: ContentProps) =>
+    (size: Size) => (
+      <Table
+        className={makeVirtualizedGridClassName(cssStyles)}
+        headerHeight={rowHeight}
+        rowHeight={rowHeight}
+        rowClassName={rowClassName}
+        {...size}
+        {...props}
+        {...scrollProps}
+        {...sortTableProps}
+      >
+        <Column
+          cellRenderer={renderLoadingOr(hasItem, renderMeterListItem)}
+          headerClassName="left-most"
+          dataKey="facility"
+          label={translate('facility')}
+          minWidth={200}
+          width={300}
+        />
+        <Column
+          cellRenderer={renderLoadingOr(hasItem, renderReadInterval)}
+          dataKey="readInterval"
+          label={translate('resolution')}
+          minWidth={200}
+          width={300}
+        />
+        <Column
+          cellRenderer={renderLoadingOr(hasItem, renderCollectionPercentage)}
+          dataKey="collectionPercentage"
+          label={translate('collection percentage')}
+          minWidth={200}
+          width={1000}
+        />
+      </Table>
+    );
 
-  const gridData = {data, total};
+  const infiniteListProps: InfiniteListProps = {
+    changePageTo: (page: number) => changePage({entityType, page}),
+    isFetching,
+    items,
+    paddingBottom: 320,
+    pagination,
+    renderContent,
+    rowHeight: 48,
+    selectedItemId,
+  };
+
+  const data = items.filter(it => it !== null);
 
   return (
-    <ExcelExport data={data} ref={exporter} filterable={true}>
-      <Grid
-        className={makeGridClassName(cssStyles)}
-        data={gridData}
-        pageable={total > size ? pageable : undefined}
-        pageSize={size}
-        take={size}
-        skip={page * size}
-        onPageChange={handlePageChange}
-        scrollable="none"
-        style={gridStyle}
-        {...scrollProps}
-      >
-        <GridColumn
-          field="facility"
-          title={translate('facility')}
-          cell={renderMeterListItem}
-          headerClassName="left-most"
-          className="left-most"
+    <>
+      <ExcelExport data={data} ref={exporter} filterable={true} fileName="collection-stats.xlsx">
+        <ExcelExportColumn field="facility" title={translate('facility')}/>
+        <ExcelExportColumn field="readInterval" title={translate('resolution')}/>
+        <ExcelExportColumn field="collectionPercentage" title={translate('collection percentage')}/>
+      </ExcelExport>
 
-        />
-        <GridColumn
-          field="readInterval"
-          title={translate('resolution')}
-          cell={renderReadInterval}
-        />
-        <GridColumn
-          field="collectionPercentage"
-          title={translate('collection percentage')}
-          cell={renderCollectionPercentage}
-        />
-      </Grid>
-    </ExcelExport>
+      <InfiniteList {...infiniteListProps}/>
+    </>
   );
 };
