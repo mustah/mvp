@@ -1,7 +1,5 @@
-import {LocationChangePayload} from 'connected-react-router';
-import {ActionType, getType} from 'typesafe-actions';
+import {ActionType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
-import {isOnSearchPage} from '../../app/routes';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Sectors} from '../../types/Types';
@@ -11,7 +9,6 @@ import {
   domainModelsPaginatedDeleteRequest,
   domainModelsPaginatedDeleteSuccess
 } from '../domain-models-paginated/paginatedDomainModelsEntityActions';
-import {locationChange} from '../location/locationActions';
 import {search} from '../search/searchActions';
 import {SelectionSummary, SummaryState} from './summaryModels';
 
@@ -24,7 +21,7 @@ export const initialState: SummaryState = {
 type ActionTypes =
   | EmptyAction<string>
   | Action<SelectionSummary | ErrorResponse>
-  | ActionType<typeof locationChange | typeof search>;
+  | ActionType<typeof search>;
 
 export const summaryFor = (sector: Sectors) =>
   (state: SummaryState = initialState, action: ActionTypes): SummaryState => {
@@ -66,9 +63,6 @@ export const summaryFor = (sector: Sectors) =>
           isFetching: false,
           isSuccessfullyFetched: false,
         };
-      case getType(locationChange):
-        return isOnSearchPage((action as Action<LocationChangePayload>).payload.location) ? state : initialState;
-      case getType(search):
       case clearAction(sector):
         return initialState;
       default:
