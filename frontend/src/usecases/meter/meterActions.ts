@@ -46,3 +46,14 @@ export const syncMeters = (ids: uuid[]) =>
       onError(dispatch, error);
     }
   };
+
+export const syncMetersOrganisation = (organisationId: uuid) =>
+  async (dispatch: Dispatch) => {
+    try {
+      const message = firstUpperTranslated('all meters for organisation will soon be synchronized');
+      dispatch(showSuccessMessage(message));
+      await restClient.post(`${EndPoints.syncMetersOrganisation}?id=${organisationId}`);
+    } catch (error) {
+      onError(dispatch, error);
+    }
+  };

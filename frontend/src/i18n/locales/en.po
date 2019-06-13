@@ -688,6 +688,12 @@ msgstr "meter will soon be synchronized"
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} meter will soon be synchronized"
 
+msgid "all meters for organisation will soon be synchronized"
+msgstr "all meters for organisation will soon be synchronized"
+
+msgid "sync all meters for this organisation"
+msgstr "sync all meters for this organisation"
+
 msgid "readout"
 msgstr "readout"
 
