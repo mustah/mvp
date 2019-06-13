@@ -19,7 +19,6 @@ import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
-import com.elvaco.mvp.testing.repository.MockMeasurements;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +53,6 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
   @Before
   public void setUp() {
     super.setUp();
-    MockMeasurements measurements = new MockMeasurements();
 
     messageConsumer = new MeteringMeasurementMessageConsumer(
       logicalMeterUseCases,
@@ -349,6 +347,43 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
           ZONED_MEASUREMENT_TIMESTAMP.plusDays(2)
         )
       );
+  }
+
+  @Test
+  public void ignoresMeasurementFromMeterWithInvalidClock() {
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(MEASUREMENT_TIMESTAMP)
+    );
+
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(LocalDateTime.parse("2000-01-01T02:00:00"))
+    );
+
+    assertThat(physicalMeters.findAll())
+      .hasSize(1)
+      .extracting(p -> p.activePeriod)
+      .containsExactly(PeriodRange.from(ZONED_MEASUREMENT_TIMESTAMP));
+
+    assertThat(measurements.allMocks())
+      .extracting(m -> m.readoutTime)
+      .containsExactly(ZONED_MEASUREMENT_TIMESTAMP);
+  }
+
+  @Test
+  public void ignoresMeasurementFromMeterWithInvalidClock_createsMeter() {
+    message(measurement()
+      .meterId(ADDRESS)
+      .valuesAtTimestamps(LocalDateTime.parse("2000-01-01T02:00:00"))
+    );
+
+    assertThat(physicalMeters.findAll())
+      .hasSize(1)
+      .extracting(p -> p.activePeriod)
+      .containsExactly(PeriodRange.empty());
+
+    assertThat(measurements.allMocks()).hasSize(0);
   }
 
   @Test

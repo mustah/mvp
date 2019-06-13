@@ -1,5 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.DE
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantity;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMedium;
+import static com.elvaco.mvp.core.domainmodels.PeriodRange.empty;
 import static com.elvaco.mvp.core.domainmodels.PeriodRange.from;
 import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
@@ -39,6 +41,8 @@ import static java.util.Comparator.comparing;
 @Slf4j
 @RequiredArgsConstructor
 public class MeteringMeasurementMessageConsumer implements MeasurementMessageConsumer {
+
+  private static final LocalDateTime FIRST_VALID_DATE = LocalDateTime.parse("2001-01-01T00:00:00");
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;
@@ -99,6 +103,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     String address = measurementMessage.meter.id;
     ZonedDateTime zonedDateTime = getEarliestTimestamp(measurementMessage);
+    boolean isValidDate = zonedDateTime.isAfter(FIRST_VALID_DATE.atZone(METERING_TIMEZONE));
 
     State physicalMeterState = new State();
     PhysicalMeter physicalMeter =
@@ -111,11 +116,13 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
             .medium(Medium.UNKNOWN_MEDIUM)
             .logicalMeterId(logicalMeter.id)
             .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
-            .activePeriod(from(zonedDateTime))
+            .activePeriod(isValidDate ? from(zonedDateTime) : empty())
             .build())
         );
 
-    updateActivePeriods(physicalMeter, physicalMeterState, zonedDateTime);
+    if (isValidDate) {
+      updateActivePeriods(physicalMeter, physicalMeterState, zonedDateTime);
+    }
 
     if (physicalMeterState.modified) {
       physicalMeterUseCases.save(physicalMeter);
@@ -157,12 +164,12 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
   private void updateActivePeriods(
     PhysicalMeter physicalMeter,
-    State state,
+    State physicalMeterState,
     ZonedDateTime zonedDateTime
   ) {
     if (physicalMeter.activePeriod.isEmpty()) {
       physicalMeter.activePeriod = from(zonedDateTime);
-      state.setModified(physicalMeter);
+      physicalMeterState.setModified(physicalMeter);
     }
 
     Optional<PhysicalMeter> activeAtTimestamp = physicalMeterUseCases.getActiveMeterAtTimestamp(
@@ -181,12 +188,18 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .filter(at -> physicalMeter.activePeriod.getStopDateTime()
         .filter(pStop -> zonedDateTime.isAfter(pStop))
         .isEmpty())
-      .map(at -> physicalMeterUseCases.saveAndFlush(at.deactivate(zonedDateTime)));
+      .ifPresent(at -> {
+        at.deactivate(zonedDateTime);
+        physicalMeterUseCases.saveAndFlush(at);
+      });
 
     // Move start time back in time if measurement is before current start time
     boolean movedStartTime = physicalMeter.activePeriod.getStartDateTime()
       .filter(pStart -> zonedDateTime.isBefore(pStart))
-      .map(pStart -> state.setModified(physicalMeter.activate(zonedDateTime)))
+      .map(pStart -> {
+        physicalMeter.activate(zonedDateTime);
+        return physicalMeterState.setModified(physicalMeter);
+      })
       .isPresent();
 
     // Also set stop time if this is a new meter in between two existing
@@ -194,7 +207,10 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       activeAtTimestamp
         .filter(at -> !at.id.equals(physicalMeter.id))
         .flatMap(at -> oldStopForActiveAtTimestamp)
-        .map(atStop -> state.setModified(physicalMeter.deactivate(atStop)));
+        .ifPresent(atStop -> {
+          physicalMeter.deactivate(atStop);
+          physicalMeterState.setModified(physicalMeter);
+        });
     }
   }
 
@@ -217,6 +233,15 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         "Discarding measurement with invalid unit for facility '{}', expecting '{}', got {}",
         physicalMeter.externalId,
         quantity.get().storageUnit,
+        value
+      );
+      return Optional.empty();
+    }
+    if (value.timestamp.isBefore(FIRST_VALID_DATE)) {
+      log.warn(
+        "Discarding measurement with invalid date for facility '{}' and meter '{}', got {}",
+        physicalMeter.externalId,
+        physicalMeter.address,
         value
       );
       return Optional.empty();
