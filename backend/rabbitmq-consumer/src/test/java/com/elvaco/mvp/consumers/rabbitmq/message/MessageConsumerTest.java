@@ -33,6 +33,7 @@ import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.geocode.MockGeocodeService;
 import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
+import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterDefinitions;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisationAssets;
@@ -118,6 +119,7 @@ public abstract class MessageConsumerTest {
   MockGeocodeService geocodeService;
   MockMeterStatusLogs meterStatusLogs;
   MockJobService<MeteringReferenceInfoMessageDto> jobService;
+  MockMeasurements measurements;
 
   MediumProvider mediumProvider = name -> Optional.ofNullable(MEDIUM_MAP.get(name));
   SystemMeterDefinitionProvider meterDefinitionProvider = medium -> Optional.ofNullable(
@@ -158,6 +160,7 @@ public abstract class MessageConsumerTest {
     geocodeService = new MockGeocodeService();
     propertiesUseCases = new PropertiesUseCases(authenticatedUser, new MockProperties());
     meterDefinitions = new MockMeterDefinitions();
+    measurements = new MockMeasurements();
 
     meterStatusLogs = new MockMeterStatusLogs();
     jobService = new MockJobService<>();

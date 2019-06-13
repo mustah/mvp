@@ -24,7 +24,6 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
-import com.elvaco.mvp.testing.repository.MockMeasurements;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,13 +49,11 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
   );
 
   private MeasurementMessageConsumer messageConsumer;
-  private MockMeasurements measurements;
 
   @Override
   @Before
   public void setUp() {
     super.setUp();
-    measurements = new MockMeasurements();
 
     messageConsumer = new MeteringMeasurementMessageConsumer(
       logicalMeterUseCases,
@@ -301,8 +298,10 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
       .build();
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
-    assertThat(createdMeasurements.get(0)).isEqualToIgnoringGivenFields(expectedMeasurement,
-      "receivedTime");
+    assertThat(createdMeasurements.get(0)).isEqualToIgnoringGivenFields(
+      expectedMeasurement,
+      "receivedTime"
+    );
   }
 
   @Test
@@ -350,7 +349,7 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
         .readIntervalMinutes(60)
         .activePeriod(physicalMeter.activePeriod)
         .build()
-      ).build(),"receivedTime");
+      ).build(), "receivedTime");
   }
 
   @Test
