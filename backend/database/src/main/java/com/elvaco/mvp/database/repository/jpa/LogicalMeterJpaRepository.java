@@ -6,8 +6,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
-import com.elvaco.mvp.core.dto.CollectionStatsDto;
-import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -35,10 +33,6 @@ public interface LogicalMeterJpaRepository {
   Set<LogicalMeterEntity> findAll(RequestParameters parameters);
 
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
-
-  Page<CollectionStatsDto> findAllCollectionStats(RequestParameters parameters, Pageable pageable);
-
-  List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(RequestParameters parameters);
 
   void delete(UUID id, UUID organisationId);
 

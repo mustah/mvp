@@ -6,8 +6,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
-import com.elvaco.mvp.core.dto.CollectionStatsDto;
-import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.exception.Unauthorized;
@@ -35,23 +33,6 @@ public class LogicalMeterUseCases {
 
   public Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
     return logicalMeters.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
-  }
-
-  public Page<CollectionStatsDto> findAllCollectionStats(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    return logicalMeters.findAllCollectionStats(
-      parameters.ensureOrganisationFilters(currentUser),
-      pageable
-    );
-  }
-
-  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
-    RequestParameters parameters
-  ) {
-    return logicalMeters.findAllCollectionStatsPerDate(
-      parameters.ensureOrganisationFilters(currentUser));
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {

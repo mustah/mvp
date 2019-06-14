@@ -10,8 +10,6 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
-import com.elvaco.mvp.core.dto.CollectionStatsDto;
-import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -77,13 +75,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Page<CollectionStatsDto> findAllCollectionStats(
-    RequestParameters parameters, Pageable pageable
-  ) {
-    return null;
-  }
-
-  @Override
   public List<LegendDto> findAllLegendsBy(RequestParameters parameters) {
     throw new NotImplementedYet();
   }
@@ -107,13 +98,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   @Override
   public long meterCount(RequestParameters parameters) {
     throw new NotImplementedYet();
-  }
-
-  @Override
-  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
-    RequestParameters parameters
-  ) {
-    return null;
   }
 
   @Override

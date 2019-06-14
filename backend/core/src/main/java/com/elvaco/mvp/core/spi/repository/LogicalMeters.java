@@ -8,8 +8,6 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
-import com.elvaco.mvp.core.dto.CollectionStatsDto;
-import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -30,8 +28,6 @@ public interface LogicalMeters {
 
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
-  Page<CollectionStatsDto> findAllCollectionStats(RequestParameters parameters, Pageable pageable);
-
   List<LegendDto> findAllLegendsBy(RequestParameters parameters);
 
   List<LogicalMeter> findAllBy(RequestParameters parameters);
@@ -41,8 +37,6 @@ public interface LogicalMeters {
   MeterSummary summary(RequestParameters parameters);
 
   long meterCount(RequestParameters parameters);
-
-  List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(RequestParameters parameters);
 
   LogicalMeter delete(LogicalMeter logicalMeter);
 
