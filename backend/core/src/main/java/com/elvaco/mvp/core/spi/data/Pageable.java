@@ -8,12 +8,4 @@ public interface Pageable {
   long getOffset();
 
   Sort getSort();
-
-  Pageable next();
-
-  Pageable previousOrFirst();
-
-  Pageable first();
-
-  boolean hasPrevious();
 }

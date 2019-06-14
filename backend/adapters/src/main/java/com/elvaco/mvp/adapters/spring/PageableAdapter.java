@@ -30,24 +30,4 @@ public class PageableAdapter implements Pageable {
   public Sort getSort() {
     return new SortAdapter(delegate.getSort());
   }
-
-  @Override
-  public Pageable next() {
-    return new PageableAdapter(delegate.next());
-  }
-
-  @Override
-  public Pageable previousOrFirst() {
-    return new PageableAdapter(delegate.previousOrFirst());
-  }
-
-  @Override
-  public Pageable first() {
-    return new PageableAdapter(delegate.first());
-  }
-
-  @Override
-  public boolean hasPrevious() {
-    return delegate.hasPrevious();
-  }
 }
