@@ -24,6 +24,8 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
 
 public interface RequestParameters {
 
+  int DEFAULT_LIMIT = 2_000;
+
   RequestParameters add(RequestParameter param, String value);
 
   RequestParameters setAll(Map<RequestParameter, String> values);
@@ -86,6 +88,16 @@ public interface RequestParameters {
 
   default Optional<RequestParameters> has(RequestParameter param) {
     return hasParam(param) ? Optional.of(this) : Optional.empty();
+  }
+
+  default int getLimit() {
+    try {
+      return Optional.ofNullable(getFirst(RequestParameter.LIMIT))
+        .map(Integer::parseInt)
+        .orElse(DEFAULT_LIMIT);
+    } catch (Exception e) {
+      return DEFAULT_LIMIT;
+    }
   }
 
   default void ensureOrganisation(AuthenticatedUser currentUser) {

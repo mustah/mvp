@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
@@ -168,10 +169,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     );
 
     given(measurementSeries()
-        .forMeter(districtHeatingMeter)
-        .startingAt(context().yesterday())
-        .withQuantity(Quantity.RETURN_TEMPERATURE)
-        .withValues(1.0, 2.0)
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 2.0)
     );
     waitForMeasurementStat();
     var response = asUser()
@@ -200,10 +201,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     );
 
     given(measurementSeries()
-        .forMeter(districtHeatingMeter)
-        .startingAt(context().yesterday())
-        .withQuantity(Quantity.RETURN_TEMPERATURE)
-        .withValues(1.0, 2.0)
+      .forMeter(districtHeatingMeter)
+      .startingAt(context().yesterday())
+      .withQuantity(Quantity.RETURN_TEMPERATURE)
+      .withValues(1.0, 2.0)
     );
     waitForMeasurementStat();
     var content = asUser()
@@ -487,6 +488,39 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     assertThat(paginatedLogicalMeters.getContent())
       .extracting(m -> m.collectionPercentage)
       .contains(100.0);
+  }
+
+  @Test
+  public void fetchCollectionStatsWithLimit() {
+    var now = context().now();
+
+    IntStream.range(0, 10)
+      .forEach(hour -> {
+        var meter = given(logicalMeter()
+          .meterDefinition(DEFAULT_DISTRICT_HEATING)
+          .physicalMeter(physicalMeter().readIntervalMinutes(60).build())
+        );
+
+        given(measurementSeries()
+          .forMeter(meter)
+          .startingAt(now.plusHours(hour))
+          .withQuantity(Quantity.RETURN_TEMPERATURE)
+          .withValues(DoubleStream.iterate(0, d -> d - 1.0).limit(12).toArray()));
+      });
+
+    waitForMeasurementStat();
+
+    var list = asUser().getList(
+      Url.builder()
+        .path("/meters/collection-stats")
+        .parameter(COLLECTION_AFTER, now)
+        .parameter(COLLECTION_BEFORE, now.plusDays(10))
+        .limit(2)
+        .build(),
+      CollectionStatsDto.class
+    ).getBody();
+
+    assertThat(list).hasSize(2);
   }
 
   @Test

@@ -10,6 +10,8 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface CollectionStats {
 
+  List<CollectionStatsDto> findAll(RequestParameters parameters, Pageable pageable);
+
   Page<CollectionStatsDto> findAllPaged(RequestParameters parameters, Pageable pageable);
 
   List<CollectionStatsPerDateDto> findAllPerDate(RequestParameters parameters);

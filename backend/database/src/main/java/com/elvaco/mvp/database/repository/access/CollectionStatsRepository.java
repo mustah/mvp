@@ -48,10 +48,12 @@ public class CollectionStatsRepository implements CollectionStats {
   private final MeasurementThresholdParser measurementThresholdParser;
 
   @Override
-  public Page<CollectionStatsDto> findAllPaged(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
+  public List<CollectionStatsDto> findAll(RequestParameters parameters, Pageable pageable) {
+    return findAllPaged(parameters, pageable).getContent();
+  }
+
+  @Override
+  public Page<CollectionStatsDto> findAllPaged(RequestParameters parameters, Pageable pageable) {
     var selectQuery = dsl.select(
       LOGICAL_METER.ID,
       LOGICAL_METER.EXTERNAL_ID,

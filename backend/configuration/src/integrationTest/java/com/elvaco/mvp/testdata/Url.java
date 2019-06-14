@@ -19,6 +19,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LIMIT;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
@@ -143,6 +144,10 @@ public class Url implements UrlTemplate {
 
     public UrlBuilder size(long pageSize) {
       return parameter("size", pageSize);
+    }
+
+    public UrlBuilder limit(int limit) {
+      return parameter(LIMIT, limit);
     }
 
     public UrlBuilder sortBy(Object value) {

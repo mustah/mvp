@@ -23,6 +23,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.COLLECTION_BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LIMIT;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MANUFACTURER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
@@ -51,16 +52,18 @@ public final class RequestParametersMapper {
 
   private static final Map<RequestParameter, Function<List<String>, VisitableFilter>>
     PARAMETER_TO_FILTER = new HashMap<>();
+
   private static final List<RequestParameter> IGNORED_PARAMETERS = List.of(
-    THRESHOLD_BEFORE,
-    THRESHOLD_AFTER,
     COLLECTION_AFTER,
     COLLECTION_BEFORE,
+    LIMIT,
+    QUANTITY,
     REPORT_AFTER,
     REPORT_BEFORE,
+    RESOLUTION,
     SORT,
-    QUANTITY,
-    RESOLUTION
+    THRESHOLD_BEFORE,
+    THRESHOLD_AFTER
   );
 
   static {
@@ -104,8 +107,7 @@ public final class RequestParametersMapper {
     );
     PARAMETER_TO_FILTER.put(
       THRESHOLD,
-      (values) ->
-        new MeasurementThresholdFilter(values.get(0))
+      (values) -> new MeasurementThresholdFilter(values.get(0))
     );
     PARAMETER_TO_FILTER.put(ALARM, AlarmFilter::new);
     PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, MatchType.WILDCARD));
@@ -168,9 +170,6 @@ public final class RequestParametersMapper {
   }
 
   private static RequestParameter disambiguateParameter(RequestParameter parameter) {
-    if (parameter.equals(Q_SERIAL)) {
-      return SERIAL;
-    }
-    return parameter;
+    return parameter.equals(Q_SERIAL) ? SERIAL : parameter;
   }
 }

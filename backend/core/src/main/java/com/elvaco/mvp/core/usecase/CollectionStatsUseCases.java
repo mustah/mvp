@@ -18,10 +18,11 @@ public class CollectionStatsUseCases {
   private final AuthenticatedUser currentUser;
   private final CollectionStats collectionStats;
 
-  public Page<CollectionStatsDto> findAllPaged(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
+  public List<CollectionStatsDto> findAll(RequestParameters parameters, Pageable pageable) {
+    return collectionStats.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
+  }
+
+  public Page<CollectionStatsDto> findAllPaged(RequestParameters parameters, Pageable pageable) {
     return collectionStats.findAllPaged(
       parameters.ensureOrganisationFilters(currentUser),
       pageable

@@ -248,4 +248,27 @@ public class RequestParametersAdapterTest {
 
     assertThat(parameters.getFirst(ORGANISATION)).isNull();
   }
+
+  @Test
+  public void usesDefaultLimit_whenNoLimitExists() {
+    RequestParameters parameters = new RequestParametersAdapter();
+
+    assertThat(parameters.getLimit()).isEqualTo(RequestParameters.DEFAULT_LIMIT);
+  }
+
+  @Test
+  public void useDefaultLimit_whenLimitIsNotANumber() {
+    RequestParameters parameters = new RequestParametersAdapter();
+    parameters.add(RequestParameter.LIMIT, "test");
+
+    assertThat(parameters.getLimit()).isEqualTo(RequestParameters.DEFAULT_LIMIT);
+  }
+
+  @Test
+  public void useDefaultLimit_whenLimitIsANumber() {
+    RequestParameters parameters = new RequestParametersAdapter();
+    parameters.add(RequestParameter.LIMIT, "123");
+
+    assertThat(parameters.getLimit()).isEqualTo(123);
+  }
 }
