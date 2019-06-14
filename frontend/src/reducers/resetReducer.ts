@@ -1,5 +1,6 @@
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
+import {search} from '../state/search/searchActions';
 import {
   addParameterToSelection,
   deselectSelection,
@@ -17,14 +18,15 @@ export const resetReducer = <S>(
   initialState: S,
 ): S => {
   switch (type) {
-    case getType(setThreshold):
-    case getType(setCollectionTimePeriod(Sectors.collection)):
-    case getType(setCollectionTimePeriod(Sectors.meterCollection)):
     case getType(addParameterToSelection):
     case getType(deselectSelection):
-    case getType(selectSavedSelectionAction):
     case getType(logoutUser):
     case getType(resetSelection):
+    case getType(search):
+    case getType(selectSavedSelectionAction):
+    case getType(setCollectionTimePeriod(Sectors.collection)):
+    case getType(setCollectionTimePeriod(Sectors.meterCollection)):
+    case getType(setThreshold):
       return initialState;
     default:
       return state;

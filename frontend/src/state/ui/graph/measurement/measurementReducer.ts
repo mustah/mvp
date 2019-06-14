@@ -59,8 +59,6 @@ const measurementReducerFor =
         case getType(reportActions.removeAllByType(sector)):
         case getType(reportActions.toggleQuantityByType(sector)):
         case getType(reportActions.toggleQuantityById(sector)):
-        case getType(search):
-          return initialState;
         default:
           return resetReducer(state, action, initialState);
       }

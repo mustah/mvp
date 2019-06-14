@@ -1,13 +1,10 @@
 import {getType} from 'typesafe-actions';
-import {toLocation} from '../../../__tests__/testDataFactory';
-import {routes} from '../../../app/routes';
 import {EndPoints} from '../../../services/endPoints';
 import {Sectors} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {makePaginatedDeleteRequestActions} from '../../domain-models-paginated/paginatedDomainModelsEntityActions';
-import {locationChange} from '../../location/locationActions';
 import {search} from '../../search/searchActions';
 import {makeMeterQuery} from '../../search/searchModels';
 import {
@@ -225,27 +222,6 @@ describe('summaryReducer', () => {
       expect(state).toEqual(initialState);
     });
 
-    it('reset search query when location changes to dashboard page', () => {
-      let state: SummaryState = {
-        ...initialState,
-        payload: {...initialState.payload, numMeters: 2}
-      };
-
-      state = summary(state, locationChange(toLocation(routes.dashboard)));
-
-      expect(state).toEqual(initialState);
-    });
-
-    it('keeps the state when location changes to search result page', () => {
-      const state: SummaryState = {
-        ...initialState,
-        payload: {...initialState.payload, numMeters: 2}
-      };
-
-      const nextState = summary(state, locationChange(toLocation(routes.searchResult)));
-
-      expect(nextState).toBe(state);
-    });
   });
 
 });
