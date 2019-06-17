@@ -92,19 +92,20 @@ class GatewayJooqJpaRepository
     String serial
   ) {
     return fetchOne(GATEWAY.ORGANISATION_ID.equal(organisationId)
-      .and(GATEWAY.PRODUCT_MODEL.equal(productModel).and(GATEWAY.SERIAL.equal(serial))));
+      .and(GATEWAY.PRODUCT_MODEL.equal(productModel)
+        .and(GATEWAY.SERIAL.upper().equal(serial.toUpperCase()))));
   }
 
   @Override
   public Optional<GatewayEntity> findByOrganisationIdAndSerial(UUID organisationId, String serial) {
     return fetchOne(GATEWAY.ORGANISATION_ID.equal(organisationId)
-      .and(GATEWAY.SERIAL.equal(serial)));
+      .and(GATEWAY.SERIAL.upper().equal(serial.toUpperCase())));
   }
 
   @Override
   public List<GatewayEntity> findBySerial(String serial) {
     return nativeQuery(dsl.select().from(GATEWAY)
-      .where(GATEWAY.SERIAL.lower().equal(serial.toLowerCase())));
+      .where(GATEWAY.SERIAL.upper().equal(serial.toUpperCase())));
   }
 
   @Override

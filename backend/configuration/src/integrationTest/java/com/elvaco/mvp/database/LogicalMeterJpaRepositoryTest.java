@@ -129,10 +129,10 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
     assertThat(logicalMeterJpaRepository.findById(logicalMeter.pk.id).get().gateways)
       .extracting(p -> p.serial)
-      .containsOnly("newSerial");
+      .containsOnly("NEWSERIAL");
 
     assertThat(gatewayJpaRepository.findById(gateway.id).get().serial)
-      .isEqualTo("newSerial");
+      .isEqualTo("NEWSERIAL");
   }
 
   @Test

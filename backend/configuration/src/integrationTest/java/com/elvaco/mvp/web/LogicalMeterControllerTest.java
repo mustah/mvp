@@ -161,7 +161,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getContent()
       .get(0);
 
-    assertThat(logicalMeterDto.gatewaySerial).isEqualTo("gateway-serial");
+    assertThat(logicalMeterDto.gatewaySerial).isEqualTo("GATEWAY-SERIAL");
   }
 
   @Test
