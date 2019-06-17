@@ -20,6 +20,7 @@ public enum RequestParameter {
   MANUFACTURER("manufacturer"),
   MEDIUM("medium"),
   REPORTED("reported"),
+  LIMIT("limit"),
   LOGICAL_METER_ID("logicalMeterId"),
   ORGANISATION("organisation"),
   PHYSICAL_METER_ID("physicalMeterId"),

@@ -5,6 +5,7 @@ import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.spi.repository.CollectionStats;
 import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Locations;
@@ -24,6 +25,7 @@ import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
+import com.elvaco.mvp.core.usecase.CollectionStatsUseCases;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LocationUseCases;
@@ -50,6 +52,7 @@ class UseCaseConfig {
   private final Users users;
   private final Settings settings;
   private final LogicalMeters logicalMeters;
+  private final CollectionStats collectionStats;
   private final Measurements measurements;
   private final Organisations organisations;
   private final Gateways gateways;
@@ -86,6 +89,11 @@ class UseCaseConfig {
   @Bean
   LogicalMeterUseCases logicalMeterUseCases(AuthenticatedUser currentUser) {
     return new LogicalMeterUseCases(currentUser, logicalMeters);
+  }
+
+  @Bean
+  CollectionStatsUseCases collectionStatsUseCases(AuthenticatedUser currentUser) {
+    return new CollectionStatsUseCases(currentUser, collectionStats);
   }
 
   @Bean

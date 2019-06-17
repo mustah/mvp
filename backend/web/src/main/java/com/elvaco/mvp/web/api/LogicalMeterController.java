@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
+import com.elvaco.mvp.adapters.spring.PageableLimit;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.dto.CollectionStatsDto;
 import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LegendDto;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.core.usecase.CollectionStatsUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
@@ -30,6 +33,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 public class LogicalMeterController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
+  private final CollectionStatsUseCases collectionStatsUseCases;
 
   @GetMapping
   public org.springframework.data.domain.Page<PagedLogicalMeterDto> logicalMeters(
@@ -59,12 +63,24 @@ public class LogicalMeterController {
       .orElseThrow(() -> new MeterNotFound(id));
   }
 
-  @GetMapping("/stats/facility")
-  public org.springframework.data.domain.Page<CollectionStatsDto> collectionStats(
+  @GetMapping("/collection-stats")
+  public List<CollectionStatsDto> collectionStats(
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    var page = logicalMeterUseCases.findAllCollectionStats(
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
+    return collectionStatsUseCases.findAll(
+      parameters,
+      new PageableLimit(pageable, parameters.getLimit())
+    );
+  }
+
+  @GetMapping("/stats/facility")
+  public org.springframework.data.domain.Page<CollectionStatsDto> pagedCollectionStats(
+    @RequestParam MultiValueMap<String, String> requestParams,
+    Pageable pageable
+  ) {
+    var page = collectionStatsUseCases.findAllPaged(
       RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID),
       new PageableAdapter(pageable)
     );
@@ -75,7 +91,7 @@ public class LogicalMeterController {
   public List<CollectionStatsPerDateDto> collectionStatsPerDate(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return logicalMeterUseCases.findAllCollectionStatsPerDate(
+    return collectionStatsUseCases.findAllPerDate(
       RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID)
     );
   }

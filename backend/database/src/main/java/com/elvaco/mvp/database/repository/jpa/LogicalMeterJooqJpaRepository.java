@@ -1,8 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +11,10 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
-import com.elvaco.mvp.core.dto.CollectionStatsDto;
-import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.entity.jooq.Tables;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
@@ -51,16 +46,11 @@ import static com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog.METER_ALA
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCENTAGE;
-import static com.elvaco.mvp.database.repository.jooq.JooqUtils.LAST_DATA;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
 import static java.util.stream.Collectors.toList;
-import static org.jooq.impl.DSL.avg;
-import static org.jooq.impl.DSL.coalesce;
-import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.noCondition;
-import static org.jooq.impl.DSL.when;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -80,30 +70,21 @@ class LogicalMeterJooqJpaRepository
     "alarm", METER_ALARM_LOG.MASK
   );
 
-  private static final Map<String, Field<?>> COLLECTION_SORT_FIELDS_MAP = Map.of(
-    "facility", LOGICAL_METER.EXTERNAL_ID,
-    "collectionPercentage", field("collectionPercentage2"),
-    "lastData", LAST_DATA
-  );
-
   private final DSLContext dsl;
   private final FilterAcceptor logicalMeterFilters;
   private final FilterAcceptor displayQuantityFilters;
-  private final MeasurementThresholdParser measurementThresholdParser;
 
   @Autowired
   LogicalMeterJooqJpaRepository(
     EntityManager entityManager,
     DSLContext dsl,
     FilterAcceptor logicalMeterFilters,
-    FilterAcceptor displayQuantityFilters,
-    MeasurementThresholdParser measurementThresholdParser
+    FilterAcceptor displayQuantityFilters
   ) {
     super(entityManager, LogicalMeterEntity.class);
     this.dsl = dsl;
     this.logicalMeterFilters = logicalMeterFilters;
     this.displayQuantityFilters = displayQuantityFilters;
-    this.measurementThresholdParser = measurementThresholdParser;
   }
 
   @Override
@@ -212,74 +193,6 @@ class LogicalMeterJooqJpaRepository
   }
 
   @Override
-  public Page<CollectionStatsDto> findAllCollectionStats(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    var selectQuery = dsl.select(
-      LOGICAL_METER.ID,
-      LOGICAL_METER.EXTERNAL_ID,
-      PHYSICAL_METER.READ_INTERVAL_MINUTES,
-      when(PHYSICAL_METER.READ_INTERVAL_MINUTES.ne(0L), coalesce(COLLECTION_PERCENTAGE, 0.0))
-        .otherwise(DSL.inline((Double) null)).as("collectionPercentage2"),
-      LAST_DATA
-    ).from(LOGICAL_METER);
-
-    var countQuery = dsl.selectDistinct(LOGICAL_METER.ID, PHYSICAL_METER.ID).from(LOGICAL_METER);
-
-    FilterVisitors.logicalMeterWithCollectionPercentageAndLastData(dsl, measurementThresholdParser)
-      .accept(toFilters(parameters))
-      .andJoinsOn(selectQuery)
-      .andJoinsOn(countQuery);
-
-    var select = selectQuery
-      .orderBy(resolveSortFields(
-        parameters,
-        COLLECTION_SORT_FIELDS_MAP,
-        LOGICAL_METER.EXTERNAL_ID.asc()
-      ))
-      .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue());
-
-    List<CollectionStatsDto> logicalMeters = select.fetch()
-      .stream()
-      .map(record -> new CollectionStatsDto(
-        record.value1(),
-        record.value2(),
-        record.value3() == null ? null : record.value3().intValue(),
-        record.value4(),
-        record.value5()
-      ))
-      .collect(toList());
-    return getPage(logicalMeters, pageable, () -> dsl.fetchCount(countQuery));
-  }
-
-  @Override
-  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
-    RequestParameters parameters
-  ) {
-    var selectQuery = dsl.select(
-      avg(field("actual", Double.class).divide(field("expected", Double.class))).times(100.0),
-      field("gendate", LocalDate.class)
-    ).from(LOGICAL_METER);
-
-    FilterVisitors.collectionPercentagePerDate(dsl, measurementThresholdParser)
-      .accept(toFilters(parameters))
-      .andJoinsOn(selectQuery);
-
-    var select = selectQuery
-      .groupBy(field("gendate")).orderBy(field("gendate").asc());
-
-    List<CollectionStatsPerDateDto> logicalMeters = select.fetch()
-      .stream()
-      .map(record -> new CollectionStatsPerDateDto(
-        record.value2().atStartOfDay(ZoneId.of("UTC+1")),
-        record.value1().doubleValue()
-      )).collect(toList());
-    return logicalMeters;
-  }
-
-  @Override
   public void delete(UUID id, UUID organisationId) {
     dsl.deleteFrom(LOGICAL_METER)
       .where(LOGICAL_METER.ID.eq(id))
@@ -359,9 +272,8 @@ class LogicalMeterJooqJpaRepository
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue());
 
-    var all = select
-      .fetch()
-      .stream().map(Record2::value1)
+    var all = select.fetch().stream()
+      .map(Record2::value1)
       .collect(toList());
 
     return getPage(all, pageable, () -> dsl.fetchCount(countQuery));

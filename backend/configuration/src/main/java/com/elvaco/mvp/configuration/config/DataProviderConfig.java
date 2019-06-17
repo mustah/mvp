@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.domainmodels.AssetType;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.AlarmDescriptions;
+import com.elvaco.mvp.core.spi.repository.CollectionStats;
 import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -34,7 +35,9 @@ import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
+import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.repository.access.AlarmDescriptionsRepository;
+import com.elvaco.mvp.database.repository.access.CollectionStatsRepository;
 import com.elvaco.mvp.database.repository.access.DashboardRepository;
 import com.elvaco.mvp.database.repository.access.GatewayRepository;
 import com.elvaco.mvp.database.repository.access.GatewayStatusLogsRepository;
@@ -142,7 +145,7 @@ class DataProviderConfig {
     var users = new UserRepository(userJpaRepository, passwordEncoder::encode);
 
     User user = productionDataProvider.superAdminUser();
-    if (!users.findByEmail(user.email).isPresent()) {
+    if (users.findByEmail(user.email).isEmpty()) {
       users.save(user);
     }
 
@@ -163,6 +166,11 @@ class DataProviderConfig {
       summaryJpaRepository,
       logicalMeterEntityMapper
     );
+  }
+
+  @Bean
+  CollectionStats collectionStats(DSLContext dsl, MeasurementThresholdParser parser) {
+    return new CollectionStatsRepository(dsl, parser);
   }
 
   @Bean

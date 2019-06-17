@@ -9,8 +9,6 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
-import com.elvaco.mvp.core.dto.CollectionStatsDto;
-import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.filter.Filters;
@@ -107,23 +105,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Page<CollectionStatsDto> findAllCollectionStats(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    return new PageAdapter<>(
-      logicalMeterJpaRepository.findAllCollectionStats(
-        parameters,
-        PageRequest.of(
-          pageable.getPageNumber(),
-          pageable.getPageSize(),
-          SortMapper.getAsSpringSort(pageable.getSort())
-        )
-      )
-    );
-  }
-
-  @Override
   public List<LegendDto> findAllLegendsBy(RequestParameters parameters) {
     return logicalMeterJpaRepository.findAllLegends(parameters);
   }
@@ -165,12 +146,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Override
   public long meterCount(RequestParameters parameters) {
     return summaryJpaRepository.meterCount(toFilters(parameters));
-  }
-
-  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
-    RequestParameters parameters
-  ) {
-    return logicalMeterJpaRepository.findAllCollectionStatsPerDate(parameters);
   }
 
   @Transactional
