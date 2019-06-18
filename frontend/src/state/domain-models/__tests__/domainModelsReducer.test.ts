@@ -1,15 +1,20 @@
+import {Period} from '../../../components/dates/dateModels';
 import {getId, groupById} from '../../../helpers/collections';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, Status} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
+import {setMeterCollectionStatsTimePeriod} from '../../../usecases/collection/collectionActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
+import {meterDetailMeasurementRequest} from '../../../usecases/meter/measurements/meterDetailMeasurementActions';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {search} from '../../search/searchActions';
 import {makeMeterQuery} from '../../search/searchModels';
 import {initialState as initialMeasurementState} from '../../ui/graph/measurement/measurementReducer';
 import {unknownAction} from '../../ui/tabs/tabsActions';
 import {resetSelection} from '../../user-selection/userSelectionActions';
+import {SelectionInterval} from '../../user-selection/userSelectionModels';
+import {CollectionStat} from '../collection-stat/collectionStatModels';
 import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
 import {
   deleteRequestOf,
@@ -23,6 +28,7 @@ import {
   domainModels,
   gatewayMapMarkers,
   initialDomain,
+  meterCollectionStats,
   meterMapMarkers,
   organisations,
   users
@@ -275,46 +281,60 @@ describe('domainModelsReducer', () => {
 
   describe('clear domainModels', () => {
 
+    const initialState: DomainModelsState = {
+      allCollectionStats: initialDomain(),
+      gatewayMapMarkers: initialDomain(),
+      meters: initialDomain(),
+      meterMapMarkers: initialDomain(),
+      organisations: initialDomain(),
+      userSelections: initialDomain(),
+      users: initialDomain(),
+      mediums: initialDomain(),
+      meterDefinitions: initialDomain(),
+      quantities: initialDomain(),
+      collectionStats: initialDomain(),
+      meterCollectionStats: initialDomain(),
+      meterDetailMeasurement: initialMeasurementState,
+      dashboards: initialDomain(),
+      widgets: initialDomain(),
+      subOrganisations: initialDomain(),
+    };
+
+    const state: DomainModelsState = {
+      allCollectionStats: {...initialState.allCollectionStats, isFetching: true},
+      gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
+      meters: {...initialState.meters, isFetching: true},
+      meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
+      organisations: {...initialState.organisations, isFetching: true},
+      userSelections: {...initialState.userSelections, isFetching: false},
+      users: {...initialState.users, isFetching: true},
+      mediums: {...initialState.mediums, isFetching: true},
+      meterDefinitions: {...initialState.meterDefinitions, isFetching: true},
+      quantities: {...initialState.quantities, isFetching: true},
+      collectionStats: {...initialState.collectionStats, isFetching: true},
+      meterCollectionStats: {...initialState.collectionStats, isFetching: true},
+      meterDetailMeasurement: {...initialMeasurementState, isFetching: true},
+      dashboards: {...initialState.dashboards, isFetching: false},
+      widgets: {...initialState.widgets, isFetching: false},
+      subOrganisations: {...initialState.subOrganisations, isFetching: true},
+    };
+
     it('resets all domain models except the ones related to selection drop downs and dashboard', () => {
-      const initialState: DomainModelsState = {
-        allCollectionStats: initialDomain(),
-        gatewayMapMarkers: initialDomain(),
-        meters: initialDomain(),
-        meterMapMarkers: initialDomain(),
-        organisations: initialDomain(),
-        userSelections: initialDomain(),
-        users: initialDomain(),
-        mediums: initialDomain(),
-        meterDefinitions: initialDomain(),
-        quantities: initialDomain(),
-        collectionStats: initialDomain(),
-        meterCollectionStats: initialDomain(),
-        meterDetailMeasurement: initialMeasurementState,
-        dashboards: initialDomain(),
-        widgets: initialDomain(),
-        subOrganisations: initialDomain(),
-      };
+      expect(domainModels(state, resetSelection())).toEqual(initialState);
+    });
+  });
 
-      const isFetchingState: DomainModelsState = {
-        allCollectionStats: {...initialState.allCollectionStats, isFetching: true},
-        gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
-        meters: {...initialState.meters, isFetching: true},
-        meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
-        organisations: {...initialState.organisations, isFetching: true},
-        userSelections: {...initialState.userSelections, isFetching: false},
-        users: {...initialState.users, isFetching: true},
-        mediums: {...initialState.mediums, isFetching: true},
-        meterDefinitions: {...initialState.meterDefinitions, isFetching: true},
-        quantities: {...initialState.quantities, isFetching: true},
-        collectionStats: {...initialState.collectionStats, isFetching: true},
-        meterCollectionStats: {...initialState.collectionStats, isFetching: true},
-        meterDetailMeasurement: {...initialMeasurementState, isFetching: true},
-        dashboards: {...initialState.dashboards, isFetching: false},
-        widgets: {...initialState.widgets, isFetching: false},
-        subOrganisations: {...initialState.subOrganisations, isFetching: true},
-      };
+  describe('collection stats reducer', () => {
+    const state: NormalizedState<CollectionStat> = {...initialDomain(), isFetching: true, total: 100};
 
-      expect(domainModels(isFetchingState, resetSelection())).toEqual(initialState);
+    it('will reset to initial state when period is changed', () => {
+      const payload: SelectionInterval = {period: Period.currentMonth};
+
+      expect(meterCollectionStats(state, setMeterCollectionStatsTimePeriod(payload))).toEqual(initialDomain());
+    });
+
+    it('will reset to initial state a new meter details request has been initialized', () => {
+      expect(meterCollectionStats(state, meterDetailMeasurementRequest())).toEqual(initialDomain());
     });
   });
 

@@ -159,7 +159,7 @@ export const resetStateOnLogoutReducer = <S extends Identifiable>(
 ): NormalizedState<S> =>
   type === getType(logoutUser) ? initialDomain<S>() : state;
 
-const resetMeterCollectionReducer = <T extends Identifiable>(
+const resetMeterCollectionStatsReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),
   action: ActionTypes<T>,
 ): NormalizedState<T> => {
@@ -247,7 +247,7 @@ export const collectionStats = reducerFor<CollectionStat>(
 export const meterCollectionStats = reducerFor<CollectionStat>(
   'collectionStats',
   Sectors.meterCollection,
-  resetMeterCollectionReducer
+  resetMeterCollectionStatsReducer
 );
 
 export const dashboards = reducerFor<Dashboard>(

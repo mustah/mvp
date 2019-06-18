@@ -10,8 +10,7 @@ import {OnChangeToolbarView, ToolbarViewSettingsProps} from '../../../../state/u
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith} from '../../../../types/Types';
 import {MeterMeasurementsToolbar} from '../components/MeterMeasurementsToolbar';
-import {selectResolution, setTimePeriod} from '../meterDetailActions';
-import {exportToExcel} from '../meterDetailMeasurementActions';
+import {exportToExcel, selectResolution, setTimePeriod} from '../meterDetailMeasurementActions';
 import {getMeterResolution} from '../meterDetailMeasurementsSelectors';
 import {OwnProps} from '../meterDetailModels';
 
