@@ -54,9 +54,9 @@ public class GatewaysTest extends IntegrationTest {
   }
 
   @Test
-  public void findGatewayBySerialIgnoreCase() {
+  public void saveGateway_UpperCaseSerial() {
     var gatewayId = randomUUID();
-    var gatewaySerial = "F612A3";
+    var gatewaySerial = "F612a3";
     gateways.save(Gateway.builder()
       .id(gatewayId)
       .organisationId(context().organisationId())
@@ -67,11 +67,78 @@ public class GatewaysTest extends IntegrationTest {
     assertThat(gateways.findById(gatewayId))
       .isPresent()
       .get().extracting(g -> g.id, g -> g.serial)
-      .contains(gatewayId, gatewaySerial);
+      .contains(gatewayId, gatewaySerial.toUpperCase());
+  }
+
+  @Test
+  public void ignoreCase_findGatewayBySerial() {
+    var gatewayId = randomUUID();
+    var gatewaySerial = "F612a3";
+    gateways.save(Gateway.builder()
+      .id(gatewayId)
+      .organisationId(context().organisationId())
+      .serial(gatewaySerial)
+      .productModel("")
+      .build());
+
+    assertThat(gateways.findBy(gatewaySerial))
+      .extracting(g -> g.id, g -> g.serial)
+      .containsExactly(tuple(gatewayId, gatewaySerial.toUpperCase()));
 
     assertThat(gateways.findBy(gatewaySerial.toLowerCase()))
-      .hasSize(1)
       .extracting(g -> g.id, g -> g.serial)
-      .containsExactly(tuple(gatewayId, gatewaySerial));
+      .containsExactly(tuple(gatewayId, gatewaySerial.toUpperCase()));
+
+    assertThat(gateways.findBy(gatewaySerial.toUpperCase()))
+      .extracting(g -> g.id, g -> g.serial)
+      .containsExactly(tuple(gatewayId, gatewaySerial.toUpperCase()));
+  }
+
+  @Test
+  public void ignoreCase_findGatewayBySerialAndOrganisation() {
+    var gatewayId = randomUUID();
+    var gatewaySerial = "F612a3";
+    gateways.save(Gateway.builder()
+      .id(gatewayId)
+      .organisationId(context().organisationId())
+      .serial(gatewaySerial)
+      .productModel("")
+      .build());
+
+    assertThat(gateways.findBy(context().organisationId(), gatewaySerial))
+      .isPresent().get().extracting(g -> g.id, g -> g.serial)
+      .contains(gatewayId, gatewaySerial.toUpperCase());
+
+    assertThat(gateways.findBy(context().organisationId(), gatewaySerial.toLowerCase()))
+      .isPresent().get().extracting(g -> g.id, g -> g.serial)
+      .contains(gatewayId, gatewaySerial.toUpperCase());
+
+    assertThat(gateways.findBy(context().organisationId(), gatewaySerial.toUpperCase()))
+      .isPresent().get().extracting(g -> g.id, g -> g.serial)
+      .contains(gatewayId, gatewaySerial.toUpperCase());
+  }
+
+  @Test
+  public void ignoreCase_findGatewayBySerialAndOrganisationAndProductModel() {
+    var gatewayId = randomUUID();
+    var gatewaySerial = "F612a3";
+    gateways.save(Gateway.builder()
+      .id(gatewayId)
+      .organisationId(context().organisationId())
+      .serial(gatewaySerial)
+      .productModel("Model")
+      .build());
+
+    assertThat(gateways.findBy(context().organisationId(), "Model", gatewaySerial))
+      .isPresent().get().extracting(g -> g.id, g -> g.serial)
+      .contains(gatewayId, gatewaySerial.toUpperCase());
+
+    assertThat(gateways.findBy(context().organisationId(), "Model", gatewaySerial.toLowerCase()))
+      .isPresent().get().extracting(g -> g.id, g -> g.serial)
+      .contains(gatewayId, gatewaySerial.toUpperCase());
+
+    assertThat(gateways.findBy(context().organisationId(), "Model", gatewaySerial.toUpperCase()))
+      .isPresent().get().extracting(g -> g.id, g -> g.serial)
+      .contains(gatewayId, gatewaySerial.toUpperCase());
   }
 }

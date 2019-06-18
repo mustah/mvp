@@ -36,7 +36,7 @@ public class GatewayEntityMapper {
   public static GatewayEntity toEntity(Gateway domainModel) {
     return new GatewayEntity(
       new EntityPk(domainModel.id, domainModel.organisationId),
-      domainModel.serial,
+      domainModel.serial.toUpperCase(),
       domainModel.productModel,
       domainModel.ip,
       domainModel.phoneNumber,

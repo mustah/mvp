@@ -129,7 +129,7 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
       .getPage(url, IdNamedDto.class);
 
     assertThat(response.getContent().stream().map(serial -> serial.name)).containsExactly(
-      "aa", "caa", "aaaa", "abaa"
+      "AA", "CAA", "AAAA", "ABAA"
     );
   }
 
