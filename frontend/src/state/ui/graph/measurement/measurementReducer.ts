@@ -5,11 +5,12 @@ import {Action, ErrorResponse} from '../../../../types/Types';
 import * as reportActions from '../../../report/reportActions';
 import {ReportSector} from '../../../report/reportModels';
 import {search} from '../../../search/searchActions';
+import {SelectionInterval} from '../../../user-selection/userSelectionModels';
 import * as actions from './measurementActions';
 import {MeasurementResponse, MeasurementState} from './measurementModels';
 
 type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>
-  | Action<Maybe<ErrorResponse> | MeasurementResponse>;
+  | Action<Maybe<ErrorResponse> | MeasurementResponse | string | SelectionInterval>;
 
 export const initialState: MeasurementState = {
   isFetching: false,
@@ -59,6 +60,7 @@ const measurementReducerFor =
         case getType(reportActions.removeAllByType(sector)):
         case getType(reportActions.toggleQuantityByType(sector)):
         case getType(reportActions.toggleQuantityById(sector)):
+          return initialState;
         default:
           return resetReducer(state, action, initialState);
       }
