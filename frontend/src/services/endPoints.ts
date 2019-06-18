@@ -1,6 +1,9 @@
 export const enum EndPoints {
   addresses = '/selections/addresses',
   cities = '/selections/cities',
+  collectionStats = '/meters/collection-stats',
+  collectionStatFacility = '/meters/stats/facility',
+  collectionStatDate = '/meters/stats/date',
   facilities = '/selections/facilities',
   gatewaySerials = '/selections/gateway-serials',
   media = '/selections/media',
@@ -26,8 +29,6 @@ export const enum EndPoints {
   userSelections = '/user/selections',
   users = '/users',
   changePassword = '/users/change-password',
-  collectionStatFacility = '/meters/stats/facility',
-  collectionStatDate = '/meters/stats/date',
   meterDefinitions = '/meter-definitions',
   mediums = '/meter-definitions/medium',
   quantities = '/meter-definitions/quantities',

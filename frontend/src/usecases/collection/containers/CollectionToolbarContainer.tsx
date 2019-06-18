@@ -1,43 +1,30 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {OnChangeToolbarView, ToolbarViewSettings} from '../../../state/ui/toolbar/toolbarModels';
-import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
-import {Callback, CallbackWith, Sectors} from '../../../types/Types';
-import {changeToolbarView, exportToExcel, setCollectionTimePeriod} from '../collectionActions';
-import {CollectionToolbar} from '../components/CollectionToolbar';
-
-export interface StateToProps extends ToolbarViewSettings {
-  hasCollectionStats: boolean;
-  isFetching: boolean;
-  isExportingToExcel: boolean;
-  timePeriod: SelectionInterval;
-}
-
-export interface DispatchToProps {
-  changeToolbarView: OnChangeToolbarView;
-  exportToExcel: Callback;
-  setCollectionTimePeriod: CallbackWith<SelectionInterval>;
-}
+import {
+  changeToolbarView,
+  exportCollectionStatsToExcel as exportToExcel,
+  setCollectionStatsTimePeriod
+} from '../collectionActions';
+import {CollectionToolbar, DispatchToProps, StateToProps} from '../components/CollectionToolbar';
 
 const mapStateToProps = ({
   collection: {isExportingToExcel, timePeriod},
   domainModels: {collectionStats: {isFetching, result}},
   ui: {toolbar: {collection: {view}}}
-}: RootState): StateToProps =>
-  ({
-    hasCollectionStats: result.length > 0,
-    isFetching,
-    isExportingToExcel,
-    view,
-    timePeriod,
-  });
+}: RootState): StateToProps => ({
+  canExportToExcel: true,
+  hasCollectionStats: result.length > 0,
+  isFetching,
+  isExportingToExcel,
+  view,
+  timePeriod,
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView,
   exportToExcel,
-  setCollectionTimePeriod: setCollectionTimePeriod(Sectors.collection),
+  setCollectionStatsTimePeriod,
 }, dispatch);
 
-export const CollectionToolbarContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionToolbar);
+export const CollectionToolbarContainer = connect(mapStateToProps, mapDispatchToProps)(CollectionToolbar);

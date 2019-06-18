@@ -3,9 +3,9 @@ import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/type-helpers';
 import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
-import {Action, ErrorResponse, Identifiable, uuid, ActionKey, Sectors} from '../../types/Types';
+import {Action, ActionKey, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
-import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
+import {setMeterCollectionStatsTimePeriod} from '../../usecases/collection/collectionActions';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterDetailMeasurementRequest} from '../../usecases/meter/measurements/meterDetailMeasurementActions';
 import {meterDetailMeasurement} from '../../usecases/meter/measurements/meterDetailMeasurementReducer';
@@ -20,7 +20,6 @@ import {
   domainModelsClearError,
   domainModelsDeleteSuccess,
   domainModelsFailure,
-  domainModelsGetEntitiesSuccess,
   domainModelsGetEntitySuccess,
   domainModelsGetSuccess,
   domainModelsPostSuccess,
@@ -53,22 +52,6 @@ const setEntities = <T extends Identifiable>(
     isFetching: false,
     isSuccessfullyFetched: true,
     entities,
-    result,
-    total: result.length,
-  };
-};
-
-const addEntities = <T extends Identifiable>(
-  entity: string,
-  state: NormalizedState<T>,
-  payload: Normalized<T>,
-): NormalizedState<T> => {
-  const entities: ObjectsById<T> = entity in payload.entities ? payload.entities[entity] : {};
-  const result: uuid[] = [...state.result, ...payload.result];
-  return {
-    ...state,
-    isFetching: false,
-    entities: {...state.entities, ...entities},
     result,
     total: result.length,
   };
@@ -143,8 +126,6 @@ const reducerFor = <T extends Identifiable>(
         return {...state, isFetching: true};
       case domainModelsGetSuccess(actionKey):
         return setEntities<T>(entity, state, (action as Action<Normalized<T>>).payload);
-      case domainModelsGetEntitiesSuccess(actionKey):
-        return addEntities<T>(entity, state, (action as Action<Normalized<T>>).payload);
       case domainModelsGetEntitySuccess(actionKey):
         return addEntity<T>(state, action as Action<T>);
       case domainModelsPostSuccess(actionKey):
@@ -183,7 +164,7 @@ const resetMeterCollectionReducer = <T extends Identifiable>(
   action: ActionTypes<T>,
 ): NormalizedState<T> => {
   switch (action.type) {
-    case getType(setCollectionTimePeriod(Sectors.meterCollection)):
+    case getType(setMeterCollectionStatsTimePeriod):
     case getType(meterDetailMeasurementRequest):
       return initialDomain<T>();
     default:
@@ -251,6 +232,12 @@ export const userSelections = reducerFor<UserSelection>(
   resetStateOnLogoutReducer
 );
 
+export const allCollectionStats = reducerFor<CollectionStat>(
+  'allCollectionStats',
+  EndPoints.collectionStats,
+  resetStateReducer
+);
+
 export const collectionStats = reducerFor<CollectionStat>(
   'collectionStats',
   Sectors.collection,
@@ -276,18 +263,19 @@ export const widgets = reducerFor<Widget>(
 );
 
 export const domainModels = combineReducers<DomainModelsState>({
+  allCollectionStats,
   collectionStats,
-  meterCollectionStats,
   dashboards,
   gatewayMapMarkers,
   mediums,
+  meterCollectionStats,
   meters,
   meterDetailMeasurement,
   meterMapMarkers,
   meterDefinitions,
   organisations,
-  subOrganisations,
   quantities,
+  subOrganisations,
   userSelections,
   users,
   widgets,

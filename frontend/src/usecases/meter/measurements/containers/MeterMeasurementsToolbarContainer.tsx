@@ -6,7 +6,7 @@ import {ThemeContext, withCssStyles} from '../../../../components/hoc/withThemeP
 import {RootState} from '../../../../reducers/rootReducer';
 import {ResolutionAware} from '../../../../state/report/reportModels';
 import {changeMeterMeasurementsToolbarView} from '../../../../state/ui/toolbar/toolbarActions';
-import {OnChangeToolbarView, ToolbarViewSettings} from '../../../../state/ui/toolbar/toolbarModels';
+import {OnChangeToolbarView, ToolbarViewSettingsProps} from '../../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith} from '../../../../types/Types';
 import {MeterMeasurementsToolbar} from '../components/MeterMeasurementsToolbar';
@@ -15,7 +15,7 @@ import {exportToExcel} from '../meterDetailMeasurementActions';
 import {getMeterResolution} from '../meterDetailMeasurementsSelectors';
 import {OwnProps} from '../meterDetailModels';
 
-interface StateToProps extends ResolutionAware, ToolbarViewSettings {
+interface StateToProps extends ResolutionAware, ToolbarViewSettingsProps {
   hasMeasurements: boolean;
   isExportingToExcel: boolean;
   isFetching: boolean;

@@ -45,8 +45,3 @@ export interface ApiResultSortingOptions {
   ascending: boolean;
   descending: boolean;
 }
-
-export interface PaginationLookupState {
-  entityType: keyof PaginatedDomainModelsState;
-  pagination: PaginationState;
-}

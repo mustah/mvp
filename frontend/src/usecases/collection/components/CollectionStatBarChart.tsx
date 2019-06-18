@@ -98,9 +98,7 @@ export const CollectionStatBarChart = ({
   parameters,
 }: Props) => {
   React.useEffect(() => {
-    if (parameters) {
-      fetchCollectionStats(parameters);
-    }
+    fetchCollectionStats(parameters);
   }, [parameters]);
 
   const data = toArray(collectionStats);

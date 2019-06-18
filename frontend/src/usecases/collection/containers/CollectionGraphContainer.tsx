@@ -3,42 +3,33 @@ import {bindActionCreators} from 'redux';
 import {Maybe} from '../../../helpers/Maybe';
 import {encodeRequestParameters, requestParametersFrom} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
-import {
-  collectionStatClearError,
-  fetchCollectionStats
-} from '../../../state/domain-models/collection-stat/collectionStatActions';
-import {CollectionStat, FetchCollectionStats} from '../../../state/domain-models/collection-stat/collectionStatModels';
+import {clearCollectionStatsError as clearError} from '../../../state/domain-models-paginated/collection-stat/collectionStatActions';
+import {fetchCollectionStats} from '../../../state/domain-models/collection-stat/collectionStatActions';
+import {CollectionStat} from '../../../state/domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
-import {Callback, EncodedUriParameters, ErrorResponse, OnClick, Sectors} from '../../../types/Types';
-import {exportToExcelSuccess} from '../collectionActions';
+import {EncodedUriParameters, ErrorResponse, Fetch, OnClick} from '../../../types/Types';
 import {getCollectionStatRequestParameters} from '../collectionSelectors';
 import {CollectionStatBarChart} from '../components/CollectionStatBarChart';
 
 export interface StateToProps {
   collectionStats: ObjectsById<CollectionStat>;
   error: Maybe<ErrorResponse>;
-  isExportingToExcel: boolean;
   isFetching: boolean;
   parameters: EncodedUriParameters;
 }
 
 export interface DispatchToProps {
   clearError: OnClick;
-  exportToExcelSuccess: Callback;
-  fetchCollectionStats: FetchCollectionStats;
+  fetchCollectionStats: Fetch;
 }
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
-  const {
-    collection: {isExportingToExcel},
-    domainModels: {collectionStats},
-  } = rootState;
+  const {domainModels: {collectionStats}} = rootState;
 
   return ({
     collectionStats: collectionStats.entities,
     error: getError(collectionStats),
-    isExportingToExcel,
     isFetching: collectionStats.isFetching,
     parameters: encodeRequestParameters(
       requestParametersFrom(getCollectionStatRequestParameters(rootState).selectionParameters)
@@ -47,10 +38,8 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  clearError: collectionStatClearError,
-  exportToExcelSuccess: exportToExcelSuccess(Sectors.collection),
+  clearError,
   fetchCollectionStats,
 }, dispatch);
 
-export const CollectionGraphContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionStatBarChart);
+export const CollectionGraphContainer = connect(mapStateToProps, mapDispatchToProps)(CollectionStatBarChart);

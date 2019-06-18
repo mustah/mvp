@@ -53,7 +53,7 @@ export enum RequestParameter {
   w = 'w',
 }
 
-const requestParametersBySelectionParameters: ParameterNames = {
+const requestParameterNames: ParameterNames = {
   addresses: RequestParameter.address,
   alarms: RequestParameter.alarm,
   cities: RequestParameter.city,
@@ -71,16 +71,8 @@ const requestParametersBySelectionParameters: ParameterNames = {
   w: RequestParameter.w,
 };
 
-const collectionStatParameters: ParameterNames = {
-  ...requestParametersBySelectionParameters,
-};
-
-const gatewayParameters: ParameterNames = {
-  ...requestParametersBySelectionParameters,
-};
-
-export const meterParameters: ParameterNames & MeterParameterNames = {
-  ...requestParametersBySelectionParameters,
+export const meterParameterNames: ParameterNames & MeterParameterNames = {
+  ...requestParameterNames,
   meterIds: 'id',
 };
 
@@ -116,7 +108,7 @@ const mapRequestParameters =
       );
     }
 
-    const apiParameter = requestParametersBySelectionParameters[selectedParameter];
+    const apiParameter = requestParameterNames[selectedParameter];
     if (apiParameter && value.length) {
       return {
         [apiParameter]: (value as IdNamed[]).map((value: IdNamed) => value.id.toString()),
@@ -166,6 +158,7 @@ export const toPaginationApiParameters = ({page, size}: Pagination) => [
 export const toWildcardApiParameter = (query?: string): string[] => query ? [`w=${query}`] : [];
 
 type SelectedParametersById = Omit<SelectedParameters, 'dateRange' | 'threshold'>;
+
 export type EntityApiParametersFactory =
   (selectionParameters: SelectedParametersById) => EncodedUriParameters[];
 
@@ -179,17 +172,13 @@ export const toThresholdParameter = (threshold: ThresholdQuery | undefined): Enc
     ? ['threshold=' + encodeURIComponent(thresholdAsString(threshold!))]
     : [];
 
-export const entityApiParametersCollectionStatFactory =
+export const makeApiParameters =
   (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>
-    parametersById(selectionParameters, collectionStatParameters);
+    parametersById(selectionParameters, requestParameterNames);
 
-export const entityApiParametersMetersFactory =
+export const makeMeterApiParameters =
   (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>
-    parametersById(selectionParameters, meterParameters);
-
-export const entityApiParametersGatewaysFactory =
-  (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>
-    parametersById(selectionParameters, gatewayParameters);
+    parametersById(selectionParameters, meterParameterNames);
 
 const makeParameter = (parameterNames: ParameterNames, parameter: string, value: string): string =>
   `${parameterNames[parameter]}=${encodeURIComponent(value)}`;
@@ -207,13 +196,13 @@ const parametersById =
             .map((id: uuid) => makeParameter(parameterNames, parameter, id.toString())),
         ], []);
 
-const toMeterIdParameters = (id: uuid) => makeParameter(meterParameters, 'meterIds', id.toString());
+const toMeterIdParameters = (id: uuid) => makeParameter(meterParameterNames, 'meterIds', id.toString());
 
 export const toMeterIdsApiParameters = (ids: uuid[]): string =>
   encodedUriParametersFrom(ids.map(toMeterIdParameters));
 
 export const toGatewayIdsApiParameters = (_: uuid[], gatewayId: uuid): string =>
-  encodedUriParametersFrom([makeParameter(meterParameters, 'gatewayIds', gatewayId.toString())]);
+  encodedUriParametersFrom([makeParameter(meterParameterNames, 'gatewayIds', gatewayId.toString())]);
 
 export const makeApiParametersOf =
   ({period, customDateRange}: SelectionInterval): EncodedUriParameters =>

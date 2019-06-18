@@ -6,31 +6,69 @@ import {iconSizeMedium} from '../../../app/themes';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
+import {withContent} from '../../../components/hoc/withContent';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {RowMiddle} from '../../../components/layouts/row/Row';
+import {SmallLoader} from '../../../components/loading/SmallLoader';
 import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
-import {DispatchToProps, StateToProps} from '../containers/CollectionToolbarContainer';
+import {OnChangeToolbarView, ToolbarView, ToolbarViewSettingsProps} from '../../../state/ui/toolbar/toolbarModels';
+import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
+import {Callback, CallbackWith, HasContent} from '../../../types/Types';
+
+export interface StateToProps extends ToolbarViewSettingsProps {
+  canExportToExcel?: boolean;
+  hasCollectionStats: boolean;
+  isFetching: boolean;
+  isExportingToExcel: boolean;
+  timePeriod: SelectionInterval;
+}
+
+export interface DispatchToProps {
+  changeToolbarView: OnChangeToolbarView;
+  exportToExcel: Callback;
+  setCollectionStatsTimePeriod: CallbackWith<SelectionInterval>;
+}
 
 type Props = StateToProps & DispatchToProps & ThemeContext;
 
-export const CollectionToolbar = withCssStyles(({
-  changeToolbarView,
+type WrapperProps = Props & HasContent;
+
+const ExportToExcelButton = withContent<WrapperProps>(({
   cssStyles: {primary},
   hasCollectionStats,
   exportToExcel,
   isExportingToExcel,
   isFetching,
-  view,
-  setCollectionTimePeriod,
-  timePeriod,
-}: Props) => {
+}: Props) => (
+  <SmallLoader isFetching={isExportingToExcel} loadingStyle={{marginLeft: 6, marginTop: 2}}>
+    <ToolbarIconButton
+      iconStyle={iconSizeMedium}
+      disabled={isFetching || !hasCollectionStats}
+      onClick={exportToExcel}
+      style={{marginLeft: 0}}
+      tooltip={firstUpperTranslated('export to excel')}
+    >
+      <CloudDownload color={primary.fg} hoverColor={primary.fgHover}/>
+    </ToolbarIconButton>
+  </SmallLoader>
+));
+
+export const CollectionToolbar = withCssStyles((props: Props) => {
+  const {
+    changeToolbarView,
+    cssStyles: {primary},
+    view,
+    setCollectionStatsTimePeriod,
+    timePeriod,
+  } = props;
+  const exportToExcelProps: WrapperProps = {...props, hasContent: !!props.canExportToExcel};
+
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
-  const selectPeriod = (period: Period) => setCollectionTimePeriod({period});
-  const setCustomDateRange = (customDateRange: DateRange) => setCollectionTimePeriod({
+  const selectPeriod = (period: Period) => setCollectionStatsTimePeriod({period});
+  const setCustomDateRange = (customDateRange: DateRange) => setCollectionStatsTimePeriod({
     period: Period.custom,
     customDateRange
   });
@@ -60,15 +98,7 @@ export const CollectionToolbar = withCssStyles(({
         </ToolbarViewSettings>
 
         <RowMiddle>
-          <ToolbarIconButton
-            iconStyle={iconSizeMedium}
-            disabled={isFetching || isExportingToExcel || !hasCollectionStats}
-            onClick={exportToExcel}
-            style={{marginLeft: 16}}
-            tooltip={firstUpperTranslated('export to excel')}
-          >
-            <CloudDownload color={primary.fg} hoverColor={primary.fgHover}/>
-          </ToolbarIconButton>
+          <ExportToExcelButton {...exportToExcelProps}/>
         </RowMiddle>
       </ToolbarLeftPane>
 

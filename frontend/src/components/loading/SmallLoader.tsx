@@ -1,14 +1,15 @@
 import * as React from 'react';
-import {Children} from '../../types/Types';
-import {Row} from '../layouts/row/Row';
+import {Children, Styled} from '../../types/Types';
+import {Row, RowCenter} from '../layouts/row/Row';
 import {LoadingSmall} from './Loading';
 
-interface Props {
+interface Props extends Styled {
   children: Children;
   isFetching: boolean;
+  loadingStyle?: React.CSSProperties;
 }
 
-export const SmallLoader = ({isFetching, children}: Props) =>
+export const SmallLoader = ({isFetching, children, loadingStyle, style}: Props) =>
   isFetching
-    ? <Row className="SmallLoader"><LoadingSmall/></Row>
+    ? <RowCenter style={style}><LoadingSmall style={loadingStyle}/></RowCenter>
     : <Row>{children}</Row>;

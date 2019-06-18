@@ -1,12 +1,14 @@
 import {ActionType, getType} from 'typesafe-actions';
 import {Period} from '../../components/dates/dateModels';
-import {Maybe} from '../../helpers/Maybe';
-import * as reportActions from '../../state/report/reportActions';
-import {search} from '../../state/search/searchActions';
-import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {Action, ErrorResponse, Sectors} from '../../types/Types';
 import {logoutUser} from '../auth/authActions';
-import * as actions from './collectionActions';
+import {
+  collectionStatsExportToExcel,
+  collectionStatsExportToExcelSuccess,
+  meterCollectionStatsExportToExcel,
+  meterCollectionStatsExportToExcelSuccess,
+  setCollectionStatsTimePeriod,
+  setMeterCollectionStatsTimePeriod
+} from './collectionActions';
 import {CollectionState} from './collectionModels';
 
 const initialState: CollectionState = {
@@ -14,21 +16,28 @@ const initialState: CollectionState = {
   timePeriod: {period: Period.yesterday},
 };
 
-type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>
-  | Action<Maybe<ErrorResponse>
-  | SelectionInterval>;
+type ActionTypes = ActionType<typeof setCollectionStatsTimePeriod
+  | typeof setMeterCollectionStatsTimePeriod
+  | typeof collectionStatsExportToExcel
+  | typeof meterCollectionStatsExportToExcel
+  | typeof collectionStatsExportToExcelSuccess
+  | typeof meterCollectionStatsExportToExcelSuccess
+  | typeof logoutUser>;
 
-const collectionReducer = (sector: Sectors) =>
+export const collection =
   (state: CollectionState = initialState, action: ActionTypes): CollectionState => {
     switch (action.type) {
-      case getType(actions.setCollectionTimePeriod(sector)):
-        return {
-          ...state,
-          timePeriod: (action.payload as SelectionInterval),
-        };
-      case getType(actions.exportToExcelAction(sector)):
+      case getType(setCollectionStatsTimePeriod):
+        return {...state, timePeriod: action.payload};
+      case getType(setMeterCollectionStatsTimePeriod):
+        return {...state, timePeriod: action.payload};
+      case getType(collectionStatsExportToExcel):
         return {...state, isExportingToExcel: true};
-      case getType(actions.exportToExcelSuccess(sector)):
+      case getType(meterCollectionStatsExportToExcel):
+        return {...state, isExportingToExcel: true};
+      case getType(collectionStatsExportToExcelSuccess):
+        return {...state, isExportingToExcel: false};
+      case getType(meterCollectionStatsExportToExcelSuccess):
         return {...state, isExportingToExcel: false};
       case getType(logoutUser):
         return initialState;
@@ -36,7 +45,3 @@ const collectionReducer = (sector: Sectors) =>
         return state;
     }
   };
-
-export const collection = collectionReducer(Sectors.collection);
-
-export const meterCollection = collectionReducer(Sectors.meterCollection);

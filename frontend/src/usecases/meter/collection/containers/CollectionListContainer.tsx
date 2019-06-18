@@ -1,22 +1,23 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {noop} from '../../../../helpers/commonHelpers';
 import {
   encodedUriParametersFrom,
   makeCollectionPeriodParametersOf,
   RequestParameter
 } from '../../../../helpers/urlFactory';
 import {RootState} from '../../../../reducers/rootReducer';
-import {fetchMeterCollectionStatsFacilityPaged} from '../../../../state/domain-models-paginated/collection-stat/collectionStatActions';
-import {sortMeterCollectionStats} from '../../../../state/domain-models-paginated/paginatedDomainModelsActions';
+import {fetchMeterCollectionStatsFacilityPaged as fetchCollectionStatsFacilityPaged} from '../../../../state/domain-models-paginated/collection-stat/collectionStatActions';
+import {sortMeterCollectionStats as sortTable} from '../../../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
   getCollectionStats,
   getPageIsFetching
 } from '../../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {changePage} from '../../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../../state/ui/pagination/paginationModels';
-import {getPaginatedCollectionStatParameters} from '../../../../state/user-selection/userSelectionSelectors';
-import {EncodedUriParameters, Sectors, uuid} from '../../../../types/Types';
-import {exportToExcelSuccess} from '../../../collection/collectionActions';
+import {getPaginatedApiParameters} from '../../../../state/user-selection/userSelectionSelectors';
+import {EncodedUriParameters, uuid} from '../../../../types/Types';
+import {meterCollectionStatsExportToExcelSuccess as exportToExcelSuccess} from '../../../collection/collectionActions';
 import {
   CollectionListContent,
   DispatchToProps,
@@ -46,7 +47,7 @@ const mapStateToProps = (
   const parameters: EncodedUriParameters = encodedUriParametersFrom([
     `${RequestParameter.logicalMeterId}=${meterId}`,
     makeCollectionPeriodParametersOf(timePeriod),
-    getPaginatedCollectionStatParameters({
+    getPaginatedApiParameters({
       sort,
       pagination,
       userSelection,
@@ -57,10 +58,12 @@ const mapStateToProps = (
 
   return ({
     entityType: 'meterCollectionStatFacilities',
+    excelExportParameters: '',
     hasContent: isFetching || totalElements > 0 || numMeters > 0,
     isExportingToExcel,
     isFetching,
     items: getCollectionStats(meterCollectionStatFacilities),
+    itemsToExport: [],
     parameters,
     pagination,
     selectedItemId,
@@ -70,9 +73,10 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changePage,
-  exportToExcelSuccess: exportToExcelSuccess(Sectors.meterCollection),
-  fetchCollectionStatsFacilityPaged: fetchMeterCollectionStatsFacilityPaged,
-  sortTable: sortMeterCollectionStats,
+  exportToExcelSuccess,
+  fetchAllCollectionStats: noop,
+  fetchCollectionStatsFacilityPaged,
+  sortTable,
 }, dispatch);
 
 export const CollectionListContainer =

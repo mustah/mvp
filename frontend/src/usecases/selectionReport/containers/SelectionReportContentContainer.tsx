@@ -6,11 +6,11 @@ import {getPaginatedResult} from '../../../state/domain-models-paginated/paginat
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {addAllToSelectionReport} from '../../../state/report/reportActions';
 import {LegendItem} from '../../../state/report/reportModels';
-import {ToolbarViewSettings} from '../../../state/ui/toolbar/toolbarModels';
+import {ToolbarViewSettingsProps} from '../../../state/ui/toolbar/toolbarModels';
 import {CallbackWith, uuid} from '../../../types/Types';
 import {SelectionReport} from '../components/SelectionReport';
 
-interface StateToProps extends ToolbarViewSettings {
+interface StateToProps extends ToolbarViewSettingsProps {
   legendItems: LegendItem[];
   result: uuid[];
   entities: ObjectsById<Meter>;

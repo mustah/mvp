@@ -12,12 +12,12 @@ import {ReportSector, ResolutionAware} from '../../../state/report/reportModels'
 import {getMeterLegendItems, hasLegendItems} from '../../../state/report/reportSelectors';
 import {exportSelectionReportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
-import {OnChangeToolbarView, ToolbarViewSettings} from '../../../state/ui/toolbar/toolbarModels';
+import {OnChangeToolbarView, ToolbarViewSettingsProps} from '../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {ReportToolbar} from '../../report/components/ReportToolbar';
 
-interface StateToProps extends ToolbarViewSettings, ResolutionAware {
+interface StateToProps extends ToolbarViewSettingsProps, ResolutionAware {
   canShowAverage: boolean;
   hasLegendItems: boolean;
   hasMeasurements: boolean;

@@ -1,22 +1,24 @@
 import {createSelector} from 'reselect';
 import {Period} from '../../components/dates/dateModels';
+import {identity} from '../../helpers/commonHelpers';
 import {byNameAsc} from '../../helpers/comparators';
 import {CurrentPeriod, toPeriodApiParameters} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {getTranslationOrName} from '../../helpers/translations';
 import {
   encodedUriParametersFrom,
-  entityApiParametersCollectionStatFactory,
   EntityApiParametersFactory,
-  entityApiParametersGatewaysFactory,
-  entityApiParametersMetersFactory,
+  makeApiParameters,
+  makeCollectionPeriodParametersOf,
+  makeMeterApiParameters,
   toPaginationApiParameters,
   toThresholdParameter,
   toWildcardApiParameter,
 } from '../../helpers/urlFactory';
+import {RootState} from '../../reducers/rootReducer';
 
 import {EncodedUriParameters, uuid} from '../../types/Types';
-import {SortOption, Pagination} from '../ui/pagination/paginationModels';
+import {Pagination, SortOption} from '../ui/pagination/paginationModels';
 import {
   ParameterName,
   SelectedParameters,
@@ -69,7 +71,9 @@ export const getSelectedGatewaySerials = getSelectedItems(ParameterName.gatewayS
 export const getThreshold = (state: UserSelectionState): ThresholdQuery | undefined =>
   getSelectionParameters(state).threshold;
 
-export const getUserSelectionId = (state: UserSelectionState): uuid => state.userSelection.id;
+export const getUserSelection = (state: UserSelectionState): UserSelection => state.userSelection;
+
+export const getUserSelectionId = (state: UserSelectionState): uuid => getUserSelection(state).id;
 
 const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
   const {start} = state;
@@ -89,6 +93,9 @@ const toSortParameters = (sort: SortOption[] | undefined): EncodedUriParameters[
       `sort=${encodeURIComponent(field)}${dir ? ',' + dir : ''}`
     )
     : [];
+
+const toLimitParameter = (limit?: number): EncodedUriParameters[] =>
+  Maybe.maybe(limit).map(it => [`limit=${it}`]).orElse([]);
 
 const defaultPeriod: CurrentPeriod = {
   customDateRange: Maybe.nothing(),
@@ -115,23 +122,29 @@ const determineActivePeriod = (
   return defaultPeriod;
 };
 
+interface Parameters {
+  limit: number;
+  query: string;
+}
+
 const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) =>
   createSelector<UriLookupStatePaginated,
-    string,
+    Parameters,
     Pagination,
     SortOption[] | undefined,
     SelectedParameters,
     CurrentPeriod,
     EncodedUriParameters>(
-    ({query}) => query!,
+    ({limit, query}) => ({query: query!, limit: limit!}),
     ({pagination}) => pagination,
     ({sort}) => sort,
     getSelectionParameters,
     getCurrentPeriod,
-    (query, pagination, sort, {dateRange, threshold, ...rest}, currentPeriod) => {
+    ({limit, query}, pagination, sort, {dateRange, threshold, ...rest}, currentPeriod) => {
       const thresholdParameter = toThresholdParameter(threshold);
       const parametersToEncode = [
         ...toSortParameters(sort),
+        ...toLimitParameter(limit),
         ...toPeriodApiParameters(determineActivePeriod(query !== undefined, currentPeriod, threshold)),
         ...toPaginationApiParameters(pagination),
       ];
@@ -171,19 +184,47 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     },
   );
 
-export const getPaginatedCollectionStatParameters =
-  getPaginatedParameters(entityApiParametersCollectionStatFactory);
-
-export const getPaginatedMeterParameters = getPaginatedParameters(entityApiParametersMetersFactory);
-
-export const getPaginatedGatewayParameters = getPaginatedParameters(entityApiParametersGatewaysFactory);
-
-export const getMeterParameters = getParameters(entityApiParametersMetersFactory);
-
 export const allCurrentMeterParameters = encodedUriParametersFrom(toPeriodApiParameters(defaultPeriod));
 
-export const getGatewayParameters = getParameters(entityApiParametersGatewaysFactory);
+export const getPaginatedMeterParameters = getPaginatedParameters(makeMeterApiParameters);
 
-export const getCollectionStatParameters = getParameters(entityApiParametersCollectionStatFactory);
+export const getMeterParameters = getParameters(makeMeterApiParameters);
 
-export const getUserSelection = (state: UserSelectionState): UserSelection => state.userSelection;
+export const getPaginatedApiParameters = getPaginatedParameters(makeApiParameters);
+
+export const getApiParameters = getParameters(makeApiParameters);
+
+export const getCollectionStatsParameters = createSelector<RootState, RootState, EncodedUriParameters>(
+  identity,
+  ({
+    collection: {timePeriod},
+    paginatedDomainModels: {collectionStatFacilities: {sort}},
+    search: {validation: {query}},
+    ui: {pagination: {collectionStatFacilities: pagination}},
+    userSelection: {userSelection}
+  }: RootState) =>
+    `${makeCollectionPeriodParametersOf(timePeriod)}&${getPaginatedApiParameters({
+      sort,
+      pagination,
+      userSelection,
+      query,
+    })}`
+);
+
+export const getCollectionStatsExcelExportParameters = createSelector<RootState, RootState, EncodedUriParameters>(
+  identity,
+  ({
+    collection: {timePeriod},
+    paginatedDomainModels: {collectionStatFacilities: {sort}},
+    search: {validation: {query}},
+    ui: {pagination: {collectionStatFacilities: pagination}},
+    userSelection: {userSelection}
+  }: RootState) =>
+    `${makeCollectionPeriodParametersOf(timePeriod)}&${getPaginatedApiParameters({
+      limit: pagination.totalElements,
+      pagination,
+      query,
+      userSelection,
+      sort,
+    })}`
+);

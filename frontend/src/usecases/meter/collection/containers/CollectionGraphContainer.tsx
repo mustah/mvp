@@ -4,11 +4,11 @@ import {encodeRequestParameters, requestParametersFrom} from '../../../../helper
 import {RootState} from '../../../../reducers/rootReducer';
 import {
   fetchMeterCollectionStats as fetchCollectionStats,
-  meterCollectionStatClearError
+  meterCollectionStatClearError as clearError,
 } from '../../../../state/domain-models/collection-stat/collectionStatActions';
 import {getError} from '../../../../state/domain-models/domainModelsSelectors';
-import {Sectors, uuid} from '../../../../types/Types';
-import {exportToExcelSuccess} from '../../../collection/collectionActions';
+import {uuid} from '../../../../types/Types';
+import {meterCollectionStatsExportToExcelSuccess as exportToExcelSuccess} from '../../../collection/collectionActions';
 import {CollectionStatBarChart} from '../../../collection/components/CollectionStatBarChart';
 import {DispatchToProps, StateToProps} from '../../../collection/containers/CollectionGraphContainer';
 
@@ -18,7 +18,7 @@ interface OwnProps {
 
 const mapStateToProps = (
   {
-    meterCollection: {isExportingToExcel, timePeriod},
+    meterCollection: {timePeriod},
     domainModels: {meterCollectionStats},
   }: RootState,
   {meterId}: OwnProps
@@ -31,15 +31,14 @@ const mapStateToProps = (
   return ({
     collectionStats: meterCollectionStats.entities,
     error: getError(meterCollectionStats),
-    isExportingToExcel,
     isFetching: meterCollectionStats.isFetching,
     parameters,
   });
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  clearError: meterCollectionStatClearError,
-  exportToExcelSuccess: exportToExcelSuccess(Sectors.meterCollection),
+  clearError,
+  exportToExcelSuccess,
   fetchCollectionStats,
 }, dispatch);
 

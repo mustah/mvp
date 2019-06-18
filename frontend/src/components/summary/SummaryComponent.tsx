@@ -20,7 +20,7 @@ export const SummaryComponent = ({
 
   return (
     <Column className="SummaryComponent">
-      <SmallLoader isFetching={isFetching}>
+      <SmallLoader isFetching={isFetching} style={{marginRight: 72}}>
         <Summary title={translate('city', {count: numCities})} count={numCities}/>
         <Summary title={translate('address', {count: numAddresses})} count={numAddresses}/>
         <Summary title={translate('meter', {count: numMeters})} count={numMeters}/>

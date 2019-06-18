@@ -1,9 +1,7 @@
 import {normalize, schema} from 'normalizr';
-import {Normalized} from '../domainModels';
+import {DomainModelsState, Normalized} from '../domainModels';
 import {DataFormatter} from '../domainModelsActions';
 import {CollectionStat} from './collectionStatModels';
 
-const collectionStatDateSchema = [new schema.Entity('collectionStats')];
-
-export const collectionStatDateDataFormatter: DataFormatter<Normalized<CollectionStat>> =
-  (response) => normalize(response, collectionStatDateSchema);
+export const makeDataFormatter = (entityKey: keyof DomainModelsState): DataFormatter<Normalized<CollectionStat>> =>
+  (response) => normalize(response, [new schema.Entity(entityKey)]);
