@@ -1,29 +1,33 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {makeCollectionPeriodParametersOf} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {fetchCollectionStatsFacilityPaged} from '../../../state/domain-models-paginated/collection-stat/collectionStatActions';
-import {sortCollectionStats} from '../../../state/domain-models-paginated/paginatedDomainModelsActions';
+import {sortCollectionStats as sortTable} from '../../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
   getCollectionStats,
   getPageIsFetching
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
+import {fetchAllCollectionStats} from '../../../state/domain-models/collection-stat/collectionStatActions';
+import {getAllEntities} from '../../../state/domain-models/domainModelsSelectors';
 import {changePage} from '../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPaginatedCollectionStatParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {Sectors} from '../../../types/Types';
-import {exportToExcelSuccess} from '../collectionActions';
+import {
+  getCollectionStatsExcelExportParameters,
+  getCollectionStatsParameters
+} from '../../../state/user-selection/userSelectionSelectors';
+import {collectionStatsExportToExcelSuccess as exportToExcelSuccess} from '../collectionActions';
 import {CollectionListContent, DispatchToProps, StateToProps} from '../components/CollectionListContent';
 
-const mapStateToProps = ({
-  collection: {isExportingToExcel, timePeriod},
-  meterDetail: {selectedMeterId: selectedItemId},
-  paginatedDomainModels: {collectionStatFacilities},
-  search: {validation: {query}},
-  summary: {payload: {numMeters}},
-  ui: {pagination: paginationState},
-  userSelection: {userSelection}
-}: RootState): StateToProps => {
+const mapStateToProps = (rootState: RootState): StateToProps => {
+  const {
+    collection: {isExportingToExcel},
+    domainModels: {allCollectionStats},
+    meterDetail: {selectedMeterId: selectedItemId},
+    paginatedDomainModels: {collectionStatFacilities},
+    summary: {payload: {numMeters}},
+    ui: {pagination: paginationState},
+  }: RootState = rootState;
+
   const pagination: Pagination = paginationState.collectionStatFacilities;
   const {page, totalElements} = pagination;
   const {sort} = collectionStatFacilities;
@@ -31,16 +35,13 @@ const mapStateToProps = ({
 
   return ({
     entityType: 'collectionStatFacilities',
+    excelExportParameters: getCollectionStatsExcelExportParameters(rootState),
     hasContent: isFetching || totalElements > 0 || numMeters > 0,
     isExportingToExcel,
     isFetching,
     items: getCollectionStats(collectionStatFacilities),
-    parameters: `${makeCollectionPeriodParametersOf(timePeriod)}&${getPaginatedCollectionStatParameters({
-      sort,
-      pagination,
-      userSelection,
-      query,
-    })}`,
+    itemsToExport: getAllEntities(allCollectionStats),
+    parameters: getCollectionStatsParameters(rootState),
     pagination,
     selectedItemId,
     sort,
@@ -49,9 +50,10 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changePage,
-  exportToExcelSuccess: exportToExcelSuccess(Sectors.collection),
+  exportToExcelSuccess,
+  fetchAllCollectionStats,
   fetchCollectionStatsFacilityPaged,
-  sortTable: sortCollectionStats,
+  sortTable,
 }, dispatch);
 
 export const CollectionListContainer =

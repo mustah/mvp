@@ -1,22 +1,27 @@
 import {EndPoints} from '../../../services/endPoints';
 import {Sectors} from '../../../types/Types';
-import {clearError, fetchIfNeededForSector} from '../domainModelsActions';
+import {clearError, fetchIfNeeded, fetchIfNeededForSector} from '../domainModelsActions';
 import {CollectionStat} from './collectionStatModels';
-import {collectionStatDateDataFormatter} from './collectionStatSchema';
+import {makeDataFormatter} from './collectionStatSchema';
 
 export const meterCollectionStatClearError = clearError(Sectors.meterCollection);
-export const collectionStatClearError = clearError(EndPoints.collectionStatFacility);
 
 export const fetchCollectionStats = fetchIfNeededForSector<CollectionStat>(
   Sectors.collection,
   EndPoints.collectionStatDate,
   'collectionStats',
-  collectionStatDateDataFormatter,
+  makeDataFormatter('collectionStats'),
 );
 
 export const fetchMeterCollectionStats = fetchIfNeededForSector<CollectionStat>(
   Sectors.meterCollection,
   EndPoints.collectionStatDate,
   'meterCollectionStats',
-  collectionStatDateDataFormatter,
+  makeDataFormatter('collectionStats'),
+);
+
+export const fetchAllCollectionStats = fetchIfNeeded<CollectionStat>(
+  EndPoints.collectionStats,
+  'allCollectionStats',
+  makeDataFormatter('allCollectionStats'),
 );

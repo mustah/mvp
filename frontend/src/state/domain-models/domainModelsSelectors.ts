@@ -1,3 +1,4 @@
+import {toArray} from 'lodash';
 import {createSelector} from 'reselect';
 import {Maybe} from '../../helpers/Maybe';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
@@ -8,6 +9,10 @@ export const getResultDomainModels =
 
 export const getEntitiesDomainModels =
   <T extends Identifiable>(state: NormalizedState<T>): ObjectsById<T> => state.entities || {};
+
+export const getAllEntities =
+  <T extends Identifiable>({entities, result}: NormalizedState<T>): T[] =>
+    result.length ? toArray(entities) : [];
 
 export const getDomainModel =
   <T extends Identifiable>({entities, result}: DomainModel<T>): DomainModel<T> =>

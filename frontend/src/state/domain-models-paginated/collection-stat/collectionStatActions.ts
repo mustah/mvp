@@ -1,10 +1,13 @@
 import {EndPoints} from '../../../services/endPoints';
 import {Sectors} from '../../../types/Types';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
+import {clearError} from '../../domain-models/domainModelsActions';
 import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 import {fetchIfNeeded} from '../paginatedDomainModelsActions';
 import {collectionStatDataFormatter} from './collectionStatSchema';
+
+export const clearCollectionStatsError = clearError(EndPoints.collectionStatFacility);
 
 export const fetchCollectionStatsFacilityPaged = fetchIfNeeded<CollectionStat>(
   Sectors.collectionStatFacilities,

@@ -113,6 +113,7 @@ export interface UserSelectionState {
 }
 
 export interface UriLookupState extends UserSelectionState, Query {
+  limit?: number;
   start?: Date;
 }
 

@@ -3,7 +3,6 @@ import {action} from 'typesafe-actions';
 import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {Maybe} from '../helpers/Maybe';
 import {EndPoints} from '../services/endPoints';
-import {PageNumbered} from '../state/domain-models-paginated/paginatedDomainModels';
 import {SortOption} from '../state/ui/pagination/paginationModels';
 
 export type uuid = string | number;
@@ -33,12 +32,10 @@ export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => vo
 export type RenderFunction<T> = (props: T) => Children;
 
 export type Fetch = (parameters?: EncodedUriParameters) => void;
+export type FetchPaginated = (page: number, requestModel?: string, sortingOptions?: SortOption[]) => void;
 export type OnFetch = (url: EndPoints | string, parameters?: EncodedUriParameters) => void;
 export type OnUpdate<T> = (endPoint: EndPoints | string, body: T) => void;
 export type ClearError = Callback;
-
-export type FetchPaginated = (page: number, requestModel?: string, sortingOptions?: SortOption[]) => void;
-export type ClearErrorPaginated = (payload: PageNumbered) => void;
 
 export type Predicate<T> = (value: T) => boolean;
 

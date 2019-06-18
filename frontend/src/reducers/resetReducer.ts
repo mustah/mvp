@@ -8,9 +8,11 @@ import {
   selectSavedSelectionAction,
   setThreshold
 } from '../state/user-selection/userSelectionActions';
-import {Sectors} from '../types/Types';
 import {logoutUser} from '../usecases/auth/authActions';
-import {setCollectionTimePeriod} from '../usecases/collection/collectionActions';
+import {
+  setCollectionStatsTimePeriod,
+  setMeterCollectionStatsTimePeriod
+} from '../usecases/collection/collectionActions';
 
 export const resetReducer = <S>(
   state: S,
@@ -24,8 +26,8 @@ export const resetReducer = <S>(
     case getType(resetSelection):
     case getType(search):
     case getType(selectSavedSelectionAction):
-    case getType(setCollectionTimePeriod(Sectors.collection)):
-    case getType(setCollectionTimePeriod(Sectors.meterCollection)):
+    case getType(setCollectionStatsTimePeriod):
+    case getType(setMeterCollectionStatsTimePeriod):
     case getType(setThreshold):
       return initialState;
     default:

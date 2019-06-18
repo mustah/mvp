@@ -2,7 +2,7 @@ import * as React from 'react';
 import {translate} from '../../../services/translationService';
 import {SelectedTab, TabName} from '../../../state/ui/tabs/tabsModels';
 import {CallbackWith, ClassNamed, WithChildren} from '../../../types/Types';
-import {CollectionStatContentContainer} from '../../../usecases/collection/containers/CollectionStatContentContainer';
+import {CollectionContentContainer} from '../../../usecases/collection/containers/CollectionContentContainer';
 import {MapMarkersContainer} from '../../../usecases/map/containers/MapMarkersContainer';
 import {SelectionReportContentContainer} from '../../../usecases/selectionReport/containers/SelectionReportContentContainer';
 import {Tab} from './Tab';
@@ -39,7 +39,7 @@ export const MainContentTabs = ({
       <MapMarkersContainer/>
     </TabContent>
     <TabContent tab={TabName.collection} selectedTab={selectedTab}>
-      {selectedTab === TabName.collection && <CollectionStatContentContainer/>}
+      {selectedTab === TabName.collection && <CollectionContentContainer/>}
     </TabContent>
     <TabContent tab={TabName.selectionReport} selectedTab={selectedTab}>
       {selectedTab === TabName.selectionReport && <SelectionReportContentContainer/>}

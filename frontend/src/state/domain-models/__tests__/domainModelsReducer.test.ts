@@ -277,6 +277,7 @@ describe('domainModelsReducer', () => {
 
     it('resets all domain models except the ones related to selection drop downs and dashboard', () => {
       const initialState: DomainModelsState = {
+        allCollectionStats: initialDomain(),
         gatewayMapMarkers: initialDomain(),
         meters: initialDomain(),
         meterMapMarkers: initialDomain(),
@@ -295,6 +296,7 @@ describe('domainModelsReducer', () => {
       };
 
       const isFetchingState: DomainModelsState = {
+        allCollectionStats: {...initialState.allCollectionStats, isFetching: true},
         gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
         meters: {...initialState.meters, isFetching: true},
         meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
@@ -312,9 +314,7 @@ describe('domainModelsReducer', () => {
         subOrganisations: {...initialState.subOrganisations, isFetching: true},
       };
 
-      const expected: DomainModelsState = {...initialState};
-
-      expect(domainModels(isFetchingState, resetSelection())).toEqual(expected);
+      expect(domainModels(isFetchingState, resetSelection())).toEqual(initialState);
     });
   });
 

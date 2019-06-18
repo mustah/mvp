@@ -478,7 +478,7 @@ describe('measurementActions', () => {
 
   });
 
-  describe('exportToExcel', () => {
+  describe('exportReportToExcel', () => {
 
     it('dispatches action if no export is ongoing', () => {
       const store = storeWith(initialState);

@@ -3,16 +3,16 @@ export const enum ToolbarView {
   table = 'table',
 }
 
-export interface ToolbarViewSettings {
+export interface ToolbarViewSettingsProps {
   view: ToolbarView;
 }
 
 export interface ToolbarState {
-  measurement: ToolbarViewSettings;
-  collection: ToolbarViewSettings;
-  meterMeasurement: ToolbarViewSettings;
-  meterCollection: ToolbarViewSettings;
-  selectionReport: ToolbarViewSettings;
+  measurement: ToolbarViewSettingsProps;
+  collection: ToolbarViewSettingsProps;
+  meterMeasurement: ToolbarViewSettingsProps;
+  meterCollection: ToolbarViewSettingsProps;
+  selectionReport: ToolbarViewSettingsProps;
 }
 
 export type OnChangeToolbarView = (view: ToolbarView) => void;

@@ -37,27 +37,27 @@ export interface NormalizedState<T extends Identifiable> extends DomainModel<T>,
 }
 
 export interface DomainModelsState {
+  allCollectionStats: NormalizedState<CollectionStat>;
+  collectionStats: NormalizedState<CollectionStat>;
+  dashboards: NormalizedState<Dashboard>;
   gatewayMapMarkers: NormalizedState<MapMarker>;
   meterMapMarkers: NormalizedState<MapMarker>;
   meters: NormalizedState<MeterDetails>;
+  meterDefinitions: NormalizedState<MeterDefinition>;
+  mediums: NormalizedState<Medium>;
+  meterCollectionStats: NormalizedState<CollectionStat>;
+  meterDetailMeasurement: MeasurementState;
   organisations: NormalizedState<Organisation>;
+  quantities: NormalizedState<Quantity>;
   subOrganisations: NormalizedState<Organisation>;
   userSelections: NormalizedState<UserSelection>;
   users: UserState;
-  meterDefinitions: NormalizedState<MeterDefinition>;
-  mediums: NormalizedState<Medium>;
-  quantities: NormalizedState<Quantity>;
-  collectionStats: NormalizedState<CollectionStat>;
-  meterCollectionStats: NormalizedState<CollectionStat>;
-  meterDetailMeasurement: MeasurementState;
-  dashboards: NormalizedState<Dashboard>;
   widgets: NormalizedState<Widget>;
 }
 
 export const enum RequestType {
   GET = 'GET',
   GET_ENTITY = 'GET_ENTITY',
-  GET_ENTITIES = 'GET_ENTITIES',
   POST = 'POST',
   PUT = 'PUT',
   DELETE = 'DELETE',

@@ -3,10 +3,10 @@ import {bindActionCreators} from 'redux';
 import {makeCollectionPeriodParametersOf} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {collectionStatClearError} from '../../../state/domain-models/collection-stat/collectionStatActions';
+import {clearCollectionStatsError as clearError} from '../../../state/domain-models-paginated/collection-stat/collectionStatActions';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
 import {resetSelection, selectSelection} from '../../../state/user-selection/userSelectionActions';
-import {getCollectionStatParameters} from '../../../state/user-selection/userSelectionSelectors';
+import {getApiParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {fetchCollectionStatsWidget} from '../../../state/widget/widgetActions';
 import {CollectionStatusWidget, DispatchToProps, OwnProps, StateToProps} from '../components/CollectionStatusWidget';
 
@@ -19,7 +19,7 @@ const mapStateToProps = (
   // TODO: fix
   const parameters =
     userSelection
-      ? makeCollectionPeriodParametersOf(selectionInterval) + '&' + getCollectionStatParameters({
+      ? makeCollectionPeriodParametersOf(selectionInterval) + '&' + getApiParameters({
       userSelection: {
         ...userSelection,
         selectionParameters: {
@@ -43,7 +43,7 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  clearError: collectionStatClearError, // TODO add id here
+  clearError,
   fetchCollectionStatsWidget,
   selectSelection,
   resetSelection,

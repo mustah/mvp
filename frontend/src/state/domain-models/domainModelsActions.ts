@@ -25,13 +25,12 @@ type ActionTypeFactory = (endPoint: EndPoints | string) => string;
 const domainModelsSuccess =
   (requestType: RequestType) =>
     (actionKey: ActionKey) =>
-      `DOMAIN_MODELS_${requestType}_SUCCESS${actionKey}`;
+      `DOMAIN_MODELS_${requestType}_SUCCESS_${actionKey}`;
 
-export const domainModelsRequest = (actionKey: ActionKey) => `DOMAIN_MODELS_REQUEST${actionKey}`;
-export const domainModelsFailure = (actionKey: ActionKey) => `DOMAIN_MODELS_FAILURE${actionKey}`;
+export const domainModelsRequest = (actionKey: ActionKey) => `DOMAIN_MODELS_REQUEST_${actionKey}`;
+export const domainModelsFailure = (actionKey: ActionKey) => `DOMAIN_MODELS_FAILURE_${actionKey}`;
 export const domainModelsGetSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET);
 export const domainModelsGetEntitySuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET_ENTITY);
-export const domainModelsGetEntitiesSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET_ENTITIES);
 export const domainModelsPostSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.POST);
 export const domainModelsPutSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.PUT);
 export const domainModelsDeleteSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.DELETE);
@@ -144,47 +143,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
   formatData: DataFormatter<Normalized<T>>,
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
 ) =>
-  (requestData?: EncodedUriParameters) =>
-    (dispatch: Dispatch, getState: GetState): Promise<void> | null => {
-      if (shouldFetch(getState().domainModels[entityType])) {
-        const requestFunc = (requestData: EncodedUriParameters): AxiosPromise<T> =>
-          restClient.get(makeUrl(endPoint, requestData));
-        return asyncRequest<string, Normalized<T>>({
-          ...getRequestOf<Normalized<T>>(endPoint),
-          formatData,
-          requestFunc,
-          requestData,
-          ...requestCallbacks,
-          dispatch,
-        });
-      } else {
-        return null;
-      }
-    };
-
-export const fetchEntitiesIfNeeded = <T extends Identifiable>(
-  endPoint: EndPoints,
-  entityType: keyof Omit<DomainModelsState, 'meterDetailMeasurement'>,
-  formatData: DataFormatter<Normalized<T>>,
-  requestDataFactory: (meterIds: uuid[], gatewayId?: uuid) => string,
-) =>
-  (meterIds: uuid[], parameters: EncodedUriParameters, gatewayId?: uuid) =>
-    (dispatch: Dispatch, getState: GetState) => {
-      const idsToFetch: uuid[] = meterIds
-        .filter((id: uuid) => shouldFetchEntity(id, getState().domainModels[entityType]));
-      if (idsToFetch.length) {
-        const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
-        return asyncRequest<string, Normalized<T>>({
-          ...getEntitiesRequestOf<Normalized<T>>(endPoint),
-          formatData,
-          requestFunc,
-          requestData: `${requestDataFactory(idsToFetch, gatewayId)}&${parameters}`,
-          dispatch,
-        });
-      } else {
-        return null;
-      }
-    };
+  fetchIfNeededForSector<T>(endPoint, endPoint, entityType, formatData, requestCallbacks);
 
 export const fetchEntityIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
@@ -332,9 +291,6 @@ export const getRequestOf = <T>(actionKey: ActionKey) =>
 
 export const getEntityRequestOf = <T>(endpoint: EndPoints) =>
   makeRequestActionsOf<T>(endpoint, RequestType.GET_ENTITY);
-
-export const getEntitiesRequestOf = <T>(endpoint: EndPoints) =>
-  makeRequestActionsOf<T>(endpoint, RequestType.GET_ENTITIES);
 
 export const postRequestOf = <T>(endpoint: EndPoints) =>
   makeRequestActionsOf<T>(endpoint, RequestType.POST);

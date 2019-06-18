@@ -24,7 +24,7 @@ import {widget, WidgetState} from '../state/widget/widgetReducer';
 import {AuthState} from '../usecases/auth/authModels';
 import {auth} from '../usecases/auth/authReducer';
 import {CollectionState} from '../usecases/collection/collectionModels';
-import {collection, meterCollection} from '../usecases/collection/collectionReducer';
+import {collection} from '../usecases/collection/collectionReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
 import {MeterDetailState} from '../usecases/meter/measurements/meterDetailModels';
 import {meterDetail} from '../usecases/meter/measurements/meterDetailReducer';
@@ -100,7 +100,7 @@ export const rootReducer = (history: History) =>
     search,
     previousSession,
     collection,
-    meterCollection,
+    meterCollection: collection,
     meterDetail,
     theme,
     widget,

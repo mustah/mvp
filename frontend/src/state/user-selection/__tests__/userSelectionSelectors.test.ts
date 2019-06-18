@@ -1,7 +1,7 @@
 import {makeThreshold} from '../../../__tests__/testDataFactory';
 import {urlFromParameters} from '../../../__tests__/urlFromParameters';
 import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
-import {meterParameters, RequestParameter} from '../../../helpers/urlFactory';
+import {meterParameterNames, RequestParameter} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {initialState as initialPaginationState, paginationPageSize} from '../../ui/pagination/paginationReducer';
 import {addParameterToSelection} from '../userSelectionActions';
@@ -14,9 +14,9 @@ import {
 } from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
 import {
-  getGatewayParameters,
+  getApiParameters,
   getMeterParameters,
-  getPaginatedGatewayParameters,
+  getPaginatedApiParameters,
   getPaginatedMeterParameters,
   getUserSelection,
 } from '../userSelectionSelectors';
@@ -158,7 +158,7 @@ describe('userSelectionSelectors', () => {
 
       const parameters: EncodedUriParameters = getPaginatedMeterParameters(stateWithOrganisation);
       const url: URL = urlFromParameters(parameters);
-      expect(url.searchParams.getAll(meterParameters.organisations)).toEqual([anOrganisation.id]);
+      expect(url.searchParams.getAll(meterParameterNames.organisations)).toEqual([anOrganisation.id]);
     });
 
     it('includes a threshold query', () => {
@@ -273,7 +273,7 @@ describe('userSelectionSelectors', () => {
 
   });
 
-  describe('getPaginatedGatewayParameters', () => {
+  describe('getPaginatedApiParameters', () => {
 
     it('has no wildcard search parameter without a query string', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
@@ -282,7 +282,7 @@ describe('userSelectionSelectors', () => {
         addParameterToSelection(payload),
       );
 
-      const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
+      const uriParameters: EncodedUriParameters = getPaginatedApiParameters({
         userSelection: state.userSelection,
         pagination: initialPaginationState.gateways,
         start,
@@ -298,7 +298,7 @@ describe('userSelectionSelectors', () => {
         addParameterToSelection(payload),
       );
 
-      const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
+      const uriParameters: EncodedUriParameters = getPaginatedApiParameters({
         userSelection: state.userSelection,
         pagination: initialPaginationState.gateways,
         start,
@@ -317,7 +317,7 @@ describe('userSelectionSelectors', () => {
         addParameterToSelection(payload),
       );
 
-      const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
+      const uriParameters: EncodedUriParameters = getPaginatedApiParameters({
         userSelection: state.userSelection,
         pagination: initialPaginationState.gateways,
         start,
@@ -448,7 +448,7 @@ describe('userSelectionSelectors', () => {
         addParameterToSelection(payload),
       );
 
-      const uriParameters: EncodedUriParameters = getGatewayParameters({
+      const uriParameters: EncodedUriParameters = getApiParameters({
         userSelection: state.userSelection,
         start,
       });
@@ -463,7 +463,7 @@ describe('userSelectionSelectors', () => {
         addParameterToSelection(payload),
       );
 
-      const uriParameters: EncodedUriParameters = getGatewayParameters({
+      const uriParameters: EncodedUriParameters = getApiParameters({
         query: 'sto',
         userSelection: state.userSelection,
         start,
@@ -482,7 +482,7 @@ describe('userSelectionSelectors', () => {
         addParameterToSelection(payload),
       );
 
-      const uriParameters: EncodedUriParameters = getGatewayParameters({
+      const uriParameters: EncodedUriParameters = getApiParameters({
         userSelection: state.userSelection,
         start,
       });

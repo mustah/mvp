@@ -10,6 +10,7 @@ import {
   Callback,
   CallbackWith,
   EncodedUriParameters,
+  Fetch,
   Fetching,
   FetchPaginated,
   HasContent,
@@ -18,8 +19,10 @@ import {
 import {CollectionStatList} from './CollectionStatList';
 
 export interface StateToProps extends EntityTyped, Fetching, HasContent {
+  excelExportParameters: EncodedUriParameters;
   isExportingToExcel: boolean;
   items: CollectionStat[];
+  itemsToExport: CollectionStat[];
   parameters: EncodedUriParameters;
   pagination: Pagination;
   selectedItemId?: uuid;
@@ -29,6 +32,7 @@ export interface StateToProps extends EntityTyped, Fetching, HasContent {
 export interface DispatchToProps {
   changePage: OnChangePage;
   exportToExcelSuccess: Callback;
+  fetchAllCollectionStats: Fetch;
   fetchCollectionStatsFacilityPaged: FetchPaginated;
   sortTable: CallbackWith<SortOption[]>;
 }
@@ -42,7 +46,10 @@ const CollectionListWrapper = compose<Props & ThemeContext, Props>(
 
 export const CollectionListContent = (props: Props) => {
   const {
+    excelExportParameters,
+    fetchAllCollectionStats,
     fetchCollectionStatsFacilityPaged,
+    isExportingToExcel,
     pagination: {page},
     parameters,
     sort,
@@ -51,6 +58,12 @@ export const CollectionListContent = (props: Props) => {
   React.useEffect(() => {
     fetchCollectionStatsFacilityPaged(page, parameters, sort);
   }, [page, parameters, sort]);
+
+  React.useEffect(() => {
+    if (isExportingToExcel) {
+      fetchAllCollectionStats(excelExportParameters);
+    }
+  }, [isExportingToExcel]);
 
   const wrapperProps: Props & EmptyContentProps = {
     ...props,

@@ -35,12 +35,17 @@ export const CollectionStatList = ({
   isExportingToExcel,
   isFetching,
   items,
+  itemsToExport,
   pagination,
   selectedItemId,
   sort,
   sortTable,
 }: Props & ThemeContext) => {
-  const exporter = useExportToExcel({exportToExcelSuccess, isExportingToExcel, save});
+  const exporter = useExportToExcel({
+    exportToExcelSuccess,
+    isExportingToExcel: isExportingToExcel && itemsToExport.length > 0,
+    save
+  });
 
   const sortProps: SortProps = Maybe.maybe(first(sort))
     .map(({field: sortBy, dir}): SortProps => ({sortBy, sortDirection: dir || 'ASC'}))
@@ -99,11 +104,9 @@ export const CollectionStatList = ({
     selectedItemId,
   };
 
-  const data = items.filter(it => it !== null);
-
   return (
     <>
-      <ExcelExport data={data} ref={exporter} filterable={true} fileName="collection-stats.xlsx">
+      <ExcelExport data={itemsToExport} ref={exporter} filterable={true} fileName="collection-stats.xlsx">
         <ExcelExportColumn field="facility" title={translate('facility')}/>
         <ExcelExportColumn field="readInterval" title={translate('resolution')}/>
         <ExcelExportColumn field="collectionPercentage" title={translate('collection percentage')}/>

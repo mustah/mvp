@@ -16,5 +16,3 @@ export interface CollectionStatParameters {
 }
 
 export type CollectionStatFacilityState = NormalizedPaginatedState<CollectionStat>;
-
-export type FetchCollectionStats = (requestParameters: string) => void;
