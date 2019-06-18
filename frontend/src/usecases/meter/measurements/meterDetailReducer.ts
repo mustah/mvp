@@ -4,7 +4,7 @@ import {isOnMeterDetailsPage} from '../../../app/routes';
 import {defaultPeriodResolution, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {locationChange} from '../../../state/location/locationActions';
 import {logoutUser} from '../../auth/authActions';
-import * as actions from './meterDetailActions';
+import {selectResolution, setTimePeriod} from './meterDetailMeasurementActions';
 import {MeterDetailState} from './meterDetailModels';
 
 export const initialState: MeterDetailState = {
@@ -13,11 +13,14 @@ export const initialState: MeterDetailState = {
   timePeriod: {period: Period.yesterday},
 };
 
-type ActionTypes = ActionType<typeof actions | typeof logoutUser | typeof locationChange>;
+type ActionTypes = ActionType<typeof setTimePeriod
+  | typeof selectResolution
+  | typeof logoutUser
+  | typeof locationChange>;
 
 export const meterDetail = (state: MeterDetailState = initialState, action: ActionTypes): MeterDetailState => {
   switch (action.type) {
-    case getType(actions.setTimePeriod):
+    case getType(setTimePeriod):
       const timePeriod = action.payload;
       return {
         ...state,
@@ -25,7 +28,7 @@ export const meterDetail = (state: MeterDetailState = initialState, action: Acti
         timePeriod,
         resolution: defaultPeriodResolution[timePeriod.period],
       };
-    case getType(actions.selectResolution):
+    case getType(selectResolution):
       return {
         ...state,
         isDirty: true,

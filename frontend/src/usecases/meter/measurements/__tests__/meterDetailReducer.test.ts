@@ -3,7 +3,7 @@ import {routes} from '../../../../app/routes';
 import {Period, TemporalResolution} from '../../../../components/dates/dateModels';
 import {locationChange} from '../../../../state/location/locationActions';
 import {SelectionInterval} from '../../../../state/user-selection/userSelectionModels';
-import {selectResolution, setTimePeriod} from '../meterDetailActions';
+import {selectResolution, setTimePeriod} from '../meterDetailMeasurementActions';
 import {MeterDetailState} from '../meterDetailModels';
 import {initialState, meterDetail} from '../meterDetailReducer';
 
