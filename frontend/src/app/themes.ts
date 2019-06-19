@@ -47,7 +47,7 @@ export const withStyles = ({primary, secondary}: ColorProperties): CssStyles => 
       bgDark: primaryHelper.darken(0.17).toHexString(),
       bgDarkest: primaryHelper.darken(0.29).toHexString(),
       fg: '#7b7b7b',
-      fgActive: '#044462',
+      fgActive: '#000000',
       fgHover: '#0f2228',
     },
     secondary: {
@@ -57,14 +57,14 @@ export const withStyles = ({primary, secondary}: ColorProperties): CssStyles => 
       bgDark: secondaryHelper.toHexString(),
       bgDarkest: secondaryHelper.toHexString(),
       fg: '#3c3c3c',
-      fgActive: '#245c40',
+      fgActive: '#000000',
       fgHover: '#0f2228',
     },
   });
 };
 
 export const makeTheme = (cssStyles: CssStyles): Theme => {
-  const {primary, secondary} = cssStyles;
+  const {primary} = cssStyles;
   return ({
     cssStyles,
     muiTheme: getMuiTheme({
@@ -83,7 +83,7 @@ export const makeTheme = (cssStyles: CssStyles): Theme => {
       flatButton: {
         buttonFilterColor: primary.bg,
         color: colors.white,
-        secondaryTextColor: secondary.fg,
+        secondaryTextColor: primary.fg,
         textColor: colors.white,
       },
       fontFamily,
