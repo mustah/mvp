@@ -53,7 +53,7 @@ export const MeterMeasurementsToolbar = ({
             iconStyle={iconSizeMedium}
             disabled={isFetching || isExportingToExcel || !hasMeasurements}
             onClick={exportToExcel}
-            style={{marginLeft: 16}}
+            style={{marginLeft: 0}}
             tooltip={firstUpperTranslated('export to excel')}
           >
             <CloudDownload color={primary.fg} hoverColor={primary.fgHover}/>
