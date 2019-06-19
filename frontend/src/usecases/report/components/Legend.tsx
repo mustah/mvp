@@ -2,16 +2,14 @@ import {DataResult, process, State} from '@progress/kendo-data-query';
 import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
-import {routes} from '../../../app/routes';
 import {borderRadius, drawerContainerStyle, gridStyle, makeGridClassName} from '../../../app/themes';
 import {ButtonClose} from '../../../components/buttons/ButtonClose';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
-import {ButtonInfo} from '../../../components/buttons/ButtonInfo';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
-import {Link} from '../../../components/links/Link';
+import {MeterLink} from '../../../components/meters/MeterLink';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {isMedium, LegendType} from '../../../state/report/reportModels';
@@ -30,11 +28,7 @@ const legendGridStyle: React.CSSProperties = {
 
 const renderLabel = ({id, label, type}: any) =>
   isMedium(type)
-    ? (
-      <Link to={`${routes.meter}/${id}`}>
-        <ButtonInfo label={orUnknown(label)} title={orUnknown(label).toString()}/>
-      </Link>
-    )
+    ? <MeterLink facility={orUnknown(label)} id={id}/>
     : orUnknown(label);
 
 const renderLabelCell = ({dataItem: {id, label, city, address, type}}: GridCellProps) =>

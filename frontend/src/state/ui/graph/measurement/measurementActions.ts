@@ -24,7 +24,7 @@ import {
 } from '../../../../usecases/meter/measurements/meterDetailMeasurementActions';
 import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {getDomainModelById} from '../../../domain-models/domainModelsSelectors';
-import {isAggregate, isMedium, LegendType, ReportSector} from '../../../report/reportModels';
+import {isAggregate, isMedium, LegendItem, LegendType, ReportSector} from '../../../report/reportModels';
 import {SelectionInterval, UserSelection} from '../../../user-selection/userSelectionModels';
 import {
   getGroupHeaderTitle,
@@ -110,6 +110,17 @@ export const urlsByType = (parameters: MeasurementParameters): EncodedUriParamet
     .map(p => makeMeasurementMetersUriParameters(p, EndPoints.measurementsAverage, meterAverageLabelFactory)));
 };
 
+export const groupLegendItemsByQuantity = (items: LegendItem[]): QuantityToIds =>
+  items
+    .filter(it => isMedium(it.type))
+    .reduce(
+      (acc, {quantities, id}) => {
+        quantities.forEach((quantity) => acc[quantity].push(id));
+        return acc;
+      },
+      makeQuantityToIdsMap()
+    );
+
 export const makeMeasurementMetersUriParameters = (
   {
     reportDateRange,
@@ -120,11 +131,7 @@ export const makeMeasurementMetersUriParameters = (
   endpoint: EndPoints,
   labelFactory: (labelItem: LabelItem) => string,
 ): EncodedUriParameters[] => {
-  const quantityToIds = makeQuantityToIdsMap();
-
-  const items = legendItems.filter(it => isMedium(it.type));
-
-  flatMap(items, it => it.quantities.forEach(q => quantityToIds[q].push(it.id)));
+  const quantityToIds = groupLegendItemsByQuantity(legendItems);
 
   return Object.keys(quantityToIds)
     .filter((quantity: Quantity) => quantityToIds[quantity].length > 0)

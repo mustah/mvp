@@ -1,34 +1,33 @@
-import {flatMap, values} from 'lodash';
+import {flatMap, flatten, values} from 'lodash';
 import {createSelector} from 'reselect';
-import {unique} from '../../helpers/collections';
+import {getId, unique} from '../../helpers/collections';
 import {identity} from '../../helpers/commonHelpers';
 import {RootState} from '../../reducers/rootReducer';
-import {MeasurementParameters, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
+import {VisibilitySummaryProps} from '../../usecases/report/components/VisibilitySummary';
+import {groupLegendItemsByQuantity} from '../ui/graph/measurement/measurementActions';
+import {MeasurementParameters, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {
   isMedium,
   LegendItem,
   LegendType,
   LegendViewOptions,
-  Report,
   SavedReportsState,
   SelectedQuantities,
   ViewOptions
 } from './reportModels';
 
-export const getMeterPage = (state: SavedReportsState): Report => state.meterPage;
-
-export const getLegendViewOptions = (state: SavedReportsState): LegendViewOptions =>
-  getMeterPage(state).legendViewOptions;
+export const getLegendViewOptions = ({meterPage: {legendViewOptions}}: SavedReportsState): LegendViewOptions =>
+  legendViewOptions;
 
 export const getViewOptions = (state: SavedReportsState, type: LegendType): ViewOptions =>
   getLegendViewOptions(state)[type];
 
-export const getLegendItems = (state: SavedReportsState): LegendItem[] =>
-  getMeterPage(state).legendItems;
+export const getLegendItems = ({meterPage: {legendItems}}: SavedReportsState): LegendItem[] =>
+  legendItems;
 
-export const hasLegendItems = (state: SavedReportsState): boolean =>
-  getLegendItems(state).length > 0;
+export const hasLegendItems = ({meterPage: {legendItems}}: SavedReportsState): boolean =>
+  legendItems.length > 0;
 
 export const makeLegendTypeQuantitiesMap = (): SelectedQuantities =>
   Object.keys(Medium).map(k => Medium[k])
@@ -43,6 +42,15 @@ export const getHiddenLines =
   createSelector<SavedReportsState, LegendItem[], uuid[]>(
     getLegendItems,
     items => items.filter(it => !!it.isHidden).map(it => it.id)
+  );
+
+export const getVisibilitySummary =
+  createSelector<SavedReportsState, LegendItem[], VisibilitySummaryProps>(
+    getLegendItems,
+    items => ({
+      allMeters: items.map(getId),
+      checkedMeters: unique(flatten(values(groupLegendItemsByQuantity(items)))),
+    })
   );
 
 export const getSelectedQuantitiesMap =

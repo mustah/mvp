@@ -4,7 +4,6 @@ import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
 import {LegendItem, LegendType, ResolutionAware} from '../../../report/reportModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
-import {MeasurementsApiResponse, MeasurementValue} from './measurementModels';
 
 export interface Measurement extends Identifiable {
   created: UnixTimestamp;

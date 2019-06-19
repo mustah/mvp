@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
 import {routerActions} from 'connected-react-router';
-import {first} from 'lodash';
+import {first, flatten, values} from 'lodash';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {getType} from 'typesafe-actions';
@@ -31,6 +31,7 @@ import {
   exportReportToExcel,
   exportToExcelAction,
   fetchMeasurementsForReport,
+  groupLegendItemsByQuantity,
   makeMeasurementMetersUriParameters,
   measurementFailure,
   measurementRequest,
@@ -497,6 +498,71 @@ describe('measurementActions', () => {
       store.dispatch(exportReportToExcel() as any);
 
       expect(store.getActions()).toEqual([]);
+    });
+
+  });
+
+  describe('groupLegendItemsByQuantity', () => {
+
+    it('contains all quantities, formatted', () => {
+      const allQuantities = Object.keys(Quantity).map(k => Quantity[k]);
+
+      const quantitiesWithAtLeastOneLegendItem = Object.keys(groupLegendItemsByQuantity([]));
+
+      expect(quantitiesWithAtLeastOneLegendItem).toEqual(allQuantities);
+    });
+
+    it('groups legend items together', () => {
+      const firstId = idGenerator.uuid();
+      const secondId = idGenerator.uuid();
+      const legendItems: LegendItem[] = [
+        {
+          id: firstId,
+          quantities: [
+            Quantity.differenceTemperature,
+            Quantity.energy
+          ],
+          label: '_',
+          type: Medium.districtHeating,
+        },
+        {
+          id: secondId,
+          quantities: [
+            Quantity.differenceTemperature,
+          ],
+          label: '_',
+          type: Medium.districtHeating,
+        },
+      ];
+
+      const quantitiesByLegendItems = groupLegendItemsByQuantity(legendItems);
+
+      expect(quantitiesByLegendItems).toHaveProperty('Energy', [firstId]);
+      expect(quantitiesByLegendItems).toHaveProperty('Difference temperature', [firstId, secondId]);
+
+      const allEntries = flatten(values(quantitiesByLegendItems));
+      expect(allEntries).toHaveLength(3);
+    });
+
+    it('ignores empty medium', () => {
+      const legendItems: LegendItem[] = [
+        {
+          id: idGenerator.uuid(),
+          quantities: [
+            Quantity.differenceTemperature,
+            Quantity.energy
+          ],
+          label: '_',
+          type: undefined as unknown as Medium,
+        },
+      ];
+
+      const quantitiesByLegendItems = groupLegendItemsByQuantity(legendItems);
+
+      expect(quantitiesByLegendItems).toHaveProperty('Energy', []);
+
+      const allEntries = flatten(values(quantitiesByLegendItems));
+      expect(allEntries).toHaveLength(0);
     });
 
   });

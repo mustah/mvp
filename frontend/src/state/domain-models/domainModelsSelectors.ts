@@ -19,12 +19,8 @@ export const getDomainModel =
     ({result, entities});
 
 export const getError =
-  <T extends Identifiable>({error}: NormalizedState<T>): Maybe<ErrorResponse> => Maybe.maybe(error);
-
-// TODO Calle fix this please
-export const getErrorCalle =
-  <T extends Identifiable & RequestsHttp>(hasRequest: T): Maybe<ErrorResponse> =>
-    Maybe.maybe(hasRequest ? hasRequest.error : undefined);
+  <T extends RequestsHttp>({error}: T): Maybe<ErrorResponse> =>
+    Maybe.maybe(error);
 
 export const getDomainModelById = <T extends Identifiable>(id: uuid) =>
   createSelector<NormalizedState<T>, ObjectsById<T>, Maybe<T>>(

@@ -8,6 +8,7 @@ import {GraphContents} from '../../../../state/report/reportModels';
 import {ThresholdQuery} from '../../../../state/user-selection/userSelectionModels';
 import {Dictionary, uuid} from '../../../../types/Types';
 import {toReferenceLineProps} from '../../helpers/lineChartHelper';
+import {VisibilitySummaryProps} from '../VisibilitySummary';
 import {ActiveDot, ActiveDotReChartProps} from './ActiveDot';
 import {CustomizedTooltip} from './CustomizedTooltip';
 import {Dot, KeyedDotProps} from './Dot';
@@ -36,6 +37,7 @@ interface Props {
   hasMeters: boolean;
   hasContent: boolean;
   threshold?: ThresholdQuery;
+  visibilitySummary?: VisibilitySummaryProps;
 }
 
 export class LineChartComponent extends React.Component<Props, State> {

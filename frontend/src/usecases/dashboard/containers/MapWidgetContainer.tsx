@@ -10,7 +10,7 @@ import {makeApiParametersOf} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {RequestsHttp} from '../../../state/domain-models/domainModels';
-import {getErrorCalle} from '../../../state/domain-models/domainModelsSelectors';
+import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
 import {MapWidget} from '../../../state/domain-models/widget/widgetModels';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
@@ -152,7 +152,7 @@ const mapStateToProps = (
     bounds: hasContent
       ? boundsFromMarkers(widget.data.entities.meterMapMarkers)
       : undefined,
-    error: getErrorCalle(widget),
+    error: Maybe.maybe(widget).flatMap(getError),
     id,
     isFetching: widget && widget.isFetching,
     isUserSelectionsSuccessfullyFetched: userSelections.isSuccessfullyFetched,

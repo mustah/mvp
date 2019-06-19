@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "{{count}} meters are not shown in the graph. Choose which meters you want to see with"
+msgstr "{{count}} meter is not shown in the graph. Choose which meters you want to see with"
+
 msgid "change colors"
 msgstr "change colors"
 
@@ -799,6 +802,10 @@ msgstr "{{count}} meters will soon be synchronized"
 msgctxt "°plural"
 msgid "during {{count}} days (or more)°"
 msgstr "during {{count}} days (or more)"
+
+msgctxt "°plural"
+msgid "{{count}} meters are not shown in the graph. Choose which meters you want to see with°"
+msgstr "{{count}} meters are not shown in the graph. Choose which meters you want to see with"
 
 msgid "object type"
 msgstr "type"

@@ -50,7 +50,7 @@ export const FoldableMainMenuItem = ({
   fontClassName,
   isSelected,
   title,
-  isVisible: initialVisibility = true
+  isVisible: initialVisibility = false
 }: Props) => {
   const {isVisible, showHide} = useToggleVisibility(initialVisibility);
 
@@ -62,6 +62,7 @@ export const FoldableMainMenuItem = ({
         isSelected={isSelected}
         onClick={showHide}
         title={title}
+        isVisible={isVisible}
       />
       <Row className={classNames('Foldable-content', className, {isVisible})}>
         {children}

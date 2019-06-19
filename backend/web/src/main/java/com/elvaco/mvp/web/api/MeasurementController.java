@@ -121,7 +121,7 @@ public class MeasurementController {
     );
   }
 
-  public List<MeasurementSeriesDto> measurements(
+  private List<MeasurementSeriesDto> measurements(
     RequestParameters parameters,
     Optional<Set<QuantityParameter>> optionalQuantityParameters,
     ZonedDateTime reportStart,

@@ -34,7 +34,7 @@ const LegendActionButton = ({color, onClick, disabled}: Clickable & FlatButtonPr
 
 export const ReportToolbar = withCssStyles(({
   canShowAverage,
-  cssStyles: {primary},
+  cssStyles: {primary: {fg, fgHover}},
   changeToolbarView,
   hasLegendItems,
   hasMeasurements,
@@ -72,7 +72,7 @@ export const ReportToolbar = withCssStyles(({
             onClick={selectGraph}
             tooltip={firstUpperTranslated('graph')}
           >
-            <EditorShowChart color={primary.fg} style={iconSizeMedium}/>
+            <EditorShowChart color={fg} style={iconSizeMedium}/>
           </ToolbarIconButton>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
@@ -80,7 +80,7 @@ export const ReportToolbar = withCssStyles(({
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
           >
-            <EditorFormatListBulleted color={primary.fg}/>
+            <EditorFormatListBulleted color={fg}/>
           </ToolbarIconButton>
         </ToolbarViewSettings>
 
@@ -92,7 +92,7 @@ export const ReportToolbar = withCssStyles(({
             style={{marginLeft: 0}}
             tooltip={firstUpperTranslated('export to excel')}
           >
-            <CloudDownload color={primary.fg} hoverColor={primary.fgHover}/>
+            <CloudDownload color={fg} hoverColor={fgHover}/>
           </ToolbarIconButton>
         </RowMiddle>
       </ToolbarLeftPane>
@@ -126,7 +126,7 @@ export const ReportToolbar = withCssStyles(({
         />
         <ResolutionSelection disabled={!hasLegendItems} resolution={resolution} selectResolution={selectResolution}/>
         <LegendActionButton
-          color={hasLegendItems ? primary.fg : colors.borderColor}
+          color={hasLegendItems ? fg : colors.borderColor}
           onClick={showHideLegend}
           disabled={!hasLegendItems}
         />
