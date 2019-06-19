@@ -4,7 +4,12 @@ import {RootState} from '../../../reducers/rootReducer';
 import {isMetersPageFetching} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {ReportSector} from '../../../state/report/reportModels';
-import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
+import {
+  getHiddenLines,
+  getMeasurementParameters,
+  getVisibilitySummary,
+  hasLegendItems
+} from '../../../state/report/reportSelectors';
 import {
   exportToExcelSuccess,
   fetchMeasurementsForReport,
@@ -27,6 +32,7 @@ import {
 import {Callback, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
+import {VisibilitySummaryProps} from '../components/VisibilitySummary';
 
 export interface StateToProps {
   hasLegendItems: boolean;
@@ -37,6 +43,7 @@ export interface StateToProps {
   measurement: MeasurementState;
   parameters: EncodedUriParameters;
   requestParameters: MeasurementParameters;
+  visibilitySummary?: VisibilitySummaryProps;
   threshold?: ThresholdQuery;
   userSelections: NormalizedState<UserSelection>;
   userSelectionId: uuid;
@@ -67,6 +74,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     measurement,
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
     requestParameters: getMeasurementParameters(rootState),
+    visibilitySummary: getVisibilitySummary(savedReports),
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
     userSelections,

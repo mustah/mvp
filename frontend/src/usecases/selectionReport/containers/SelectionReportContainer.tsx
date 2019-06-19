@@ -3,7 +3,12 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {isMetersPageFetching} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ReportSector} from '../../../state/report/reportModels';
-import {getHiddenLines, getSelectionMeasurementParameters, hasLegendItems} from '../../../state/report/reportSelectors';
+import {
+  getHiddenLines,
+  getSelectionMeasurementParameters,
+  getVisibilitySummary,
+  hasLegendItems
+} from '../../../state/report/reportSelectors';
 import {
   exportSelectionReportToExcel,
   fetchMeasurementsForSelectionReport,
@@ -42,6 +47,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
     userSelections,
+    visibilitySummary: getVisibilitySummary(savedReports),
   });
 };
 

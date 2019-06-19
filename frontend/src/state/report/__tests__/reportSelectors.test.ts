@@ -1,11 +1,13 @@
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
-import {allQuantitiesMap, Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
+import {idGenerator} from '../../../helpers/idGenerator';
 import {makeColumnQuantities} from '../../../usecases/report/helpers/legendHelper';
+import {allQuantitiesMap, Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
 import {LegendItem, SavedReportsState, SelectedQuantities} from '../reportModels';
 import {initialSavedReportState} from '../reportReducer';
 import {
   getLegendItems,
   getSelectedQuantitiesMap,
+  getVisibilitySummary,
   makeLegendTypeQuantitiesMap
 } from '../reportSelectors';
 
@@ -89,6 +91,59 @@ describe('reportSelectors', () => {
       const expected: Quantity[] = [...allQuantitiesMap.districtHeating, ...allQuantitiesMap.roomSensor];
 
       expect(makeColumnQuantities(savedReportsWith([meter1, meter2, meter2]))).toEqual(expected);
+    });
+
+  });
+
+  describe('getVisibilitySummary', () => {
+
+    it('counts distinct legend items', () => {
+      const firstId = idGenerator.uuid();
+
+      const state: SavedReportsState = {
+        meterPage: {
+          ...initialSavedReportState.meterPage,
+          legendItems: [
+            {
+              id: firstId,
+              label: '_',
+              type: Medium.districtHeating,
+              quantities: [
+                Quantity.differenceTemperature,
+                Quantity.energy,
+              ],
+            },
+          ],
+        }
+      };
+
+      expect(getVisibilitySummary(state)).toEqual({
+        allMeters: [firstId],
+        checkedMeters: [firstId],
+      });
+    });
+
+    it('disregards deselected legend items', () => {
+      const firstId = idGenerator.uuid();
+
+      const state: SavedReportsState = {
+        meterPage: {
+          ...initialSavedReportState.meterPage,
+          legendItems: [
+            {
+              id: firstId,
+              label: '_',
+              type: Medium.districtHeating,
+              quantities: [],
+            },
+          ],
+        }
+      };
+
+      expect(getVisibilitySummary(state)).toEqual({
+        allMeters: [firstId],
+        checkedMeters: [],
+      });
     });
 
   });

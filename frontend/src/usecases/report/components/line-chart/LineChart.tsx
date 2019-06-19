@@ -24,7 +24,6 @@ import {shortTimestamp} from '../../../../helpers/dateHelpers';
 import {AxesProps, LineProps} from '../../../../state/report/reportModels';
 import {Children, OnClickEventHandler, uuid} from '../../../../types/Types';
 import {ActiveDotReChartProps} from './ActiveDot';
-import {LineChartProps} from './LineChart';
 
 const lineMargins: Partial<Margin> = {top: 40, right: 0, bottom: 0, left: 0};
 const domains: [AxisDomain, AxisDomain] = ['dataMin', 'dataMax'];
