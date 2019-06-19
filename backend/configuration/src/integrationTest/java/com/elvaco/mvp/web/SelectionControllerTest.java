@@ -37,7 +37,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getCities() {
     prepareMeters();
 
-    Page<CityDto> response = asUser()
+    Page<CityDto> response = asMvpUser()
       .getPage("/selections/cities", CityDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -53,7 +53,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getCities_SortedByCityAsc() {
     prepareMeters();
 
-    Page<CityDto> response = asUser()
+    Page<CityDto> response = asMvpUser()
       .getPage("/selections/cities?sort=city", CityDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -69,7 +69,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getCities_SortedByCityDesc() {
     prepareMeters();
 
-    Page<CityDto> response = asUser()
+    Page<CityDto> response = asMvpUser()
       .getPage("/selections/cities?sort=city,desc", CityDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -85,7 +85,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getAddresses_SortAsc() {
     prepareMeters();
 
-    Page<AddressDto> response = asUser()
+    Page<AddressDto> response = asMvpUser()
       .getPage("/selections/addresses?sort=streetAddress,asc", AddressDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -102,7 +102,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getAddresses_SortDesc() {
     prepareMeters();
 
-    Page<AddressDto> response = asUser()
+    Page<AddressDto> response = asMvpUser()
       .getPage("/selections/addresses?sort=streetAddress,desc", AddressDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -122,7 +122,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .location(kungsbacka().country(null).address("kabelgatan 17").build())
     );
 
-    Page<AddressDto> response = asUser()
+    Page<AddressDto> response = asMvpUser()
       .getPage("/selections/addresses?sort=streetAddress,asc", AddressDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -137,7 +137,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void userCanNotAccessOtherOrganisationsCities() {
-    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
+    OrganisationWithUsers organisationWithUsers = given(organisation(), mvpUser());
     given(
       logicalMeter()
         .location(kungsbacka().country("sweden").address("kabelgatan 1").build())
@@ -172,7 +172,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .sortBy("externalId,asc")
       .build();
 
-    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asMvpUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -192,7 +192,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .sortBy("externalId,desc")
       .build();
 
-    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asMvpUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -213,7 +213,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .sortBy("externalId,asc")
       .build();
 
-    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asMvpUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -223,7 +223,7 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanNotAccessOtherOrganisationsFacilities() {
     prepareMeters();
-    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
+    OrganisationWithUsers organisationWithUsers = given(organisation(), mvpUser());
     given(
       logicalMeter().location(kungsbacka().country("sweden").address("kabelgatan 2").build())
         .externalId("extId5"),
@@ -242,7 +242,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .parameter(Q, "extId6")
       .build();
 
-    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asMvpUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
     assertThat(response.getTotalPages()).isEqualTo(0);
@@ -259,7 +259,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getSecondaryAddresses_SortedDesc() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asUser()
+    Page<IdNamedDto> response = asMvpUser()
       .getPage("/selections/secondary-addresses?sort=secondaryAddress,desc", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -286,7 +286,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .address("2")
     );
 
-    Page<IdNamedDto> response = asUser().getPage(
+    Page<IdNamedDto> response = asMvpUser().getPage(
       "/selections/secondary-addresses",
       IdNamedDto.class
     );
@@ -298,7 +298,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getSecondaryAddressFiltered() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asUser()
+    Page<IdNamedDto> response = asMvpUser()
       .getPage("/selections/secondary-addresses?q=444", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -310,7 +310,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void userCanNotAccessOtherOrganisationsSecondaryAddresses() {
     prepareMeters();
 
-    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
+    OrganisationWithUsers organisationWithUsers = given(organisation(), mvpUser());
     given(
       logicalMeter()
         .organisationId(organisationWithUsers.getId())
@@ -321,7 +321,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
     String url = "/selections/secondary-addresses?q=777";
 
-    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asMvpUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
     assertThat(response.getTotalPages()).isEqualTo(0);
@@ -338,7 +338,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getGatewaySerials_SortedDesc() {
     prepareGateways();
 
-    Page<IdNamedDto> response = asUser()
+    Page<IdNamedDto> response = asMvpUser()
       .getPage(gatewaySerialsUrl().sortBy("serial,desc").build(), IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -402,7 +402,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .parameter(SERIAL, "66")
       .build();
 
-    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asMvpUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -412,7 +412,7 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanNotAccessOtherOrganisationsGatewaySerials() {
     prepareGateways();
-    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
+    OrganisationWithUsers organisationWithUsers = given(organisation(), mvpUser());
     given(gateway().organisationId(organisationWithUsers.getId())
       .serial("6666")
       .productModel("3100"));
@@ -431,19 +431,19 @@ public class SelectionControllerTest extends IntegrationTest {
   public void wildcard_facility() {
     given(logicalMeter().externalId("abcdef"));
 
-    var contains = asUser().getPage(
+    var contains = asMvpUser().getPage(
       Url.builder().path("/selections/facilities").parameter(Q, "bcd").build(),
       IdNamedDto.class
     );
     assertThat(contains).extracting("name").containsExactly("abcdef");
 
-    var startsWith = asUser().getPage(
+    var startsWith = asMvpUser().getPage(
       Url.builder().path("/selections/facilities").parameter(Q, "abcd").build(),
       IdNamedDto.class
     );
     assertThat(startsWith).extracting("name").containsExactly("abcdef");
 
-    var emptySearchResponse = asUser().getPage(
+    var emptySearchResponse = asMvpUser().getPage(
       Url.builder().path("/selections/facilities").parameter(Q, "qwerty").build(),
       IdNamedDto.class
     );
@@ -456,7 +456,7 @@ public class SelectionControllerTest extends IntegrationTest {
       logicalMeter().externalId("1234"), physicalMeter().address("123456")
     );
 
-    var response = asUser().getPage(Url.builder()
+    var response = asMvpUser().getPage(Url.builder()
       .path("/selections/secondary-addresses")
       .parameter(Q, "12345")
       .build(), IdNamedDto.class);
@@ -464,7 +464,7 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("123456");
 
-    var emptySearchResponse = asUser().getPage(Url.builder()
+    var emptySearchResponse = asMvpUser().getPage(Url.builder()
       .path("/selections/secondary-addresses")
       .parameter(Q, "000000")
       .build(), IdNamedDto.class);
@@ -476,15 +476,15 @@ public class SelectionControllerTest extends IntegrationTest {
   public void wildcard_gatewaySerial() {
     given(gateway().serial("1234567"));
 
-    var contains = asUser().getPage(Url.builder().path("/selections/gateway-serials")
+    var contains = asMvpUser().getPage(Url.builder().path("/selections/gateway-serials")
       .parameter(Q, "3456").build(), IdNamedDto.class);
     assertThat(contains.getContent()).extracting(gw -> gw.name).containsExactly("1234567");
 
-    var startsWith = asUser().getPage(Url.builder().path("/selections/gateway-serials")
+    var startsWith = asMvpUser().getPage(Url.builder().path("/selections/gateway-serials")
       .parameter(Q, "1234").build(), IdNamedDto.class);
     assertThat(startsWith.getContent()).extracting(gw -> gw.name).containsExactly("1234567");
 
-    assertThat(asUser().getPage(
+    assertThat(asMvpUser().getPage(
       Url.builder().path("/selections/gateway-serials")
         .parameter(Q, "90909090")
         .build(),
@@ -496,29 +496,32 @@ public class SelectionControllerTest extends IntegrationTest {
   public void wildcard_city() {
     given(logicalMeter().location(kungsbacka().build()));
 
-    Page<CityDto> contains = asUser().getPage("/selections/cities?q=ngsback", CityDto.class);
+    Page<CityDto> contains = asMvpUser().getPage("/selections/cities?q=ngsback", CityDto.class);
     assertThat(contains.getContent()).extracting(c -> c.name).containsExactly("kungsbacka");
 
-    Page<CityDto> startsWith = asUser().getPage("/selections/cities?q=kungs", CityDto.class);
+    Page<CityDto> startsWith = asMvpUser().getPage("/selections/cities?q=kungs", CityDto.class);
     assertThat(startsWith.getContent()).extracting(c -> c.name).containsExactly("kungsbacka");
 
-    assertThat(asUser().getPage("/selections/cities?q=tockholm", IdNamedDto.class)).hasSize(0);
+    assertThat(asMvpUser().getPage("/selections/cities?q=tockholm", IdNamedDto.class)).hasSize(0);
   }
 
   @Test
   public void wildcard_streetAddress() {
     given(logicalMeter().location(kungsbacka().address("Stora vägen 24").build()));
 
-    Page<AddressDto> contains = asUser().getPage("/selections/addresses?q=tora", AddressDto.class);
+    Page<AddressDto> contains = asMvpUser().getPage(
+      "/selections/addresses?q=tora",
+      AddressDto.class
+    );
     assertThat(contains.getContent()).extracting(a -> a.street).containsExactly("stora vägen 24");
 
-    Page<AddressDto> startsWith = asUser().getPage(
+    Page<AddressDto> startsWith = asMvpUser().getPage(
       "/selections/addresses?q=stora",
       AddressDto.class
     );
     assertThat(startsWith.getContent()).extracting(a -> a.street).containsExactly("stora vägen 24");
 
-    assertThat(asUser().getPage(
+    assertThat(asMvpUser().getPage(
       "/selections/addresses?q=illa",
       AddressDto.class
     )).hasSize(0);
@@ -541,9 +544,7 @@ public class SelectionControllerTest extends IntegrationTest {
     )
       .as("Case insensitive substring in the start of term")
       .extracting(o -> o.name)
-      .containsExactly(
-        "abcdef"
-      );
+      .containsExactly("abcdef");
 
     assertThat(asSuperAdmin()
       .getPage(
@@ -567,8 +568,7 @@ public class SelectionControllerTest extends IntegrationTest {
           .build(),
         OrganisationDto.class
       )
-    ).as("Wild card does not mean 'select everything'")
-      .hasSize(0);
+    ).as("Wild card does not mean 'select everything'").hasSize(0);
   }
 
   @Test
@@ -579,7 +579,7 @@ public class SelectionControllerTest extends IntegrationTest {
       logicalMeter().location(stockholm().country("norge").city("oslo").build())
     );
 
-    Page<CityDto> response = asUser().getPage(
+    Page<CityDto> response = asMvpUser().getPage(
       "/selections/cities",
       CityDto.class
     );
@@ -597,7 +597,7 @@ public class SelectionControllerTest extends IntegrationTest {
       logicalMeter().location(kungsbacka().build())
     );
 
-    Page<AddressDto> response = asUser().getPage(
+    Page<AddressDto> response = asMvpUser().getPage(
       "/selections/addresses",
       AddressDto.class
     );
@@ -612,7 +612,7 @@ public class SelectionControllerTest extends IntegrationTest {
     given(logicalMeter(), physicalMeter().address("123456"));
     given(logicalMeter(), physicalMeter().address("123456"));
 
-    Page<IdNamedDto> response = asUser().getPage(
+    Page<IdNamedDto> response = asMvpUser().getPage(
       "/selections/secondary-addresses",
       IdNamedDto.class
     );
@@ -628,7 +628,7 @@ public class SelectionControllerTest extends IntegrationTest {
       physicalMeter().externalId("1234")
     );
 
-    Page<IdNamedDto> response = asUser().getPage(
+    Page<IdNamedDto> response = asMvpUser().getPage(
       "/selections/facilities",
       IdNamedDto.class
     );
@@ -640,7 +640,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getFacilities_logicalWithoutPhysicalIncluded() {
     given(logicalMeter().externalId("1234"), false);
 
-    Page<IdNamedDto> response = asUser().getPage(
+    Page<IdNamedDto> response = asMvpUser().getPage(
       "/selections/facilities",
       IdNamedDto.class
     );
@@ -656,7 +656,7 @@ public class SelectionControllerTest extends IntegrationTest {
       gateway().serial("2").productModel("3100")
     );
 
-    Page<IdNamedDto> response = asUser().getPage(gatewaySerialsUrl().build(), IdNamedDto.class);
+    Page<IdNamedDto> response = asMvpUser().getPage(gatewaySerialsUrl().build(), IdNamedDto.class);
 
     assertThat(response).extracting("name").containsExactlyInAnyOrder("1", "2");
   }
@@ -679,7 +679,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .as("The test fixtures added some organisations for us")
       .isNotEmpty();
 
-    Page<IdNamedDto> response = asUser()
+    Page<IdNamedDto> response = asMvpUser()
       .getPage("/selections/organisations", IdNamedDto.class);
 
     assertThat(response).isEmpty();

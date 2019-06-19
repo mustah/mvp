@@ -195,7 +195,7 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
   @Test
   public void saveTheme_notAllowedForAdmin() {
     Organisation organisation = given(organisation());
-    User user = given(user().organisation(organisation).asAdmin());
+    User user = given(mvpUser().organisation(organisation).asMvpAdmin());
     List<PropertyDto> properties = List.of(new PropertyDto(KEY1, VALUE1));
 
     var response = as(user).put(
@@ -211,7 +211,7 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
   @Test
   public void saveTheme_notAllowedForUser() {
     Organisation organisation = given(organisation());
-    User user = given(user().organisation(organisation).asUser());
+    User user = given(mvpUser().organisation(organisation).asMvpUser());
     List<PropertyDto> properties = List.of(new PropertyDto(KEY1, VALUE1));
 
     var response = as(user).put(
@@ -242,7 +242,7 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
   @Test
   public void deleteTheme_notAllowedForAdmin() {
     Organisation organisation = given(organisation());
-    User user = given(user().organisation(organisation).asAdmin());
+    User user = given(mvpUser().organisation(organisation).asMvpAdmin());
     given(theme()
       .organisationId(organisation.id)
       .properties(Map.of(KEY1, VALUE1))
@@ -257,7 +257,7 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
   @Test
   public void deleteTheme_notAllowedForUser() {
     Organisation organisation = given(organisation());
-    User user = given(user().organisation(organisation));
+    User user = given(mvpUser().organisation(organisation));
     given(theme()
       .organisationId(organisation.id)
       .properties(Map.of(KEY1, VALUE1))

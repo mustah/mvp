@@ -36,7 +36,7 @@ public class OrganisationRepositoryTest extends IntegrationTest {
       "asdf",
       Language.en,
       organisationEntity,
-      singletonList(RoleEntity.user())
+      singletonList(RoleEntity.mvpUser())
     ));
 
     assertThat(userJpaRepository.findByOrganisationId(organisationEntity.id)).hasSize(1);

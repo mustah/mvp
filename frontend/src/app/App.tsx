@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Redirect, Route, Switch, withRouter} from 'react-router';
-import {adminIsAuthenticated, userIsAuthenticated, userIsNotAuthenticated} from '../services/authService';
+import {mvpAdminIsAuthenticated, userIsAuthenticated, userIsNotAuthenticated} from '../services/authService';
 import {LoginContainer} from '../usecases/auth/containers/LoginContainer';
 import {AdminAppContainer} from './admin/AdminApp';
 import './App.scss';
@@ -9,7 +9,7 @@ import {routes} from './routes';
 
 const LoginPage = userIsNotAuthenticated(LoginContainer);
 const MvpPage = userIsAuthenticated(MvpAppContainer);
-const AdminPage = adminIsAuthenticated(AdminAppContainer);
+const AdminPage = mvpAdminIsAuthenticated(AdminAppContainer);
 
 const AppComponent = () => (
   <Switch>

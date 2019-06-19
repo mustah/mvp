@@ -40,16 +40,16 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
     this.token = token;
   }
 
-  public static MockAuthenticatedUser admin() {
-    return new MockAuthenticatedUser(singletonList(Role.ADMIN));
-  }
-
   public static MockAuthenticatedUser superAdmin() {
     return new MockAuthenticatedUser(singletonList(Role.SUPER_ADMIN));
   }
 
-  public static MockAuthenticatedUser user() {
-    return new MockAuthenticatedUser(singletonList(Role.USER));
+  public static MockAuthenticatedUser mvpAdmin() {
+    return new MockAuthenticatedUser(singletonList(Role.MVP_ADMIN));
+  }
+
+  public static MockAuthenticatedUser mvpUser() {
+    return new MockAuthenticatedUser(singletonList(Role.MVP_USER));
   }
 
   @Override
@@ -58,8 +58,8 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   }
 
   @Override
-  public boolean isAdmin() {
-    return user.isAdmin;
+  public boolean isMvpAdmin() {
+    return user.isMvpAdmin;
   }
 
   @Override

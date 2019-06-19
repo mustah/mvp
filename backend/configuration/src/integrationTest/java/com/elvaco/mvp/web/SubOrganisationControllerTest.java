@@ -67,7 +67,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void createWithOtherUsersSelectionFails() {
-    User otherSuperAdmin = given(organisation(), user().asSuperAdmin()).getUser();
+    User otherSuperAdmin = given(organisation(), mvpUser().asSuperAdmin()).getUser();
     UserSelectionDto userSelection = createUserSelection(otherSuperAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<ErrorMessageDto> request = createNew(
@@ -82,10 +82,10 @@ public class SubOrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void create_disallowRegularUser() {
-    UserSelectionDto userSelection = createUserSelection(context().user);
+    UserSelectionDto userSelection = createUserSelection(context().mvpUser);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asUser(), context().organisationId(), subOrganisation
+      asMvpUser(), context().organisationId(), subOrganisation
     );
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -93,10 +93,10 @@ public class SubOrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void create_allowOrganisationAdmin() {
-    UserSelectionDto userSelection = createUserSelection(context().admin);
+    UserSelectionDto userSelection = createUserSelection(context().mvpAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asAdmin(), context().organisationId(), subOrganisation
+      asMvpAdmin(), context().organisationId(), subOrganisation
     );
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.CREATED);

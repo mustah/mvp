@@ -56,7 +56,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void user_CannotUpload_OwnOrganisation() {
     var organisation = given(organisation());
-    var user = given(user().organisation(organisation));
+    var user = given(mvpUser().organisation(organisation));
 
     assertCannotUpload(user, organisation, HttpStatus.NOT_FOUND);
   }
@@ -64,7 +64,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void user_CannotUpload_AnyOrganisation() {
     var organisation = given(organisation());
-    var user = given(user());
+    var user = given(mvpUser());
 
     assertCannotUpload(user, organisation, HttpStatus.NOT_FOUND);
   }
@@ -76,7 +76,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     putCustomAsset(secretOrganisation);
 
     var anotherOrganisation = given(organisation());
-    var userFromOtherOrganisation = given(user().organisation(anotherOrganisation));
+    var userFromOtherOrganisation = given(mvpUser().organisation(anotherOrganisation));
 
     var response = as(userFromOtherOrganisation)
       .get(assetGetUrl(secretOrganisation.slug), byte[].class);
@@ -98,7 +98,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
   @Test
   public void asset_FallbackAssetsAreNotEmpty() {
-    var response = asUser()
+    var response = asMvpUser()
       .get(assetGetUrl("any-organisation"), byte[].class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -107,7 +107,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
   @Test
   public void fallback_InvalidOrganisationSlug() {
-    var response = asUser()
+    var response = asMvpUser()
       .get(assetGetUrl("asdf-asdf-invalid-stuff"), byte[].class);
 
     assertDefaultAsset(response);
@@ -117,7 +117,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   public void fallback_OrganisationWithoutCustomAsset() {
     var organisationWithoutCustomAsset = given(organisation());
     var userFromOrganisationWithoutCustomAsset = given(
-      user().organisation(organisationWithoutCustomAsset)
+      mvpUser().organisation(organisationWithoutCustomAsset)
     );
     var response = as(userFromOrganisationWithoutCustomAsset)
       .get(assetGetUrl(organisationWithoutCustomAsset.slug), byte[].class);
@@ -128,7 +128,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void subOrganisation_Fallbacks_UsesOwnIfExisting() {
     var parent = given(organisation().name("parent"));
-    var admin = given(user().organisation(parent).asAdmin());
+    var admin = given(mvpUser().organisation(parent).asMvpAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
 
     putCustomAsset(subOrganisation);
@@ -142,7 +142,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void subOrganisation_Fallbacks_UsesOwnIfExistingAndParentExists() {
     var parent = given(organisation().name("parent"));
-    var admin = given(user().organisation(parent).asAdmin());
+    var admin = given(mvpUser().organisation(parent).asMvpAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
 
     putCustomAsset(parent);
@@ -157,7 +157,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void subOrganisation_Fallbacks_ParentOrganisationIfNoOwn() {
     var parent = given(organisation().name("parent"));
-    var admin = given(user().organisation(parent).asAdmin());
+    var admin = given(mvpUser().organisation(parent).asMvpAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
 
     putCustomAsset(parent);
@@ -171,7 +171,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void subOrganisation_Fallbacks_DefaultAfterOwnAndParent() {
     var parent = given(organisation().name("parent"));
-    var admin = given(user().organisation(parent).asAdmin());
+    var admin = given(mvpUser().organisation(parent).asMvpAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
 
     var response = asNotLoggedIn()
@@ -183,7 +183,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void admin_OwnOrganisation_Put() {
     var organisation = given(organisation());
-    var admin = given(user().organisation(organisation).asAdmin());
+    var admin = given(mvpUser().organisation(organisation).asMvpAdmin());
 
     assertCannotUpload(admin, organisation, HttpStatus.FORBIDDEN);
   }
@@ -191,14 +191,14 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void admin_OwnOrganisation_Delete() {
     var organisation = given(organisation());
-    var admin = given(user().organisation(organisation).asAdmin());
+    var admin = given(mvpUser().organisation(organisation).asMvpAdmin());
     assertCannotDelete(admin, organisation, HttpStatus.FORBIDDEN);
   }
 
   @Test
   public void admin_OwnSubOrganisation_Delete() {
     var parent = given(organisation().name("parent"));
-    var admin = given(user().organisation(parent).asAdmin());
+    var admin = given(mvpUser().organisation(parent).asMvpAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
     assertCannotDelete(admin, subOrganisation, HttpStatus.FORBIDDEN);
   }
@@ -206,19 +206,19 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void admin_OtherOrganisation_Delete() {
     var organisation = given(organisation());
-    var admin = given(user().asAdmin());
+    var admin = given(mvpUser().asMvpAdmin());
     assertCannotDelete(admin, organisation, HttpStatus.NOT_FOUND);
   }
 
   @Test
   public void admin_OtherSubOrganisation_Delete() {
     var adminsOrganisation = given(organisation());
-    var admin = given(user().organisation(adminsOrganisation).asAdmin());
+    var admin = given(mvpUser().organisation(adminsOrganisation).asMvpAdmin());
 
-    var otherOrganisationsParent = given(organisation().name("parent"));
-    var otherOrganisationsAdmin = given(user().organisation(otherOrganisationsParent).asAdmin());
+    var parentOrg = given(organisation().name("parent"));
+    var otherOrganisationsAdmin = given(mvpUser().organisation(parentOrg).asMvpAdmin());
     var otherSubOrganisation = given(
-      subOrganisation(otherOrganisationsParent, otherOrganisationsAdmin).name("sub")
+      subOrganisation(parentOrg, otherOrganisationsAdmin).name("sub")
     );
     assertCannotDelete(admin, otherSubOrganisation, HttpStatus.NOT_FOUND);
   }
@@ -226,14 +226,14 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void admin_OtherOrganisation_Put() {
     var organisation = given(organisation());
-    var admin = given(user().asAdmin());
+    var admin = given(mvpUser().asMvpAdmin());
     assertCannotUpload(admin, organisation, HttpStatus.NOT_FOUND);
   }
 
   @Test
   public void admin_OwnSubOrganisation_Put() {
     var parent = given(organisation().name("parent"));
-    var admin = given(user().organisation(parent).asAdmin());
+    var admin = given(mvpUser().organisation(parent).asMvpAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
 
     assertCannotUpload(admin, subOrganisation, HttpStatus.FORBIDDEN);
@@ -266,7 +266,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   @Test
   public void superAdmin_RemoveAsset_AnyOrganisation() {
     var organisation = given(organisation());
-    var superAdmin = given(user().asSuperAdmin());
+    var superAdmin = given(mvpUser().asSuperAdmin());
     assertCanDelete(superAdmin, organisation);
   }
 
@@ -331,7 +331,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
       .get("/organisations/" + organisation.id, OrganisationDto.class);
     assertThat(shouldBeDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
-    var lookingAtFallback = asUser()
+    var lookingAtFallback = asMvpUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
 
     assertAssetMatches(lookingAtFallback, assetFixtures.get(assetUnderTest()));
@@ -371,7 +371,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   private void assertCanDelete(User user, Organisation organisation) {
     putCustomAsset(organisation);
 
-    var lookingAtNew = asUser()
+    var lookingAtNew = asMvpUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
 
     assertThat(lookingAtNew.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -382,7 +382,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
     assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    var lookingAtFallback = asUser()
+    var lookingAtFallback = asMvpUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
 
     assertAssetMatches(lookingAtFallback, assetFixtures.get(assetUnderTest()));
@@ -395,7 +395,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
   ) {
     putCustomAsset(organisation);
 
-    var lookingAtNew = asUser()
+    var lookingAtNew = asMvpUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
 
     var newAsset = lookingAtNew.getBody();
@@ -408,7 +408,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
     assertThat(deleted.getStatusCode()).isEqualTo(expectedStatus);
 
-    var lookingAtFallback = asUser()
+    var lookingAtFallback = asMvpUser()
       .get(assetGetUrl(organisation.slug), byte[].class);
 
     assertAssetMatches(lookingAtFallback, newAsset);

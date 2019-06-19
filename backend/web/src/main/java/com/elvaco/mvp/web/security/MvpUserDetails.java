@@ -19,8 +19,9 @@ import static java.util.stream.Collectors.toList;
 @ToString
 public class MvpUserDetails implements UserDetails, AuthenticatedUser {
 
+  public static final String SPRING_ROLE_PREFIX = "ROLE_";
+
   private static final long serialVersionUID = -7344530747327091472L;
-  private static final String SPRING_ROLE_PREFIX = "ROLE_";
 
   private final List<GrantedAuthority> authorities;
   private final String token;
@@ -46,8 +47,8 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   }
 
   @Override
-  public boolean isAdmin() {
-    return user.isAdmin;
+  public boolean isMvpAdmin() {
+    return user.isMvpAdmin;
   }
 
   @Override

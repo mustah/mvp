@@ -125,8 +125,8 @@ public class StepDefinitions {
     assertThat(driver.getTitle()).isEqualTo("EVO");
   }
 
-  @When("I login as user '(.*)' and password '(.*)'")
-  public void whenILoginAsUserWithPassword(String email, String password) {
+  @When("I login as mvp user '(.*)' and password '(.*)'")
+  public void whenILoginAsMvpUserWithPassword(String email, String password) {
     WebElement emailElement = driver.findElement(By.id("email"));
     emailElement.clear();
     emailElement.sendKeys(email);

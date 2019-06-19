@@ -53,7 +53,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextId.toString() + "@test.com")
       .password("password")
       .organisation(organisation)
-      .asUser()
+      .asMvpUser()
       .build();
     users.save(user);
 
@@ -62,7 +62,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextId.toString() + "-admin@test.com")
       .password("password")
       .organisation(organisation)
-      .asAdmin()
+      .asMvpAdmin()
       .build();
     users.save(admin);
 

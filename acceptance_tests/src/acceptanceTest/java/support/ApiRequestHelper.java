@@ -45,7 +45,7 @@ public class ApiRequestHelper {
     data.getObject().put("name", userName)
       .put("email", email)
       .put("organisation", organisation.getObject())
-      .put("roles", new JsonNode("[\"USER\"]").getArray())
+      .put("roles", new JsonNode("[\"MVP_USER\"]").getArray())
       .put("language", "en")
       .put("password", password);
 

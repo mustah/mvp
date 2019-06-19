@@ -362,7 +362,7 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
       .sortBy(sort)
       .build();
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<PagedLogicalMeterDto> response = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(response)

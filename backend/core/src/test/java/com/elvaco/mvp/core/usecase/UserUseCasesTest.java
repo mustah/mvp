@@ -16,9 +16,9 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
 import static java.util.Arrays.asList;
@@ -35,7 +35,7 @@ public class UserUseCasesTest {
     User user = userBuilder()
       .name("t1")
       .email("t2@email.com")
-      .roles(USER, ADMIN)
+      .roles(MVP_USER, MVP_ADMIN)
       .build();
 
     User userToUpdate = userBuilder().build();
@@ -70,7 +70,7 @@ public class UserUseCasesTest {
     User superAdmin = userBuilder()
       .name("t1")
       .email("t2@email.com")
-      .roles(USER, SUPER_ADMIN)
+      .roles(MVP_USER, SUPER_ADMIN)
       .build();
     User marvelUser = userBuilder().build();
     usersOf(currentUser(superAdmin), superAdmin, marvelUser);
@@ -107,6 +107,6 @@ public class UserUseCasesTest {
       .email("random@random.com")
       .password(randomUUID().toString())
       .organisation(DAILY_PLANET)
-      .asUser();
+      .asMvpUser();
   }
 }

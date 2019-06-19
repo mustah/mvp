@@ -68,7 +68,7 @@ describe('userApiActions', () => {
       name: 'Alexander Laas',
       email: 'alexander.laas@elvaco.se',
       organisation: {id: 1, slug: 'elvaco', name: 'elvaco'},
-      roles: [Role.USER],
+      roles: [Role.MVP_USER],
     };
     const returnedUser: Partial<User> = {...newUser, id: 1};
     const errorResponse = {message: 'An error'};
@@ -110,7 +110,7 @@ describe('userApiActions', () => {
       email: 'alexander.laas@elvaco.se',
       language: 'sv',
       organisation: {id: 1, slug: 'elvaco', name: 'elvaco'},
-      roles: [Role.USER, Role.ADMIN],
+      roles: [Role.MVP_USER, Role.MVP_ADMIN],
     };
     const errorResponse = {message: 'An error'};
     const putUserWithResponseOk = async (updatedUser: User) => {
@@ -150,7 +150,7 @@ describe('userApiActions', () => {
       email: 'alexander.laas@elvaco.se',
       language: 'sv',
       organisation: {id: 1, slug: 'elvaco', name: 'elvaco'},
-      roles: [Role.USER, Role.ADMIN],
+      roles: [Role.MVP_USER, Role.MVP_ADMIN],
     };
 
     const errorResponse = {message: 'An error'};
@@ -205,7 +205,7 @@ describe('userApiActions', () => {
       name: 'Eva',
       organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
       language: 'sv',
-      roles: [Role.USER],
+      roles: [Role.MVP_USER],
       email: 'eva@elvaco.se',
     };
     const errorResponse = {message: 'An error'};
@@ -237,7 +237,7 @@ describe('userApiActions', () => {
       name: 'Eva',
       organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
       language: 'sv',
-      roles: [Role.USER],
+      roles: [Role.MVP_USER],
       email: 'eva@elvaco.se',
     };
     const errorResponse = {message: 'An error'};

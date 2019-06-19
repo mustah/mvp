@@ -29,7 +29,7 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
       .page(0)
       .build();
 
-    Page<CityDto> response = asUser()
+    Page<CityDto> response = asMvpUser()
       .getPage(url, CityDto.class);
 
     assertThat(response.getContent().stream().map(cityDto -> cityDto.name)).containsExactly(
@@ -53,7 +53,7 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
       .page(0)
       .build();
 
-    Page<AddressDto> response = asUser()
+    Page<AddressDto> response = asMvpUser()
       .getPage(url, AddressDto.class);
 
     assertThat(response.getContent().stream().map(addressDto -> addressDto.street)).containsExactly(
@@ -77,7 +77,7 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
       .page(0)
       .build();
 
-    Page<IdNamedDto> response = asUser()
+    Page<IdNamedDto> response = asMvpUser()
       .getPage(url, IdNamedDto.class);
 
     assertThat(response.getContent().stream().map(facility -> facility.name)).containsExactly(
@@ -101,7 +101,7 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
       .page(0)
       .build();
 
-    Page<IdNamedDto> response = asUser()
+    Page<IdNamedDto> response = asMvpUser()
       .getPage(url, IdNamedDto.class);
 
     assertThat(response.getContent().stream().map(addr -> addr.name)).containsExactly(
@@ -125,7 +125,7 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
       .page(0)
       .build();
 
-    Page<IdNamedDto> response = asUser()
+    Page<IdNamedDto> response = asMvpUser()
       .getPage(url, IdNamedDto.class);
 
     assertThat(response.getContent().stream().map(serial -> serial.name)).containsExactly(

@@ -4,7 +4,7 @@ import {compose as composeHoc} from 'recompose';
 import {compose} from 'redux';
 import {RootState} from '../../reducers/rootReducer';
 import {User} from '../../state/domain-models/user/userModels';
-import {isAdmin, isSuperAdmin} from '../../state/domain-models/user/userSelectors';
+import {isMvpAdmin, isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {Predicate} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
 import {componentOrNothing} from './hocs';
@@ -14,12 +14,13 @@ interface AuthenticatedUser {
 }
 
 const selectUser = (authenticatedUser: AuthenticatedUser) => authenticatedUser.user;
-const issAdminUser: Predicate<AuthenticatedUser> = compose(isAdmin, selectUser);
+
+const isMvpAdminUser: Predicate<AuthenticatedUser> = compose(isMvpAdmin, selectUser);
 const isSuperAdminUser: Predicate<AuthenticatedUser> = compose(isSuperAdmin, selectUser);
 
-const withAdminOrNothing =
+const withMvpAdminOrNothing =
   <P extends AuthenticatedUser>(Component: React.ComponentType<P>): React.FunctionComponent<P> =>
-    componentOrNothing<P>(issAdminUser)(Component);
+    componentOrNothing<P>(isMvpAdminUser)(Component);
 
 const withSuperAdminOrNothing =
   <P extends AuthenticatedUser>(Component: React.ComponentType<P>): React.FunctionComponent<P> =>
@@ -27,9 +28,9 @@ const withSuperAdminOrNothing =
 
 const mapStateToProps = ({auth}: RootState): AuthenticatedUser => ({user: getUser(auth)});
 
-export const withAdminOnly =
+export const withMvpAdminOnly =
   <P extends {}>(Component: React.ComponentType<P & AuthenticatedUser>) =>
-    composeHoc<AuthenticatedUser, P>(connect(mapStateToProps), withAdminOrNothing)(Component);
+    composeHoc<AuthenticatedUser, P>(connect(mapStateToProps), withMvpAdminOrNothing)(Component);
 
 export const withSuperAdminOnly =
   <P extends {}>(Component: React.ComponentType<P & AuthenticatedUser>) =>

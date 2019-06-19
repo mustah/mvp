@@ -30,8 +30,8 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void getDashboards() {
-    User user = given(user());
-    User otherUser = given(user());
+    User user = given(mvpUser());
+    User otherUser = given(mvpUser());
     Dashboard myDashboard = given(dashboard().ownerUserId(user.id));
 
     given(dashboard().ownerUserId(otherUser.id));
@@ -48,7 +48,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void getWidgets() {
-    User user = given(user());
+    User user = given(mvpUser());
     Dashboard myDashboard1 = given(dashboard().ownerUserId(user.id));
     Widget widget1 = given(widget().dashboardId(myDashboard1.id).ownerUserId(user.id));
     Widget widget2 = given(widget().dashboardId(myDashboard1.id).ownerUserId(user.id));
@@ -56,7 +56,7 @@ public class DashboardControllerTest extends IntegrationTest {
     Dashboard myDashboard2 = given(dashboard().ownerUserId(user.id));
     given(widget().dashboardId(myDashboard2.id).ownerUserId(user.id));
 
-    User anotherUser = given(user());
+    User anotherUser = given(mvpUser());
     Dashboard anotherUsersDashboard = given(dashboard().ownerUserId(anotherUser.id));
     given(widget().dashboardId(anotherUsersDashboard.id).ownerUserId(anotherUser.id));
 
@@ -72,7 +72,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void getDashboards_noDashboardFound() {
-    List<DashboardDto> response = asUser().getList(
+    List<DashboardDto> response = asMvpUser().getList(
       dashboardsUrl(),
       DashboardDto.class
     ).getBody();
@@ -82,7 +82,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void addDashboard() {
-    User user = given(user());
+    User user = given(mvpUser());
     DashboardDto dto = new DashboardDto(randomUUID(), randomName(), randomLayout(), emptyList());
 
     ResponseEntity<DashboardDto> response = as(user).post(
@@ -101,7 +101,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void addDashboard_handleNullWidgets() {
-    User user = given(user());
+    User user = given(mvpUser());
     DashboardDto dto = new DashboardDto(randomUUID(), randomName(), randomLayout(), null);
 
     ResponseEntity<DashboardDto> response = as(user).post(
@@ -120,7 +120,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void addDashboard_savesWidgets() {
-    User user = given(user());
+    User user = given(mvpUser());
     UUID dashboardId = randomUUID();
     WidgetDto widget1 = new WidgetDto(
       randomUUID(),
@@ -164,7 +164,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void addWidget() {
-    User user = given(user());
+    User user = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     WidgetDto dto = new WidgetDto(
       randomUUID(),
@@ -189,7 +189,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void addWidget_InvalidWidgetType() {
-    User user = given(user());
+    User user = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     WidgetDto dto = new WidgetDto(
       randomUUID(),
@@ -217,7 +217,7 @@ public class DashboardControllerTest extends IntegrationTest {
       randomName(),
       randomSettings()
     );
-    ResponseEntity<ErrorMessageDto> response = asUser().post(
+    ResponseEntity<ErrorMessageDto> response = asMvpUser().post(
       widgetsUrl(),
       dto,
       ErrorMessageDto.class
@@ -231,8 +231,8 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void addWidget_notMyDashboard() {
-    User user = given(user());
-    User otherUser = given(user());
+    User user = given(mvpUser());
+    User otherUser = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
 
     WidgetDto dto = new WidgetDto(
@@ -257,7 +257,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void deleteDashboard() {
-    User user = given(user());
+    User user = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
 
@@ -275,8 +275,8 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void deleteDashboard_failForAnotherUser() {
-    User user = given(user());
-    User otherUser = given(user());
+    User user = given(mvpUser());
+    User otherUser = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
 
     ResponseEntity<ErrorMessageDto> response = as(user).delete(
@@ -290,7 +290,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void deleteWidget() {
-    User user = given(user());
+    User user = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     Widget widget1 = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
     Widget widget2 = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
@@ -318,8 +318,8 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void deleteWidget_failForAnotherUser() {
-    User user = given(user());
-    Dashboard dashboard = given(dashboard().ownerUserId(given(user()).id));
+    User user = given(mvpUser());
+    Dashboard dashboard = given(dashboard().ownerUserId(given(mvpUser()).id));
     Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(dashboard.ownerUserId));
 
     ResponseEntity<ErrorMessageDto> response = as(user).delete(
@@ -333,7 +333,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void updateDashboard() {
-    User user = given(user());
+    User user = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
 
     DashboardDto dto = new DashboardDto(dashboard.id, randomName(), randomLayout(), null);
@@ -352,7 +352,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void updateDashboard_doesNotUpdateWidgets() {
-    User user = given(user());
+    User user = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
 
@@ -385,8 +385,8 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void updateDashboard_failForAnotherUser() {
-    User user = given(user());
-    User otherUser = given(user());
+    User user = given(mvpUser());
+    User otherUser = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(otherUser.id));
 
     DashboardDto dto = new DashboardDto(dashboard.id, randomName(), randomLayout(), null);
@@ -405,7 +405,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void updateWidget() {
-    User user = given(user());
+    User user = given(mvpUser());
     Dashboard dashboard = given(dashboard().ownerUserId(user.id));
     Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(user.id));
 
@@ -445,8 +445,8 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void updateWidget_failForAnotherUser() {
-    User user = given(user());
-    Dashboard dashboard = given(dashboard().ownerUserId(given(user()).id));
+    User user = given(mvpUser());
+    Dashboard dashboard = given(dashboard().ownerUserId(given(mvpUser()).id));
     Widget widget = given(widget().dashboardId(dashboard.id).ownerUserId(dashboard.ownerUserId));
 
     WidgetDto dto = new WidgetDto(

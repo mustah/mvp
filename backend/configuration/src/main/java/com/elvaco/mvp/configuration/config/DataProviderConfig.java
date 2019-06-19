@@ -106,6 +106,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 class DataProviderConfig {
 
   private static final byte[] EMPTY_CONTENT = {};
+
   private final PasswordEncoder passwordEncoder;
   private final UserJpaRepository userJpaRepository;
   private final SettingJpaRepository settingJpaRepository;
@@ -283,10 +284,10 @@ class DataProviderConfig {
     MvpProperties mvpProperties,
     Organisation rootOrganisation
   ) {
-    MvpProperties.Superadmin superadmin = mvpProperties.getSuperadmin();
+    MvpProperties.Superadmin superAdmin = mvpProperties.getSuperadmin();
     return new ProductionData(
-      superadmin.getEmail(),
-      superadmin.getPassword(),
+      superAdmin.getEmail(),
+      superAdmin.getPassword(),
       rootOrganisation
     );
   }

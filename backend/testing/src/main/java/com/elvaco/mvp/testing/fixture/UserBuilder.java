@@ -9,11 +9,10 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
@@ -79,12 +78,12 @@ public final class UserBuilder {
     return roles(SUPER_ADMIN);
   }
 
-  public UserBuilder asAdmin() {
-    return roles(ADMIN);
+  public UserBuilder asMvpAdmin() {
+    return roles(MVP_ADMIN);
   }
 
-  public UserBuilder asUser() {
-    return roles(USER);
+  public UserBuilder asMvpUser() {
+    return roles(MVP_USER);
   }
 
   public UserBuilder roles(List<Role> roles) {
@@ -93,7 +92,7 @@ public final class UserBuilder {
   }
 
   public UserBuilder roles(Role... roles) {
-    return roles(asList(roles));
+    return roles(List.of(roles));
   }
 
   public User build() {

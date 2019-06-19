@@ -186,7 +186,7 @@ public class OrganisationPermissionsTest {
   @Test
   public void userCanNotElevateRoleToAdmin() {
     assertFalse(
-      hasPermission(ELVACO_USER, userWithRole(ELVACO_USER, Role.ADMIN), ELVACO_USER, UPDATE)
+      hasPermission(ELVACO_USER, userWithRole(ELVACO_USER, Role.MVP_ADMIN), ELVACO_USER, UPDATE)
     );
   }
 
@@ -226,7 +226,7 @@ public class OrganisationPermissionsTest {
     assertTrue(
       hasPermission(
         ELVACO_ADMIN_USER,
-        userWithRole(ELVACO_USER, Role.ADMIN),
+        userWithRole(ELVACO_USER, Role.MVP_ADMIN),
         ELVACO_USER,
         UPDATE
       )
@@ -238,7 +238,7 @@ public class OrganisationPermissionsTest {
     assertTrue(
       hasPermission(
         ELVACO_ADMIN_USER,
-        userWithRole(ELVACO_ADMIN_USER, Role.USER),
+        userWithRole(ELVACO_ADMIN_USER, Role.MVP_USER),
         ELVACO_ADMIN_USER,
         UPDATE
       )
@@ -262,7 +262,7 @@ public class OrganisationPermissionsTest {
     assertTrue(
       hasPermission(
         ELVACO_SUPER_ADMIN_USER,
-        userWithRole(ELVACO_SUPER_ADMIN_USER, Role.USER),
+        userWithRole(ELVACO_SUPER_ADMIN_USER, Role.MVP_USER),
         ELVACO_ADMIN_USER,
         UPDATE
       )
@@ -272,7 +272,6 @@ public class OrganisationPermissionsTest {
   @Test
   public void unhandledRoleThrowsException() {
     RuntimeException exception = null;
-
     try {
       hasPermission(
         ELVACO_SUPER_ADMIN_USER,
@@ -283,7 +282,6 @@ public class OrganisationPermissionsTest {
     } catch (RuntimeException ex) {
       exception = ex;
     }
-
     assertNotNull(exception);
   }
 
@@ -297,7 +295,10 @@ public class OrganisationPermissionsTest {
   }
 
   private boolean hasPermission(
-    User currentUser, User targetUser, User beforeUpdate, Permission permission
+    User currentUser,
+    User targetUser,
+    User beforeUpdate,
+    Permission permission
   ) {
     return permissionEvaluator.isAllowed(
       new MockAuthenticatedUser(currentUser, randomUUID().toString()),
@@ -307,7 +308,7 @@ public class OrganisationPermissionsTest {
     );
   }
 
-  public User userWithRole(User user, Role role) {
+  private User userWithRole(User user, Role role) {
     return new User(
       user.id,
       user.name,

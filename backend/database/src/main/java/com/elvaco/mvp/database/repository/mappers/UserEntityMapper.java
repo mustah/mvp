@@ -23,7 +23,7 @@ public class UserEntityMapper {
       userEntity.password,
       userEntity.language,
       OrganisationEntityMapper.toDomainModel(userEntity.organisation),
-      rolesOf(userEntity.roles)
+      rolesFrom(userEntity.roles)
     );
   }
 
@@ -35,17 +35,17 @@ public class UserEntityMapper {
       user.password,
       user.language,
       OrganisationEntityMapper.toEntity(user.organisation),
-      rolesOf(user.roles)
+      rolesFrom(user.roles)
     );
   }
 
-  private static List<RoleEntity> rolesOf(List<Role> roles) {
+  private static List<RoleEntity> rolesFrom(List<Role> roles) {
     return roles.stream()
       .map(r -> new RoleEntity(r.role))
       .collect(toList());
   }
 
-  private static List<Role> rolesOf(Collection<RoleEntity> roles) {
+  private static List<Role> rolesFrom(Collection<RoleEntity> roles) {
     return roles.stream()
       .map(r -> new Role(r.role))
       .collect(toList());

@@ -16,8 +16,8 @@ export interface User {
 export type UserState = NormalizedState<User>;
 
 export const enum Role {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
+  MVP_ADMIN = 'MVP_ADMIN',
+  MVP_USER = 'MVP_USER',
   SUPER_ADMIN = 'SUPER_ADMIN',
 }
 

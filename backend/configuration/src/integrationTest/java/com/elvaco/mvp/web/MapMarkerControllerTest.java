@@ -77,7 +77,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void cannotFindMapMarkerWithNoLocation_HasEmptyBody() {
-    UUID logicalMeterId = saveLogicalMeterWith(UNKNOWN_LOCATION, context().user).id;
+    UUID logicalMeterId = saveLogicalMeterWith(UNKNOWN_LOCATION, context().mvpUser).id;
 
     ResponseEntity<ErrorMessageDto> response = asSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
@@ -105,16 +105,16 @@ public class MapMarkerControllerTest extends IntegrationTest {
   @Test
   public void findMeterMapMarker_ChecksOrganisation() {
     UUID logicalMeterId = saveLogicalMeter().id;
-    User user = given(organisation(), user()).getUser();
+    User user = given(organisation(), mvpUser()).getUser();
 
-    ResponseEntity<ErrorMessageDto> missing = restAsUser(user)
+    ResponseEntity<ErrorMessageDto> missing = restClientWith(user)
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
 
     assertThat(missing.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     assertThat(missing.getBody().message)
       .isEqualTo("Unable to find meter with ID '" + logicalMeterId + "'");
 
-    ResponseEntity<MapMarkerWithStatusDto> found = asUser()
+    ResponseEntity<MapMarkerWithStatusDto> found = asMvpUser()
       .get("/map-markers/meters/" + logicalMeterId, MapMarkerWithStatusDto.class);
 
     assertThat(found.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -125,22 +125,22 @@ public class MapMarkerControllerTest extends IntegrationTest {
   @Test
   public void meterMapMarkers_ChecksOrganisation() {
     StatusType status = StatusType.OK;
-    saveLogicalAndPhysicalMeters(kungsbacka().build(), context().user, status);
-    saveLogicalAndPhysicalMeters(kungsbacka().build(), context().user, status);
+    saveLogicalAndPhysicalMeters(kungsbacka().build(), context().mvpUser, status);
+    saveLogicalAndPhysicalMeters(kungsbacka().build(), context().mvpUser, status);
 
-    User user = given(organisation(), user()).getUser();
+    User user = given(organisation(), mvpUser()).getUser();
 
     Url urlDefinition =
       Url.builder().path("/map-markers/meters")
         .build();
 
-    ResponseEntity<MapMarkersDto> differentOrganisation = restAsUser(user)
+    ResponseEntity<MapMarkersDto> differentOrganisation = restClientWith(user)
       .get(urlDefinition, MapMarkersDto.class);
 
     assertThat(differentOrganisation.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(differentOrganisation.getBody().markers.size()).isEqualTo(0);
 
-    ResponseEntity<MapMarkersDto> sameOrganisation = asUser()
+    ResponseEntity<MapMarkersDto> sameOrganisation = asMvpUser()
       .get(urlDefinition, MapMarkersDto.class);
 
     assertThat(sameOrganisation.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -169,7 +169,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void meterMapMarkers_FindsMapMarkersWithParameters() {
-    LogicalMeter meter1 = saveLogicalMeterWith(UNKNOWN_LOCATION, context().user);
+    LogicalMeter meter1 = saveLogicalMeterWith(UNKNOWN_LOCATION, context().mvpUser);
     LogicalMeter meter2 = saveLogicalMeter();
     LogicalMeter meter3 = saveLogicalMeter();
 
@@ -182,7 +182,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .parameter(CITY, "sverige,kungsbacka")
       .build();
 
-    ResponseEntity<MapMarkersDto> response = asUser()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get(url, MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -210,7 +210,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());
 
-    ResponseEntity<MapMarkersDto> response = asUser()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get(mapMarkerAlarmUrl("yes"), MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -241,7 +241,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());
 
-    ResponseEntity<MapMarkersDto> response = asUser()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get(gatewayMapMarkerAlarmUrl("yes"), MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -272,7 +272,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     waitForMeasurementStat();
 
-    ResponseEntity<MapMarkersDto> response = asUser()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get(url, MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -307,7 +307,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     waitForMeasurementStat();
 
-    ResponseEntity<MapMarkersDto> response = asUser()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get(url, MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -331,7 +331,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .parameter(RequestParameter.ALARM, "yes")
       .build();
 
-    ResponseEntity<MapMarkersDto> response = asUser()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get(url, MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -354,7 +354,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());
 
-    ResponseEntity<MapMarkersDto> response = asUser()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get(mapMarkerAlarmUrl("no"), MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -373,14 +373,14 @@ public class MapMarkerControllerTest extends IntegrationTest {
     saveLogicalMeterWith(kungsbacka().build(), gateway2);
     saveLogicalMeterWith(kungsbacka().build(), gateway3);
 
-    User user = given(organisation(), user()).getUser();
+    User user = given(organisation(), mvpUser()).getUser();
 
     Url url = Url.builder()
       .path("/map-markers/gateways")
       .parameter(CITY, "sverige,kungsbacka")
       .build();
 
-    ResponseEntity<MapMarkersDto> foundByCorrectUser = asUser()
+    ResponseEntity<MapMarkersDto> foundByCorrectUser = asMvpUser()
       .get(url, MapMarkersDto.class);
 
     assertThat(foundByCorrectUser.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -391,7 +391,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
         new MapMarkerDto(gateway3.id, 12.345, 11.123)
       );
 
-    ResponseEntity<MapMarkersDto> notFoundByIncorrectUser = restAsUser(user)
+    ResponseEntity<MapMarkersDto> notFoundByIncorrectUser = restClientWith(user)
       .get(url, MapMarkersDto.class);
 
     assertThat(notFoundByIncorrectUser.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -402,7 +402,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void doIncludeMeterMapMarkerWithLowConfidence() {
     given(logicalMeter().location(kungsbacka().confidence(0.5).build()));
 
-    ResponseEntity<MapMarkersDto> response = asUser()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get("/map-markers/meters", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -413,7 +413,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void findMeterMapMarker_HasBodyForLowConfidence() {
     var logicalMeter = given(logicalMeter().location(kungsbacka().confidence(0.0).build()));
 
-    ResponseEntity<MapMarkerWithStatusDto> response = asUser()
+    ResponseEntity<MapMarkerWithStatusDto> response = asMvpUser()
       .get("/map-markers/meters/" + logicalMeter.id, MapMarkerWithStatusDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -505,7 +505,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   private LogicalMeter saveLogicalMeter() {
-    return saveLogicalMeterWith(kungsbacka().build(), context().user);
+    return saveLogicalMeterWith(kungsbacka().build(), context().mvpUser);
   }
 
   private PhysicalMeter savePhysicalMeterWith(LogicalMeter logicalMeter, StatusType status) {

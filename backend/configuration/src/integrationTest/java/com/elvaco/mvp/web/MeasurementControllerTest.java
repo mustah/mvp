@@ -81,7 +81,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withQuantity(DIFFERENCE_TEMPERATURE)
       .withValues(DIFF_TEMP_VALUE_CELSIUS));
 
-    List<MeasurementDto> measurements = asUser()
+    List<MeasurementDto> measurements = asMvpUser()
       .getList(
         "/measurements?resolution=hour"
           + "&logicalMeterId=" + meter.id
@@ -110,7 +110,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .quantity(DIFFERENCE_TEMPERATURE.name)
       .value(DIFF_TEMP_VALUE_CELSIUS));
 
-    List<MeasurementSeriesDto> measurements = asUser()
+    List<MeasurementSeriesDto> measurements = asMvpUser()
       .getList(
         "/measurements?quantity=Difference+temperature:K"
           + "&logicalMeterId=" + meter.id
@@ -137,7 +137,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withQuantity(DIFFERENCE_TEMPERATURE)
       .withValues(DIFF_TEMP_VALUE_CELSIUS));
 
-    List<MeasurementDto> measurements = asUser()
+    List<MeasurementDto> measurements = asMvpUser()
       .getList(
         "/measurements?logicalMeterId=" + meter.id
           + "&reportAfter=" + date
@@ -392,7 +392,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withValues(ENERGY_VALUE, ENERGY_VALUE));
 
     List<MeasurementSeriesDto> contents =
-      asUser().getList(
+      asMvpUser().getList(
         measurementsUrl()
           .quantity(ENERGY.name + ":kWh:readout")
           .logicalMeterId(meter.id)
@@ -431,7 +431,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withValues(ENERGY_VALUE, ENERGY_VALUE + 1));
 
     List<MeasurementSeriesDto> contents =
-      asUser().getList(
+      asMvpUser().getList(
         measurementsUrl()
           .quantity(ENERGY.name + ":kWh:consumption")
           .logicalMeterId(meter.id)
@@ -712,7 +712,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementOutsideSchedule_limitNrOfMeters() {
     ZonedDateTime date = context().now();
 
-    ResponseEntity<ErrorMessageDto> response = asUser()
+    ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .get(
         "/measurements?quantity=Power"
           + logicalMeterIdRequestString(11)
@@ -730,7 +730,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementOutsideSchedule_limitNrOfDays() {
     ZonedDateTime date = context().now();
 
-    ResponseEntity<ErrorMessageDto> response = asUser()
+    ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .get(
         "/measurements?quantity=Power"
           + logicalMeterIdRequestString(1)
@@ -872,7 +872,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         .value(DIFF_TEMP_VALUE_CELSIUS)
     );
 
-    ResponseEntity<ErrorMessageDto> response = asUser()
+    ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .get(
         "/measurements?quantity=Difference+temperature:unknownUnit"
           + "&logicalMeterId=" + heatMeter.id.toString()
@@ -902,7 +902,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         .value(DIFF_TEMP_VALUE_CELSIUS)
     );
 
-    ResponseEntity<ErrorMessageDto> response = asUser()
+    ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .get(
         "/measurements?quantity=Difference+temperature:kWh"
           + "&logicalMeterId=" + heatMeter.id
@@ -918,7 +918,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void missingMetersParametersReturnsHttp400() {
-    ResponseEntity<ErrorMessageDto> response = asUser()
+    ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .get(
         "/measurements?quantity=Difference+temperature:kWh",
         ErrorMessageDto.class
@@ -940,7 +940,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withValues(25, 35, 55)
     );
 
-    List<MeasurementSeriesDto> list = asUser()
+    List<MeasurementSeriesDto> list = asMvpUser()
       .getList(
         "/measurements?resolution=hour&quantity=Volume"
           + "&logicalMeterId=" + consumptionMeter.id
@@ -978,7 +978,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(25, 35, 55));
 
-    List<MeasurementSeriesDto> seriesDto = asUser()
+    List<MeasurementSeriesDto> seriesDto = asMvpUser()
       .getList(String.format(
         "/measurements?resolution=hour&quantity=Volume&logicalMeterId=%s"
           + "&reportAfter=%s&reportBefore=%s",
@@ -1016,7 +1016,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withValues(1, 2, 5)
     );
 
-    List<MeasurementSeriesDto> response = asUser()
+    List<MeasurementSeriesDto> response = asMvpUser()
       .getList(String.format(
         "/measurements"
           + "?reportAfter=" + when
@@ -1052,7 +1052,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime before = context().now().plusDays(1);
     var logicalMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
-    List<MeasurementSeriesDto> response = asUser()
+    List<MeasurementSeriesDto> response = asMvpUser()
       .getList(
         "/measurements"
           + "?reportAfter=" + after
@@ -1098,7 +1098,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .withValues(9999.0)
     );
 
-    List<MeasurementSeriesDto> response = asUser()
+    List<MeasurementSeriesDto> response = asMvpUser()
       .getList(measurementsUrl()
         .reportPeriod(context().now(), context().now().plusHours(2))
         .quantity(POWER)
@@ -1129,7 +1129,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(logicalMeter.getQuantity(VOLUME.name).get().storageMode).isEqualTo(CONSUMPTION);
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(String.format(
         "/measurements"
           + "?reportAfter=" + date

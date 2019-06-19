@@ -37,7 +37,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
         name: '',
         email: '',
         organisation: {id: '', slug: '', name: ''},
-        roles: [Role.USER],
+        roles: [Role.MVP_USER],
         language: 'en',
         password: '',
       };

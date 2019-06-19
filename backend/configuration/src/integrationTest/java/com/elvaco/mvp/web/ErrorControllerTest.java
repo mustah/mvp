@@ -13,7 +13,7 @@ public class ErrorControllerTest extends IntegrationTest {
   @Test
   public void internalErrorsAreMappedCorrectly() {
     assertThat(
-      asUser().get(
+      asMvpUser().get(
         Url.builder().path("/errors").build(),
         ErrorMessageDto.class
       ).getBody()

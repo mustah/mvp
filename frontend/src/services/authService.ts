@@ -7,14 +7,14 @@ import {Role} from '../state/domain-models/user/userModels';
 const isAuthenticatedSelector = (state: RootState): boolean => state.auth.isAuthenticated;
 const isNotAuthenticatedSelector = (state: RootState): boolean => !state.auth.isAuthenticated;
 
-const isAdminSelector = (state: RootState): boolean =>
-  state.auth.user!.roles.includes(Role.ADMIN) || isSuperAdminSelector(state);
+const isMvpAdminSelector = (state: RootState): boolean =>
+  state.auth.user!.roles.includes(Role.MVP_ADMIN) || isSuperAdminSelector(state);
 
 const isSuperAdminSelector = ({auth: {user}}: RootState): boolean =>
   user!.roles.includes(Role.SUPER_ADMIN);
 
-const isAdminAuthenticatedSelector = (state: RootState): boolean =>
-  isAuthenticatedSelector(state) && isAdminSelector(state);
+const isMvpAdminAuthenticatedSelector = (state: RootState): boolean =>
+  isAuthenticatedSelector(state) && isMvpAdminSelector(state);
 
 export const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: routes.login,
@@ -22,9 +22,9 @@ export const userIsAuthenticated = connectedRouterRedirect({
   allowRedirectBack: false,
 });
 
-export const adminIsAuthenticated = connectedRouterRedirect({
+export const mvpAdminIsAuthenticated = connectedRouterRedirect({
   redirectPath: routes.home,
-  authenticatedSelector: isAdminAuthenticatedSelector,
+  authenticatedSelector: isMvpAdminAuthenticatedSelector,
   allowRedirectBack: false,
 });
 

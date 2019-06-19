@@ -48,7 +48,7 @@ public class OrganisationUseCases {
   public List<Organisation> findAll() {
     if (currentUser.isSuperAdmin()) {
       return organisations.findAll();
-    } else if (currentUser.isAdmin()) {
+    } else if (currentUser.isMvpAdmin()) {
       return organisations.findOrganisationAndSubOrganisations(currentUser.getOrganisationId());
     }
     return emptyList();
@@ -57,7 +57,7 @@ public class OrganisationUseCases {
   public List<Organisation> findAllSubOrganisations(UUID organisationId) {
     if (currentUser.isSuperAdmin()) {
       return organisations.findAllSubOrganisations(organisationId);
-    } else if (currentUser.isAdmin()) {
+    } else if (currentUser.isMvpAdmin()) {
       return organisations.findAllSubOrganisations(currentUser.getOrganisationId());
     }
     return emptyList();

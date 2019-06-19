@@ -21,7 +21,7 @@ public class User implements Identifiable<UUID>, Usernamed {
   public final Language language;
   public final Organisation organisation;
   public final List<Role> roles;
-  public final boolean isAdmin;
+  public final boolean isMvpAdmin;
   public final boolean isSuperAdmin;
 
   public User(
@@ -41,7 +41,7 @@ public class User implements Identifiable<UUID>, Usernamed {
     this.organisation = organisation;
     this.roles = unmodifiableList(roles);
     this.isSuperAdmin = roles.contains(Role.SUPER_ADMIN);
-    this.isAdmin = roles.contains(Role.ADMIN);
+    this.isMvpAdmin = roles.contains(Role.MVP_ADMIN);
   }
 
   public User(

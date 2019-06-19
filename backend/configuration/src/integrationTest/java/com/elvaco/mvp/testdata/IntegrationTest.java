@@ -241,20 +241,20 @@ public abstract class IntegrationTest implements ContextDsl {
     return restClient();
   }
 
-  protected RestClient asUser() {
-    return restAsUser(context().user);
+  protected RestClient asMvpUser() {
+    return restClientWith(context().mvpUser);
   }
 
-  protected RestClient asAdmin() {
-    return restAsUser(context().admin);
+  protected RestClient asMvpAdmin() {
+    return restClientWith(context().mvpAdmin);
   }
 
   protected RestClient asSuperAdmin() {
-    return restAsUser(context().superAdmin);
+    return restClientWith(context().superAdmin);
   }
 
   protected RestClient as(User user) {
-    return restAsUser(user);
+    return restClientWith(user);
   }
 
   protected User createUserIfNotPresent(User user) {
@@ -263,7 +263,7 @@ public abstract class IntegrationTest implements ContextDsl {
       .orElseGet(() -> users.save(user));
   }
 
-  protected RestClient restAsUser(User user) {
+  protected RestClient restClientWith(User user) {
     createUserIfNotPresent(user);
     return restClient()
       .loginWith(user.getUsername(), user.password)

@@ -55,7 +55,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .startingAt(context().now())
       .withValues(1.0));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusHours(1)),
         CollectionStatsDto.class
@@ -71,7 +71,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void zeroPercentWhenNoMeasurements() {
     given(logicalMeter());
     waitForMeasurementStat();
-    var meters = asUser()
+    var meters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(1)),
         CollectionStatsDto.class
@@ -93,7 +93,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .startingAt(context().now())
       .withValues(1.0));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> response = asUser()
+    Page<CollectionStatsDto> response = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusHours(2)),
         CollectionStatsDto.class
@@ -117,7 +117,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withInterval(Duration.ofMinutes(5))
       .withValues(DoubleStream.iterate(1, d -> d).limit(24 * 12 - 1).toArray()));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> response = asUser()
+    Page<CollectionStatsDto> response = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(1)),
         CollectionStatsDto.class
@@ -140,7 +140,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .startingAt(context().now())
       .withValues(1.0));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> response = asUser()
+    Page<CollectionStatsDto> response = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusHours(2)),
         CollectionStatsDto.class
@@ -175,7 +175,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withValues(1.0, 2.0)
     );
     waitForMeasurementStat();
-    var response = asUser()
+    var response = asMvpUser()
       .getPage(
         statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(5)),
         CollectionStatsDto.class
@@ -207,7 +207,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withValues(1.0, 2.0)
     );
     waitForMeasurementStat();
-    var content = asUser()
+    var content = asMvpUser()
       .getPage(
         statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(4)),
         CollectionStatsDto.class
@@ -227,7 +227,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(1.0));
     waitForMeasurementStat();
-    CollectionStatsDto logicalMeterDto = asUser()
+    CollectionStatsDto logicalMeterDto = asMvpUser()
       .getPage(
         statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(3)),
         CollectionStatsDto.class
@@ -264,7 +264,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(2, d -> d + 1.0).limit(23).toArray()));
     waitForMeasurementStat();
-    List<CollectionStatsDto> pagedMeters = asUser()
+    List<CollectionStatsDto> pagedMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(
           secondMeterActivePeriod.getStartDateTime().get(),
@@ -283,7 +283,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
   @Test
   public void oneHundredPercentAsUser() {
-    oneHundredPercentAs(asUser());
+    oneHundredPercentAs(asMvpUser());
   }
 
   @Test
@@ -332,7 +332,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(2)),
         CollectionStatsDto.class
@@ -344,7 +344,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .extracting(m -> m.collectionPercentage)
       .contains(100.0);
 
-    var listedPercentage = asUser().getList(
+    var listedPercentage = asMvpUser().getList(
       statsDateUrl(
         context().now(),
         context().now().plusDays(2)
@@ -371,7 +371,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(2)),
         CollectionStatsDto.class
@@ -383,7 +383,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .extracting(m -> m.collectionPercentage)
       .contains(100.0);
 
-    var listedPercentage = asUser().getList(
+    var listedPercentage = asMvpUser().getList(
       statsDateUrl(
         context().now().plusDays(1),
         context().now().plusDays(2)
@@ -419,7 +419,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(0, d -> d - 1.0).limit(12).toArray()));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters/stats/facility")
@@ -438,7 +438,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .extracting(m -> m.collectionPercentage)
       .contains(50.0);
 
-    var listedPercentage = asUser()
+    var listedPercentage = asMvpUser()
       .getList(
         Url.builder()
           .path("/meters/stats/date")
@@ -479,7 +479,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(2)),
         CollectionStatsDto.class
@@ -510,7 +510,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
     waitForMeasurementStat();
 
-    var list = asUser().getList(
+    var list = asMvpUser().getList(
       Url.builder()
         .path("/meters/collection-stats")
         .parameter(COLLECTION_AFTER, now)
@@ -547,7 +547,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(36).toArray()));
     waitForMeasurementStat();
-    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(2)),
         CollectionStatsDto.class
@@ -678,7 +678,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(1.0, 1, 1, 1, 1));
     waitForMeasurementStat();
-    var listedPercentage = asUser()
+    var listedPercentage = asMvpUser()
       .getList(
         statsDateUrl(context().yesterday(), context().yesterday().plusDays(2)),
         CollectionStatsPerDateDto.class
@@ -701,7 +701,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .sortBy(sort)
       .build();
 
-    Page<CollectionStatsDto> response = asUser()
+    Page<CollectionStatsDto> response = asMvpUser()
       .getPage(url, CollectionStatsDto.class);
 
     assertThat(response)

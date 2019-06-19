@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -85,7 +85,7 @@ public class AuthControllerTest extends IntegrationTest {
       "yes-random",
       Language.en,
       context().defaultOrganisation(),
-      singletonList(ADMIN)
+      singletonList(MVP_ADMIN)
     ));
 
     ResponseEntity<UserTokenDto> response = restClient()
@@ -141,7 +141,7 @@ public class AuthControllerTest extends IntegrationTest {
         .password(password)
         .language(Language.en)
         .organisation(context().defaultOrganisation())
-        .asUser()
+        .asMvpUser()
         .build()
     );
 

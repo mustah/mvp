@@ -25,9 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
@@ -143,7 +143,7 @@ public class UserControllerTest extends IntegrationTest {
         .password("ttt123")
         .language(Language.en)
         .organisation(context().defaultOrganisation())
-        .asUser()
+        .asMvpUser()
         .build()
     );
     UserDto userDto = UserDtoMapper.toDto(user);
@@ -178,7 +178,7 @@ public class UserControllerTest extends IntegrationTest {
   public void regularUserCannotCreateUser() {
     UserWithPasswordDto user = createUserDto("simple@user.com", "test123");
 
-    ResponseEntity<UnauthorizedDto> response = asUser().post(
+    ResponseEntity<UnauthorizedDto> response = asMvpUser().post(
       "/users",
       user,
       UnauthorizedDto.class
@@ -194,11 +194,11 @@ public class UserControllerTest extends IntegrationTest {
         .email("thisguy@users.net")
         .password("hunter2")
         .organisation(context().defaultOrganisation())
-        .asUser()
+        .asMvpUser()
         .build()
     );
 
-    asUser().delete("/users/" + user.id);
+    asMvpUser().delete("/users/" + user.id);
 
     assertThat(users.findById(user.id).isPresent()).isTrue();
   }
@@ -208,7 +208,7 @@ public class UserControllerTest extends IntegrationTest {
     String email = "another@user.com";
     UserDto user = createUserDto(email);
 
-    asUser().put("/users", user);
+    asMvpUser().put("/users", user);
 
     assertThat(users.findByEmail(email).isPresent()).isFalse();
   }
@@ -223,27 +223,27 @@ public class UserControllerTest extends IntegrationTest {
         .password(password)
         .language(Language.en)
         .organisation(context().defaultOrganisation())
-        .asUser()
+        .asMvpUser()
         .build()
     ).withPassword(password);
 
     UserDto userDto = UserDtoMapper.toDto(user);
-    userDto.roles = List.of(ADMIN.role);
+    userDto.roles = List.of(MVP_ADMIN.role);
 
     ResponseEntity<UserDto> response = as(user).put("/users", userDto, UserDto.class);
     assertThat(response.getStatusCode().value()).isEqualTo(404);
-    assertThat(users.findById(user.id).get().roles).containsExactly(USER);
+    assertThat(users.findById(user.id).get().roles).containsExactly(MVP_USER);
 
     userDto.roles = List.of(SUPER_ADMIN.role);
 
     response = as(user).put("/users", userDto, UserDto.class);
     assertThat(response.getStatusCode().value()).isEqualTo(404);
-    assertThat(users.findById(user.id).get().roles).containsExactly(USER);
+    assertThat(users.findById(user.id).get().roles).containsExactly(MVP_USER);
   }
 
   @Test
   public void regularUserCanOnlySeeOtherUsersWithinSameOrganisation() {
-    ResponseEntity<List<UserDto>> response = asUser().getList("/users", UserDto.class);
+    ResponseEntity<List<UserDto>> response = asMvpUser().getList("/users", UserDto.class);
 
     List<String> organisationCodes = response.getBody().stream()
       .map(u -> u.organisation.slug)
@@ -307,11 +307,11 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void adminCanFindAllUsersInOrganisationAndSubOrganisation() {
-    Organisation parentOrganisation = given(organisation().name("parent"));
-    User admin = given(user().roles(ADMIN).organisation(parentOrganisation).email("admin@test.se"));
-    Organisation subOrganisation = given(subOrganisation(parentOrganisation, admin).name("sub"));
-    given(user().organisation(subOrganisation).email("userInSub@test.se"));
-    given(user().organisation(subOrganisation).email("userInSub2@test.se"));
+    Organisation parentOrg = given(organisation().name("parent"));
+    User admin = given(mvpUser().roles(MVP_ADMIN).organisation(parentOrg).email("admin@test.se"));
+    Organisation subOrganisation = given(subOrganisation(parentOrg, admin).name("sub"));
+    given(mvpUser().organisation(subOrganisation).email("userInSub@test.se"));
+    given(mvpUser().organisation(subOrganisation).email("userInSub2@test.se"));
 
     ResponseEntity<List<UserDto>> response = as(admin)
       .getList("/users", UserDto.class);
@@ -326,13 +326,13 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotFindAllUsersInParentOrganisation() {
-    Organisation parentOrganisation = given(organisation().name("parent"));
-    User admin = given(user().roles(ADMIN).organisation(parentOrganisation).email("admin@test.se"));
-    Organisation subOrganisation = given(subOrganisation(parentOrganisation, admin).name("sub"));
-    User subAdmin = given(user().roles(ADMIN)
+    Organisation parentOrg = given(organisation().name("parent"));
+    User admin = given(mvpUser().roles(MVP_ADMIN).organisation(parentOrg).email("admin@test.se"));
+    Organisation subOrganisation = given(subOrganisation(parentOrg, admin).name("sub"));
+    User subAdmin = given(mvpUser().roles(MVP_ADMIN)
       .organisation(subOrganisation)
       .email("userInSub@test.se"));
-    given(user().organisation(subOrganisation).email("userInSub2@test.se"));
+    given(mvpUser().organisation(subOrganisation).email("userInSub2@test.se"));
 
     ResponseEntity<List<UserDto>> response = as(subAdmin)
       .getList("/users", UserDto.class);
@@ -346,14 +346,14 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void adminCanCreateUserInSubOrganisation() throws IOException {
-    createUserIfNotPresent(context().admin);
+    createUserIfNotPresent(context().mvpAdmin);
 
     UserSelection selection = UserSelection.builder()
       .id(randomUUID())
-      .organisationId(context().admin.organisation.id)
+      .organisationId(context().mvpAdmin.organisation.id)
       .name("")
       .selectionParameters(OBJECT_MAPPER.readTree("{\"test\":\"test selection\"}"))
-      .ownerUserId(context().admin.id)
+      .ownerUserId(context().mvpAdmin.id)
       .build();
 
     selection = userSelections.save(selection);
@@ -367,7 +367,7 @@ public class UserControllerTest extends IntegrationTest {
 
     UserWithPasswordDto user = createUserDto("superman@dailyplanet.us", organisation);
 
-    ResponseEntity<UserDto> response = asAdmin().post("/users", user, UserDto.class);
+    ResponseEntity<UserDto> response = asMvpAdmin().post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -380,7 +380,7 @@ public class UserControllerTest extends IntegrationTest {
   public void adminCanCreateUserOfSameOrganisation() {
     UserWithPasswordDto user = createUserDto("stranger@danger.us", "hello");
 
-    ResponseEntity<UserDto> response = asAdmin().post("/users", user, UserDto.class);
+    ResponseEntity<UserDto> response = asMvpAdmin().post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -393,7 +393,7 @@ public class UserControllerTest extends IntegrationTest {
   public void adminCannotCreateUserOfDifferentOrganisation() {
     UserDto user = createUserDto("50@blessings.hm", given(organisation()));
 
-    ResponseEntity<UserDto> response = asAdmin().post("/users", user, UserDto.class);
+    ResponseEntity<UserDto> response = asMvpAdmin().post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
@@ -408,7 +408,7 @@ public class UserControllerTest extends IntegrationTest {
       .post("/users", createUserDto("my.colleague@elvaco.se"), UserDto.class)
       .getBody();
 
-    ResponseEntity<List<UserDto>> responseList = asAdmin()
+    ResponseEntity<List<UserDto>> responseList = asMvpAdmin()
       .getList("/users", UserDto.class);
 
     assertThat(responseList.getBody()).doesNotContain(batman);
@@ -425,7 +425,7 @@ public class UserControllerTest extends IntegrationTest {
         .password(password)
         .language(Language.en)
         .organisation(context().defaultOrganisation())
-        .asAdmin()
+        .asMvpAdmin()
         .build()
     ).withPassword(password);
 
@@ -434,7 +434,7 @@ public class UserControllerTest extends IntegrationTest {
 
     ResponseEntity<UserDto> response = as(user).put("/users", userDto, UserDto.class);
     assertThat(response.getStatusCode().value()).isEqualTo(404);
-    assertThat(users.findById(user.id).get().roles).containsExactly(ADMIN);
+    assertThat(users.findById(user.id).get().roles).containsExactly(MVP_ADMIN);
   }
 
   @Test
@@ -443,7 +443,7 @@ public class UserControllerTest extends IntegrationTest {
     UserDto userDto = createUserDto(email);
     userDto.roles = List.of(SUPER_ADMIN.role);
 
-    ResponseEntity<UserDto> response = asAdmin().put("/users", userDto, UserDto.class);
+    ResponseEntity<UserDto> response = asMvpAdmin().put("/users", userDto, UserDto.class);
     assertThat(response.getStatusCode().value()).isEqualTo(404);
     assertThat(users.findByEmail(email).isPresent()).isFalse();
   }
@@ -466,7 +466,7 @@ public class UserControllerTest extends IntegrationTest {
     UserDto userDto = UserDtoMapper.toDto(user);
     userDto.email = "new@email.com";
 
-    ResponseEntity<UserDto> response = asAdmin().put("/users", userDto, UserDto.class);
+    ResponseEntity<UserDto> response = asMvpAdmin().put("/users", userDto, UserDto.class);
     assertThat(response.getStatusCode().value()).isEqualTo(404);
     assertThat(users.findById(user.id).get().email).isEqualTo(oldEmail);
   }
@@ -489,7 +489,7 @@ public class UserControllerTest extends IntegrationTest {
     UserDto userDto = UserDtoMapper.toDto(user);
     userDto.email = "new@email.com";
 
-    ResponseEntity<UserDto> response = asAdmin().delete("/users/" + user.id, UserDto.class);
+    ResponseEntity<UserDto> response = asMvpAdmin().delete("/users/" + user.id, UserDto.class);
 
     assertThat(response.getStatusCode().value()).isEqualTo(404);
     assertThat(users.findById(user.id).isPresent()).isTrue();
@@ -578,10 +578,13 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void userCanFindAllUsersInOrganisationAndSubOrganisation() {
     Organisation parentOrganisation = given(organisation().name("parent"));
-    User admin = given(user().roles(ADMIN).organisation(parentOrganisation).email("admin@test.se"));
+    User admin = given(mvpUser()
+      .roles(MVP_ADMIN)
+      .organisation(parentOrganisation)
+      .email("admin@test.se"));
     Organisation subOrganisation = given(subOrganisation(parentOrganisation, admin).name("sub"));
-    User user = given(user().organisation(parentOrganisation).email("userInSub@test.se"));
-    given(user().organisation(subOrganisation).email("userInSub2@test.se"));
+    User user = given(mvpUser().organisation(parentOrganisation).email("userInSub@test.se"));
+    given(mvpUser().organisation(subOrganisation).email("userInSub2@test.se"));
 
     ResponseEntity<List<UserDto>> response = as(user)
       .getList("/users", UserDto.class);
@@ -596,11 +599,11 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void userCannotFindAllUsersInParentOrganisation() {
-    Organisation parentOrganisation = given(organisation().name("parent"));
-    User admin = given(user().roles(ADMIN).organisation(parentOrganisation).email("admin@test.se"));
-    Organisation subOrganisation = given(subOrganisation(parentOrganisation, admin).name("sub"));
-    User user = given(user().organisation(subOrganisation).email("userInSub@test.se"));
-    given(user().organisation(subOrganisation).email("userInSub2@test.se"));
+    Organisation parentOrg = given(organisation().name("parent"));
+    User admin = given(mvpUser().roles(MVP_ADMIN).organisation(parentOrg).email("admin@test.se"));
+    Organisation subOrganisation = given(subOrganisation(parentOrg, admin).name("sub"));
+    User user = given(mvpUser().organisation(subOrganisation).email("userInSub@test.se"));
+    given(mvpUser().organisation(subOrganisation).email("userInSub2@test.se"));
 
     ResponseEntity<List<UserDto>> response = as(user)
       .getList("/users", UserDto.class);
@@ -619,7 +622,7 @@ public class UserControllerTest extends IntegrationTest {
     userDto.id = users.save(UserDtoMapper.toDomainModel(userDto)).id;
 
     userDto.password = "test";
-    asUser().put("/users/change-password/" + userDto.id, userDto);
+    asMvpUser().put("/users/change-password/" + userDto.id, userDto);
 
     User updatedUser = users.findById(userDto.id).get();
 
@@ -668,7 +671,7 @@ public class UserControllerTest extends IntegrationTest {
     user.password = "secret stuff";
     user.language = Language.en;
     user.organisation = OrganisationDtoMapper.toDto(context().defaultOrganisation());
-    user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
+    user.roles = asList(MVP_USER.role, MVP_ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
 
@@ -679,7 +682,7 @@ public class UserControllerTest extends IntegrationTest {
     user.password = password;
     user.language = Language.en;
     user.organisation = OrganisationDtoMapper.toDto(context().defaultOrganisation());
-    user.roles = asList(USER.role, ADMIN.role);
+    user.roles = asList(MVP_USER.role, MVP_ADMIN.role);
     return user;
   }
 
@@ -690,7 +693,7 @@ public class UserControllerTest extends IntegrationTest {
     user.password = "i am batman";
     user.language = Language.en;
     user.organisation = OrganisationDtoMapper.toDto(organisation);
-    user.roles = singletonList(USER.role);
+    user.roles = singletonList(MVP_USER.role);
     return user;
   }
 }

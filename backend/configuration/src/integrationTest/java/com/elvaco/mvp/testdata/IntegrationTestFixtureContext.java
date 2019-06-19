@@ -49,8 +49,8 @@ import static java.util.stream.Collectors.toList;
 public class IntegrationTestFixtureContext implements TestFixtures {
 
   public final Organisation organisation;
-  public final User user;
-  public final User admin;
+  public final User mvpUser;
+  public final User mvpAdmin;
   public final User superAdmin;
   private final LogicalMeters logicalMeters;
   private final Gateways gateways;

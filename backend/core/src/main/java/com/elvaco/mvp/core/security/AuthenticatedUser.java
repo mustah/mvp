@@ -10,7 +10,7 @@ public interface AuthenticatedUser extends Usernamed, Serializable {
 
   boolean isSuperAdmin();
 
-  boolean isAdmin();
+  boolean isMvpAdmin();
 
   boolean isWithinOrganisation(UUID organisationId);
 

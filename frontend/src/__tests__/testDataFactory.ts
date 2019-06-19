@@ -91,7 +91,7 @@ export const makeUser = (): User => ({
   email: 'ck@dailyplanet.net',
   language: 'en',
   organisation: {id: 1, name: 'daily planet', slug: 'daily-planet'},
-  roles: [Role.USER],
+  roles: [Role.MVP_USER],
 });
 
 export const makeThreshold = (): ThresholdQuery => ({
