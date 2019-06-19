@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {Redirect, Route, Switch} from 'react-router';
 import {mvpAdminIsAuthenticated} from '../../services/authService';
-import {MeterDefinitions} from '../../usecases/administration/components/MeterDefinitions';
 import {Organisations} from '../../usecases/administration/components/Organisations';
 import {Users} from '../../usecases/administration/components/Users';
-import {MeterDefinitionEditContainer} from '../../usecases/administration/containers/MeterDefinitionEditContainer';
 import {OrganisationFormContainer} from '../../usecases/administration/containers/OrganisationFormContainer';
 import {UserAddContainer} from '../../usecases/administration/containers/UserAddContainer';
 import {UserEditContainer} from '../../usecases/administration/containers/UserEditContainer';
+import {MeterDefinitions} from '../../usecases/administration/meter-definitions/components/MeterDefinitions';
+import {MeterDefinitionEditContainer} from '../../usecases/administration/meter-definitions/containers/MeterDefinitionEditContainer';
 import {routes} from '../routes';
 
 const MeterDefinitionsPage = mvpAdminIsAuthenticated(MeterDefinitions);
