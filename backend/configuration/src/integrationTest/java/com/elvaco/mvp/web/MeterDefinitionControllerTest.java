@@ -35,7 +35,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void findAll_systemDefinitionsVisibleForUser() {
-    List<MeterDefinitionDto> definitionDtos = asUser().getList(
+    List<MeterDefinitionDto> definitionDtos = asMvpUser().getList(
       meterDefinitionsUrl(),
       MeterDefinitionDto.class
     ).getBody();
@@ -47,7 +47,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void findAll_systemDefinitionsVisibleForAdmin() {
-    List<MeterDefinitionDto> definitionDtos = asAdmin().getList(
+    List<MeterDefinitionDto> definitionDtos = asMvpAdmin().getList(
       meterDefinitionsUrl(),
       MeterDefinitionDto.class
     ).getBody();
@@ -62,7 +62,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     MeterDefinition meterDefinition
       = given(meterDefinition().medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING)));
 
-    List<MeterDefinitionDto> definitionDtos = asUser().getList(
+    List<MeterDefinitionDto> definitionDtos = asMvpUser().getList(
       meterDefinitionsUrl(),
       MeterDefinitionDto.class
     ).getBody();
@@ -78,7 +78,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING)));
 
-    var userOnOtherOrganisation = given(organisation(), user()).getUser();
+    var userOnOtherOrganisation = given(organisation(), mvpUser()).getUser();
 
     List<MeterDefinitionDto> definitionDtos = as(userOnOtherOrganisation).getList(
       meterDefinitionsUrl(),
@@ -92,7 +92,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void findAll_definitionsVisibleToSubOrganisation() {
-    User subOrgUser = given(subOrganisation(), user()).getUser();
+    User subOrgUser = given(subOrganisation(), mvpUser()).getUser();
 
     MeterDefinition meterDefinition = given(meterDefinition()
       .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING)));
@@ -111,7 +111,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   public void create_invalidInputObject() {
     MeterDefinitionDto dto = new MeterDefinitionDto();
 
-    ResponseEntity<ErrorMessageDto> response = asAdmin().post(
+    ResponseEntity<ErrorMessageDto> response = asMvpAdmin().post(
       meterDefinitionsUrl(),
       dto,
       ErrorMessageDto.class
@@ -154,7 +154,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       false
     );
 
-    ResponseEntity<MeterDefinitionDto> response = asAdmin().post(
+    ResponseEntity<MeterDefinitionDto> response = asMvpAdmin().post(
       meterDefinitionsUrl(),
       meterDefinition,
       MeterDefinitionDto.class
@@ -181,7 +181,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       true
     );
 
-    ResponseEntity<MeterDefinitionDto> response = asAdmin().post(
+    ResponseEntity<MeterDefinitionDto> response = asMvpAdmin().post(
       meterDefinitionsUrl(),
       meterDefinition,
       MeterDefinitionDto.class
@@ -202,7 +202,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       true
     );
 
-    ResponseEntity<ErrorMessageDto> response = asUser().post(
+    ResponseEntity<ErrorMessageDto> response = asMvpUser().post(
       meterDefinitionsUrl(),
       meterDefinition,
       ErrorMessageDto.class
@@ -224,7 +224,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       true
     );
 
-    ResponseEntity<ErrorMessageDto> response = asAdmin().post(
+    ResponseEntity<ErrorMessageDto> response = asMvpAdmin().post(
       meterDefinitionsUrl(),
       meterDefinition,
       ErrorMessageDto.class
@@ -250,7 +250,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       false
     );
 
-    ResponseEntity<MeterDefinitionDto> response = asAdmin().post(
+    ResponseEntity<MeterDefinitionDto> response = asMvpAdmin().post(
       meterDefinitionsUrl(),
       meterDefinition,
       MeterDefinitionDto.class
@@ -289,7 +289,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       + "&logicalMeterId=" + logicalMeter.id
       + "&reportAfter=" + start
       + "&reportBefore=" + start.plusHours(1);
-    var measurementSeriesDtos = asUser().getList(url, MeasurementSeriesDto.class).getBody();
+    var measurementSeriesDtos = asMvpUser().getList(url, MeasurementSeriesDto.class).getBody();
 
     assertThat(measurementSeriesDtos)
       .flatExtracting(dto -> dto.values)
@@ -305,9 +305,9 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       true
     );
 
-    asAdmin().post(meterDefinitionsUrl(), meterDefinition, MeterDefinitionDto.class);
+    asMvpAdmin().post(meterDefinitionsUrl(), meterDefinition, MeterDefinitionDto.class);
 
-    measurementSeriesDtos = asUser().getList(url, MeasurementSeriesDto.class).getBody();
+    measurementSeriesDtos = asMvpUser().getList(url, MeasurementSeriesDto.class).getBody();
 
     assertThat(measurementSeriesDtos)
       .flatExtracting(dto -> dto.values)
@@ -326,7 +326,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       true
     );
 
-    ResponseEntity<MeterDefinitionDto> response = asAdmin().post(
+    ResponseEntity<MeterDefinitionDto> response = asMvpAdmin().post(
       meterDefinitionsUrl(),
       meterDefinition,
       MeterDefinitionDto.class
@@ -346,7 +346,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       true
     );
 
-    ResponseEntity<MeterDefinitionDto> response = asAdmin().post(
+    ResponseEntity<MeterDefinitionDto> response = asMvpAdmin().post(
       meterDefinitionsUrl(),
       meterDefinition,
       MeterDefinitionDto.class
@@ -433,7 +433,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
     );
 
-    ResponseEntity<MeterDefinitionDto> response = asAdmin().delete(
+    ResponseEntity<MeterDefinitionDto> response = asMvpAdmin().delete(
       meterDefinitionsUrl("/" + meterDefinition.id).template(),
       MeterDefinitionDto.class
     );
@@ -450,7 +450,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
         .organisation(organisation)
     );
 
-    ResponseEntity<MeterDefinitionDto> response = asAdmin().delete(
+    ResponseEntity<MeterDefinitionDto> response = asMvpAdmin().delete(
       meterDefinitionsUrl("/" + meterDefinition.id).template(),
       MeterDefinitionDto.class
     );
@@ -465,7 +465,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
     );
 
-    ResponseEntity<MeterDefinitionDto> response = asUser().delete(
+    ResponseEntity<MeterDefinitionDto> response = asMvpUser().delete(
       meterDefinitionsUrl("/" + meterDefinition.id).template(),
       MeterDefinitionDto.class
     );
@@ -491,7 +491,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void getMedium() {
-    List<MediumDto> mediumDtos = asUser().getList(
+    List<MediumDto> mediumDtos = asMvpUser().getList(
       meterDefinitionsUrl("/medium"),
       MediumDto.class
     ).getBody();
@@ -503,7 +503,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void getQuantity() {
-    List<QuantityDto> quantityDtos = asUser().getList(
+    List<QuantityDto> quantityDtos = asMvpUser().getList(
       meterDefinitionsUrl("/quantities"),
       QuantityDto.class
     ).getBody();

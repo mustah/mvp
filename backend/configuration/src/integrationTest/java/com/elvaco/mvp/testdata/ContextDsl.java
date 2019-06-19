@@ -134,8 +134,8 @@ public interface ContextDsl {
     return context().widget();
   }
 
-  default UserBuilder user() {
-    return context().newUser();
+  default UserBuilder mvpUser() {
+    return context().newMvpUser();
   }
 
   default PhysicalMeterBuilder physicalMeter() {

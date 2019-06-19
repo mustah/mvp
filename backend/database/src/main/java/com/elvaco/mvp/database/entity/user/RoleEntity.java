@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,12 +31,12 @@ public class RoleEntity extends IdentifiableType<String> {
   @Id
   public String role;
 
-  public static RoleEntity user() {
-    return new RoleEntity(USER.role);
+  public static RoleEntity mvpUser() {
+    return new RoleEntity(MVP_USER.role);
   }
 
-  public static RoleEntity admin() {
-    return new RoleEntity(ADMIN.role);
+  public static RoleEntity mvpAdmin() {
+    return new RoleEntity(MVP_ADMIN.role);
   }
 
   public static RoleEntity superAdmin() {

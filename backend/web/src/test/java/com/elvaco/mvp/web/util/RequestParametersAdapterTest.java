@@ -207,7 +207,7 @@ public class RequestParametersAdapterTest {
   @Test
   public void replace_ensureOrganisationIsSameAsUserOrganisationWhenNotSuperAdminUser() {
     String organisationId = randomUUID().toString();
-    AuthenticatedUser currentUser = MockAuthenticatedUser.user();
+    AuthenticatedUser currentUser = MockAuthenticatedUser.mvpUser();
 
     RequestParameters parameters = new RequestParametersAdapter()
       .add(ORGANISATION, organisationId)
@@ -219,7 +219,7 @@ public class RequestParametersAdapterTest {
 
   @Test
   public void add_ensureOrganisationIsSameAsUserOrganisationWhenNotSuperAdminUser() {
-    AuthenticatedUser currentUser = MockAuthenticatedUser.user();
+    AuthenticatedUser currentUser = MockAuthenticatedUser.mvpUser();
     RequestParameters parameters = new RequestParametersAdapter()
       .ensureOrganisationFilters(currentUser);
 

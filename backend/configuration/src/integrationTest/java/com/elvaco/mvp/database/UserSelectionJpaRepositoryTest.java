@@ -18,11 +18,11 @@ public class UserSelectionJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void jsonbFieldTypeDetectsChanges() throws IOException {
-    UUID owner = context().user.id;
+    UUID owner = context().mvpUser.id;
     String name = "My selection";
     JsonField originalData = new JsonField((ObjectNode) OBJECT_MAPPER.readTree("{\"city\": "
       + "\"Höganäs\"}"));
-    UUID organisationId = context().user.organisation.id;
+    UUID organisationId = context().mvpUser.organisation.id;
 
     UserSelectionEntity entityToSave = new UserSelectionEntity(
       randomUUID(),

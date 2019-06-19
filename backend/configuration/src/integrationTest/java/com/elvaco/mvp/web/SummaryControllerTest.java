@@ -132,7 +132,7 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void userCanOnlyGetSummaryForMetersWithinTheOrganisation() {
-    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
+    OrganisationWithUsers organisationWithUsers = given(organisation(), mvpUser());
     given(logicalMeter().location(stockholm().address("kungsgatan 1").build()));
     given(logicalMeter().location(kungsbacka().address("drottninggatan 1").build()));
     given(logicalMeter().location(kungsbacka().address("drottninggatan 2").build()));
@@ -167,7 +167,7 @@ public class SummaryControllerTest extends IntegrationTest {
       statusLog(logicalMeter).status(StatusType.WARNING).start(context().now().plusDays(1))
     );
 
-    ResponseEntity<MeterSummaryDto> response = asUser()
+    ResponseEntity<MeterSummaryDto> response = asMvpUser()
       .get(summaryUrl().build(), MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -178,7 +178,7 @@ public class SummaryControllerTest extends IntegrationTest {
   public void meterCount_OneMeter() {
     given(logicalMeter());
 
-    ResponseEntity<Long> response = asUser()
+    ResponseEntity<Long> response = asMvpUser()
       .get(summaryMetersUrl().build(), Long.class);
 
     assertThat(response.getBody()).isEqualTo(1L);
@@ -189,7 +189,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter());
     given(logicalMeter());
 
-    ResponseEntity<Long> response = asUser()
+    ResponseEntity<Long> response = asMvpUser()
       .get(summaryMetersUrl().build(), Long.class);
 
     assertThat(response.getBody()).isEqualTo(2L);
@@ -197,7 +197,7 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void meterCount_NoMeters() {
-    ResponseEntity<Long> response = asUser()
+    ResponseEntity<Long> response = asMvpUser()
       .get(summaryMetersUrl().build(), Long.class);
 
     assertThat(response.getBody()).isEqualTo(0L);
@@ -217,7 +217,7 @@ public class SummaryControllerTest extends IntegrationTest {
       physicalMeter().activePeriod(PeriodRange.from(date.minusDays(2)))
     );
 
-    ResponseEntity<Long> response = asUser()
+    ResponseEntity<Long> response = asMvpUser()
       .get(
         summaryMetersUrl()
           .parameter("after", date)
@@ -235,7 +235,7 @@ public class SummaryControllerTest extends IntegrationTest {
     given(logicalMeter());
     given(logicalMeter().organisationId(otherOrganisation.getId()));
 
-    ResponseEntity<Long> response = asUser()
+    ResponseEntity<Long> response = asMvpUser()
       .get(summaryMetersUrl().build(), Long.class);
 
     assertThat(response.getBody()).isEqualTo(1L);

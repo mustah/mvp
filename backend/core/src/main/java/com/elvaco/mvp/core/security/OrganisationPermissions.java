@@ -10,25 +10,18 @@ import com.elvaco.mvp.core.domainmodels.Usernamed;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.util.RoleComparator;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
 
 public class OrganisationPermissions {
 
   private static final RoleComparator ROLE_COMPARATOR = new RoleComparator();
+
   private final Users users;
 
   public OrganisationPermissions(Users users) {
     this.users = users;
-  }
-
-  public static boolean userInOrganisationOrParent(
-    AuthenticatedUser currentUser,
-    Organisation organisation
-  ) {
-    return currentUser.isWithinOrganisation(organisation.id)
-      || (organisation.parent != null && currentUser.isWithinOrganisation(organisation.parent.id));
   }
 
   public boolean isAllowed(
@@ -40,24 +33,13 @@ public class OrganisationPermissions {
       return true;
     }
 
-    if (authenticatedUser.isAdmin()
-      && authenticatedUser.isWithinOrganisation(target.id)
-    ) {
-      if (permission.equals(Permission.READ)) {
-        return true;
-      } else {
-        return false;
-      }
+    if (authenticatedUser.isMvpAdmin() && authenticatedUser.isWithinOrganisation(target.id)) {
+      return permission.equals(Permission.READ);
     }
 
-    if (authenticatedUser.isAdmin()
+    return authenticatedUser.isMvpAdmin()
       && target.parent != null
-      && authenticatedUser.isWithinOrganisation(target.parent.id)
-    ) {
-      return true;
-    }
-
-    return false;
+      && authenticatedUser.isWithinOrganisation(target.parent.id);
   }
 
   public boolean isAllowed(
@@ -82,7 +64,7 @@ public class OrganisationPermissions {
       return false;
     }
 
-    if (authenticatedUser.isAdmin()) {
+    if (authenticatedUser.isMvpAdmin()) {
       return true; // admins can do anything on users of the same organisation
     }
 
@@ -99,7 +81,9 @@ public class OrganisationPermissions {
   }
 
   private boolean isUserRoleSufficient(
-    AuthenticatedUser authenticatedUser, User target, User beforeUpdate
+    AuthenticatedUser authenticatedUser,
+    User target,
+    User beforeUpdate
   ) {
     return isTargetRolesGreaterOrEqual(authenticatedUser, target)
       && (beforeUpdate == null || isTargetRolesGreaterOrEqual(authenticatedUser, beforeUpdate));
@@ -126,15 +110,13 @@ public class OrganisationPermissions {
     return users.findByRole(SUPER_ADMIN).size() != 1;
   }
 
-  private boolean isTargetRolesGreaterOrEqual(
-    AuthenticatedUser currentUser, User target
-  ) {
+  private boolean isTargetRolesGreaterOrEqual(AuthenticatedUser currentUser, User target) {
     if (currentUser.isSuperAdmin()) {
       return isRoleGreaterOrEqual(SUPER_ADMIN, target.roles);
-    } else if (currentUser.isAdmin()) {
-      return isRoleGreaterOrEqual(ADMIN, target.roles);
+    } else if (currentUser.isMvpAdmin()) {
+      return isRoleGreaterOrEqual(MVP_ADMIN, target.roles);
     } else {
-      return isRoleGreaterOrEqual(USER, target.roles);
+      return isRoleGreaterOrEqual(MVP_USER, target.roles);
     }
   }
 

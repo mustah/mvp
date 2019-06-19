@@ -64,7 +64,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter());
     given(logicalMeter());
 
-    List<LegendDto> legends = asUser()
+    List<LegendDto> legends = asMvpUser()
       .getList(legendsUrl(), LegendDto.class)
       .getBody();
 
@@ -76,7 +76,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().externalId("1"));
     given(logicalMeter().externalId("2"));
 
-    List<LegendDto> legends = asUser()
+    List<LegendDto> legends = asMvpUser()
       .getList(legendsUrl().facility("2"), LegendDto.class)
       .getBody();
 
@@ -90,7 +90,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().externalId("1").location(kungsbacka().build()));
     given(logicalMeter().externalId("2").location(oslo().build()));
 
-    List<LegendDto> legends = asUser()
+    List<LegendDto> legends = asMvpUser()
       .getList(legendsUrl().city(kungsbacka().build()), LegendDto.class)
       .getBody();
 
@@ -103,7 +103,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void pagedMeter_Has_Location() {
     given(logicalMeter().location(kungsbacka().build()));
 
-    PagedLogicalMeterDto logicalMeterDto = asUser()
+    PagedLogicalMeterDto logicalMeterDto = asMvpUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
       .getContent()
       .get(0);
@@ -116,7 +116,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void pagedMeter_Has_MeterDefinition() {
     given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
-    PagedLogicalMeterDto logicalMeterDto = asUser()
+    PagedLogicalMeterDto logicalMeterDto = asMvpUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
       .getContent()
       .get(0);
@@ -128,7 +128,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void pagedMeter_Has_ReadInterval() {
     given(physicalMeter().readIntervalMinutes(42L));
 
-    var logicalMeterDto = asUser()
+    var logicalMeterDto = asMvpUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
       .getContent();
 
@@ -141,7 +141,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void pagedMeter_Has_Manufacturer() {
     given(physicalMeter().manufacturer("KAKA"));
 
-    var logicalMeterDto = asUser()
+    var logicalMeterDto = asMvpUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
       .getContent();
 
@@ -156,7 +156,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     given(gateway().serial("gateway-serial").meter(meter));
 
-    PagedLogicalMeterDto logicalMeterDto = asUser()
+    PagedLogicalMeterDto logicalMeterDto = asMvpUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
       .getContent()
       .get(0);
@@ -176,7 +176,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .activePeriod(PeriodRange.halfOpenFrom(context().now(), null))
     );
 
-    List<PagedLogicalMeterDto> meters = asUser()
+    List<PagedLogicalMeterDto> meters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -196,7 +196,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter());
     given(logicalMeter());
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<PagedLogicalMeterDto> response = asMvpUser()
       .getPage("/meters?size=1", PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -210,7 +210,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter());
     given(logicalMeter());
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<PagedLogicalMeterDto> response = asMvpUser()
       .getPage("/meters?page=0&size=2", PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -223,7 +223,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().meterDefinition(DEFAULT_HOT_WATER));
     given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<PagedLogicalMeterDto> response = asMvpUser()
       .getPage("/meters?medium=Hot+water", PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -233,7 +233,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void pagedMeter_By_Organisation() {
     given(logicalMeter());
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<PagedLogicalMeterDto> response = asMvpUser()
       .getPage("/meters?organisation=" + context().organisationId(), PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isGreaterThanOrEqualTo(1L);
@@ -245,7 +245,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     given(logicalMeter().organisationId(otherOrganisation));
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<PagedLogicalMeterDto> response = asMvpUser()
       .getPage("/meters?organisation=" + otherOrganisation, PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0L);
@@ -258,7 +258,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().meterDefinition(DEFAULT_GAS)
       .organisationId(organisationId));
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<PagedLogicalMeterDto> response = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -282,7 +282,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(gateway().serial(serial).meter(interestingMeter));
     given(gateway().serial("777").meter(uninterestingMeter));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -302,7 +302,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().externalId(facility));
     given(logicalMeter().externalId("2"));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?facility=" + facility, PagedLogicalMeterDto.class);
 
     assertThat(result.getContent())
@@ -316,7 +316,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(physicalMeter().address(address));
     given(physicalMeter().address("2"));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -335,7 +335,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().location(UNKNOWN_LOCATION));
     given(logicalMeter().location(kungsbacka().build()));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?city=unknown,unknown", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(1);
@@ -346,7 +346,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().location(UNKNOWN_LOCATION));
     given(logicalMeter().location(kungsbacka().build()));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?city=unknown,unknown&city=sverige,kungsbacka", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(2);
@@ -358,7 +358,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().location(kungsbacka().build()));
     given(logicalMeter().location(kungsbacka().confidence(0.74).build()));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?city=unknown,unknown&city=sverige,kungsbacka", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(3);
@@ -377,7 +377,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .build()
     ));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?city=unknown,unknown", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent())
@@ -390,7 +390,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(physicalMeter().manufacturer("KAM"));
     given(physicalMeter().manufacturer("ELV"));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?manufacturer=ELV", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent())
@@ -403,7 +403,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     UUID id1 = given(logicalMeter()).id;
     given(logicalMeter());
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?id=" + id1, PagedLogicalMeterDto.class);
 
     assertThat(result.getContent())
@@ -416,7 +416,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     UUID id1 = given(logicalMeter()).id;
     given(logicalMeter());
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?logicalMeterId=" + id1, PagedLogicalMeterDto.class);
 
     assertThat(result.getContent())
@@ -432,7 +432,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().externalId("789")
       .location(kungsbacka().confidence(null).longitude(null).latitude(null).build()));
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage("/meters?address=unknown,unknown,unknown", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent())
@@ -447,13 +447,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     UUID otherOrganisation = given(organisation()).getId();
     given(logicalMeter().organisationId(otherOrganisation));
 
-    var allMeters = asUser().getPage("/meters", PagedLogicalMeterDto.class);
+    var allMeters = asMvpUser().getPage("/meters", PagedLogicalMeterDto.class);
 
     assertThat(allMeters.getContent())
       .extracting(m -> m.organisationId)
       .containsExactly(context().organisationId());
 
-    asUser()
+    asMvpUser()
       .getPage(
         "/meters?organisation={id}",
         PagedLogicalMeterDto.class,
@@ -499,7 +499,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(1));
 
-    ResponseEntity<ErrorMessageDto> response = asUser()
+    ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .delete("/meters/" + meter.id, ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -509,7 +509,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void removingLogicalMeter_ShouldNotLeakInformation() {
-    ResponseEntity<ErrorMessageDto> response = asUser()
+    ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .delete("/meters/" + randomUUID(), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode())
@@ -526,7 +526,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(1));
 
-    ResponseEntity<ErrorMessageDto> response = asAdmin()
+    ResponseEntity<ErrorMessageDto> response = asMvpAdmin()
       .delete("/meters/" + meter.id, ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -577,10 +577,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void nullFieldsAreNotIncludedInDto() {
     var meterOk = given(physicalMeter().manufacturer("manu"));
-    JsonNode jsonOk = asUser().getJson("/meters?id=" + meterOk.id);
+    JsonNode jsonOk = asMvpUser().getJson("/meters?id=" + meterOk.id);
 
     var meterNull = given(physicalMeter().manufacturer(null));
-    JsonNode jsonNull = asUser().getJson("/meters?id=" + meterNull.id);
+    JsonNode jsonNull = asMvpUser().getJson("/meters?id=" + meterNull.id);
 
     assertSoftly(softly -> {
       softly.assertThat(jsonOk.get("content").get(0).has("manufacturer"))
@@ -597,7 +597,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void wildcardSearchMatchesFacilityStart() {
     given(logicalMeter().externalId("abcdef"));
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=abc",
       PagedLogicalMeterDto.class
     );
@@ -612,7 +612,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     String city = "abcdef";
     given(logicalMeter().location(new LocationBuilder().city(city).build()));
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=abc",
       PagedLogicalMeterDto.class
     );
@@ -627,7 +627,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     String city = "abcdef";
     given(logicalMeter().location(new LocationBuilder().city(city).build()));
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=ABC",
       PagedLogicalMeterDto.class
     );
@@ -642,7 +642,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().location(kungsbacka().address("storgatan").build()));
     given(logicalMeter().location(kungsbacka().address("lillgatan").build()));
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=storgat",
       PagedLogicalMeterDto.class
     );
@@ -657,7 +657,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().location(kungsbacka().address("storgatan").build()));
     given(logicalMeter().location(kungsbacka().address("lillgatan").build()));
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=Storgat",
       PagedLogicalMeterDto.class
     );
@@ -672,7 +672,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(physicalMeter().manufacturer("elvaco"));
     given(physicalMeter().manufacturer("kamstrup"));
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=elv",
       PagedLogicalMeterDto.class
     );
@@ -687,7 +687,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().meterDefinition(DEFAULT_HOT_WATER));
     given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=hot",
       PagedLogicalMeterDto.class
     );
@@ -709,14 +709,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       physicalMeter().externalId("externalId2").address("456")
     );
 
-    Page<PagedLogicalMeterDto> contains = asUser()
+    Page<PagedLogicalMeterDto> contains = asMvpUser()
       .getPage("/meters?w=23", PagedLogicalMeterDto.class);
 
     assertThat(contains.getContent())
       .extracting(m -> m.address)
       .containsExactly("123");
 
-    Page<PagedLogicalMeterDto> startsWith = asUser()
+    Page<PagedLogicalMeterDto> startsWith = asMvpUser()
       .getPage("/meters?w=12", PagedLogicalMeterDto.class);
 
     assertThat(startsWith.getContent())
@@ -729,7 +729,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter().externalId("first"));
     given(logicalMeter().externalId("second"));
 
-    Page<PagedLogicalMeterDto> page = asUser()
+    Page<PagedLogicalMeterDto> page = asMvpUser()
       .getPage("/meters?w=secon", PagedLogicalMeterDto.class);
 
     assertThat(page.getContent())
@@ -756,7 +756,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .logicalMeterId(meterId)
       .build());
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=str",
       PagedLogicalMeterDto.class
     );
@@ -795,7 +795,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .logicalMeterId(meterIdTwo)
       .build());
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(
       "/meters?w=street",
       PagedLogicalMeterDto.class
     );
@@ -808,7 +808,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(logicalMeter());
 
     ZonedDateTime start = context().now();
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         metersUrl(start, start.plusHours(1)),
         PagedLogicalMeterDto.class
@@ -829,7 +829,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     given(alarm(interestingMeter).mask(12).start(context().now()));
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -854,7 +854,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     given(alarm(logicalMeterWithAlarm).start(context().now()).mask(12));
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -877,7 +877,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     var alarms = given(alarm(meter).mask(12).start(context().now()));
     AlarmLogEntry alarmLogEntry = alarms.stream().findFirst().get();
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         metersUrl(context().now(), context().now().plusHours(1)),
         PagedLogicalMeterDto.class
@@ -905,7 +905,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .description("testing")
     );
 
-    var response = asUser()
+    var response = asMvpUser()
       .getPage(
         metersUrl(context().now().plusHours(3), context().now().plusHours(3).plusMinutes(30)),
         PagedLogicalMeterDto.class
@@ -929,7 +929,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       alarm(logicalMeter).start(context().now()).mask(122).description("testing")
     ).stream().filter(a -> a.stop == null).findAny().orElseThrow();
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         metersUrl(context().now(), context().now().plusHours(4)),
         PagedLogicalMeterDto.class
@@ -951,7 +951,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .address("bbb")
     );
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -976,7 +976,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .address("bbb")
     );
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -1002,7 +1002,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .address("bbb")
     );
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -1025,7 +1025,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .stop(context().now().minusDays(1)));
     given(statusLog(interestingMeter).status(ERROR).start(context().now().minusDays(1)));
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")
@@ -1042,7 +1042,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     given(statusLog(interestingMeter).status(OK).start(context().now().minusHours(6)));
 
-    paginatedLogicalMeters = asUser()
+    paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
           .path("/meters")

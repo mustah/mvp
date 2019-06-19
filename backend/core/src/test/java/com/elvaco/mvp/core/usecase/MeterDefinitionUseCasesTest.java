@@ -58,7 +58,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void findAll_adminWillGetAllForOrganisation() {
-    User adminUser = newUser().organisation(organisation().build()).asAdmin().build();
+    User adminUser = newMvpUser().organisation(organisation().build()).asMvpAdmin().build();
 
     meterDefinitions.save(meterDefinition(defaultOrganisation()));
     meterDefinitions.save(meterDefinition(organisation().build()));

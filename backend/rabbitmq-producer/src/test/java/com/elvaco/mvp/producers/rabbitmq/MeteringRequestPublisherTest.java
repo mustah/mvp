@@ -35,7 +35,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void regularUserCanNotIssueRequest() {
-    MockAuthenticatedUser user = MockAuthenticatedUser.user();
+    MockAuthenticatedUser user = MockAuthenticatedUser.mvpUser();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
 
     assertThatThrownBy(() -> meteringRequestPublisher.request((LogicalMeter) null))
@@ -47,7 +47,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void adminCanNotIssueRequest() {
-    MockAuthenticatedUser user = MockAuthenticatedUser.admin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.mvpAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
 
     assertThatThrownBy(() -> meteringRequestPublisher.request((LogicalMeter) null))

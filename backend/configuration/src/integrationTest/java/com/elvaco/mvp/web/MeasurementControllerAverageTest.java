@@ -56,7 +56,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(99.0, 100.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -91,7 +91,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(1.0, 2.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -133,7 +133,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(3.0, 4.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -180,7 +180,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .withInterval(Duration.ofSeconds(10))
       .withValues(10.0, 11.0, 12.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -229,7 +229,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .withInterval(Duration.ofSeconds(10))
       .withValues(10.0, 15.0, 27.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -278,7 +278,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(3.0, 8.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -342,7 +342,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .withInterval(interval)
       .withValues(10.0, 20.0, 30.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date.minusDays(2)
@@ -407,7 +407,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .withInterval(interval)
       .withValues(10.0, 20.0, 30.0, 40.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date.minusDays(2)
@@ -448,7 +448,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(2.0, 4.0, 6.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -475,7 +475,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   public void timeZoneInformationIsConsidered() {
     var logicalMeter = given(logicalMeter());
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser().getList(
       "/measurements/average"
         + "?reportAfter=2018-03-06T05:00:00.000Z"
         + "&reportBefore=2018-03-06T06:00:00.000Z"
@@ -488,7 +488,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     );
 
     ResponseEntity<List<MeasurementSeriesDto>> responseForNonZuluRequest =
-      asUser().getList(
+      asMvpUser().getList(
         "/measurements/average"
           + "?reportAfter={after}"
           + "&reportBefore={before}"
@@ -529,7 +529,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = context().now();
     var logicalMeterWithoutPhysical = given(physicalMeter().activePeriod(PeriodRange.empty()));
 
-    var response = asUser()
+    var response = asMvpUser()
       .getList(String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -557,7 +557,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = context().now();
     var logicalMeter = given(logicalMeter());
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -590,7 +590,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(40000.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -627,7 +627,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(1.0, 2.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(String.format(
         "/measurements/average"
           + "?reportAfter=" + date.minusDays(1)
@@ -669,7 +669,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .withInterval(Period.ofMonths(1))
       .withValues(1.0, 2.0, 4.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(String.format(
         "/measurements/average"
           + "?reportAfter=" + date.plusHours(5)
@@ -699,7 +699,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void invalidParameterValuesReturnsHttp400_after() {
-    var response = asUser()
+    var response = asMvpUser()
       .get(String.format(
         "/measurements/average"
           + "?reportAfter=thisIsNotAValidTimestamp"
@@ -717,7 +717,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void invalidParameterValuesReturnsHttp400_before() {
-    var response = asUser()
+    var response = asMvpUser()
       .get(String.format(
         "/measurements/average"
           + "?reportAfter=2018-03-07T12:32:05.999Z"
@@ -735,7 +735,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void invalidParameterValuesReturnsHttp400_resolution() {
-    var response = asUser()
+    var response = asMvpUser()
       .get(String.format(
         "/measurements/average"
           + "?reportAfter=2018-03-07T12:32:05.999Z"
@@ -753,7 +753,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void invalidParameterValuesReturnsHttp400_logicalMeterId() {
-    var response = asUser()
+    var response = asMvpUser()
       .get(String.format(
         "/measurements/average"
           + "?reportAfter=2018-03-07T12:32:05.999Z"
@@ -773,7 +773,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
     var logicalMeter = given(logicalMeter());
 
-    var response = asUser()
+    var response = asMvpUser()
       .getList(String.format(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -790,7 +790,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void missingParametersReturnsHttp400_after() {
-    var response = asUser()
+    var response = asMvpUser()
       .get(String.format(
         "/measurements/average"
           + "?to=2018-03-07T12:32:05.999Z"
@@ -807,7 +807,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void missingParametersReturnsHttp400_quantities() {
-    var response = asUser()
+    var response = asMvpUser()
       .get(String.format(
         "/measurements/average"
           + "?reportAfter=2018-03-07T12:32:05.999Z"
@@ -832,7 +832,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .withInterval(Duration.ofHours(1))
       .withValues(1.0));
 
-    List<MeasurementSeriesDto> response = asUser()
+    List<MeasurementSeriesDto> response = asMvpUser()
       .getList(
         "/measurements/average"
           + "?reportAfter={now}"
@@ -858,7 +858,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var before = after.plusDays(1).truncatedTo(ChronoUnit.DAYS).minusSeconds(1);
     var logicalMeter = given(logicalMeter());
 
-    MeasurementSeriesDto response = asUser()
+    MeasurementSeriesDto response = asMvpUser()
       .getList(String.format(
         "/measurements/average"
           + "?reportAfter=" + after
@@ -880,7 +880,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(1.0, 2.0, 5.0));
 
-    var response = asUser()
+    var response = asMvpUser()
       .getList(
         "/measurements/average"
           + "?reportAfter=" + date
@@ -930,7 +930,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       .startingAt(reportStart)
       .withValues(DoubleStream.iterate(7, d -> d - 1.0).limit(7).toArray()));
 
-    var response = asUser()
+    var response = asMvpUser()
       .getList(
         Url.builder()
           .path("/measurements/average")

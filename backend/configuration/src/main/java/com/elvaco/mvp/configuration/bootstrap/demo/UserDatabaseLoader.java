@@ -23,9 +23,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
@@ -44,16 +44,18 @@ class UserDatabaseLoader implements CommandLineRunner {
     "elvis123",
     Language.en,
     WAYNE_INDUSTRIES,
-    singletonList(ADMIN)
+    singletonList(MVP_ADMIN)
   );
+
   private static final User OTHER_USER = new User(
     "Erik Karlsson",
     "erikar@wayne.se",
     "erik123",
     Language.en,
     WAYNE_INDUSTRIES,
-    singletonList(USER)
+    singletonList(MVP_USER)
   );
+
   private final TokenService tokenService;
   private final TokenFactory tokenFactory;
   private final Organisations organisations;
@@ -98,7 +100,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "emil123",
         Language.sv,
         rootOrganisation,
-        asList(USER, ADMIN, SUPER_ADMIN)
+        asList(MVP_USER, MVP_ADMIN, SUPER_ADMIN)
       ),
       new User(
         "Hanna Sjöstedt",
@@ -106,7 +108,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "hanna123",
         Language.en,
         rootOrganisation,
-        asList(USER, ADMIN)
+        asList(MVP_USER, MVP_ADMIN)
       ),
       new User(
         "User Fake",
@@ -114,7 +116,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "user123",
         Language.sv,
         WAYNE_INDUSTRIES,
-        singletonList(USER)
+        singletonList(MVP_USER)
       ),
 
       new User(
@@ -123,7 +125,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "anna123",
         Language.sv,
         WAYNE_INDUSTRIES,
-        singletonList(USER)
+        singletonList(MVP_USER)
       ),
       new User(
         "Maria Svensson",
@@ -131,7 +133,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "maria123",
         Language.sv,
         WAYNE_INDUSTRIES,
-        singletonList(USER)
+        singletonList(MVP_USER)
       ),
       OTHER_ADMIN_USER,
       OTHER_USER,
@@ -141,7 +143,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "stefan123",
         Language.en,
         rootOrganisation,
-        singletonList(USER)
+        singletonList(MVP_USER)
       ),
       new User(
         "Eva Nilsson",
@@ -149,7 +151,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "eva123",
         Language.en,
         rootOrganisation,
-        singletonList(USER)
+        singletonList(MVP_USER)
       ),
       new User(
         "Peter Eriksson",
@@ -157,7 +159,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "peter123",
         Language.en,
         rootOrganisation,
-        singletonList(ADMIN)
+        singletonList(MVP_ADMIN)
       ),
       new User(
         "Super Admin",

@@ -49,7 +49,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminFindsOwnOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asAdmin()
+    ResponseEntity<OrganisationDto> request = asMvpAdmin()
       .get("/organisations/" + context().organisationId(), OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -61,7 +61,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminFindsSubOrgOfOwnOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asAdmin()
+    ResponseEntity<OrganisationDto> request = asMvpAdmin()
       .get("/organisations/" + context().organisationId(), OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -73,7 +73,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminDoesNotFindOtherOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asAdmin()
+    ResponseEntity<OrganisationDto> request = asMvpAdmin()
       .get("/organisations/" + theBeatles.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -81,7 +81,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserDoesNotFindOwnOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asUser()
+    ResponseEntity<OrganisationDto> request = asMvpUser()
       .get("/organisations/" + context().organisationId(), OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -98,36 +98,36 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminFindsOwnOrganisationAndSubOrganisation() throws IOException {
-    createUserIfNotPresent(context().admin);
+    createUserIfNotPresent(context().mvpAdmin);
 
     var selection = UserSelection.builder()
       .id(randomUUID())
-      .organisationId(context().admin.organisation.id)
+      .organisationId(context().mvpAdmin.organisation.id)
       .name("")
       .selectionParameters(OBJECT_MAPPER.readTree("{\"test\":\"test selection\"}"))
-      .ownerUserId(context().admin.id)
+      .ownerUserId(context().mvpAdmin.id)
       .build();
 
     userSelections.save(selection);
 
-    var parent = context().admin.organisation;
+    var parent = context().mvpAdmin.organisation;
     var subOrganisation = Organisation.subOrganisation("Scooter", parent, selection).build();
 
     organisations.saveAndFlush(subOrganisation);
 
-    ResponseEntity<List<OrganisationDto>> request = asAdmin()
+    ResponseEntity<List<OrganisationDto>> request = asMvpAdmin()
       .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).containsExactlyInAnyOrder(
-      OrganisationDtoMapper.toDto(context().admin.organisation),
+      OrganisationDtoMapper.toDto(context().mvpAdmin.organisation),
       OrganisationDtoMapper.toDto(subOrganisation)
     );
   }
 
   @Test
   public void regularUsersDoesNotFindOrganisations() {
-    ResponseEntity<List<OrganisationDto>> request = asUser()
+    ResponseEntity<List<OrganisationDto>> request = asMvpUser()
       .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -149,7 +149,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void adminCannotCreateOrganisation() {
     OrganisationDto input = new OrganisationDto("ich bin wieder hier");
-    ResponseEntity<OrganisationDto> created = asAdmin()
+    ResponseEntity<OrganisationDto> created = asMvpAdmin()
       .post("/organisations", input, OrganisationDto.class);
 
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -158,7 +158,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void regularUserCannotCreateOrganisation() {
     OrganisationDto input = new OrganisationDto("ich bin wieder hier");
-    ResponseEntity<OrganisationDto> created = asUser()
+    ResponseEntity<OrganisationDto> created = asMvpUser()
       .post("/organisations", input, OrganisationDto.class);
 
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -193,12 +193,12 @@ public class OrganisationControllerTest extends IntegrationTest {
       wayneIndustries.name
     );
 
-    ResponseEntity<UnauthorizedDto> putResponse = asAdmin()
+    ResponseEntity<UnauthorizedDto> putResponse = asMvpAdmin()
       .put("/organisations", organisation, UnauthorizedDto.class);
 
     assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(putResponse.getBody().message).isEqualTo(
-      "User '" + context().admin.email + "' is not allowed to save this organisation"
+      "User '" + context().mvpAdmin.email + "' is not allowed to save this organisation"
     );
   }
 
@@ -215,7 +215,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     // act
     organisation.slug = "batcave";
-    ResponseEntity<UnauthorizedDto> putResponse = asUser()
+    ResponseEntity<UnauthorizedDto> putResponse = asMvpUser()
       .put("/organisations", organisation, UnauthorizedDto.class);
 
     // assert
@@ -254,7 +254,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanDeleteOrganisationWithUsers() {
-    given(user().organisation(theBeatles));
+    given(mvpUser().organisation(theBeatles));
     superAdminCanDelete(theBeatles.id);
   }
 
@@ -274,7 +274,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ResponseEntity<OrganisationDto> notReallyDeleted = asAdmin()
+    ResponseEntity<OrganisationDto> notReallyDeleted = asMvpAdmin()
       .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -289,7 +289,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ResponseEntity<OrganisationDto> notReallyDeleted = asUser()
+    ResponseEntity<OrganisationDto> notReallyDeleted = asMvpUser()
       .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -318,12 +318,12 @@ public class OrganisationControllerTest extends IntegrationTest {
     given(subOrganisation());
     given(subOrganisation());
 
-    User adminOfOtherOrganisation = given(user().asAdmin().organisation(theBeatles));
+    User adminOfOtherOrganisation = given(mvpUser().asMvpAdmin().organisation(theBeatles));
     given(subOrganisation(theBeatles, adminOfOtherOrganisation));
 
-    ResponseEntity<List<OrganisationDto>> request = asAdmin()
+    ResponseEntity<List<OrganisationDto>> request = asMvpAdmin()
       .getList(
-        "/organisations/sub-organisations?organisation=" + context().admin.organisation.id,
+        "/organisations/sub-organisations?organisation=" + context().mvpAdmin.organisation.id,
         OrganisationDto.class
       );
 
@@ -336,9 +336,9 @@ public class OrganisationControllerTest extends IntegrationTest {
     given(subOrganisation());
     given(subOrganisation());
 
-    ResponseEntity<List<OrganisationDto>> request = asUser()
+    ResponseEntity<List<OrganisationDto>> request = asMvpUser()
       .getList(
-        "/organisations/sub-organisations?organisation=" + context().user.organisation.id,
+        "/organisations/sub-organisations?organisation=" + context().mvpUser.organisation.id,
         OrganisationDto.class
       );
 

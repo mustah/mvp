@@ -5,8 +5,8 @@ import com.elvaco.mvp.core.domainmodels.User;
 
 import lombok.experimental.UtilityClass;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
@@ -19,7 +19,7 @@ public class UserTestData {
     .email("clark@dailyplanet.org")
     .password("KalEl")
     .organisation(DAILY_PLANET)
-    .asAdmin()
+    .asMvpAdmin()
     .build();
 
   public static final User ELVACO_SUPER_ADMIN_USER = new UserBuilder()
@@ -35,7 +35,7 @@ public class UserTestData {
     .email("admin@elvaco.se")
     .password("admin123")
     .organisation(ELVACO)
-    .asAdmin()
+    .asMvpAdmin()
     .build();
 
   public static final User ELVACO_USER = new UserBuilder()
@@ -43,7 +43,7 @@ public class UserTestData {
     .email("user@elvaco.se")
     .password("user123")
     .organisation(ELVACO)
-    .asUser()
+    .asMvpUser()
     .build();
 
   public static final User OTHER_ELVACO_USER = new UserBuilder()
@@ -51,7 +51,7 @@ public class UserTestData {
     .email("user2@elvaco.se")
     .password("user123-2")
     .organisation(ELVACO)
-    .asUser()
+    .asMvpUser()
     .build();
 
   public static final User OTHER_USER = new UserBuilder()
@@ -59,7 +59,7 @@ public class UserTestData {
     .email("user@other.com")
     .password("user123")
     .organisation(OTHER_ORGANISATION)
-    .asUser()
+    .asMvpUser()
     .build();
 
   public static final User OTHER_ADMIN_USER = new UserBuilder()
@@ -67,7 +67,7 @@ public class UserTestData {
     .email("admin@other.com")
     .password("admin123")
     .organisation(OTHER_ORGANISATION)
-    .asAdmin()
+    .asMvpAdmin()
     .build();
 
   public static User dailyPlanetUser(Organisation organisation) {
@@ -76,7 +76,7 @@ public class UserTestData {
       .email("jimy@dailyplanet.org")
       .password("jimols")
       .organisation(organisation)
-      .asUser()
+      .asMvpUser()
       .build();
   }
 
@@ -85,7 +85,7 @@ public class UserTestData {
       .name("john doh")
       .email("a@b.com")
       .password("letmein")
-      .roles(ADMIN, USER);
+      .roles(MVP_ADMIN, MVP_USER);
   }
 
   public static UserBuilder subOrgUser() {
@@ -93,6 +93,6 @@ public class UserTestData {
       .name("sub-org-user")
       .email("sub-org-user@sub.org.com")
       .password("password-god")
-      .asUser();
+      .asMvpUser();
   }
 }

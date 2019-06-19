@@ -46,7 +46,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(result.getTotalElements()).isEqualTo(0);
@@ -71,7 +71,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(result.getTotalElements()).isEqualTo(1);
@@ -96,7 +96,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(result.getTotalElements()).isEqualTo(0);
@@ -121,7 +121,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(result.getTotalElements()).isEqualTo(1);
@@ -146,7 +146,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(result.getTotalElements()).isEqualTo(1);
@@ -171,7 +171,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(result.getTotalElements()).isEqualTo(1);
@@ -196,7 +196,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(result.getTotalElements()).isEqualTo(1);
@@ -221,7 +221,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(result.getTotalElements()).isEqualTo(1);
@@ -246,7 +246,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    var result = asUser()
+    var result = asMvpUser()
       .get(url, ErrorMessageDto.class)
       .getBody();
 
@@ -266,7 +266,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume < 1 m^3")
@@ -274,7 +274,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     assertThat(page.getTotalElements()).isEqualTo(0);
 
-    page = asUser().getPage(Url.builder()
+    page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume <= 1 m^3")
@@ -295,7 +295,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume < 4 m^3")
@@ -303,7 +303,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     assertThat(page.getTotalElements()).isEqualTo(0);
 
-    page = asUser().getPage(Url.builder()
+    page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume <= 4 m^3")
@@ -333,7 +333,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(Url.builder()
         .path("/meters")
         .thresholdPeriod(now, now.plusDays(2))
@@ -342,7 +342,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     assertThat(result.getTotalElements()).isEqualTo(1);
 
-    result = asUser()
+    result = asMvpUser()
       .getPage(Url.builder()
         .path("/meters")
         .thresholdPeriod(now.plusDays(1), now.plusDays(2))
@@ -374,7 +374,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(Url.builder()
         .path("/meters")
         .thresholdPeriod(now, now.plusDays(8))
@@ -383,7 +383,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     assertThat(result.getTotalElements()).isEqualTo(1);
 
-    result = asUser()
+    result = asMvpUser()
       .getPage(Url.builder()
         .path("/meters")
         .thresholdPeriod(now, now.plusDays(7))
@@ -414,7 +414,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> result = asUser()
+    Page<PagedLogicalMeterDto> result = asMvpUser()
       .getPage(Url.builder()
         .path("/meters")
         .thresholdPeriod(now, now.plusDays(6))
@@ -423,7 +423,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     assertThat(result.getTotalElements()).isEqualTo(1);
 
-    result = asUser()
+    result = asMvpUser()
       .getPage(Url.builder()
         .path("/meters")
         .thresholdPeriod(now.plusDays(3), now.plusDays(6))
@@ -436,7 +436,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   @Test
   public void forDuration_DurationLongerThanSelectionPeriod() {
     ZonedDateTime now = context().now();
-    ResponseEntity<ErrorMessageDto> response = asUser()
+    ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .get(Url.builder()
         .path("/meters")
         .thresholdPeriod(now, now.plusDays(1))
@@ -461,7 +461,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    ResponseEntity<PagedLogicalMeterDto> response = asUser()
+    ResponseEntity<PagedLogicalMeterDto> response = asMvpUser()
       .get(Url.builder()
         .path("/meters")
         .thresholdPeriod(now.plusDays(1), now.plusDays(2))
@@ -483,7 +483,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume < 4 m^3 for 1 days")
@@ -491,7 +491,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     assertThat(page.getTotalElements()).isEqualTo(0);
 
-    page = asUser().getPage(Url.builder()
+    page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume <= 4 m^3 for 1 days")
@@ -512,7 +512,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume < 1 m^3 for 1 days")
@@ -520,7 +520,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     assertThat(page.getTotalElements()).isEqualTo(0);
 
-    page = asUser().getPage(Url.builder()
+    page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Volume <= 1 m^3 for 1 days")
@@ -541,7 +541,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     waitForMeasurementStat();
 
-    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+    Page<PagedLogicalMeterDto> page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Return temperature < 24 °C for 1 days")
@@ -549,7 +549,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
     assertThat(page.getTotalElements()).isEqualTo(0);
 
-    page = asUser().getPage(Url.builder()
+    page = asMvpUser().getPage(Url.builder()
       .path("/meters")
       .thresholdPeriod(now.plusDays(1), now.plusDays(2))
       .parameter(THRESHOLD, "Return temperature <= 24 °C for 1 days")

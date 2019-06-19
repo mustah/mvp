@@ -27,7 +27,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
   public void shouldFindOrganisationsMeterById() {
     LogicalMeter meter = newMeter(randomUUID(), OTHER_ORGANISATION.id);
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(List.of(Role.USER)),
+      newAuthenticatedUser(List.of(Role.MVP_USER)),
       List.of(meter)
     );
 
@@ -38,7 +38,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
   public void shouldNotFindOtherOrganisationsMeterById() {
     LogicalMeter meter = newMeter(randomUUID(), randomUUID());
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(List.of(Role.USER)),
+      newAuthenticatedUser(List.of(Role.MVP_USER)),
       List.of(meter)
     );
 
@@ -62,7 +62,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
   @Test
   public void shouldOnlyFindAllMetersBelongingToOwnOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(List.of(Role.USER)),
+      newAuthenticatedUser(List.of(Role.MVP_USER)),
       asList(
         newMeter(randomUUID(), OTHER_ORGANISATION.id),
         newMeter(randomUUID(), randomUUID()),
@@ -76,7 +76,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
   @Test
   public void shouldFindMetersAsSubOrganisationUser() {
     var subOrganisation = subOrganisation().build();
-    var user = newUser().organisation(subOrganisation).build();
+    var user = newMvpUser().organisation(subOrganisation).build();
     var meter = newMeter(randomUUID(), subOrganisation.parent.id);
     LogicalMeterUseCases useCases = newUseCases(
       new MockAuthenticatedUser(user, randomUUID().toString()),
@@ -89,7 +89,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
   @Test
   public void notAllowedToCreateMeterForOtherOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(List.of(Role.USER)),
+      newAuthenticatedUser(List.of(Role.MVP_USER)),
       emptyList()
     );
 
@@ -100,7 +100,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
   @Test
   public void allowedToCreateMeterForOwnOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(List.of(Role.USER)),
+      newAuthenticatedUser(List.of(Role.MVP_USER)),
       emptyList()
     );
     UUID meterId = randomUUID();

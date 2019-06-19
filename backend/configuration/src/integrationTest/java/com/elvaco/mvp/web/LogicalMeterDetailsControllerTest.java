@@ -46,7 +46,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     );
     given(statusLog(logicalMeter).start(start).status(UNKNOWN));
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -67,7 +67,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     var url = meterDetailsUrl(logicalMeter.id);
 
-    var meters = asUser()
+    var meters = asMvpUser()
       .get(url, LogicalMeterDto.class)
       .getBody();
 
@@ -88,7 +88,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     given(statusLog(logicalMeter).status(OK).start(context().yesterday()));
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -115,7 +115,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .stop(stop)
     );
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -147,7 +147,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     var url = meterDetailsUrl(logicalMeter.id);
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(url, LogicalMeterDto.class)
       .getBody();
 
@@ -172,7 +172,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     var url = meterDetailsUrl(logicalMeter.id);
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(url, LogicalMeterDto.class)
       .getBody();
 
@@ -192,7 +192,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       physicalMeter().activePeriod(PeriodRange.from(stop))
     );
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -212,7 +212,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     given(statusLog(logicalMeter).status(OK).start(start));
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -236,7 +236,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .build()
     );
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -256,7 +256,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     );
     given(statusLog(logicalMeter).status(OK).start(start));
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -279,7 +279,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       statusLog(logicalMeter).start(context().now().plusMinutes(1)).status(ERROR)
     );
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -308,7 +308,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .start(context().now())
     );
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -317,7 +317,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void meterNotFound() {
-    ResponseEntity<LogicalMeterDto> response = asUser()
+    ResponseEntity<LogicalMeterDto> response = asMvpUser()
       .get(meterDetailsUrl(randomUUID()), LogicalMeterDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -337,7 +337,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       alarm(logicalMeter).mask(16).start(context().now())
     ).iterator().next();
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -363,7 +363,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .stop(context().now().minusHours(5))
     ));
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -388,7 +388,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       ))
     );
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -410,7 +410,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     var url = meterDetailsUrl(meter.id);
 
-    LogicalMeterDto logicalMeterDto = asUser()
+    LogicalMeterDto logicalMeterDto = asMvpUser()
       .get(url, LogicalMeterDto.class)
       .getBody();
 
@@ -430,7 +430,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     var url = meterDetailsUrl(meter.id);
 
-    var content = asUser()
+    var content = asMvpUser()
       .get(url, LogicalMeterDto.class)
       .getBody();
 
@@ -449,7 +449,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     var url = meterDetailsUrl(meter.id);
 
-    var meterDto = asUser()
+    var meterDto = asMvpUser()
       .get(url, LogicalMeterDto.class)
       .getBody();
 
@@ -473,7 +473,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     var url = meterDetailsUrl(meter.id);
 
-    var meterDto = asUser()
+    var meterDto = asMvpUser()
       .get(url, LogicalMeterDto.class)
       .getBody();
 

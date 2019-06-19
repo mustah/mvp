@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Redirect, Route, Switch} from 'react-router';
-import {adminIsAuthenticated} from '../../services/authService';
+import {mvpAdminIsAuthenticated} from '../../services/authService';
 import {MeterDefinitions} from '../../usecases/administration/components/MeterDefinitions';
 import {Organisations} from '../../usecases/administration/components/Organisations';
 import {Users} from '../../usecases/administration/components/Users';
@@ -10,10 +10,10 @@ import {UserAddContainer} from '../../usecases/administration/containers/UserAdd
 import {UserEditContainer} from '../../usecases/administration/containers/UserEditContainer';
 import {routes} from '../routes';
 
-const MeterDefinitionsPage = adminIsAuthenticated(MeterDefinitions);
-const MeterDefinitionEditPage = adminIsAuthenticated(MeterDefinitionEditContainer);
-const OrganisationsPage = adminIsAuthenticated(Organisations);
-const OrganisationPage = adminIsAuthenticated(OrganisationFormContainer);
+const MeterDefinitionsPage = mvpAdminIsAuthenticated(MeterDefinitions);
+const MeterDefinitionEditPage = mvpAdminIsAuthenticated(MeterDefinitionEditContainer);
+const OrganisationsPage = mvpAdminIsAuthenticated(Organisations);
+const OrganisationPage = mvpAdminIsAuthenticated(OrganisationFormContainer);
 
 export const AdminPages = () => (
   <Switch>

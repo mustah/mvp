@@ -15,6 +15,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @RequiredArgsConstructor
 public class ApmInterceptor implements HandlerInterceptor {
+
   private final AuthenticatedUser currentUser;
 
   @Override
@@ -31,12 +32,14 @@ public class ApmInterceptor implements HandlerInterceptor {
 
     try {
       currentTransaction.setUser(
-        currentUser.getUserId().toString(), currentUser.getUsername(), currentUser.getUsername()
+        currentUser.getUserId().toString(),
+        currentUser.getUsername(),
+        currentUser.getUsername()
       );
 
       currentTransaction.addTag("organisation", currentUser.getOrganisationId().toString());
       currentTransaction.addTag("super-admin", currentUser.isSuperAdmin() ? "yes" : "no");
-      currentTransaction.addTag("admin", currentUser.isAdmin() ? "yes" : "no");
+      currentTransaction.addTag("mvp-admin", currentUser.isMvpAdmin() ? "yes" : "no");
     } catch (BeanCreationException bce) {
       if (!bce.contains(InsufficientAuthenticationException.class)) {
         throw bce;

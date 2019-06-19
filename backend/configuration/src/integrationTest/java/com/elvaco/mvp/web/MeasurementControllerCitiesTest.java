@@ -54,7 +54,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(3.0, 4.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(
         measurementsAverageUrl()
           .reportPeriod(start, start.plusHours(1))
@@ -115,7 +115,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(10.0, 10.0));
 
-    var response = asUser()
+    var response = asMvpUser()
       .getList(
         measurementsAverageUrl()
           .reportPeriod(start, start.plusHours(1))
@@ -165,7 +165,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(10.0, 11.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(
         measurementsAverageUrl()
           .reportPeriod(start, start.plusHours(1))
@@ -203,7 +203,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(1.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(
         measurementsAverageUrl()
           .reportPeriod(start, start.plusHours(1))
@@ -222,7 +222,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   public void cityAverageIsEmptyWhenNoMetersExistsInCity() {
     ZonedDateTime start = context().now();
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(
         measurementsAverageUrl()
           .reportPeriod(start, start.plusHours(1))
@@ -254,7 +254,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .startingAt(context().now())
       .withValues(10.0, 10.0));
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asMvpUser()
       .getList(
         measurementsAverageUrl()
           .reportPeriod(start, start.plusHours(1))
@@ -316,11 +316,11 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .parameter("id", List.of(meterOne.id, meterTwo.id))
       .build();
 
-    ResponseEntity<List<MeasurementSeriesDto>> cityAverageResponse = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> cityAverageResponse = asMvpUser()
       .getList(cityAverageUrl, MeasurementSeriesDto.class
       );
 
-    ResponseEntity<List<MeasurementSeriesDto>> metersAverageResponse = asUser()
+    ResponseEntity<List<MeasurementSeriesDto>> metersAverageResponse = asMvpUser()
       .getList(
         metersAverageUrl,
         MeasurementSeriesDto.class

@@ -2,17 +2,14 @@ package com.elvaco.mvp.core.util;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.Role;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
 
 public class RoleComparator implements Comparator<Role>, Serializable {
-
-  private static final List<String> ALL_ROLES = List.of(USER.role, ADMIN.role, SUPER_ADMIN.role);
 
   @Override
   public int compare(Role role1, Role role2) {
@@ -29,11 +26,11 @@ public class RoleComparator implements Comparator<Role>, Serializable {
         return -1;
       }
 
-      if (role1.role.equals(ADMIN.role)) {
+      if (role1.role.equals(MVP_ADMIN.role)) {
         return 1;
       }
 
-      if (role1.role.equals(USER.role)) {
+      if (role1.role.equals(MVP_USER.role)) {
         return -1;
       }
     }
@@ -44,6 +41,6 @@ public class RoleComparator implements Comparator<Role>, Serializable {
   }
 
   private boolean isRoleImplemented(String role) {
-    return ALL_ROLES.contains(role);
+    return Role.ALL_ROLE_IDS.contains(role);
   }
 }

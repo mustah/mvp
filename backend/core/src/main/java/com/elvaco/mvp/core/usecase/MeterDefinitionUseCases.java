@@ -186,7 +186,7 @@ public class MeterDefinitionUseCases {
 
   private boolean hasAdminAccess(MeterDefinition meterDefinition) {
     return currentUser.isSuperAdmin()
-      || (currentUser.isAdmin() && meterDefinition.belongsTo(currentUser.getOrganisationId()));
+      || (currentUser.isMvpAdmin() && meterDefinition.belongsTo(currentUser.getOrganisationId()));
   }
 
   private void autoApplyOnExistingMeters(MeterDefinition toMeterDefinition) {

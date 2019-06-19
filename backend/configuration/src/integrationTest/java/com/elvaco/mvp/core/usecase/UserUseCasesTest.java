@@ -12,8 +12,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -105,7 +105,7 @@ public class UserUseCasesTest extends IntegrationTest {
       .password(rawPassword)
       .language(Language.en)
       .organisation(context().defaultOrganisation())
-      .roles(ADMIN, USER)
+      .roles(MVP_ADMIN, MVP_USER)
       .build();
   }
 

@@ -30,12 +30,12 @@ public class UserSelectionControllerTest extends IntegrationTest {
     IntegrationTestFixtureContext context = context();
 
     UserSelectionDto selection1 = createSelection(
-      context.user,
+      context.mvpUser,
       "Kungsbacka",
       (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here\"}")
     );
 
-    ResponseEntity<UserSelectionDto> response = asUser()
+    ResponseEntity<UserSelectionDto> response = asMvpUser()
       .get("/user/selections/" + selection1.id, UserSelectionDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -48,18 +48,18 @@ public class UserSelectionControllerTest extends IntegrationTest {
     IntegrationTestFixtureContext context = context();
 
     UserSelectionDto selection1 = createSelection(
-      context.user,
+      context.mvpUser,
       "Kungsbacka",
       (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here\"}")
     );
 
     UserSelectionDto selection2 = createSelection(
-      context.user,
+      context.mvpUser,
       "Varberg",
       (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here2\"}")
     );
 
-    ResponseEntity<List<UserSelectionDto>> response = asUser()
+    ResponseEntity<List<UserSelectionDto>> response = asMvpUser()
       .getList("/user/selections", UserSelectionDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -77,18 +77,18 @@ public class UserSelectionControllerTest extends IntegrationTest {
     IntegrationTestFixtureContext context = context();
 
     UserSelectionDto selection1 = createSelection(
-      context.user,
+      context.mvpUser,
       "Kungsbacka",
       (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here\"}")
     );
 
     UserSelectionDto selection2 = createSelection(
-      context.admin,
+      context.mvpAdmin,
       "Kungsbacka",
       (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"Json stuff here\"}")
     );
 
-    ResponseEntity<List<UserSelectionDto>> responseFindAll = asAdmin()
+    ResponseEntity<List<UserSelectionDto>> responseFindAll = asMvpAdmin()
       .getList("/user/selections", UserSelectionDto.class);
 
     assertThat(responseFindAll.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -97,7 +97,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     assertThat(responseFindAll.getBody().get(0).selectionParameters)
       .isEqualTo(selection2.selectionParameters);
 
-    ResponseEntity<UserSelectionDto> responseFindOne = asAdmin()
+    ResponseEntity<UserSelectionDto> responseFindOne = asMvpAdmin()
       .get("/user/selections/" + selection1.id, UserSelectionDto.class);
 
     assertThat(responseFindOne.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -109,13 +109,13 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
     UserSelectionDto userSelectionDto = new UserSelectionDto(
       null,
-      context().user.id,
+      context().mvpUser.id,
       "My selection",
       data,
-      context().user.organisation.id
+      context().mvpUser.organisation.id
     );
 
-    ResponseEntity<UserSelectionDto> post = asUser().post(
+    ResponseEntity<UserSelectionDto> post = asMvpUser().post(
       "/user/selections",
       userSelectionDto,
       UserSelectionDto.class
@@ -127,8 +127,8 @@ public class UserSelectionControllerTest extends IntegrationTest {
     Optional<UserSelectionEntity> selection = userSelectionJpaRepository
       .findByIdAndOwnerUserIdAndOrganisationId(
         post.getBody().id,
-        context().user.id,
-        context().user.organisation.id
+        context().mvpUser.id,
+        context().mvpUser.organisation.id
       );
 
     assertThat(selection).isPresent();
@@ -141,14 +141,14 @@ public class UserSelectionControllerTest extends IntegrationTest {
     ObjectNode newData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Rolfstorp\"}");
 
     UserSelectionDto userSelectionDto = createSelection(
-      context().user,
+      context().mvpUser,
       "My selection",
       originalData
     );
 
     userSelectionDto.selectionParameters = newData;
 
-    ResponseEntity<UserSelectionDto> response = asUser().put(
+    ResponseEntity<UserSelectionDto> response = asMvpUser().put(
       "/user/selections",
       userSelectionDto,
       UserSelectionDto.class
@@ -163,8 +163,8 @@ public class UserSelectionControllerTest extends IntegrationTest {
     Optional<UserSelectionEntity> selectionInDatabase = userSelectionJpaRepository
       .findByIdAndOwnerUserIdAndOrganisationId(
         updatedThroughApi.id,
-        context().user.id,
-        context().user.organisation.id
+        context().mvpUser.id,
+        context().mvpUser.organisation.id
       );
 
     assertThat(selectionInDatabase).isPresent();
@@ -177,14 +177,14 @@ public class UserSelectionControllerTest extends IntegrationTest {
     ObjectNode changedData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Rolfstorp\"}");
 
     UserSelectionDto userSelectionDto = createSelection(
-      context().user,
+      context().mvpUser,
       "My selection",
       originalData
     );
 
     userSelectionDto.selectionParameters = changedData;
 
-    ResponseEntity<ErrorMessageDto> put = asAdmin().put(
+    ResponseEntity<ErrorMessageDto> put = asMvpAdmin().put(
       "/user/selections",
       userSelectionDto,
       ErrorMessageDto.class
@@ -195,8 +195,8 @@ public class UserSelectionControllerTest extends IntegrationTest {
     Optional<UserSelectionEntity> selectionUser = userSelectionJpaRepository
       .findByIdAndOwnerUserIdAndOrganisationId(
         userSelectionDto.id,
-        context().user.id,
-        context().user.organisation.id
+        context().mvpUser.id,
+        context().mvpUser.organisation.id
       );
 
     assertThat(selectionUser).isPresent();
@@ -205,8 +205,8 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
   @Test
   public void loggedInUserIsOwnerIndependentOfUserInPayloadWhenCreating() throws IOException {
-    User userInPayload = context().user;
-    User apiUser = context().admin;
+    User userInPayload = context().mvpUser;
+    User apiUser = context().mvpAdmin;
 
     ObjectNode selectionJson = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}");
     UserSelectionDto userSelectionDto = new UserSelectionDto(
@@ -241,12 +241,12 @@ public class UserSelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanDeleteOwnedSelections() throws IOException {
     UserSelectionDto userSelectionDto = createSelection(
-      context().user,
+      context().mvpUser,
       "My selection",
       (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}")
     );
 
-    ResponseEntity<UserSelectionDto> post = asUser().delete(
+    ResponseEntity<UserSelectionDto> post = asMvpUser().delete(
       "/user/selections/" + userSelectionDto.id,
       UserSelectionDto.class
     );
@@ -258,12 +258,12 @@ public class UserSelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanNotDeleteOtherUsersSelections() throws IOException {
     UserSelectionDto adminsSelectionDto = createSelection(
-      context().admin,
+      context().mvpAdmin,
       "Admins selection",
       (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}")
     );
 
-    ResponseEntity<ErrorMessageDto> post = asUser().delete(
+    ResponseEntity<ErrorMessageDto> post = asMvpUser().delete(
       "/user/selections/" + adminsSelectionDto.id,
       ErrorMessageDto.class
     );

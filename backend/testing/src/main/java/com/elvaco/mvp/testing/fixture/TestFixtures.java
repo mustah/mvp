@@ -93,11 +93,11 @@ public interface TestFixtures {
     }
   }
 
-  default UserBuilder newUser() {
+  default UserBuilder newMvpUser() {
     UUID userId = randomUUID();
     return new UserBuilder()
       .id(userId)
-      .asUser()
+      .asMvpUser()
       .language(Language.en)
       .name(userId.toString())
       .password(userId.toString())

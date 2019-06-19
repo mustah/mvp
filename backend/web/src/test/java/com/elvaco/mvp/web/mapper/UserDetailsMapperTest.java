@@ -10,10 +10,11 @@ import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
+import static com.elvaco.mvp.web.security.MvpUserDetails.SPRING_ROLE_PREFIX;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,17 +44,20 @@ public class UserDetailsMapperTest {
     Stream<String> roles = mvpUserDetails().getAuthorities().stream()
       .map(GrantedAuthority::getAuthority);
 
-    assertThat(roles).containsExactly("ROLE_" + ADMIN.role, "ROLE_" + USER.role);
+    assertThat(roles).containsExactly(
+      SPRING_ROLE_PREFIX + MVP_ADMIN.role,
+      SPRING_ROLE_PREFIX + MVP_USER.role
+    );
   }
 
   @Test
-  public void userIsNotSuperAdminAndAdmin() {
+  public void userIsNotSuperAdmin() {
     assertThat(mvpUserDetails().isSuperAdmin()).isFalse();
   }
 
   @Test
-  public void userIsAdminAndAdmin() {
-    assertThat(mvpUserDetails().isAdmin()).isTrue();
+  public void userIsMvpAdmin() {
+    assertThat(mvpUserDetails().isMvpAdmin()).isTrue();
   }
 
   @Test

@@ -10,21 +10,19 @@ import com.elvaco.mvp.core.domainmodels.User;
 
 import lombok.RequiredArgsConstructor;
 
+import static com.elvaco.mvp.core.domainmodels.Role.ALL_ROLES;
 import static java.util.Collections.singletonList;
 
 @RequiredArgsConstructor
 public class ProductionData implements ProductionDataProvider {
+
   private final String superAdminEmail;
   private final String superAdminPassword;
   private final Organisation rootOrganisation;
 
   @Override
   public List<Role> roles() {
-    return List.of(
-      Role.USER,
-      Role.ADMIN,
-      Role.SUPER_ADMIN
-    );
+    return ALL_ROLES;
   }
 
   @Override
