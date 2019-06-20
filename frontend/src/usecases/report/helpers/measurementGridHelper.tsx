@@ -94,23 +94,12 @@ export const renderColumns =
       values,
       quantity,
     }: MeasurementResponsePart) => {
-      if (columns[quantity] === undefined) {
-        const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
-        columns[quantity] = (
-          <GridColumn
-            headerClassName="quantity"
-            key={`${id}-${title}`}
-            title={title}
-            field={`values.${quantity}`}
-          />
-        );
-      }
+      const legendType = medium ? getMediumType(medium) : 'aggregate';
+      const formattedName = medium ? name : firstUpperTranslated('average');
+      const type = medium ? getGroupHeaderTitle(legendType) : label;
 
       values.forEach(({when, value}) => {
         const rowKey = `${when}-${label}`;
-        const legendType = medium ? getMediumType(medium) : 'aggregate';
-        const formattedName = medium ? name : firstUpperTranslated('average');
-        const type = medium ? getGroupHeaderTitle(legendType) : label;
         const listItem: ListItem = rows[rowKey] || {
           label,
           name: formattedName,
@@ -122,6 +111,18 @@ export const renderColumns =
         listItem.values[quantity] = value !== undefined ? roundMeasurement(value) : '-';
         rows[rowKey] = listItem;
       });
+
+      if (columns[quantity] === undefined) {
+        const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
+        columns[quantity] = (
+          <GridColumn
+            headerClassName="quantity"
+            key={`${id}-${title}`}
+            title={title}
+            field={`values.${quantity}`}
+          />
+        );
+      }
     });
 
     return [toArray(rows).reverse(), toArray(columns)];

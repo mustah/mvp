@@ -44,8 +44,10 @@ export const toAggregateLegendItem = ({id, name}: IdNamed): LegendItem => ({
   ...legendViewSettings
 });
 
+const availableQuantities = (quantity: Quantity) => quantitiesToExclude.indexOf(quantity) === -1;
+
 export const makeColumnQuantities = (state: SavedReportsState) => {
   const quantities: Quantity[][] = flatMap(getLegendItems(state), it => it.type)
     .map((medium: Medium) => allQuantitiesMap[medium]);
-  return unique(flatMap(quantities).filter(it => quantitiesToExclude.indexOf(it) === -1));
+  return unique(flatMap(quantities).filter(availableQuantities));
 };

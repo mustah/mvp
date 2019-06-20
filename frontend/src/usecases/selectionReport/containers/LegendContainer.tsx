@@ -64,19 +64,15 @@ const LegendComponent = compose<WrapperProps & ThemeContext, WrapperProps>(
   withContent
 )(Legend);
 
-const mapStateToProps = ({selectionReport}: RootState): StateToProps => {
-  const {temporal: {resolution}, savedReports} = selectionReport;
-
-  return ({
-    columnQuantities: makeColumnQuantities(savedReports),
-    hasContent: hasLegendItems(savedReports),
-    legendItems: getLegendItems(savedReports),
-    mediumViewOptions: getLegendViewOptions(savedReports),
-    resolution,
-    savedReports,
-    selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
-  });
-};
+const mapStateToProps = ({selectionReport: {temporal: {resolution}, savedReports}}: RootState): StateToProps => ({
+  columnQuantities: makeColumnQuantities(savedReports),
+  hasContent: hasLegendItems(savedReports),
+  legendItems: getLegendItems(savedReports),
+  mediumViewOptions: getLegendViewOptions(savedReports),
+  resolution,
+  savedReports,
+  selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   showHideAllByType: showHideAllByType(ReportSector.selectionReport),

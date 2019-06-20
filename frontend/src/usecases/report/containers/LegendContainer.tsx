@@ -66,18 +66,15 @@ const LegendComponent = compose<WrapperProps & ThemeContext, WrapperProps>(
   withContent
 )(Legend);
 
-const mapStateToProps = ({report}: RootState): StateToProps => {
-  const {temporal: {resolution}, savedReports} = report;
-  return ({
-    columnQuantities: makeColumnQuantities(savedReports),
-    hasContent: hasLegendItems(savedReports),
-    legendItems: getLegendItems(savedReports),
-    mediumViewOptions: getLegendViewOptions(savedReports),
-    resolution,
-    savedReports,
-    selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
-  });
-};
+const mapStateToProps = ({report: {temporal: {resolution}, savedReports}}: RootState): StateToProps => ({
+  columnQuantities: makeColumnQuantities(savedReports),
+  hasContent: hasLegendItems(savedReports),
+  legendItems: getLegendItems(savedReports),
+  mediumViewOptions: getLegendViewOptions(savedReports),
+  resolution,
+  savedReports,
+  selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem,
