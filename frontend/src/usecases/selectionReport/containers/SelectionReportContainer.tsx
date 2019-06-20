@@ -5,7 +5,7 @@ import {isMetersPageFetching} from '../../../state/domain-models-paginated/pagin
 import {ReportSector} from '../../../state/report/reportModels';
 import {
   getHiddenLines,
-  getSelectionMeasurementParameters,
+  getMeasurementParameters,
   getVisibilitySummary,
   hasLegendItems
 } from '../../../state/report/reportSelectors';
@@ -26,30 +26,28 @@ import {MeasurementLineChart} from '../../report/components/MeasurementLineChart
 import {Measurements} from '../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../report/containers/MeasurementsContainer';
 
-const mapStateToProps = (rootState: RootState): StateToProps => {
-  const {
-    selectionReport: {savedReports},
-    domainModels: {userSelections},
-    paginatedDomainModels: {meters},
-    selectionMeasurement,
-    userSelection,
-    ui
-  } = rootState;
-  return ({
-    hasLegendItems: hasLegendItems(savedReports),
+const mapStateToProps = ({
+  domainModels: {userSelections},
+  paginatedDomainModels: {meters},
+  selectionMeasurement,
+  selectionReport,
+  userSelection,
+  ui
+}: RootState): StateToProps =>
+  ({
+    hasLegendItems: hasLegendItems(selectionReport.savedReports),
     hasContent: hasMeasurementValues(selectionMeasurement.measurementResponse),
-    hiddenLines: getHiddenLines(savedReports),
+    hiddenLines: getHiddenLines(selectionReport.savedReports),
     isFetching: selectionMeasurement.isFetching || isMetersPageFetching(meters, ui.pagination),
     isSideMenuOpen: isSideMenuOpen(ui),
     measurement: selectionMeasurement,
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
-    requestParameters: getSelectionMeasurementParameters(rootState),
+    requestParameters: getMeasurementParameters(selectionReport),
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
     userSelections,
-    visibilitySummary: getVisibilitySummary(savedReports),
+    visibilitySummary: getVisibilitySummary(selectionReport.savedReports),
   });
-};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError(ReportSector.selectionReport),

@@ -2,7 +2,6 @@ import {flatMap, flatten, values} from 'lodash';
 import {createSelector} from 'reselect';
 import {getId, unique} from '../../helpers/collections';
 import {identity} from '../../helpers/commonHelpers';
-import {RootState} from '../../reducers/rootReducer';
 import {uuid} from '../../types/Types';
 import {VisibilitySummaryProps} from '../../usecases/report/components/VisibilitySummary';
 import {groupLegendItemsByQuantity} from '../ui/graph/measurement/measurementActions';
@@ -12,6 +11,7 @@ import {
   LegendItem,
   LegendType,
   LegendViewOptions,
+  ReportState,
   SavedReportsState,
   SelectedQuantities,
   ViewOptions
@@ -76,28 +76,15 @@ export const hasSelectedQuantities =
   );
 
 export const getMeasurementParameters =
-  createSelector<RootState, RootState, MeasurementParameters>(
+  createSelector<ReportState, ReportState, MeasurementParameters>(
     identity,
     ({
-      report: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
+      savedReports,
+      temporal: {resolution, timePeriod, shouldComparePeriod},
     }) => ({
+      legendItems: getLegendItems(savedReports),
       reportDateRange: timePeriod,
       resolution,
-      legendItems: getLegendItems(savedReports),
-      shouldComparePeriod,
-      shouldShowAverage: savedReports.meterPage.shouldShowAverage,
-    })
-  );
-
-export const getSelectionMeasurementParameters =
-  createSelector<RootState, RootState, MeasurementParameters>(
-    identity,
-    ({
-      selectionReport: {savedReports, temporal: {resolution, timePeriod, shouldComparePeriod}},
-    }) => ({
-      reportDateRange: timePeriod,
-      resolution,
-      legendItems: getLegendItems(savedReports),
       shouldComparePeriod,
       shouldShowAverage: savedReports.meterPage.shouldShowAverage,
     })

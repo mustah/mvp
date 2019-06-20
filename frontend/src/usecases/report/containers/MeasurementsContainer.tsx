@@ -56,30 +56,28 @@ export interface DispatchToProps {
   fetchUserSelections: Fetch;
 }
 
-const mapStateToProps = (rootState: RootState): StateToProps => {
-  const {
-    domainModels: {userSelections},
-    paginatedDomainModels: {meters},
-    report: {savedReports},
-    measurement,
-    userSelection,
-    ui,
-  } = rootState;
-  return ({
-    hasLegendItems: hasLegendItems(savedReports),
+const mapStateToProps = ({
+  domainModels: {userSelections},
+  measurement,
+  paginatedDomainModels: {meters},
+  report,
+  userSelection,
+  ui,
+}: RootState): StateToProps =>
+  ({
+    hasLegendItems: hasLegendItems(report.savedReports),
     hasContent: hasMeasurementValues(measurement.measurementResponse),
-    hiddenLines: getHiddenLines(savedReports),
+    hiddenLines: getHiddenLines(report.savedReports),
     isFetching: measurement.isFetching || isMetersPageFetching(meters, ui.pagination),
     isSideMenuOpen: isSideMenuOpen(ui),
     measurement,
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
-    requestParameters: getMeasurementParameters(rootState),
-    visibilitySummary: getVisibilitySummary(savedReports),
+    requestParameters: getMeasurementParameters(report),
+    visibilitySummary: getVisibilitySummary(report.savedReports),
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
     userSelections,
   });
-};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError(ReportSector.report),
