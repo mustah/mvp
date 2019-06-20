@@ -3,7 +3,7 @@ import {bindActionCreators, Dispatch} from 'redux';
 import {isDefined} from '../../../../helpers/commonHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
 import {RootState} from '../../../../reducers/rootReducer';
-import {getEntitiesDomainModels} from '../../../../state/domain-models/domainModelsSelectors';
+import {getAllEntities, getEntitiesDomainModels} from '../../../../state/domain-models/domainModelsSelectors';
 import {fetchMediums} from '../../../../state/domain-models/medium/mediumModels';
 import {
   addMeterDefinition,
@@ -11,7 +11,6 @@ import {
   updateMeterDefinition
 } from '../../../../state/domain-models/meter-definitions/meterDefinitionsApiActions';
 import {fetchOrganisations} from '../../../../state/domain-models/organisation/organisationsApiActions';
-import {getOrganisations} from '../../../../state/domain-models/organisation/organisationSelectors';
 import {fetchQuantities} from '../../../../state/domain-models/quantities/quantitesApiActions';
 import {DispatchToProps, MeterDefinitionEdit, OwnProps, StateToProps} from '../components/MeterDefinitionEdit';
 
@@ -20,7 +19,7 @@ const mapStateToProps = ({
 }: RootState): StateToProps => ({
   error: Maybe.maybe([organisations.error, mediums.error, quantities.error, meterDefinitions.error].find(isDefined)),
   isFetching: organisations.isFetching || meterDefinitions.isFetching || mediums.isFetching || quantities.isFetching,
-  organisations: getOrganisations(organisations),
+  organisations: getAllEntities(organisations),
   meterDefinitions: getEntitiesDomainModels(meterDefinitions),
   mediums: getEntitiesDomainModels(mediums),
   quantities: getEntitiesDomainModels(quantities),

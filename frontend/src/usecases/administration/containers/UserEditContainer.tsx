@@ -15,10 +15,9 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {getAllEntities, getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
-import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {changePassword, clearUserError, fetchUser, modifyUser} from '../../../state/domain-models/user/userApiActions';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
@@ -119,7 +118,7 @@ const mapStateToProps = ({auth, domainModels: {users, organisations}}: RootState
   users: getEntitiesDomainModels(users),
   isFetching: users.isFetching,
   error: getError(users),
-  organisations: getOrganisations(organisations),
+  organisations: getAllEntities(organisations),
   roles: getRoles(getUser(auth)),
   languages: getLanguages(),
 });

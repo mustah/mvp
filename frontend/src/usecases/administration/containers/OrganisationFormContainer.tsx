@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {getAllEntities, getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {
   addOrganisation,
   addSubOrganisation,
@@ -11,7 +11,6 @@ import {
   updateOrganisation,
   uploadAsset,
 } from '../../../state/domain-models/organisation/organisationsApiActions';
-import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {clearUserSelectionErrors, fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
 import {DispatchToProps, OrganisationForm, StateToProps} from '../components/OrganisationForm';
 
@@ -20,7 +19,7 @@ const mapStateToProps = ({domainModels: {organisations, userSelections}}: RootSt
   isFetchingUserSelections: userSelections.isFetching,
   organisationsError: getError(organisations),
   userSelectionsError: getError(userSelections),
-  organisations: getOrganisations(organisations),
+  organisations: getAllEntities(organisations),
   selections: getEntitiesDomainModels(userSelections),
 });
 
