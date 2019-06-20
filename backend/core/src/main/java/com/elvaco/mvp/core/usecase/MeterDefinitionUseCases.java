@@ -59,15 +59,14 @@ public class MeterDefinitionUseCases {
   public MeterDefinition deleteById(Long id) {
     return meterDefinitions.findById(id)
       .filter(md -> !md.isDefault())
-      .filter(md -> hasAdminAccess(md))
-      .map(
-        md -> {
-          resetToDefaultOnConnectedMeters(md);
-          meterDefinitions.deleteById(id);
-          return md;
-        }
-      ).orElseThrow(() -> new Unauthorized(
-        "User is not authorized to delete meter definition with id " + id));
+      .filter(this::hasAdminAccess)
+      .map(md -> {
+        resetToDefaultOnConnectedMeters(md);
+        meterDefinitions.deleteById(id);
+        return md;
+      })
+      .orElseThrow(() ->
+        new Unauthorized("User is not authorized to delete meter definition with id " + id));
   }
 
   public List<Quantity> findAllQuantities() {
@@ -90,8 +89,7 @@ public class MeterDefinitionUseCases {
     Medium medium,
     MeterDefinition excluded
   ) {
-    return meterDefinitions.findAll(organisation.id)
-      .stream()
+    return meterDefinitions.findAll(organisation.id).stream()
       .filter(md -> md.medium.name.equals(medium.name))
       .filter(md -> md.autoApply)
       .filter(md -> !md.isDefault())
@@ -115,7 +113,7 @@ public class MeterDefinitionUseCases {
 
     meterDefinition.quantities.forEach(this::validateDisplayQuantity);
 
-    if (!duplicatedQuantites(meterDefinition).isEmpty()) {
+    if (!duplicatedQuantities(meterDefinition).isEmpty()) {
       throw new InvalidMeterDefinition("Duplicated quantity");
     }
 
@@ -136,7 +134,7 @@ public class MeterDefinitionUseCases {
       meterDefinitions.findById(meterDefinition.id)
         .filter(previous -> !previous.isDefault())
         .filter(previous -> !previous.organisation.id.equals(meterDefinition.organisation.id))
-        .ifPresent(previous -> resetToDefaultOnConnectedMeters(previous));
+        .ifPresent(this::resetToDefaultOnConnectedMeters);
     }
 
     MeterDefinition newMeterDefinition = meterDefinitions.save(meterDefinition);
@@ -146,9 +144,9 @@ public class MeterDefinitionUseCases {
     return newMeterDefinition;
   }
 
-  private Set<DisplayQuantity> duplicatedQuantites(MeterDefinition meterDefinition) {
-    Set<DisplayQuantity> duplicates = new HashSet();
-    Set<String> temp = new HashSet();
+  private Set<DisplayQuantity> duplicatedQuantities(MeterDefinition meterDefinition) {
+    Set<DisplayQuantity> duplicates = new HashSet<>();
+    Set<String> temp = new HashSet<>();
     meterDefinition.quantities.forEach(q -> {
       if (!temp.add(q.quantity.name + q.displayMode.toString())) {
         duplicates.add(q);
