@@ -6,7 +6,6 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {paperStyle} from '../../../../app/themes';
 import {MeterDefinitionEditForm} from '../../../../components/forms/MeterDefinitionEditForm';
 import {AdminPageLayout} from '../../../../components/layouts/layout/PageLayout';
-import {RowIndented} from '../../../../components/layouts/row/Row';
 import {Loader} from '../../../../components/loading/Loader';
 import {MainTitle} from '../../../../components/texts/Titles';
 import {Maybe} from '../../../../helpers/Maybe';
@@ -69,20 +68,18 @@ export const MeterDefinitionEdit = (props: Props) => {
         {meterDefinitionId ? translate('edit meter definition') : translate('add meter definition')}
       </MainTitle>
 
-      <Paper style={paperStyle}>
-        <RowIndented>
-          <Loader isFetching={isFetching}>
-            <MeterDefinitionEditForm
-              key={`meter-definition-${meterDefinitionId}`}
-              addMeterDefinition={addMeterDefinition}
-              organisations={organisations}
-              meterDef={meterDefinitions[meterDefinitionId]}
-              updateMeterDefinition={updateMeterDefinition}
-              mediums={values(mediums)}
-              allQuantities={values(quantities)}
-            />
-          </Loader>
-        </RowIndented>
+      <Paper style={{...paperStyle, padding: 24}}>
+        <Loader isFetching={isFetching}>
+          <MeterDefinitionEditForm
+            key={`meter-definition-${meterDefinitionId}`}
+            addMeterDefinition={addMeterDefinition}
+            organisations={organisations}
+            meterDef={meterDefinitions[meterDefinitionId]}
+            updateMeterDefinition={updateMeterDefinition}
+            mediums={values(mediums)}
+            allQuantities={values(quantities)}
+          />
+        </Loader>
       </Paper>
     </AdminPageLayout>
   );

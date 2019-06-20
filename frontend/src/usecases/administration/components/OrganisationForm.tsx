@@ -10,7 +10,6 @@ import {OrganisationEditForm} from '../../../components/forms/OrganisationEditFo
 import {withSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
-import {RowIndented} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {Maybe} from '../../../helpers/Maybe';
@@ -83,7 +82,7 @@ export const OrganisationForm = ({
     <AdminPageLayout>
       <MainTitle>{organisationId ? translate('edit organisation') : translate('add organisation')}</MainTitle>
 
-      <Paper style={paperStyle}>
+      <Paper style={{...paperStyle, padding: 24}}>
         <RetryLoader
           isFetching={isFetchingOrganisations}
           error={organisationsError}
@@ -94,7 +93,7 @@ export const OrganisationForm = ({
             error={userSelectionsError}
             clearError={clearUserSelectionErrors}
           >
-            <RowIndented className="OrganisationForm">
+            <div className="OrganisationForm">
               <OrganisationEditForm
                 addOrganisation={addOrganisation}
                 addSubOrganisation={addSubOrganisation}
@@ -104,7 +103,7 @@ export const OrganisationForm = ({
                 selections={userSelections}
               />
               {organisation && <SuperAdminAssetForms {...assetFormProps} organisation={organisation!}/>}
-            </RowIndented>
+            </div>
           </RetryLoader>
         </RetryLoader>
       </Paper>

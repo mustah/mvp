@@ -5,7 +5,6 @@ import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
-import {RowIndented} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {Maybe} from '../../../helpers/Maybe';
@@ -58,17 +57,15 @@ class UserAdd extends React.Component<Props> {
       <AdminPageLayout>
         <MainTitle>{translate('add user')}</MainTitle>
 
-        <Paper style={paperStyle}>
+        <Paper style={{...paperStyle, padding: 24}}>
           <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-            <RowIndented>
-              <UserEditForm
-                organisations={organisations}
-                onSubmit={addUser}
-                possibleRoles={roles}
-                isEditSelf={false}
-                languages={languages}
-              />
-            </RowIndented>
+            <UserEditForm
+              organisations={organisations}
+              onSubmit={addUser}
+              possibleRoles={roles}
+              isEditSelf={false}
+              languages={languages}
+            />
           </RetryLoader>
         </Paper>
       </AdminPageLayout>

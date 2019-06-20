@@ -20,7 +20,6 @@ import {withCssStyles} from '../hoc/withThemeProvider';
 import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
 import {ValidatedInputSelectable} from '../inputs/ValidatedInputSelectable';
 import {Column} from '../layouts/column/Column';
-import './MeterDefinitionEditForm.scss';
 
 const mediumById = (mediumId: number, mediums: Medium[]): Medium =>
   mediums.find(({id}) => id === mediumId)!;
@@ -90,7 +89,7 @@ export const MeterDefinitionEditForm = (
   const requiredMessage: string[] = [firstUpperTranslated('required field')];
   return (
     <ValidatorForm style={{flex: 1}} onSubmit={wrappedSubmit}>
-      <Column className="EditMeterDefinitionContainer">
+      <Column>
         <ValidatedFieldInput
           autoComplete="off"
           floatingLabelText={nameLabel}
@@ -142,7 +141,7 @@ export const MeterDefinitionEditForm = (
           editable={!isDefault}
         />
 
-        <ButtonSave disabled={isDefault} className="ButtonSave" type="submit"/>
+        <ButtonSave disabled={isDefault} className="flex-align-self-start" type="submit"/>
       </Column>
 
     </ValidatorForm>

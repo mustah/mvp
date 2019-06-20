@@ -64,7 +64,7 @@ export const withStyles = ({primary, secondary}: ColorProperties): CssStyles => 
 };
 
 export const makeTheme = (cssStyles: CssStyles): Theme => {
-  const {primary} = cssStyles;
+  const {primary, secondary} = cssStyles;
   return ({
     cssStyles,
     muiTheme: getMuiTheme({
@@ -83,7 +83,7 @@ export const makeTheme = (cssStyles: CssStyles): Theme => {
       flatButton: {
         buttonFilterColor: primary.bg,
         color: colors.white,
-        secondaryTextColor: primary.fg,
+        secondaryTextColor: secondary.fg,
         textColor: colors.white,
       },
       fontFamily,

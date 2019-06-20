@@ -8,7 +8,7 @@ import {OnChangePassword, PasswordEditForm} from '../../../components/forms/Pass
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
 import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
-import {RowIndented} from '../../../components/layouts/row/Row';
+import {Row} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {Maybe} from '../../../helpers/Maybe';
@@ -87,9 +87,9 @@ class UserEdit extends React.Component<Props, {}> {
       <AdminPageLayout>
         <MainTitle>{translate('edit user')}</MainTitle>
 
-        <Paper style={paperStyle}>
+        <Paper style={{...paperStyle, padding: 24}}>
           <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-            <RowIndented className="UserEditContainer">
+            <Row>
               <Column style={userEditStyle}>
                 <UserEditForm
                   organisations={organisations}
@@ -107,7 +107,7 @@ class UserEdit extends React.Component<Props, {}> {
                   user={users[userId]}
                 />
               </Column>
-            </RowIndented>
+            </Row>
           </RetryLoader>
         </Paper>
       </AdminPageLayout>

@@ -10,7 +10,6 @@ import {ButtonSave} from '../buttons/ButtonSave';
 import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
 import {ValidatedInputSelectable} from '../inputs/ValidatedInputSelectable';
 import {Column} from '../layouts/column/Column';
-import './UserEditForm.scss';
 
 interface UserFormProps {
   onSubmit: OnClickEventHandler;
@@ -93,10 +92,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     );
 
     return (
-      <ValidatorForm
-        onSubmit={this.wrappedSubmit}
-      >
-        <Column className="EditUserContainer">
+      <ValidatorForm onSubmit={this.wrappedSubmit}>
+        <Column>
           <ValidatedFieldInput
             floatingLabelText={nameLabel}
             hintText={nameLabel}
@@ -157,7 +154,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
 
           {passwordElement}
 
-          <ButtonSave className="ButtonSave" type="submit"/>
+          <ButtonSave className="flex-align-self-start" type="submit"/>
         </Column>
       </ValidatorForm>
     );
