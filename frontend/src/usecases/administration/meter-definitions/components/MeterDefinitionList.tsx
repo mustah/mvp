@@ -2,20 +2,35 @@ import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import {toArray} from 'lodash';
 import NavigationCheck from 'material-ui/svg-icons/navigation/check';
 import * as React from 'react';
-import {routes} from '../../../app/routes';
-import {makeGridClassName} from '../../../app/themes';
-import {ButtonAdd} from '../../../components/buttons/ButtonAdd';
-import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
-import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
-import {ThemeContext} from '../../../components/hoc/withThemeProvider';
-import {Column} from '../../../components/layouts/column/Column';
-import {Row} from '../../../components/layouts/row/Row';
-import {Link} from '../../../components/links/Link';
-import {RetryLoader} from '../../../components/loading/Loader';
-import {translate} from '../../../services/translationService';
-import {DispatchToProps, StateToProps} from '../containers/MeterDefinitionsContainer';
+import {routes} from '../../../../app/routes';
+import {makeGridClassName} from '../../../../app/themes';
+import {ButtonAdd} from '../../../../components/buttons/ButtonAdd';
+import {useConfirmDialog} from '../../../../components/dialog/confirmDialogHook';
+import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
+import {ThemeContext} from '../../../../components/hoc/withThemeProvider';
+import {Column} from '../../../../components/layouts/column/Column';
+import {Row} from '../../../../components/layouts/row/Row';
+import {Link} from '../../../../components/links/Link';
+import {RetryLoader} from '../../../../components/loading/Loader';
+import {Maybe} from '../../../../helpers/Maybe';
+import {translate} from '../../../../services/translationService';
+import {DomainModel} from '../../../../state/domain-models/domainModels';
+import {MeterDefinition} from '../../../../state/domain-models/meter-definitions/meterDefinitionModels';
+import {ClearError, ErrorResponse, Fetch, OnClickWithId} from '../../../../types/Types';
 import {MeterDefinitionActions} from './MeterDefinitionActions';
 import './MeterDefinitionList.scss';
+
+export interface StateToProps {
+  meterDefinitions: DomainModel<MeterDefinition>;
+  isFetching: boolean;
+  error: Maybe<ErrorResponse>;
+}
+
+export interface DispatchToProps {
+  deleteMeterDefinition: OnClickWithId;
+  fetchMeterDefinitions: Fetch;
+  clearError: ClearError;
+}
 
 type Props = StateToProps & DispatchToProps & ThemeContext;
 

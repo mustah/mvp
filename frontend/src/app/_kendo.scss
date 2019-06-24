@@ -33,6 +33,10 @@ $pager-number-text: $black;
   &.quantity {
     text-transform: none;
   }
+
+  &.k-grid-toolbar {
+    padding-left: 0 !important;
+  }
 }
 
 .Dialog .k-widget.k-grid .k-grid-header tr th {

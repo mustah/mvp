@@ -8,7 +8,6 @@ import {ErrorMessage} from '../error-message/ErrorMessage';
 import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
-import './PasswordEditForm.scss';
 
 export type OnChangePassword = (password: Password, userId: uuid) => void;
 
@@ -72,12 +71,12 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
             errorMessages={requiredMessage}
             onChange={this.onChangePasswordConfirm}
           />
-          <Row className="Error-message-container">
-            <ErrorMessage message={error}/>
+          <Row style={{height: 30}}>
+            <ErrorMessage message={error} style={{margin: 0}}/>
           </Row>
           <ButtonPrimary
             type="submit"
-            className="ButtonSave"
+            className="flex-align-self-start"
             label={firstUpperTranslated('change password')}
           />
         </Column>

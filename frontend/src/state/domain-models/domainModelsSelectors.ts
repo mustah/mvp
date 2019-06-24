@@ -4,9 +4,6 @@ import {Maybe} from '../../helpers/Maybe';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {DomainModel, NormalizedState, ObjectsById, RequestsHttp} from './domainModels';
 
-export const getResultDomainModels =
-  <T extends Identifiable>(state: NormalizedState<T>): uuid[] => state.result;
-
 export const getEntitiesDomainModels =
   <T extends Identifiable>(state: NormalizedState<T>): ObjectsById<T> => state.entities || {};
 

@@ -1,7 +1,7 @@
 import {Grid, GridColumn, GridToolbar} from '@progress/kendo-react-grid';
 import * as React from 'react';
 import {makeGridClassName} from '../../../app/themes';
-import {ButtonLink} from '../../../components/buttons/ButtonLink';
+import {ButtonPrimary} from '../../../components/buttons/ButtonPrimary';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {InputSelectableCell} from '../../../components/inputs/InputSelectableCell';
 import {translate} from '../../../services/translationService';
@@ -120,7 +120,7 @@ export const QuantityList = ({
   };
 
   const addNewQuantityButton = editable
-    ? <ButtonLink className="k-button k-primary" onClick={enterInsert}>{translate('add quantity')}</ButtonLink>
+    ? <ButtonPrimary onClick={enterInsert} label={translate('add quantity')}/>
     : null;
   return (
     <Grid

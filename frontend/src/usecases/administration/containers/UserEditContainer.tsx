@@ -8,17 +8,16 @@ import {OnChangePassword, PasswordEditForm} from '../../../components/forms/Pass
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
 import {AdminPageLayout} from '../../../components/layouts/layout/PageLayout';
-import {RowIndented} from '../../../components/layouts/row/Row';
+import {Row} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {getAllEntities, getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
-import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {changePassword, clearUserError, fetchUser, modifyUser} from '../../../state/domain-models/user/userApiActions';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
@@ -87,9 +86,9 @@ class UserEdit extends React.Component<Props, {}> {
       <AdminPageLayout>
         <MainTitle>{translate('edit user')}</MainTitle>
 
-        <Paper style={paperStyle}>
+        <Paper style={{...paperStyle, padding: 24}}>
           <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
-            <RowIndented className="UserEditContainer">
+            <Row>
               <Column style={userEditStyle}>
                 <UserEditForm
                   organisations={organisations}
@@ -107,7 +106,7 @@ class UserEdit extends React.Component<Props, {}> {
                   user={users[userId]}
                 />
               </Column>
-            </RowIndented>
+            </Row>
           </RetryLoader>
         </Paper>
       </AdminPageLayout>
@@ -119,7 +118,7 @@ const mapStateToProps = ({auth, domainModels: {users, organisations}}: RootState
   users: getEntitiesDomainModels(users),
   isFetching: users.isFetching,
   error: getError(users),
-  organisations: getOrganisations(organisations),
+  organisations: getAllEntities(organisations),
   roles: getRoles(getUser(auth)),
   languages: getLanguages(),
 });

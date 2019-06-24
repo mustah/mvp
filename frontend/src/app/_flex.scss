@@ -14,6 +14,10 @@
   flex-wrap: nowrap;
 }
 
+.flex-align-self-start {
+  align-self: flex-start;
+}
+
 .one-third {
   flex-basis: 33%;
 }

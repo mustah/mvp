@@ -6,14 +6,14 @@ import {paperStyle} from '../../../app/themes';
 import {PasswordEditForm} from '../../../components/forms/PasswordEditForm';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
+import {PageLayout} from '../../../components/layouts/layout/PageLayout';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageLayout} from '../../../components/layouts/layout/PageLayout';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {getAllEntities} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
-import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {changePassword, modifyProfile} from '../../../state/domain-models/user/userApiActions';
 import {Password, Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
@@ -94,7 +94,7 @@ class EditProfile extends React.Component<Props> {
 
 const mapStateToProps = ({auth, domainModels: {organisations}}: RootState): StateToProps => ({
   user: getUser(auth),
-  organisations: getOrganisations(organisations),
+  organisations: getAllEntities(organisations),
   roles: getRoles(getUser(auth)),
   languages: getLanguages(),
 });

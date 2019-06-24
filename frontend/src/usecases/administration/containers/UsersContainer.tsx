@@ -4,7 +4,7 @@ import {withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {clearUserError, deleteUser, fetchUsers} from '../../../state/domain-models/user/userApiActions';
 import {User} from '../../../state/domain-models/user/userModels';
 import {ClearError, ErrorResponse, Fetch, OnClickWithId} from '../../../types/Types';
@@ -23,7 +23,7 @@ export interface DispatchToProps {
 }
 
 const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
-  users: getDomainModel(users),
+  users,
   isFetching: users.isFetching,
   error: getError(users),
 });
