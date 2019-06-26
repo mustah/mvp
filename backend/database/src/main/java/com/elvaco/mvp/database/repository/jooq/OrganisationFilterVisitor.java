@@ -10,14 +10,18 @@ import org.jooq.SelectJoinStep;
 import static com.elvaco.mvp.database.entity.jooq.tables.Organisation.ORGANISATION;
 
 class OrganisationFilterVisitor extends EmptyFilterVisitor {
+
+  @Override
   public void visit(OrganisationIdFilter filter) {
     addCondition(ORGANISATION.ID.in(filter.values()));
   }
 
+  @Override
   public void visit(OrganisationParentFilter filter) {
     addCondition(ORGANISATION.PARENT_ID.isNull());
   }
 
+  @Override
   public void visit(WildcardFilter filter) {
     addCondition(ORGANISATION.NAME.lower().contains(filter.oneValue().toLowerCase()));
   }

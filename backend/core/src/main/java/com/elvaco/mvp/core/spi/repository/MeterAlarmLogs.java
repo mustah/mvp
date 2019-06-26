@@ -13,14 +13,9 @@ public interface MeterAlarmLogs {
 
   Collection<? extends AlarmLogEntry> save(Collection<? extends AlarmLogEntry> alarms);
 
-  void createOrUpdate(
-    PrimaryKey primaryKey,
-    int mask,
-    ZonedDateTime start
-  );
+  void createOrUpdate(PrimaryKey primaryKey, int mask, ZonedDateTime start);
 
   Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when);
 
   void closeAlarmIfNewMeasurementsArrived(AlarmLogEntry alarm, ZonedDateTime toDate);
-
 }
