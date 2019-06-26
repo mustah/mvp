@@ -33,7 +33,7 @@ import {
 } from '../../../state/report/reportSelectors';
 import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../components/Legend';
-import {makeColumnQuantities} from '../helpers/legendHelper';
+import {makeSelectableQuantities} from '../helpers/legendHelper';
 
 export interface StateToProps extends HasContent, ColumnQuantities, ResolutionAware {
   legendItems: LegendItem[];
@@ -66,18 +66,15 @@ const LegendComponent = compose<WrapperProps & ThemeContext, WrapperProps>(
   withContent
 )(Legend);
 
-const mapStateToProps = ({report}: RootState): StateToProps => {
-  const {temporal: {resolution}, savedReports} = report;
-  return ({
-    columnQuantities: makeColumnQuantities(savedReports),
-    hasContent: hasLegendItems(savedReports),
-    legendItems: getLegendItems(savedReports),
-    mediumViewOptions: getLegendViewOptions(savedReports),
-    resolution,
-    savedReports,
-    selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
-  });
-};
+const mapStateToProps = ({report: {temporal: {resolution}, savedReports}}: RootState): StateToProps => ({
+  columnQuantities: makeSelectableQuantities(savedReports),
+  hasContent: hasLegendItems(savedReports),
+  legendItems: getLegendItems(savedReports),
+  mediumViewOptions: getLegendViewOptions(savedReports),
+  resolution,
+  savedReports,
+  selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem,

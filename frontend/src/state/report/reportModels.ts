@@ -7,18 +7,18 @@ import {LegendType} from './reportModels';
 
 export type LegendType = Medium | 'aggregate';
 
-export const isMedium = (type: LegendType): type is Medium => Medium[type] !== undefined;
-export const isAggregate = (type: LegendType): type is 'aggregate' => !isMedium(type);
+export interface LegendTyped {
+  type: LegendType;
+}
 
 export interface LegendItemSettings {
   isHidden?: boolean;
   isRowExpanded?: boolean;
 }
 
-export interface LegendItem extends LegendItemSettings {
+export interface LegendItem extends LegendTyped, LegendItemSettings {
   id: uuid;
   label: string;
-  type: LegendType;
   quantities: Quantity[];
 }
 
@@ -87,8 +87,7 @@ export interface GraphContents {
   lines: LineProps[];
 }
 
-export interface QuantityLegendType {
-  type: LegendType;
+export interface QuantityLegendType extends LegendTyped {
   quantity: Quantity;
 }
 
@@ -102,3 +101,9 @@ export const enum ReportSector {
   selectionReport = 'selectionReport',
   meterDetailsReport = 'meterDetailsReport',
 }
+
+const isOfTypeMedium = (type: LegendType): type is Medium => Medium[type] !== undefined;
+
+export const isMedium = ({type}: LegendTyped): boolean => isOfTypeMedium(type);
+export const isKnownMedium = (type: LegendType): type is Medium => Medium[type] !== Medium.unknown;
+export const isAggregate = (type: LegendType): type is 'aggregate' => !isOfTypeMedium(type);

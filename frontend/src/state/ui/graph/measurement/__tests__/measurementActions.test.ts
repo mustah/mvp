@@ -31,15 +31,18 @@ import {
   exportReportToExcel,
   exportToExcelAction,
   fetchMeasurementsForReport,
-  groupLegendItemsByQuantity,
   makeMeasurementMetersUriParameters,
+  makeQuantityParamFrom,
+  mapMediumToIds,
   measurementFailure,
   measurementRequest,
   measurementSuccess,
   meterAverageLabelFactory,
+  meterLabelFactory,
   urlsByType
 } from '../measurementActions';
 import {
+  allQuantitiesMap,
   getMediumText,
   MeasurementParameters,
   MeasurementResponsePart,
@@ -47,8 +50,7 @@ import {
   MeasurementState,
   MeasurementValue,
   Medium,
-  Quantity,
-  quantityAttributes
+  Quantity
 } from '../measurementModels';
 import {initialState} from '../measurementReducer';
 
@@ -192,20 +194,16 @@ describe('measurementActions', () => {
           (url: string) => new URL(`${mockHost}${url}`),
         );
 
-        const volumeAttr = quantityAttributes[Quantity.volume];
-
         expect(externalTemperature.pathname).toEqual('/measurements');
-        expect(externalTemperature.searchParams.get(RequestParameter.quantity))
-          .toEqual(Quantity.volume + '::' + volumeAttr.displayMode);
         expect(externalTemperature.searchParams.get(RequestParameter.logicalMeterId)).toEqual(gasMeter.id);
         expect(externalTemperature.searchParams.get(RequestParameter.reportBefore)).toBeTruthy();
         expect(externalTemperature.searchParams.get(RequestParameter.reportAfter)).toBeTruthy();
-
-        const externalTempAttr = quantityAttributes[Quantity.externalTemperature];
+        expect(externalTemperature.searchParams.get(RequestParameter.quantity))
+          .toEqual(makeQuantityParamFrom(Quantity.volume));
 
         expect(volume.pathname).toEqual('/measurements');
         expect(volume.searchParams.get(RequestParameter.quantity))
-          .toEqual(Quantity.externalTemperature + '::' + externalTempAttr.displayMode);
+          .toEqual(makeQuantityParamFrom(Quantity.externalTemperature));
         expect(volume.searchParams.get(RequestParameter.logicalMeterId)).toEqual(roomSensorMeter.id);
         expect(volume.searchParams.get(RequestParameter.reportBefore)).toBeTruthy();
         expect(volume.searchParams.get(RequestParameter.reportAfter)).toBeTruthy();
@@ -258,10 +256,9 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurementsForReport(requestParameters));
 
-        expect(requestedUrls).toHaveLength(1);
-
         const [url] = requestedUrls.map(url => new URL(`${mockHost}${url}`));
 
+        expect(requestedUrls).toHaveLength(1);
         expect(url.pathname).toEqual(EndPoints.measurementsAverage);
         expect(url.searchParams.get('quantity')).toEqual(Quantity.volume);
         expect(url.searchParams.get('before')).toBeTruthy();
@@ -335,22 +332,6 @@ describe('measurementActions', () => {
         ]);
       });
 
-      it('makes request for meters that have selected quantities', async () => {
-        const item1: LegendItem = {...legendItemOf(Medium.districtHeating), label: 'a'};
-        const item2: LegendItem = {...legendItemOf(Medium.districtHeating), label: 'b', quantities: []};
-        const legendItems: LegendItem[] = [item1, item2];
-
-        const requestParameters: MeasurementParameters = {...parameters, legendItems};
-
-        const uriParameters = makeMeasurementMetersUriParameters(
-          requestParameters,
-          EndPoints.measurementsAverage,
-          meterAverageLabelFactory
-        );
-
-        expect(uriParameters).toHaveLength(1);
-      });
-
       it('does not fetch measurements when there are not items to fetch', async () => {
         const store = storeWith(initialState);
         const legendItems = [];
@@ -361,6 +342,58 @@ describe('measurementActions', () => {
         await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
 
         expect(store.getActions()).toEqual([]);
+      });
+
+      describe('make measurement uri parameters', () => {
+
+        it('makes request for meters that have selected quantities', () => {
+          const medium = Medium.districtHeating;
+          const quantities = allQuantitiesMap[medium];
+          const item1: LegendItem = legendItemOf(medium, 'a');
+          const item2: LegendItem = {...legendItemOf(medium, 'b'), quantities};
+          const legendItems: LegendItem[] = [item1, item2];
+          const requestParameters: MeasurementParameters = {...parameters, legendItems};
+
+          const uriParameters = makeMeasurementMetersUriParameters(
+            requestParameters,
+            EndPoints.measurementsAverage,
+            meterAverageLabelFactory
+          );
+
+          expect(uriParameters).toHaveLength(1);
+        });
+
+        it('makes request for meters that have selected quantities and with different medium', () => {
+          const item1: LegendItem = legendItemOf(Medium.districtHeating, 'a');
+          const item2: LegendItem = legendItemOf(Medium.roomSensor, 'b');
+          const legendItems: LegendItem[] = [item1, item2];
+
+          const requestParameters: MeasurementParameters = {...parameters, legendItems};
+
+          const uriParameters = makeMeasurementMetersUriParameters(
+            requestParameters,
+            EndPoints.measurements,
+            meterLabelFactory
+          );
+
+          const [url, url2] = uriParameters.map(url => new URL(`${mockHost}${url}`));
+
+          expect(uriParameters).toHaveLength(2);
+          expect(url.pathname).toEqual(EndPoints.measurements);
+          expect(url.searchParams.getAll('quantity')).toEqual([
+            'Energy::consumption',
+            'Volume::consumption',
+            'Power::readout',
+            'Flow::readout',
+            'Forward temperature::readout',
+            'Return temperature::readout',
+            'Difference temperature::readout'
+          ]);
+          expect(url2.searchParams.getAll('quantity')).toEqual([
+            'External temperature::readout',
+            'Relative humidity::readout'
+          ]);
+        });
       });
 
       describe('urlsByType', () => {
@@ -379,7 +412,7 @@ describe('measurementActions', () => {
 
           const uriParameters = urlsByType(requestParameters);
 
-          expect(uriParameters).toHaveLength(3);
+          expect(uriParameters).toHaveLength(2);
         });
       });
 
@@ -463,13 +496,11 @@ describe('measurementActions', () => {
         requestedUrls.push(config.url!);
 
         if (config.url!.match(/^\/measurements\/average/) || shouldShowAverage) {
-          const average: MeasurementsApiResponse = legendItems
-            .filter(it => isAggregate(it.type) || shouldShowAverage)
+          const average: MeasurementsApiResponse = legendItems.filter(it => isAggregate(it.type) || shouldShowAverage)
             .map(makeMeasurementAverageResponse);
           return [200, average];
         } else {
-          const measurement: MeasurementsApiResponse = legendItems
-            .filter(it => isMedium(it.type))
+          const measurement: MeasurementsApiResponse = legendItems.filter(isMedium)
             .map(makeMeasurementResponse);
           return [200, measurement];
         }
@@ -502,14 +533,10 @@ describe('measurementActions', () => {
 
   });
 
-  describe('groupLegendItemsByQuantity', () => {
+  describe('mapMediumToIds', () => {
 
-    it('contains all quantities, formatted', () => {
-      const allQuantities = Object.keys(Quantity).map(k => Quantity[k]);
-
-      const quantitiesWithAtLeastOneLegendItem = Object.keys(groupLegendItemsByQuantity([]));
-
-      expect(quantitiesWithAtLeastOneLegendItem).toEqual(allQuantities);
+    it('contains all mediums, formatted', () => {
+      expect(Object.keys(mapMediumToIds([]))).toEqual(Object.keys(Medium));
     });
 
     it('groups legend items together', () => {
@@ -535,13 +562,7 @@ describe('measurementActions', () => {
         },
       ];
 
-      const quantitiesByLegendItems = groupLegendItemsByQuantity(legendItems);
-
-      expect(quantitiesByLegendItems).toHaveProperty('Energy', [firstId]);
-      expect(quantitiesByLegendItems).toHaveProperty('Difference temperature', [firstId, secondId]);
-
-      const allEntries = flatten(values(quantitiesByLegendItems));
-      expect(allEntries).toHaveLength(3);
+      expect(mapMediumToIds(legendItems)[Medium.districtHeating]).toEqual([firstId, secondId]);
     });
 
     it('ignores empty medium', () => {
@@ -557,12 +578,7 @@ describe('measurementActions', () => {
         },
       ];
 
-      const quantitiesByLegendItems = groupLegendItemsByQuantity(legendItems);
-
-      expect(quantitiesByLegendItems).toHaveProperty('Energy', []);
-
-      const allEntries = flatten(values(quantitiesByLegendItems));
-      expect(allEntries).toHaveLength(0);
+      expect(flatten(values(mapMediumToIds(legendItems)))).toEqual([]);
     });
 
   });

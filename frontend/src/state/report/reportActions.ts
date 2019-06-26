@@ -13,6 +13,7 @@ import {
   LegendItem,
   LegendItemSettings,
   LegendType,
+  LegendTyped,
   QuantityId,
   QuantityLegendType,
   ReportSector,
@@ -59,10 +60,6 @@ interface DispatchWithinLimits {
   dispatch: Dispatch;
   items: LegendItem[];
   reportSection: ReportSector;
-}
-
-interface LegendTyped {
-  type: LegendType;
 }
 
 export const getQuantity = <T extends LegendTyped>({type}: T, threshold?: ThresholdQuery): Quantity =>

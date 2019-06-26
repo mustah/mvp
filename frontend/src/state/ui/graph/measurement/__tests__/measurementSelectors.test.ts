@@ -46,6 +46,8 @@ describe('measurementSelectors', () => {
     ...item
   });
 
+  const selectedQuantities = [Quantity.power];
+
   const measurementResponse: MeasurementResponse = {
     measurements: [responseItem],
     average: [],
@@ -63,7 +65,7 @@ describe('measurementSelectors', () => {
       });
 
       it('handles 0 entities gracefully', () => {
-        expect(toGraphContents(emptyResponses)).toEqual(emptyGraphContents());
+        expect(toGraphContents(emptyResponses, [])).toEqual(emptyGraphContents());
       });
     });
 
@@ -109,7 +111,7 @@ describe('measurementSelectors', () => {
       it('extracts a single axis if all measurements are of the same unit', () => {
         const sameUnit: MeasurementsApiResponse = [responseItem, responseItem];
 
-        const {axes: {left, right}}: GraphContents = toGraphContents({...emptyResponses, measurements: sameUnit});
+        const {axes: {left, right}} = toGraphContents({...emptyResponses, measurements: sameUnit}, selectedQuantities);
 
         expect(left).toEqual('mW');
         expect(right).toBeUndefined();
@@ -124,7 +126,7 @@ describe('measurementSelectors', () => {
         const graphContents: GraphContents = toGraphContents({
           ...emptyResponses,
           measurements: twoDifferentUnits,
-        });
+        }, [...selectedQuantities, Quantity.forwardTemperature]);
 
         expect(graphContents.axes.left).toEqual('mW');
         expect(graphContents.axes.right).toEqual('°C');
@@ -140,7 +142,7 @@ describe('measurementSelectors', () => {
         const graphContents: GraphContents = toGraphContents({
           ...emptyResponses,
           measurements: threeDifferentUnits,
-        });
+        }, selectedQuantities);
 
         expect(graphContents.axes.left).toEqual('mW');
         expect(graphContents.axes.right).toEqual('kWh');
@@ -161,7 +163,7 @@ describe('measurementSelectors', () => {
             measurements: slightlyLaterThanFirstAverage,
             average,
             compare: [],
-          });
+          }, selectedQuantities);
 
           expect(graphContents.data).toHaveLength(3);
           expect(graphContents.data.filter((it: Dictionary<number>) => it.name >= startTimestamp).length).toEqual(3);
@@ -173,13 +175,16 @@ describe('measurementSelectors', () => {
     describe('legend', () => {
 
       it('has no legend data', () => {
-        const {legend}: GraphContents = toGraphContents(emptyResponses);
+        const {legend}: GraphContents = toGraphContents(emptyResponses, []);
 
         expect(legend).toEqual([]);
       });
 
       it('has legend items for measurement quantities', () => {
-        const {legend}: GraphContents = toGraphContents({measurements: [responseItem], average: [], compare: []});
+        const {legend}: GraphContents = toGraphContents({
+          measurements: [responseItem],
+          average: [], compare: []
+        }, selectedQuantities);
         expect(legend).toEqual([{type: 'line', color: '#00B0FF', value: 'Power'}]);
       });
 
@@ -188,7 +193,8 @@ describe('measurementSelectors', () => {
           measurements: [responseItem, makeResponseItem({id: 'b'})],
           average: [],
           compare: [],
-        });
+        }, selectedQuantities);
+
         expect(legend).toEqual([{type: 'line', color: '#00B0FF', value: 'Power'}]);
       });
 
@@ -197,7 +203,8 @@ describe('measurementSelectors', () => {
           measurements: [responseItem],
           average: [makeResponseItem({id: 'b'})],
           compare: [],
-        });
+        }, selectedQuantities);
+
         expect(legend).toEqual([
           {type: 'line', color: '#00B0FF', value: 'Power'},
           {type: 'line', color: '#00B0FF', value: 'Medelvärde Power'},
@@ -212,7 +219,7 @@ describe('measurementSelectors', () => {
           measurements: [responseItem],
           average: [],
           compare: [],
-        });
+        }, selectedQuantities);
 
         const expected: Array<Dictionary<number | TooltipMeta>> = [
           {
@@ -230,7 +237,7 @@ describe('measurementSelectors', () => {
           average: [makeResponseItem({id: '2', quantity: Quantity.energy})],
           compare: [],
           measurements: [],
-        });
+        }, [...selectedQuantities, Quantity.energy]);
 
         const expected: Array<Dictionary<number | TooltipMeta>> = [
           {
@@ -279,7 +286,7 @@ describe('measurementSelectors', () => {
             'compare-Power-b-2-meta': {id: '2', quantity: Quantity.power},
           }
         ];
-        expect(toGraphContents({measurements, average: [], compare}).data).toEqual(expected);
+        expect(toGraphContents({measurements, average: [], compare}, selectedQuantities).data).toEqual(expected);
       });
 
       it('does not compare measurements that have not same number of measurement response results', () => {
@@ -312,7 +319,7 @@ describe('measurementSelectors', () => {
           }
         ];
 
-        expect(toGraphContents({measurements, average: [], compare}).data).toEqual(expected);
+        expect(toGraphContents({measurements, average: [], compare}, selectedQuantities).data).toEqual(expected);
       });
     });
 

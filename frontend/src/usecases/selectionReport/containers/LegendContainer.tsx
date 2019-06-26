@@ -31,7 +31,7 @@ import {
 } from '../../../state/report/reportSelectors';
 import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../../report/components/Legend';
-import {makeColumnQuantities} from '../../report/helpers/legendHelper';
+import {makeSelectableQuantities} from '../../report/helpers/legendHelper';
 
 export interface StateToProps extends HasContent, ColumnQuantities, ResolutionAware {
   legendItems: LegendItem[];
@@ -64,19 +64,15 @@ const LegendComponent = compose<WrapperProps & ThemeContext, WrapperProps>(
   withContent
 )(Legend);
 
-const mapStateToProps = ({selectionReport}: RootState): StateToProps => {
-  const {temporal: {resolution}, savedReports} = selectionReport;
-
-  return ({
-    columnQuantities: makeColumnQuantities(savedReports),
-    hasContent: hasLegendItems(savedReports),
-    legendItems: getLegendItems(savedReports),
-    mediumViewOptions: getLegendViewOptions(savedReports),
-    resolution,
-    savedReports,
-    selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
-  });
-};
+const mapStateToProps = ({selectionReport: {temporal: {resolution}, savedReports}}: RootState): StateToProps => ({
+  columnQuantities: makeSelectableQuantities(savedReports),
+  hasContent: hasLegendItems(savedReports),
+  legendItems: getLegendItems(savedReports),
+  mediumViewOptions: getLegendViewOptions(savedReports),
+  resolution,
+  savedReports,
+  selectedQuantitiesMap: getSelectedQuantitiesMap(savedReports),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   showHideAllByType: showHideAllByType(ReportSector.selectionReport),

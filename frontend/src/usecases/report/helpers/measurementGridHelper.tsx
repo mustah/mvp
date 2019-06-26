@@ -15,7 +15,7 @@ import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {displayDate} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
 import {capitalized, firstUpperTranslated, translate} from '../../../services/translationService';
-import {LegendType} from '../../../state/report/reportModels';
+import {LegendTyped} from '../../../state/report/reportModels';
 import {
   getGroupHeaderTitle,
   getMediumType,
@@ -70,11 +70,10 @@ export const rowRender = (tr: React.ReactElement<HTMLTableRowElement>, {dataItem
   }
 };
 
-interface ListItem {
+interface ListItem extends LegendTyped {
   label: string;
   meterId?: string;
   name?: string;
-  type: LegendType;
   values: Dictionary<string>;
   when: string;
 }
@@ -94,23 +93,12 @@ export const renderColumns =
       values,
       quantity,
     }: MeasurementResponsePart) => {
-      if (columns[quantity] === undefined) {
-        const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
-        columns[quantity] = (
-          <GridColumn
-            headerClassName="quantity"
-            key={`${id}-${title}`}
-            title={title}
-            field={`values.${quantity}`}
-          />
-        );
-      }
+      const legendType = medium ? getMediumType(medium) : 'aggregate';
+      const formattedName = medium ? name : firstUpperTranslated('average');
+      const type = medium ? getGroupHeaderTitle(legendType) : label;
 
       values.forEach(({when, value}) => {
         const rowKey = `${when}-${label}`;
-        const legendType = medium ? getMediumType(medium) : 'aggregate';
-        const formattedName = medium ? name : firstUpperTranslated('average');
-        const type = medium ? getGroupHeaderTitle(legendType) : label;
         const listItem: ListItem = rows[rowKey] || {
           label,
           name: formattedName,
@@ -122,6 +110,18 @@ export const renderColumns =
         listItem.values[quantity] = value !== undefined ? roundMeasurement(value) : '-';
         rows[rowKey] = listItem;
       });
+
+      if (columns[quantity] === undefined) {
+        const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
+        columns[quantity] = (
+          <GridColumn
+            headerClassName="quantity"
+            key={`${id}-${title}`}
+            title={title}
+            field={`values.${quantity}`}
+          />
+        );
+      }
     });
 
     return [toArray(rows).reverse(), toArray(columns)];

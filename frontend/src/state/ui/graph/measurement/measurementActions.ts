@@ -1,4 +1,4 @@
-import {find, flatMap, groupBy, map, sortBy} from 'lodash';
+import {flatMap, groupBy, map, sortBy} from 'lodash';
 import {createAction, createStandardAction} from 'typesafe-actions';
 import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {DateRange, Period, TemporalResolution} from '../../../../components/dates/dateModels';
@@ -24,18 +24,29 @@ import {
 } from '../../../../usecases/meter/measurements/meterDetailMeasurementActions';
 import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {getDomainModelById} from '../../../domain-models/domainModelsSelectors';
-import {isAggregate, isMedium, LegendItem, LegendType, ReportSector} from '../../../report/reportModels';
+import {getQuantity} from '../../../report/reportActions';
+import {
+  isAggregate,
+  isKnownMedium,
+  isMedium,
+  LegendItem,
+  LegendType,
+  LegendTyped,
+  ReportSector
+} from '../../../report/reportModels';
 import {SelectionInterval, UserSelection} from '../../../user-selection/userSelectionModels';
 import {
+  allQuantitiesMap,
+  availableQuantities,
   getGroupHeaderTitle,
   MeasurementParameters,
   MeasurementResponse,
   MeasurementResponsePart,
   MeasurementsApiResponse,
   MeasurementState,
+  Medium,
   Quantity,
-  quantityAttributes,
-  QuantityDisplayMode
+  quantityAttributes
 } from './measurementModels';
 
 export const measurementRequest = (sector: ReportSector) =>
@@ -57,26 +68,21 @@ export const exportToExcelSuccess = (sector: ReportSector) =>
   createAction(`EXPORT_TO_EXCEL_SUCCESS_${sector}`);
 
 const measurementMeterUri = (
-  quantity: Quantity,
+  quantity: string[],
   resolution: TemporalResolution,
   dateRange: SelectionInterval,
   meterIds: uuid[],
   label: string,
-  displayMode: QuantityDisplayMode,
-): EncodedUriParameters => {
-  const quantityWithParams = quantity + '::' + displayMode;
-
-  return `${makeReportPeriodParametersOf(dateRange)}&${encodeRequestParameters({
+): EncodedUriParameters =>
+  `${makeReportPeriodParametersOf(dateRange)}&${encodeRequestParameters({
     label,
-    quantity: quantityWithParams,
+    quantity,
     resolution,
     logicalMeterId: meterIds.map(id => id.toString()),
   })}`;
-};
 
-interface LabelItem {
+interface LabelItem extends LegendTyped {
   quantity: Quantity;
-  type: LegendType;
 }
 
 interface GraphDataResponse {
@@ -85,12 +91,42 @@ interface GraphDataResponse {
 
 type GraphDataRequests = Array<Promise<GraphDataResponse>>;
 
-type QuantityToIds = { [q in Quantity]: uuid[] };
+type MediumIdsMap = { [m in Medium]: uuid[] };
+type QuantityIdsMap = { [q in Quantity]: uuid[] };
 
-const makeQuantityToIdsMap = (): QuantityToIds =>
-  Object.keys(Quantity)
-    .map(k => Quantity[k])
+const makeMediumToIdsMap = (): MediumIdsMap =>
+  Object.keys(Medium).map(key => Medium[key])
+    .reduce((prev, curr) => ({...prev, [curr]: []}), {});
+
+export const mapMediumToIds = (items: LegendItem[]): MediumIdsMap =>
+  items.filter(isMedium)
+    .reduce(
+      (acc, {type, id}) => {
+        acc[type].push(id);
+        return acc;
+      },
+      makeMediumToIdsMap()
+    );
+
+const makeQuantityToIdsMap = (): QuantityIdsMap =>
+  Object.keys(Quantity).map(k => Quantity[k])
     .reduce((acc, quantity) => ({...acc, [quantity]: []}), {});
+
+export const mapQuantityToIds = (items: LegendItem[]): QuantityIdsMap =>
+  items.filter(isMedium)
+    .reduce(
+      (acc, {quantities, id}) => {
+        quantities.forEach(quantity => acc[quantity].push(id));
+        return acc;
+      },
+      makeQuantityToIdsMap(),
+    );
+
+export const searchableQuantitiesFrom = (type: LegendType): Quantity[] =>
+  allQuantitiesMap[type].filter(availableQuantities);
+
+export const makeQuantityParamFrom = (quantity: Quantity): string =>
+  `${quantity}::${quantityAttributes[quantity].displayMode}`;
 
 export const meterLabelFactory = ({quantity}): string => quantity;
 
@@ -110,40 +146,28 @@ export const urlsByType = (parameters: MeasurementParameters): EncodedUriParamet
     .map(p => makeMeasurementMetersUriParameters(p, EndPoints.measurementsAverage, meterAverageLabelFactory)));
 };
 
-export const groupLegendItemsByQuantity = (items: LegendItem[]): QuantityToIds =>
-  items
-    .filter(it => isMedium(it.type))
-    .reduce(
-      (acc, {quantities, id}) => {
-        quantities.forEach((quantity) => acc[quantity].push(id));
-        return acc;
-      },
-      makeQuantityToIdsMap()
-    );
-
 export const makeMeasurementMetersUriParameters = (
   {
     reportDateRange,
     legendItems,
     resolution,
-    displayMode,
   }: MeasurementParameters,
   endpoint: EndPoints,
   labelFactory: (labelItem: LabelItem) => string,
 ): EncodedUriParameters[] => {
-  const quantityToIds = groupLegendItemsByQuantity(legendItems);
+  const mediumToIds = mapMediumToIds(legendItems);
 
-  return Object.keys(quantityToIds)
-    .filter((quantity: Quantity) => quantityToIds[quantity].length > 0)
-    .map((quantity: Quantity) => {
-      const {type} = find(legendItems, {id: quantityToIds[quantity][0]})!;
+  return Object.keys(mediumToIds)
+    .filter((medium: Medium) => mediumToIds[medium].length > 0)
+    .filter(isKnownMedium)
+    .map((medium: Medium) => {
+      const quantityParams = searchableQuantitiesFrom(medium).map(makeQuantityParamFrom);
       return measurementMeterUri(
-        quantity,
+        quantityParams,
         resolution,
         reportDateRange,
-        quantityToIds[quantity],
-        labelFactory({type, quantity}),
-        displayMode || quantityAttributes[quantity].displayMode,
+        mediumToIds[medium],
+        labelFactory({type: medium, quantity: getQuantity({type: medium})})
       );
     })
     .map(parameters => makeUrl(endpoint, parameters));
