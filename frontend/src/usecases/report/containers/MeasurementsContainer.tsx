@@ -7,6 +7,7 @@ import {ReportSector} from '../../../state/report/reportModels';
 import {
   getHiddenLines,
   getMeasurementParameters,
+  getSelectedQuantities,
   getVisibilitySummary,
   hasLegendItems
 } from '../../../state/report/reportSelectors';
@@ -18,7 +19,8 @@ import {
 import {
   FetchMeasurements,
   MeasurementParameters,
-  MeasurementState
+  MeasurementState,
+  Quantity
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
@@ -47,6 +49,7 @@ export interface StateToProps {
   threshold?: ThresholdQuery;
   userSelections: NormalizedState<UserSelection>;
   userSelectionId: uuid;
+  selectedQuantities: Quantity[];
 }
 
 export interface DispatchToProps {
@@ -73,10 +76,11 @@ const mapStateToProps = ({
     measurement,
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
     requestParameters: getMeasurementParameters(report),
-    visibilitySummary: getVisibilitySummary(report.savedReports),
+    selectedQuantities: getSelectedQuantities(report.savedReports),
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
     userSelections,
+    visibilitySummary: getVisibilitySummary(report.savedReports),
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

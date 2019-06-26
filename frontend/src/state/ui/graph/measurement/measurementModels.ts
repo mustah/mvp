@@ -210,7 +210,9 @@ export const allQuantitiesMap: { [p in LegendType]: Quantity[] } = {
   aggregate: [...quantities],
 };
 
-export const quantitiesToExclude = [
+const quantitiesToExclude = [
   Quantity.energyReactive,
   Quantity.energyReturn,
 ];
+
+export const availableQuantities = (quantity: Quantity) => quantitiesToExclude.indexOf(quantity) === -1;

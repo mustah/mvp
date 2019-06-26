@@ -1,6 +1,5 @@
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
-import {idGenerator} from '../../../helpers/idGenerator';
-import {makeColumnQuantities} from '../../../usecases/report/helpers/legendHelper';
+import {makeSelectableQuantities} from '../../../usecases/report/helpers/legendHelper';
 import {allQuantitiesMap, Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
 import {LegendItem, SavedReportsState, SelectedQuantities} from '../reportModels';
 import {initialSavedReportState} from '../reportReducer';
@@ -78,10 +77,10 @@ describe('reportSelectors', () => {
 
   });
 
-  describe('makeColumnQuantities', () => {
+  describe('makeSelectableQuantities', () => {
 
     it('has no quantities selected when no', () => {
-      expect(makeColumnQuantities(initialSavedReportState)).toEqual([]);
+      expect(makeSelectableQuantities(initialSavedReportState)).toEqual([]);
     });
 
     it('collects all selected quantities for each type', () => {
@@ -90,7 +89,7 @@ describe('reportSelectors', () => {
 
       const expected: Quantity[] = [...allQuantitiesMap.districtHeating, ...allQuantitiesMap.roomSensor];
 
-      expect(makeColumnQuantities(savedReportsWith([meter1, meter2, meter2]))).toEqual(expected);
+      expect(makeSelectableQuantities(savedReportsWith([meter1, meter2, meter2]))).toEqual(expected);
     });
 
   });
@@ -98,14 +97,12 @@ describe('reportSelectors', () => {
   describe('getVisibilitySummary', () => {
 
     it('counts distinct legend items', () => {
-      const firstId = idGenerator.uuid();
-
       const state: SavedReportsState = {
         meterPage: {
           ...initialSavedReportState.meterPage,
           legendItems: [
             {
-              id: firstId,
+              id: 1,
               label: '_',
               type: Medium.districtHeating,
               quantities: [
@@ -118,20 +115,18 @@ describe('reportSelectors', () => {
       };
 
       expect(getVisibilitySummary(state)).toEqual({
-        allMeters: [firstId],
-        checkedMeters: [firstId],
+        allMeters: [1],
+        checkedMeters: [1],
       });
     });
 
     it('disregards deselected legend items', () => {
-      const firstId = idGenerator.uuid();
-
       const state: SavedReportsState = {
         meterPage: {
           ...initialSavedReportState.meterPage,
           legendItems: [
             {
-              id: firstId,
+              id: 1,
               label: '_',
               type: Medium.districtHeating,
               quantities: [],
@@ -141,7 +136,7 @@ describe('reportSelectors', () => {
       };
 
       expect(getVisibilitySummary(state)).toEqual({
-        allMeters: [firstId],
+        allMeters: [1],
         checkedMeters: [],
       });
     });

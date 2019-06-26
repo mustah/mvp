@@ -11,6 +11,7 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {
   ColumnQuantities,
   LegendType,
+  LegendTyped,
   LegendViewOptions,
   QuantityId,
   SelectedQuantities
@@ -20,10 +21,6 @@ import {OnClick, OnClickEventHandler, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
 import {colorFor} from './lineChartHelper';
 import {isGroupHeader} from './measurementGridHelper';
-
-interface CurrentLegendType {
-  type: LegendType;
-}
 
 interface CurrentQuantity {
   quantity: Quantity;
@@ -72,7 +69,7 @@ const renderGroupHeaderTds = ({
   showHideAllByType,
   toggleQuantityByType,
   type,
-}: RowProps & CurrentLegendType) => {
+}: RowProps & LegendTyped) => {
   const tds = columnQuantities.map((quantity) => {
     const key = `group-header-td-${type}-${quantity}`;
     if (allQuantitiesMap[type].indexOf(quantity) !== -1) {

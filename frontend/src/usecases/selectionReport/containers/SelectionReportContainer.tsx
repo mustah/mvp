@@ -6,6 +6,7 @@ import {ReportSector} from '../../../state/report/reportModels';
 import {
   getHiddenLines,
   getMeasurementParameters,
+  getSelectedQuantities,
   getVisibilitySummary,
   hasLegendItems
 } from '../../../state/report/reportSelectors';
@@ -43,6 +44,7 @@ const mapStateToProps = ({
     measurement: selectionMeasurement,
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
     requestParameters: getMeasurementParameters(selectionReport),
+    selectedQuantities: getSelectedQuantities(selectionReport.savedReports),
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
     userSelections,

@@ -12,7 +12,7 @@ import {
   TooltipMeta
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
-import {Dictionary} from '../../../types/Types';
+import {Dictionary, Predicate} from '../../../types/Types';
 
 const colorize =
   (colorSchema: {[key: string]: string}) =>
@@ -77,17 +77,21 @@ const legendPayloadReducer = (keyFactory: KeyFactory, valueFactory: ValueFactory
         },
       });
 
-const makeLegendPayloads = ({average, measurements}: MeasurementResponse): LegendPayload[] => {
-  const aggregateLegends: Dictionary<LegendPayload> =
-    average.reduce(legendPayloadReducer(
+const makeLegendPayloads = (
+  {average, measurements}: MeasurementResponse,
+  justSelectedQuantities: Predicate<MeasurementResponsePart>,
+): LegendPayload[] => {
+  const aggregateLegends: Dictionary<LegendPayload> = average.filter(justSelectedQuantities)
+    .reduce(legendPayloadReducer(
       ({id, label, quantity}) => makeAggregateKey({id, label, quantity}),
       ({quantity}) => `${firstUpperTranslated('average')} ${quantity}`,
     ), {});
 
-  const meterLegends: Dictionary<LegendPayload> = measurements.reduce(legendPayloadReducer(
-    ({quantity}) => quantity,
-    ({quantity}) => quantity,
-  ), {});
+  const meterLegends: Dictionary<LegendPayload> = measurements.filter(justSelectedQuantities)
+    .reduce(legendPayloadReducer(
+      ({quantity}) => quantity,
+      ({quantity}) => quantity,
+    ), {});
 
   return uniqBy(toArray({...meterLegends, ...aggregateLegends}), 'value');
 };
@@ -108,7 +112,7 @@ interface Meta {
 type TooltipContentProps = MeasurementValue & Meta & TooltipMeta;
 
 export const toGraphContents =
-  (response: MeasurementResponse): GraphContents => {
+  (response: MeasurementResponse, selectedQuantities: Quantity[]): GraphContents => {
     const graphContents: GraphContents = {
       axes: {},
       data: [],
@@ -135,31 +139,34 @@ export const toGraphContents =
 
     const sortedMeasurementValues: Dictionary<MeasurementValue[]> = {};
 
-    measurements.forEach(({id, quantity, label, values, unit}: MeasurementResponsePart) => {
-      makeAxes(graphContents, unit);
+    const justSelectedQuantities = (it: MeasurementResponsePart) => selectedQuantities.indexOf(it.quantity) !== -1;
 
-      const yAxisId = yAxisIdLookup(graphContents.axes, unit);
+    measurements.filter(justSelectedQuantities)
+      .forEach(({id, quantity, label, values, unit}: MeasurementResponsePart) => {
+        makeAxes(graphContents, unit);
 
-      if (yAxisId) {
-        const dataKey: string = makeMeasurementKey({id, label, quantity});
-        graphContents.lines.push({
-          id,
-          dataKey,
-          key: dataKey,
-          name: label,
-          stroke: colorFor(quantity),
-          strokeWidth: 1,
-          unit,
-          yAxisId,
-        });
+        const yAxisId = yAxisIdLookup(graphContents.axes, unit);
 
-        values.forEach(it => {
-          const timestamp: number = it.when * 1000;
-          makeByDate({...it, when: timestamp, dataKey, id, quantity});
-        });
-        sortedMeasurementValues[dataKey] = sortBy(values, it => it.when);
-      }
-    });
+        if (yAxisId) {
+          const dataKey: string = makeMeasurementKey({id, label, quantity});
+          graphContents.lines.push({
+            id,
+            dataKey,
+            key: dataKey,
+            name: label,
+            stroke: colorFor(quantity),
+            strokeWidth: 1,
+            unit,
+            yAxisId,
+          });
+
+          values.forEach(it => {
+            const timestamp: number = it.when * 1000;
+            makeByDate({...it, when: timestamp, dataKey, id, quantity});
+          });
+          sortedMeasurementValues[dataKey] = sortBy(values, it => it.when);
+        }
+      });
 
     compare.forEach(({id, label, quantity, unit, values}: MeasurementResponsePart) => {
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
@@ -194,34 +201,35 @@ export const toGraphContents =
       }
     });
 
-    average.forEach(({id, label, quantity, values, unit}: MeasurementResponsePart) => {
-      makeAxes(graphContents, unit);
+    average.filter(justSelectedQuantities)
+      .forEach(({id, label, quantity, values, unit}: MeasurementResponsePart) => {
+        makeAxes(graphContents, unit);
 
-      const yAxisId = yAxisIdLookup(graphContents.axes, unit);
-      if (yAxisId) {
-        const dataKey: string = makeAggregateKey({id, label, quantity});
-        graphContents.lines.push({
-          id,
-          dataKey,
-          key: dataKey,
-          name: `${firstUpperTranslated('average')}: ${label}`,
-          stroke: colorFor(quantity),
-          strokeWidth: 4,
-          unit,
-          yAxisId,
-        });
-        values.forEach(it => {
-          const timestamp: number = it.when * 1000;
-          makeByDate({...it, when: timestamp, dataKey, id, quantity});
-        });
-      }
-    });
+        const yAxisId = yAxisIdLookup(graphContents.axes, unit);
+        if (yAxisId) {
+          const dataKey: string = makeAggregateKey({id, label, quantity});
+          graphContents.lines.push({
+            id,
+            dataKey,
+            key: dataKey,
+            name: `${firstUpperTranslated('average')}: ${label}`,
+            stroke: colorFor(quantity),
+            strokeWidth: 4,
+            unit,
+            yAxisId,
+          });
+          values.forEach(it => {
+            const timestamp: number = it.when * 1000;
+            makeByDate({...it, when: timestamp, dataKey, id, quantity});
+          });
+        }
+      });
 
     graphContents.data = Object.keys(byDate)
       .map(created => ({...byDate[created]}))
       .sort(({name: createdA}, {name: createdB}) => createdA - createdB);
 
-    graphContents.legend = makeLegendPayloads(response);
+    graphContents.legend = makeLegendPayloads(response, justSelectedQuantities);
 
     return graphContents;
   };

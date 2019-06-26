@@ -15,7 +15,7 @@ import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {displayDate} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
 import {capitalized, firstUpperTranslated, translate} from '../../../services/translationService';
-import {LegendType} from '../../../state/report/reportModels';
+import {LegendTyped} from '../../../state/report/reportModels';
 import {
   getGroupHeaderTitle,
   getMediumType,
@@ -70,11 +70,10 @@ export const rowRender = (tr: React.ReactElement<HTMLTableRowElement>, {dataItem
   }
 };
 
-interface ListItem {
+interface ListItem extends LegendTyped {
   label: string;
   meterId?: string;
   name?: string;
-  type: LegendType;
   values: Dictionary<string>;
   when: string;
 }

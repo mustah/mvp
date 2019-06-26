@@ -6,18 +6,24 @@ describe('reportModels', () => {
   it('is of type Medium', () => {
     const type: LegendType = Medium.gas;
 
-    expect(isMedium(type)).toBe(true);
+    expect(isMedium({type})).toBe(true);
   });
 
   it('is not of type Medium', () => {
     const type: LegendType = 'aggregate';
 
-    expect(isMedium(type)).toBe(false);
+    expect(isMedium({type})).toBe(false);
   });
 
   it('is of type aggregate', () => {
     const type: LegendType = 'aggregate';
 
     expect(isAggregate(type)).toBe(true);
+  });
+
+  it('is not of type aggregate', () => {
+    const type: LegendType = Medium.gas;
+
+    expect(isAggregate(type)).toBe(false);
   });
 });

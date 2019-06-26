@@ -19,12 +19,13 @@ export const MeasurementLineChart = (props: Props) => {
     isFetching,
     isSideMenuOpen,
     measurement: {error, measurementResponse},
+    selectedQuantities,
     threshold,
     visibilitySummary,
   } = props;
   useFetchMeasurements(props);
 
-  const graphContents: GraphContents = useGraphContents(measurementResponse);
+  const graphContents: GraphContents = useGraphContents(measurementResponse, selectedQuantities);
 
   const hiddenLinesNote = visibilitySummary
     ? <VisibilitySummary {...visibilitySummary}/>

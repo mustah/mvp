@@ -4,7 +4,7 @@ import {getId, unique} from '../../helpers/collections';
 import {identity} from '../../helpers/commonHelpers';
 import {uuid} from '../../types/Types';
 import {VisibilitySummaryProps} from '../../usecases/report/components/VisibilitySummary';
-import {groupLegendItemsByQuantity} from '../ui/graph/measurement/measurementActions';
+import {mapQuantityToIds} from '../ui/graph/measurement/measurementActions';
 import {MeasurementParameters, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {
   isMedium,
@@ -35,7 +35,7 @@ export const makeLegendTypeQuantitiesMap = (): SelectedQuantities =>
 
 export const getMeterLegendItems = createSelector<SavedReportsState, LegendItem[], LegendItem[]>(
   getLegendItems,
-  items => items.filter(it => isMedium(it.type)),
+  items => items.filter(isMedium),
 );
 
 export const getHiddenLines =
@@ -49,7 +49,7 @@ export const getVisibilitySummary =
     getLegendItems,
     items => ({
       allMeters: items.map(getId),
-      checkedMeters: unique(flatten(values(groupLegendItemsByQuantity(items)))),
+      checkedMeters: unique(flatten(values(mapQuantityToIds(items)))),
     })
   );
 

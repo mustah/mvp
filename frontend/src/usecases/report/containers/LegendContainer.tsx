@@ -33,7 +33,7 @@ import {
 } from '../../../state/report/reportSelectors';
 import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../components/Legend';
-import {makeColumnQuantities} from '../helpers/legendHelper';
+import {makeSelectableQuantities} from '../helpers/legendHelper';
 
 export interface StateToProps extends HasContent, ColumnQuantities, ResolutionAware {
   legendItems: LegendItem[];
@@ -67,7 +67,7 @@ const LegendComponent = compose<WrapperProps & ThemeContext, WrapperProps>(
 )(Legend);
 
 const mapStateToProps = ({report: {temporal: {resolution}, savedReports}}: RootState): StateToProps => ({
-  columnQuantities: makeColumnQuantities(savedReports),
+  columnQuantities: makeSelectableQuantities(savedReports),
   hasContent: hasLegendItems(savedReports),
   legendItems: getLegendItems(savedReports),
   mediumViewOptions: getLegendViewOptions(savedReports),

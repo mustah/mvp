@@ -4,8 +4,8 @@ import {createSelector} from 'reselect';
 import {identity, isDefined} from '../../../../helpers/commonHelpers';
 import {uuid} from '../../../../types/Types';
 import {toGraphContents} from '../../../../usecases/report/helpers/lineChartHelper';
-import {GraphContents} from '../../../report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
+import {GraphContents} from '../../../report/reportModels';
 import {
   allQuantitiesMap,
   ExistingReadings,
@@ -44,8 +44,9 @@ export const groupMeasurementsByDate =
     };
   };
 
-export const useGraphContents = (responses: MeasurementResponse): GraphContents =>
-  React.useMemo<GraphContents>(() => toGraphContents(responses), [responses]);
+export const useGraphContents =
+  (responses: MeasurementResponse, selectedQuantities: Quantity[]): GraphContents =>
+    React.useMemo<GraphContents>(() => toGraphContents(responses, selectedQuantities), [responses, selectedQuantities]);
 
 export const hasMeasurementValues = createSelector<MeasurementResponse, MeasurementResponse, boolean>(
   identity,

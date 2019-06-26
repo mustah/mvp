@@ -6,7 +6,7 @@ import {MeterDetails} from '../../../state/domain-models/meter-details/meterDeta
 import {ResolutionAware} from '../../../state/report/reportModels';
 import {MeasurementParameters, MeasurementResponse} from '../../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
-import {toLegendItemAllQuantities} from '../../report/helpers/legendHelper';
+import {toLegendItemAllSearchableQuantities} from '../../report/helpers/legendHelper';
 import {MeterDetailState} from './meterDetailModels';
 
 interface ResolutionState {
@@ -30,7 +30,7 @@ export const getMeasurementParameters =
   createSelector<State, State, MeasurementParameters>(
     identity,
     ({meter, resolution, timePeriod}) => ({
-      legendItems: [toLegendItemAllQuantities(meter)],
+      legendItems: [toLegendItemAllSearchableQuantities(meter)],
       resolution,
       reportDateRange: timePeriod,
       shouldComparePeriod: false,
