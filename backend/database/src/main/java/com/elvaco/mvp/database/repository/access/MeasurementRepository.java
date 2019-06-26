@@ -313,9 +313,9 @@ public class MeasurementRepository implements Measurements {
     //TODO: rewrite to JOOQ in next release.
     return dsl.execute(
       "delete from measurement_stat_job where(organisation_id,physical_meter_id,"
-        + "                                               quantity_id,stat_date,is_consumption) in\n"
-        + "                                      (select organisation_id,physical_meter_id,"
-        + "                                  quantity_id,stat_date,is_consumption "
+        + "                                   quantity_id,stat_date,is_consumption) in\n"
+        + "                                   (select organisation_id,physical_meter_id,"
+        + "                                     quantity_id,stat_date,is_consumption "
         + " from (select *,\n"
         + "    calculate_and_write_statistics(organisation_id,\n"
         + "                                   quantity_id,\n"

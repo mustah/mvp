@@ -117,7 +117,7 @@ export const MeasurementList = ({
 
   return (
     <Column className="Grouping-grid">
-      <ExcelExport data={listItems} ref={exporter} filterable={true}>
+      <ExcelExport data={listItems} ref={exporter} filterable={true} fileName="measurements.xlsx">
         <Grid
           className={makeGridClassName(cssStyles)}
           scrollable="none"
