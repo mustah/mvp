@@ -88,13 +88,13 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
     );
 
     testSorting(
-      "address,asc",
+      "streetAddress,asc",
       meter -> meter.location.address,
       List.of("a-gatan 1", "a-gatan 2", "b-gatan 1")
     );
 
     testSorting(
-      "address,desc",
+      "streetAddress,desc",
       meter -> meter.location.address,
       List.of("b-gatan 1", "a-gatan 2", "a-gatan 1")
     );
@@ -114,7 +114,7 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
     );
 
     testSorting(
-      "address,asc",
+      "streetAddress,asc",
       meter -> meter.location.address,
       List.of("a 1", "a 2", "o 1", "å 1", "ä 1", "æ 1", "ö 1", "ø 1")
     );

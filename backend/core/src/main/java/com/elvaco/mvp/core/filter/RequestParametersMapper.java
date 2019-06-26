@@ -67,39 +67,39 @@ public final class RequestParametersMapper {
   );
 
   static {
-    PARAMETER_TO_FILTER.put(CITY, (values) -> new CityFilter(values, MatchType.EXACT));
-    PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, (values) -> new SerialFilter(values, MatchType.EXACT));
-    PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, MatchType.WILDCARD));
-    PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, MatchType.EXACT));
+    PARAMETER_TO_FILTER.put(CITY, values -> new CityFilter(values, MatchType.EXACT));
+    PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, values -> new SerialFilter(values, MatchType.EXACT));
+    PARAMETER_TO_FILTER.put(SERIAL, values -> new SerialFilter(values, MatchType.WILDCARD));
+    PARAMETER_TO_FILTER.put(ADDRESS, values -> new StreetAddressFilter(values, MatchType.EXACT));
     PARAMETER_TO_FILTER.put(MEDIUM, MediumFilter::new);
-    PARAMETER_TO_FILTER.put(FACILITY, (values) -> new FacilityFilter(values, MatchType.EXACT));
-    PARAMETER_TO_FILTER.put(Q_FACILITY, (values) -> new FacilityFilter(values, MatchType.WILDCARD));
+    PARAMETER_TO_FILTER.put(FACILITY, values -> new FacilityFilter(values, MatchType.EXACT));
+    PARAMETER_TO_FILTER.put(Q_FACILITY, values -> new FacilityFilter(values, MatchType.WILDCARD));
     PARAMETER_TO_FILTER.put(MANUFACTURER, ManufacturerFilter::new);
     PARAMETER_TO_FILTER.put(
       SECONDARY_ADDRESS,
-      (values) -> new SecondaryAddressFilter(values, MatchType.EXACT)
+      values -> new SecondaryAddressFilter(values, MatchType.EXACT)
     );
     PARAMETER_TO_FILTER.put(
       Q_SECONDARY_ADDRESS,
-      (values) -> new SecondaryAddressFilter(values, MatchType.WILDCARD)
+      values -> new SecondaryAddressFilter(values, MatchType.WILDCARD)
     );
     PARAMETER_TO_FILTER.put(
       REPORTED,
-      (values) -> new MeterStatusFilter(
+      values -> new MeterStatusFilter(
         values.stream().map(StatusType::from).collect(toList())
       )
     );
     PARAMETER_TO_FILTER.put(
       GATEWAY_ID,
-      (values) -> new GatewayIdFilter(toUuids(values))
+      values -> new GatewayIdFilter(toUuids(values))
     );
     PARAMETER_TO_FILTER.put(
       LOGICAL_METER_ID,
-      (values) -> new LogicalMeterIdFilter(toUuids(values))
+      values -> new LogicalMeterIdFilter(toUuids(values))
     );
     PARAMETER_TO_FILTER.put(
       ORGANISATION,
-      (values) -> new OrganisationIdFilter(toUuids(values))
+      values -> new OrganisationIdFilter(toUuids(values))
     );
     PARAMETER_TO_FILTER.put(
       RequestParameter.WILDCARD,
@@ -107,11 +107,14 @@ public final class RequestParametersMapper {
     );
     PARAMETER_TO_FILTER.put(
       THRESHOLD,
-      (values) -> new MeasurementThresholdFilter(values.get(0))
+      values -> new MeasurementThresholdFilter(values.get(0))
     );
     PARAMETER_TO_FILTER.put(ALARM, AlarmFilter::new);
-    PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, MatchType.WILDCARD));
-    PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, MatchType.WILDCARD));
+    PARAMETER_TO_FILTER.put(Q_CITY, values -> new CityFilter(values, MatchType.WILDCARD));
+    PARAMETER_TO_FILTER.put(
+      Q_ADDRESS,
+      values -> new StreetAddressFilter(values, MatchType.WILDCARD)
+    );
     PARAMETER_TO_FILTER.put(Q_ORGANISATION, WildcardFilter::new);
   }
 
