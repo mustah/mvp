@@ -1,9 +1,9 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
 import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
+import com.elvaco.mvp.core.filter.StreetAddressFilter;
 
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
@@ -27,7 +27,7 @@ class LocationFilterVisitor extends EmptyFilterVisitor {
   }
 
   @Override
-  public void visit(AddressFilter filter) {
+  public void visit(StreetAddressFilter filter) {
     if (filter.isWildcard()) {
       addCondition(LOCATION.STREET_ADDRESS.lower().contains(filter.oneValue().toLowerCase()));
     } else {

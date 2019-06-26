@@ -60,7 +60,7 @@ class LogicalMeterJooqJpaRepository
 
   private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(
     "facility", LOGICAL_METER.EXTERNAL_ID,
-    "address", LOCATION.STREET_ADDRESS.lower(),
+    "streetAddress", LOCATION.STREET_ADDRESS.lower(),
     "city", LOCATION.CITY.lower(),
     "manufacturer", PHYSICAL_METER.MANUFACTURER,
     "gatewaySerial", GATEWAY.SERIAL,

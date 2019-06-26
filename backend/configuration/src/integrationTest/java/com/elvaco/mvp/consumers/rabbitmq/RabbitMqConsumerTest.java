@@ -152,7 +152,6 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
         publishMessage(toJson(message).getBytes(StandardCharsets.UTF_8));
       }
-
     }
     waitFor(60000);
 
@@ -204,7 +203,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     String address,
     String zip
   ) throws InterruptedException {
-    assertThat(waitForCondition(() -> hasMeterAddress(
+    assertThat(waitForCondition(() -> hasMeterStreetAddress(
       organisationId,
       externalId,
       country,
@@ -214,7 +213,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     ))).as("Logical meter '" + externalId + "' has address").isTrue();
   }
 
-  private boolean hasMeterAddress(
+  private boolean hasMeterStreetAddress(
     UUID organisationId,
     String externalId,
     String country,

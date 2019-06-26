@@ -4,7 +4,7 @@ public interface FilterVisitor {
 
   void visit(CityFilter filter);
 
-  void visit(AddressFilter filter);
+  void visit(StreetAddressFilter filter);
 
   void visit(OrganisationIdFilter filter);
 

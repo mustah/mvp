@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jooq;
 
 import java.util.List;
 
-import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
 import com.elvaco.mvp.core.filter.CollectionPeriodFilter;
@@ -19,6 +18,7 @@ import com.elvaco.mvp.core.filter.OrganisationParentFilter;
 import com.elvaco.mvp.core.filter.ReportPeriodFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
+import com.elvaco.mvp.core.filter.StreetAddressFilter;
 import com.elvaco.mvp.core.filter.ThresholdPeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 
@@ -32,7 +32,7 @@ abstract class EmptyFilterVisitor extends JooqFilterVisitor {
   public void visit(CityFilter filter) {}
 
   @Override
-  public void visit(AddressFilter filter) {}
+  public void visit(StreetAddressFilter filter) {}
 
   @Override
   public void visit(OrganisationIdFilter filter) {}

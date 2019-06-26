@@ -36,6 +36,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
   private static final ZonedDateTime UTC_TIME = ZonedDateTime.parse("2018-11-23T00:00:00+00")
     .truncatedTo(ChronoUnit.HOURS);
+
   private final MeasurementStatData statData = MeasurementStatData.MEASUREMENT_STAT_DATA;
 
   @Autowired

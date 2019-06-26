@@ -1,10 +1,10 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
 import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
+import com.elvaco.mvp.core.filter.StreetAddressFilter;
 
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
@@ -25,7 +25,7 @@ class SelectionFilterVisitor extends EmptyFilterVisitor {
   }
 
   @Override
-  public void visit(AddressFilter filter) {
+  public void visit(StreetAddressFilter filter) {
     addCondition(withUnknownAddresses(toAddressParameters(filter.values())));
   }
 

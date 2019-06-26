@@ -1,9 +1,9 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
 import com.elvaco.mvp.core.filter.FilterVisitor;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
+import com.elvaco.mvp.core.filter.StreetAddressFilter;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOCATION;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownAddresses;
@@ -19,7 +19,7 @@ interface CommonLocationFilterVisitor extends ConditionAdding, FilterVisitor {
   }
 
   @Override
-  default void visit(AddressFilter filter) {
+  default void visit(StreetAddressFilter filter) {
     addCondition(withUnknownAddresses(toAddressParameters(filter.values())));
   }
 
