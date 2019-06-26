@@ -38,7 +38,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest {
+public class CollectionStatsControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
@@ -422,7 +422,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
-          .path("/meters/stats/facility")
+          .path("/meters/collection-stats/facility")
           .parameter(THRESHOLD_AFTER, now)
           .parameter(THRESHOLD_BEFORE, now.plusDays(1))
           .parameter(THRESHOLD, "Return temperature > 10 °C")
@@ -441,7 +441,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     var listedPercentage = asMvpUser()
       .getList(
         Url.builder()
-          .path("/meters/stats/date")
+          .path("/meters/collection-stats/date")
           .parameter(THRESHOLD_AFTER, now)
           .parameter(THRESHOLD_BEFORE, now.plusDays(1))
           .parameter(THRESHOLD, "Return temperature > 10 °C")
@@ -694,7 +694,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     List<String> expectedProperties
   ) {
     Url url = Url.builder()
-      .path("/meters/stats/facility")
+      .path("/meters/collection-stats/facility")
       .collectionPeriod(context().yesterday(), context().yesterday().plusDays(1))
       .size(expectedProperties.size())
       .page(0)
@@ -713,7 +713,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
   private static UrlTemplate statsFacilityUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
-      .path("/meters/stats/facility")
+      .path("/meters/collection-stats/facility")
       .parameter(COLLECTION_AFTER, after)
       .parameter(COLLECTION_BEFORE, before)
       .build();
@@ -721,7 +721,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
   private static UrlTemplate statsDateUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
-      .path("/meters/stats/date")
+      .path("/meters/collection-stats/date")
       .parameter(COLLECTION_AFTER, after)
       .parameter(COLLECTION_BEFORE, before)
       .build();
