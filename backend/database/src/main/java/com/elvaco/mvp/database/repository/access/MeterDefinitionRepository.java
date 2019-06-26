@@ -3,7 +3,6 @@ package com.elvaco.mvp.database.repository.access;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import javax.transaction.Transactional;
 
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -15,6 +14,7 @@ import com.elvaco.mvp.database.repository.mappers.MediumEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -68,8 +68,7 @@ public class MeterDefinitionRepository implements MeterDefinitions {
 
   @Override
   public List<MeterDefinition> findAll() {
-    return meterDefinitionJpaRepository.findAll()
-      .stream()
+    return meterDefinitionJpaRepository.findAll().stream()
       .map(meterDefinitionEntityMapper::toDomainModel)
       .collect(toList());
   }

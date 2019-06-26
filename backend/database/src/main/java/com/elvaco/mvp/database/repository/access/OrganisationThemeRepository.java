@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.repository.access;
 
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Theme;
@@ -11,6 +10,7 @@ import com.elvaco.mvp.database.entity.organisationtheme.OrganisationThemePk;
 import com.elvaco.mvp.database.repository.jpa.OrganisationThemeJpaRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,15 +26,15 @@ public class OrganisationThemeRepository implements OrganisationThemes {
 
     var pkBuilder = OrganisationThemePk.builder().organisationId(theme.organisationId);
 
-    var savedEntities =
-      organisationThemeJpaRepository.saveAll(
-        theme.properties.entrySet().stream()
-          .map(entry ->
-            OrganisationThemeEntity.builder()
-              .organisationThemePk(pkBuilder.property(entry.getKey()).build())
-              .value(entry.getValue())
-              .build())
-          .collect(toList()));
+    var savedEntities = organisationThemeJpaRepository.saveAll(
+      theme.properties.entrySet().stream()
+        .map(entry ->
+          OrganisationThemeEntity.builder()
+            .organisationThemePk(pkBuilder.property(entry.getKey()).build())
+            .value(entry.getValue())
+            .build())
+        .collect(toList())
+    );
 
     return Theme.builder()
       .properties(savedEntities.stream()
@@ -48,7 +48,6 @@ public class OrganisationThemeRepository implements OrganisationThemes {
 
     if (organisation.parent != null) {
       organisationThemeJpaRepository.findByOrganisationThemePkOrganisationId(organisation.parent.id)
-        .stream()
         .forEach(entity -> themeBuilder.property(
           entity.organisationThemePk.property,
           entity.value
@@ -56,7 +55,6 @@ public class OrganisationThemeRepository implements OrganisationThemes {
     }
 
     organisationThemeJpaRepository.findByOrganisationThemePkOrganisationId(organisation.id)
-      .stream()
       .forEach(entity -> themeBuilder.property(entity.organisationThemePk.property, entity.value));
 
     return themeBuilder.build();

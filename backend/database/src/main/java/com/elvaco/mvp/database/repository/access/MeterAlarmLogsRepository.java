@@ -40,11 +40,7 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
   }
 
   @Override
-  public void createOrUpdate(
-    PrimaryKey primaryKey,
-    int mask,
-    ZonedDateTime timestamp
-  ) {
+  public void createOrUpdate(PrimaryKey primaryKey, int mask, ZonedDateTime timestamp) {
     meterAlarmLogJpaRepository.createOrUpdate(
       primaryKey.getId(),
       primaryKey.getOrganisationId(),
@@ -59,6 +55,7 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
       .map(MeterAlarmLogEntityMapper::toDomainModel);
   }
 
+  @Override
   @Transactional
   public void closeAlarmIfNewMeasurementsArrived(AlarmLogEntry alarm, ZonedDateTime toDate) {
     measurements.firstForPhysicalMeter(
@@ -69,12 +66,11 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
     ).ifPresent(firstMeasurementAfterLastSeen ->
       meterAlarmLogJpaRepository.save(MeterAlarmLogEntity.builder()
         .id(alarm.id)
-        .pk(new PhysicalMeterPk(alarm.primaryKey.getId(),alarm.primaryKey.getOrganisationId()))
+        .pk(new PhysicalMeterPk(alarm.primaryKey.getId(), alarm.primaryKey.getOrganisationId()))
         .mask(alarm.mask)
         .start(alarm.start)
         .lastSeen(alarm.lastSeen)
         .stop(firstMeasurementAfterLastSeen.id.readoutTime)
         .build()));
   }
-
 }

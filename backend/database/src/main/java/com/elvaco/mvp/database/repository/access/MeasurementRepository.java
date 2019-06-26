@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.UUID;
-
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
@@ -189,21 +188,7 @@ public class MeasurementRepository implements Measurements {
   public Map<String, List<MeasurementValue>> findAverageForPeriod(
     MeasurementParameter parameter
   ) {
-    Map<String, List<MeasurementValue>> result = parameter.getQuantities()
-      .stream()
-      .collect(toMap(q -> q.name, q -> new ArrayList<>()));
-
-    var consumptionParameter = getConsumptionParameter(parameter);
-    if (!consumptionParameter.getQuantities().isEmpty()) {
-      var r = getConsumptionAverageQuery(consumptionParameter);
-      result.putAll(mapAverageForPeriod(consumptionParameter, r));
-    }
-
-    var readoutParameter = getReadoutParameter(parameter);
-    if (!readoutParameter.getQuantities().isEmpty()) {
-      var r = getReadoutAverageQuery(readoutParameter);
-      result.putAll(mapAverageForPeriod(readoutParameter, r));
-    }
+    Map<String, List<MeasurementValue>> result = findAverageAllForPeriod(parameter);
 
     return result.keySet().stream()
       .collect(toMap(
@@ -221,22 +206,9 @@ public class MeasurementRepository implements Measurements {
   public Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(
     MeasurementParameter parameter
   ) {
-    Map<MeasurementKey, List<MeasurementValue>> result = new HashMap<>();
+    Map<MeasurementKey, List<MeasurementValue>> result = findAllForPeriod(parameter);
 
-    MeasurementParameter readoutParameter = getReadoutParameter(parameter);
-    if (!readoutParameter.getQuantities().isEmpty()) {
-      var r = getReadoutSeriesQuery(readoutParameter);
-      result.putAll(mapSeriesForPeriod(readoutParameter, r));
-    }
-
-    MeasurementParameter consumptionParameter = getConsumptionParameter(parameter);
-    if (!consumptionParameter.getQuantities().isEmpty()) {
-      var r = getConsumptionQuery(consumptionParameter);
-      result.putAll(mapSeriesForPeriod(consumptionParameter, r));
-    }
-
-    return result.keySet()
-      .stream()
+    return result.keySet().stream()
       .collect(toMap(
         identity(),
         key -> fillMissing(
@@ -294,7 +266,6 @@ public class MeasurementRepository implements Measurements {
       var r = getReadoutAverageQuery(readoutParameter);
       result.putAll(mapAverageForPeriod(readoutParameter, r));
     }
-
     return result;
   }
 
@@ -303,48 +274,51 @@ public class MeasurementRepository implements Measurements {
     UUID organisationId, UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEquals
   ) {
     return measurementJpaRepository.firstForPhysicalMeter(organisationId,
-      physicalMeterId, after, beforeOrEquals)
+      physicalMeterId, after, beforeOrEquals
+    )
       .map(measurementEntityMapper::toDomainModel);
   }
 
   @Override
   @Transactional
   public int popAndCalculate(int limit, long ageMillis, int numberOfWorkers, int workerId) {
-    //Will rewrite to JOOQ in next release.
-    return dsl.execute("delete from measurement_stat_job where(organisation_id,physical_meter_id,"
-      + "                                               quantity_id,stat_date,is_consumption) in\n"
-      + "                                      (select organisation_id,physical_meter_id,"
-      + "                                  quantity_id,stat_date,is_consumption "
-      + " from (select *,\n"
-      + "    calculate_and_write_statistics(organisation_id,\n"
-      + "                                   quantity_id,\n"
-      + "                                   physical_meter_id,\n"
-      + "                                   stat_date,\n"
-      + "                                   stat_date,\n"
-      + "                                   posix_offset,\n"
-      + "                                   read_interval_minutes,\n"
-      + "                                   false),\n"
-      + "    case when is_consumption then\n"
-      + "      calculate_and_write_statistics("
-      + "          organisation_id,\n"
-      + "          quantity_id,\n"
-      + "          physical_meter_id,\n"
-      + "          stat_date,\n"
-      + "          stat_date,\n"
-      + "          posix_offset,\n"
-      + "          read_interval_minutes,\n"
-      + "          is_consumption)\n"
-      + "    else\n"
-      + "      null\n"
-      + "    end\n"
-      + "from measurement_stat_job m1\n"
-      + "         where modified <(now()- (({0}||' ms')::interval)) "
-      + "               and mod(shard_key, {1}) = {2} "
-      + "          order by modified asc\n"
-      + "          limit 1 for update skip locked ) as a);\n",
+    //TODO: rewrite to JOOQ in next release.
+    return dsl.execute(
+      "delete from measurement_stat_job where(organisation_id,physical_meter_id,"
+        + "                                   quantity_id,stat_date,is_consumption) in\n"
+        + "                                   (select organisation_id,physical_meter_id,"
+        + "                                     quantity_id,stat_date,is_consumption "
+        + " from (select *,\n"
+        + "    calculate_and_write_statistics(organisation_id,\n"
+        + "                                   quantity_id,\n"
+        + "                                   physical_meter_id,\n"
+        + "                                   stat_date,\n"
+        + "                                   stat_date,\n"
+        + "                                   posix_offset,\n"
+        + "                                   read_interval_minutes,\n"
+        + "                                   false),\n"
+        + "    case when is_consumption then\n"
+        + "      calculate_and_write_statistics("
+        + "          organisation_id,\n"
+        + "          quantity_id,\n"
+        + "          physical_meter_id,\n"
+        + "          stat_date,\n"
+        + "          stat_date,\n"
+        + "          posix_offset,\n"
+        + "          read_interval_minutes,\n"
+        + "          is_consumption)\n"
+        + "    else\n"
+        + "      null\n"
+        + "    end\n"
+        + "from measurement_stat_job m1\n"
+        + "         where modified <(now()- (({0}||' ms')::interval)) "
+        + "               and mod(shard_key, {1}) = {2} "
+        + "          order by modified asc\n"
+        + "          limit 1 for update skip locked ) as a);\n",
       val(ageMillis),
       val(numberOfWorkers),
-      val(workerId));
+      val(workerId)
+    );
   }
 
   private ResultQuery<Record11<
@@ -507,8 +481,10 @@ public class MeasurementRepository implements Measurements {
       : timeField.eq(atTimeZone(
         iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
         DSL.trunc(
-          atTimeZone(iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
-            timeField),
+          atTimeZone(
+            iso8601OffsetToPosixOffset(LOGICAL_METER.UTC_OFFSET),
+            timeField
+          ),
           toDatePart(resolution)
         )
       ));
@@ -668,8 +644,7 @@ public class MeasurementRepository implements Measurements {
       return measurement.readoutTime;
     }
 
-    var instant = measurement.readoutTime.toInstant()
-      .atOffset(ZoneOffset.of(utcOffset));
+    var instant = measurement.readoutTime.toInstant().atOffset(ZoneOffset.of(utcOffset));
     var startOfDay = instant.truncatedTo(ChronoUnit.DAYS);
 
     var duration = Duration.between(startOfDay, instant);
@@ -678,5 +653,4 @@ public class MeasurementRepository implements Measurements {
     }
     return null;
   }
-
 }
