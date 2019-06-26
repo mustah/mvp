@@ -188,21 +188,7 @@ public class MeasurementRepository implements Measurements {
   public Map<String, List<MeasurementValue>> findAverageForPeriod(
     MeasurementParameter parameter
   ) {
-    Map<String, List<MeasurementValue>> result = parameter.getQuantities()
-      .stream()
-      .collect(toMap(q -> q.name, q -> new ArrayList<>()));
-
-    var consumptionParameter = getConsumptionParameter(parameter);
-    if (!consumptionParameter.getQuantities().isEmpty()) {
-      var r = getConsumptionAverageQuery(consumptionParameter);
-      result.putAll(mapAverageForPeriod(consumptionParameter, r));
-    }
-
-    var readoutParameter = getReadoutParameter(parameter);
-    if (!readoutParameter.getQuantities().isEmpty()) {
-      var r = getReadoutAverageQuery(readoutParameter);
-      result.putAll(mapAverageForPeriod(readoutParameter, r));
-    }
+    Map<String, List<MeasurementValue>> result = findAverageAllForPeriod(parameter);
 
     return result.keySet().stream()
       .collect(toMap(
@@ -220,22 +206,9 @@ public class MeasurementRepository implements Measurements {
   public Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(
     MeasurementParameter parameter
   ) {
-    Map<MeasurementKey, List<MeasurementValue>> result = new HashMap<>();
+    Map<MeasurementKey, List<MeasurementValue>> result = findAllForPeriod(parameter);
 
-    MeasurementParameter readoutParameter = getReadoutParameter(parameter);
-    if (!readoutParameter.getQuantities().isEmpty()) {
-      var r = getReadoutSeriesQuery(readoutParameter);
-      result.putAll(mapSeriesForPeriod(readoutParameter, r));
-    }
-
-    MeasurementParameter consumptionParameter = getConsumptionParameter(parameter);
-    if (!consumptionParameter.getQuantities().isEmpty()) {
-      var r = getConsumptionQuery(consumptionParameter);
-      result.putAll(mapSeriesForPeriod(consumptionParameter, r));
-    }
-
-    return result.keySet()
-      .stream()
+    return result.keySet().stream()
       .collect(toMap(
         identity(),
         key -> fillMissing(
@@ -293,7 +266,6 @@ public class MeasurementRepository implements Measurements {
       var r = getReadoutAverageQuery(readoutParameter);
       result.putAll(mapAverageForPeriod(readoutParameter, r));
     }
-
     return result;
   }
 
