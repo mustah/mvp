@@ -33,7 +33,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class MeteringMessageListenerConfig {
+class MeteringMessageListenerConfig {
+
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;
   private final OrganisationUseCases organisationUseCases;

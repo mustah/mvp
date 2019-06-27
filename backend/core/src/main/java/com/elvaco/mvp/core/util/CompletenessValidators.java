@@ -11,13 +11,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CompletenessValidators {
 
-  private static final CompletenessValidator<LogicalMeter> LOGICAL_METER_COMPLETENESS_VALIDATOR =
+  public static final CompletenessValidator<LogicalMeter> LOGICAL_METER_VALIDATOR =
     new CompletenessValidator<>(
       logicalMeter -> logicalMeter.location.isKnown(),
       logicalMeter -> !logicalMeter.meterDefinition.equals(MeterDefinition.UNKNOWN)
     );
 
-  private static final CompletenessValidator<PhysicalMeter> PHYSICAL_METER_COMPLETENESS_VALIDATOR =
+  public static final CompletenessValidator<PhysicalMeter> PHYSICAL_METER_VALIDATOR =
     new CompletenessValidator<>(
       physicalMeter -> !physicalMeter.medium.equals(Medium.UNKNOWN_MEDIUM),
       physicalMeter -> physicalMeter.manufacturer != null
@@ -26,18 +26,6 @@ public class CompletenessValidators {
       physicalMeter -> physicalMeter.revision != null
     );
 
-  private static final CompletenessValidator<Gateway> GATEWAY_COMPLETENESS_VALIDATOR =
+  public static final CompletenessValidator<Gateway> GATEWAY_VALIDATOR =
     new CompletenessValidator<>(gateway -> !gateway.productModel.isEmpty());
-
-  public static CompletenessValidator<LogicalMeter> logicalMeterValidator() {
-    return LOGICAL_METER_COMPLETENESS_VALIDATOR;
-  }
-
-  public static CompletenessValidator<PhysicalMeter> physicalMeterValidator() {
-    return PHYSICAL_METER_COMPLETENESS_VALIDATOR;
-  }
-
-  public static CompletenessValidator<Gateway> gatewayValidator() {
-    return GATEWAY_COMPLETENESS_VALIDATOR;
-  }
 }

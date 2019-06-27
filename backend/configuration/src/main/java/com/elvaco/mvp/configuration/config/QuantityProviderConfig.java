@@ -38,10 +38,6 @@ class QuantityProviderConfig {
    * We cannot use the domain model <-> entity mapper before having a real QuantityProvider,
    * because of a circular dependency. We avoid the circle by using a separate JPA repository and
    * do the mapping ourselves.
-   *
-   * @param initialQuantityProviderRepository
-   *
-   * @return QuantityProvider
    */
   @Bean
   QuantityProvider quantityProvider(QuantityProviderRepository initialQuantityProviderRepository) {
@@ -57,8 +53,7 @@ class QuantityProviderConfig {
         ))
     );
 
-    var savedQuantities = initialQuantityProviderRepository.findAllEntities()
-      .stream()
+    var savedQuantities = initialQuantityProviderRepository.findAllEntities().stream()
       .map(quantityEntity -> new Quantity(
         quantityEntity.id,
         quantityEntity.name,
@@ -110,8 +105,6 @@ class QuantityProviderConfig {
     QuantityProvider quantityProvider,
     QuantityEntityMapper quantityEntityMapper
   ) {
-    return new MeasurementEntityMapper(unitConverter,
-      quantityProvider, quantityEntityMapper
-    );
+    return new MeasurementEntityMapper(unitConverter, quantityProvider, quantityEntityMapper);
   }
 }

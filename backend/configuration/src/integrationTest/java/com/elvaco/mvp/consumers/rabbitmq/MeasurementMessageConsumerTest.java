@@ -41,10 +41,13 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     LocalDateTime.parse("2018-03-07T16:13:09"),
     METERING_TIMEZONE
   );
+
   @Autowired
   private MeasurementMessageConsumer measurementMessageConsumer;
+
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
+
   @Autowired
   private CacheManager cacheManager;
 
@@ -115,7 +118,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
       new FacilityIdDto("facility"),
       "organisationId",
       "sourceSystemId",
-      asList(newValueDto(when, 1.0))
+      singletonList(newValueDto(when, 1.0))
     ));
 
     // Meter replacement including gateway will save logicalMeter and gateway
@@ -125,7 +128,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
       new FacilityIdDto("facility"),
       "organisationId",
       "sourceSystemId",
-      asList(newValueDto(when.plusDays(1), 2.0))
+      singletonList(newValueDto(when.plusDays(1), 2.0))
     ));
 
     assertThat(measurementJpaRepository.findAll())
@@ -144,7 +147,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
       new FacilityIdDto("facility"),
       "organisationId",
       "sourceSystemId",
-      asList(newValueDto(when, 1.0))
+      singletonList(newValueDto(when, 1.0))
     ));
 
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
@@ -153,7 +156,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
       new FacilityIdDto("facility"),
       "organisationId",
       "sourceSystemId",
-      asList(newValueDto(when.plusDays(1), 2.0))
+      singletonList(newValueDto(when.plusDays(1), 2.0))
     ));
 
     assertThatThrownBy(() ->
@@ -163,7 +166,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
         new FacilityIdDto("facility"),
         "organisationId",
         "sourceSystemId",
-        asList(newValueDto(when.minusDays(1), 3.0))
+        singletonList(newValueDto(when.minusDays(1), 3.0))
       )))
       .isInstanceOf(DataIntegrityViolationException.class)
       .hasStackTraceContaining("non_overlapping_active_periods");
@@ -188,7 +191,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   @Transactional
   @Test
-  public void invaludUnitForQuantityIsDiscarded() {
+  public void invalidUnitForQuantityIsDiscarded() {
     var measurementMessage = newMeasurementMessage(
       asList(
         new ValueDto(CREATED.toLocalDateTime(), 1.0, "m³", "Volume"),
