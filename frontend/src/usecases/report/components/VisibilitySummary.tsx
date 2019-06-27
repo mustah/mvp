@@ -18,7 +18,7 @@ export const VisibilitySummary = withCssStyles(
       ? (
         <RowCenter style={{color: fg, margin: '16px 16px 0 16px'}}>
           {translate('{{count}} meters are not shown in the graph. Choose which meters you want to see with', {count})}
-          <ContentFilterList color={fg}/>
+          <ContentFilterList color={fg} style={{marginLeft: 8}}/>
         </RowCenter>
       )
       : null;
