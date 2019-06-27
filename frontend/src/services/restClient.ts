@@ -1,7 +1,6 @@
 import axios, {
   AxiosInstance,
   AxiosInterceptorManager,
-  AxiosPromise,
   AxiosRequestConfig,
   AxiosResponse,
   CancelTokenSource,
@@ -15,7 +14,7 @@ import {Dictionary, ErrorResponse} from '../types/Types';
 const requestCanceled = 'REQUEST_CANCELED';
 const timeoutOf = 'timeout of';
 
-class RestClientDelegate implements AxiosInstance {
+class RestClient {
 
   private static getRequestId(url: string) {
     const endPoint = /[^?]*/; // regExp matching all characters before '?' or whole string when no
@@ -42,43 +41,35 @@ class RestClientDelegate implements AxiosInstance {
     this.setResponseInterceptors();
   }
 
-  request<T = any>(config: AxiosRequestConfig): AxiosPromise<T> {
-    return this.delegate.request(config);
+  get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return this.doGet(RestClient.getRequestId(url), url, config);
   }
 
-  get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
-    return this.doGet(RestClientDelegate.getRequestId(url), url, config);
-  }
-
-  getParallel<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
-    return this.doGet(url, url, config);
-  }
-
-  getForced<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
-    return this.doGet(idGenerator.uuid().toString(), url, config);
-  }
-
-  delete(url: string, config?: AxiosRequestConfig): AxiosPromise {
-    return this.delegate.delete(url, config);
-  }
-
-  head(url: string, config?: AxiosRequestConfig): AxiosPromise {
-    return this.delegate.head(url, config);
-  }
-
-  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T> {
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     return this.delegate.post(url, data, config);
   }
 
-  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T> {
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     return this.delegate.put(url, data, config);
   }
 
-  patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T> {
-    return this.delegate.patch(url, data, config);
+  delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return this.delegate.delete(url, config);
   }
 
-  private doGet<T = any>(requestId: string, url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
+  getParallel<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return this.doGet(url, url, config);
+  }
+
+  getForced<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return this.doGet(idGenerator.uuid().toString(), url, config);
+  }
+
+  getDelegate(): AxiosInstance {
+    return this.delegate;
+  }
+
+  private doGet<T = any>(requestId: string, url: string, config?: AxiosRequestConfig): Promise<T> {
     const request = this.requests[requestId];
     if (request) {
       request.cancel(requestCanceled);
@@ -103,19 +94,14 @@ class RestClientDelegate implements AxiosInstance {
 
 const axiosConfig = config().axios;
 
-interface AxiosInstanceWrapper extends AxiosInstance {
-  getParallel<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>;
-  getForced<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>;
-}
-
-export let restClient: AxiosInstanceWrapper = new RestClientDelegate(axios.create(axiosConfig));
+export let restClient: RestClient = new RestClient(axios.create(axiosConfig));
 
 interface Headers {
   Authorization: string;
 }
 
-const makeRestClient = (headers: Headers): AxiosInstance => {
-  restClient = new RestClientDelegate(axios.create({...axiosConfig, headers}));
+const makeRestClient = (headers: Headers): RestClient => {
+  restClient = new RestClient(axios.create({...axiosConfig, headers}));
   return restClient;
 };
 
@@ -125,7 +111,7 @@ export const restClientWith = (token?: string): void => {
   }
 };
 
-export const authenticate = (token: string): AxiosInstance =>
+export const authenticate = (token: string): RestClient =>
   makeRestClient({Authorization: `Basic ${token}`});
 
 export const wasRequestCanceled = (error: ErrorResponse): boolean =>
