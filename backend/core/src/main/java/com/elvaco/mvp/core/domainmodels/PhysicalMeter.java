@@ -61,11 +61,13 @@ public class PhysicalMeter implements Identifiable<UUID>, PrimaryKeyed {
     return this;
   }
 
-  public void deactivate(ZonedDateTime dateTime) {
+  public PhysicalMeter deactivate(ZonedDateTime dateTime) {
     this.activePeriod = activePeriod.toBuilder().stop(PeriodBound.exclusiveOf(dateTime)).build();
+    return this;
   }
 
-  public void activate(ZonedDateTime dateTime) {
+  public PhysicalMeter activate(ZonedDateTime dateTime) {
     this.activePeriod = activePeriod.toBuilder().start(PeriodBound.inclusiveOf(dateTime)).build();
+    return this;
   }
 }

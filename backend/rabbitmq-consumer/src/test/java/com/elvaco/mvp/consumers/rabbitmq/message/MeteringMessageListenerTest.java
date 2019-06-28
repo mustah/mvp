@@ -214,8 +214,7 @@ public class MeteringMessageListenerTest {
     }
   }
 
-  private static class ReferenceInfoMessageConsumerSpy
-    implements ReferenceInfoMessageConsumer {
+  private static class ReferenceInfoMessageConsumerSpy implements ReferenceInfoMessageConsumer {
 
     private boolean messageReceived;
 
