@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.InitBinder;
 
 @ControllerAdvice
-public class ControllerAdviceConfig {
+class ControllerAdviceConfig {
+
   @InitBinder
   public void initDirectFieldAccess(DataBinder dataBinder) {
     dataBinder.initDirectFieldAccess();

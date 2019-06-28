@@ -10,9 +10,9 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
-import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
-import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
+import static com.elvaco.mvp.core.util.CompletenessValidators.GATEWAY_VALIDATOR;
+import static com.elvaco.mvp.core.util.CompletenessValidators.LOGICAL_METER_VALIDATOR;
+import static com.elvaco.mvp.core.util.CompletenessValidators.PHYSICAL_METER_VALIDATOR;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +30,7 @@ public class CompletenessValidatorsTest {
       .externalId("external-id")
       .organisationId(randomUUID())
       .build();
-    assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
+    assertThat(LOGICAL_METER_VALIDATOR.isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -40,7 +40,7 @@ public class CompletenessValidatorsTest {
       .organisationId(randomUUID())
       .location(KNOWN_LOCATION)
       .build();
-    assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
+    assertThat(LOGICAL_METER_VALIDATOR.isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -51,7 +51,7 @@ public class CompletenessValidatorsTest {
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .location(KNOWN_LOCATION)
       .build();
-    assertThat(logicalMeterValidator().isComplete(logicalMeter)).isTrue();
+    assertThat(LOGICAL_METER_VALIDATOR.isComplete(logicalMeter)).isTrue();
   }
 
   @Test
@@ -62,7 +62,7 @@ public class CompletenessValidatorsTest {
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .location(Location.UNKNOWN_LOCATION)
       .build();
-    assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
+    assertThat(LOGICAL_METER_VALIDATOR.isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -72,7 +72,7 @@ public class CompletenessValidatorsTest {
       .manufacturer("ELV")
       .readIntervalMinutes(15)
       .build();
-    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
+    assertThat(PHYSICAL_METER_VALIDATOR.isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -83,7 +83,7 @@ public class CompletenessValidatorsTest {
       .readIntervalMinutes(15)
       .revision(1)
       .build();
-    assertThat(physicalMeterValidator().isComplete(
+    assertThat(PHYSICAL_METER_VALIDATOR.isComplete(
       physicalMeter)).isTrue();
   }
 
@@ -95,7 +95,7 @@ public class CompletenessValidatorsTest {
       .readIntervalMinutes(15)
       .revision(1)
       .build();
-    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
+    assertThat(PHYSICAL_METER_VALIDATOR.isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -106,7 +106,7 @@ public class CompletenessValidatorsTest {
       .readIntervalMinutes(15)
       .revision(1)
       .build();
-    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
+    assertThat(PHYSICAL_METER_VALIDATOR.isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -117,7 +117,7 @@ public class CompletenessValidatorsTest {
       .readIntervalMinutes(0)
       .revision(1)
       .build();
-    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
+    assertThat(PHYSICAL_METER_VALIDATOR.isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -128,7 +128,7 @@ public class CompletenessValidatorsTest {
       .readIntervalMinutes(0)
       .revision(null)
       .build();
-    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
+    assertThat(PHYSICAL_METER_VALIDATOR.isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -138,7 +138,7 @@ public class CompletenessValidatorsTest {
       .serial("1234")
       .productModel("CMi2110")
       .build();
-    assertThat(gatewayValidator().isComplete(gateway)).isTrue();
+    assertThat(GATEWAY_VALIDATOR.isComplete(gateway)).isTrue();
   }
 
   @Test
@@ -148,6 +148,6 @@ public class CompletenessValidatorsTest {
       .serial("1234")
       .productModel("")
       .build();
-    assertThat(gatewayValidator().isComplete(gateway)).isFalse();
+    assertThat(GATEWAY_VALIDATOR.isComplete(gateway)).isFalse();
   }
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class ScheduledTasks {
+class ScheduledTasks {
 
   private final MeterAlarmUseCases meterAlarmUseCases;
 
@@ -24,5 +24,4 @@ public class ScheduledTasks {
       log.error("Exception occurred during alarm closing. ", re);
     }
   }
-
 }

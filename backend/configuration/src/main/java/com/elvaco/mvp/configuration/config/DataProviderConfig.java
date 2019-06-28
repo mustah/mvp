@@ -86,6 +86,7 @@ import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.WidgetJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MediumEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
@@ -187,16 +188,16 @@ class DataProviderConfig {
   Measurements measurements(
     DSLContext dsl,
     QuantityProvider quantityProvider,
-    QuantityEntityMapper quantityEntityMapper,
-    FilterAcceptor logicalMeterMeasurementFilters
+    FilterAcceptor logicalMeterMeasurementFilters,
+    MeasurementEntityMapper measurementEntityMapper
   ) {
     return new MeasurementRepository(
       dsl,
       measurementJpaRepository,
       quantityProvider,
       unitConverter,
-      quantityEntityMapper,
-      logicalMeterMeasurementFilters
+      logicalMeterMeasurementFilters,
+      measurementEntityMapper
     );
   }
 

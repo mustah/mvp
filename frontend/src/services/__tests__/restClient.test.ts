@@ -30,7 +30,7 @@ describe('restClient', () => {
 
     beforeEach(() => {
       restClientWith('123123123');
-      mockRestClient = new MockAdapter(restClient);
+      mockRestClient = new MockAdapter(restClient.getDelegate());
     });
 
     it('throws a InvalidToken exception if token invalid from backend', async () => {
@@ -58,7 +58,7 @@ describe('restClient', () => {
     let mockRestClient;
     beforeEach(() => {
       restClientWith('123123123');
-      mockRestClient = new MockAdapter(restClient, {delayResponse: 200});
+      mockRestClient = new MockAdapter(restClient.getDelegate(), {delayResponse: 200});
     });
 
     const getRequestFromURL = async (url: string) => {

@@ -33,9 +33,9 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.ma
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMedium;
 import static com.elvaco.mvp.core.domainmodels.PeriodRange.empty;
 import static com.elvaco.mvp.core.domainmodels.PeriodRange.from;
-import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
-import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
-import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
+import static com.elvaco.mvp.core.util.CompletenessValidators.GATEWAY_VALIDATOR;
+import static com.elvaco.mvp.core.util.CompletenessValidators.LOGICAL_METER_VALIDATOR;
+import static com.elvaco.mvp.core.util.CompletenessValidators.PHYSICAL_METER_VALIDATOR;
 import static java.util.Comparator.comparing;
 
 @Slf4j
@@ -54,35 +54,34 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   private final MediumProvider mediumProvider;
 
   @Override
-  public Optional<GetReferenceInfoDto> accept(MeteringMeasurementMessageDto measurementMessage) {
-    String facilityId = measurementMessage.facility.id;
+  public Optional<GetReferenceInfoDto> accept(MeteringMeasurementMessageDto messageDto) {
+    String facilityId = messageDto.facility.id;
 
     if (facilityId.trim().isEmpty()) {
       log.warn(
         "Discarding measurement message with invalid facility/external ID: {}",
-        measurementMessage
+        messageDto
       );
       return Optional.empty();
     }
 
-    Organisation organisation =
-      organisationUseCases.findOrCreate(measurementMessage.organisationId);
+    Organisation organisation = organisationUseCases.findOrCreate(messageDto.organisationId);
 
     State logicalMeterState = new State();
-    LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
-      .orElseGet(() ->
-        logicalMeterState.setModified(
-          LogicalMeter.builder()
-            .externalId(facilityId)
-            .organisationId(organisation.id)
-            .meterDefinition(meterDefinitionUseCases.getAutoApplied(
-              organisation,
-              mediumProvider.getByNameOrThrow(resolveMedium(measurementMessage.values))
-            ))
-            .build())
-      );
 
-    Optional<Gateway> gateway = measurementMessage.gateway()
+    LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
+      .orElseGet(() -> logicalMeterState.setModified(
+        LogicalMeter.builder()
+          .externalId(facilityId)
+          .organisationId(organisation.id)
+          .meterDefinition(meterDefinitionUseCases.getAutoApplied(
+            organisation,
+            mediumProvider.getByNameOrThrow(resolveMedium(messageDto.values))
+          ))
+          .build()
+      ));
+
+    Optional<Gateway> gateway = messageDto.gateway()
       .map(gatewayIdDto -> gatewayIdDto.id)
       .map(serial -> gatewayUseCases.findBy(organisation.id, serial)
         .orElseGet(() -> gatewayUseCases.save(
@@ -101,27 +100,27 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       );
     }
 
-    String address = measurementMessage.meter.id;
-    ZonedDateTime zonedDateTime = getEarliestTimestamp(measurementMessage);
-    boolean isValidDate = zonedDateTime.isAfter(FIRST_VALID_DATE.atZone(METERING_TIMEZONE));
+    String address = messageDto.meter.id;
+    ZonedDateTime earliestDateTime = getEarliestTimestamp(messageDto);
+    boolean isValidDate = earliestDateTime.isAfter(FIRST_VALID_DATE.atZone(METERING_TIMEZONE));
 
     State physicalMeterState = new State();
     PhysicalMeter physicalMeter =
       physicalMeterUseCases.findBy(organisation.id, facilityId, address)
-        .orElseGet(() ->
-          physicalMeterState.setModified(PhysicalMeter.builder()
+        .orElseGet(() -> physicalMeterState.setModified(
+          PhysicalMeter.builder()
             .organisationId(organisation.id)
             .address(address)
             .externalId(facilityId)
             .medium(Medium.UNKNOWN_MEDIUM)
             .logicalMeterId(logicalMeter.id)
             .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
-            .activePeriod(isValidDate ? from(zonedDateTime) : empty())
-            .build())
-        );
+            .activePeriod(isValidDate ? from(earliestDateTime) : empty())
+            .build()
+        ));
 
     if (isValidDate) {
-      updateActivePeriods(physicalMeter, physicalMeterState, zonedDateTime);
+      updateActivePeriods(physicalMeter, physicalMeterState, earliestDateTime);
     }
 
     if (physicalMeterState.modified) {
@@ -129,25 +128,19 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     }
 
     ZonedDateTime now = ZonedDateTime.now();
-    measurementMessage.values
-      .forEach(value -> createMeasurement(value, now, physicalMeter)
-        .ifPresent(measurement -> measurementUseCases.createOrUpdate(measurement, logicalMeter)));
+    messageDto.values.forEach(value -> createMeasurement(value, now, physicalMeter)
+      .ifPresent(measurement -> measurementUseCases.createOrUpdate(measurement, logicalMeter)));
 
     MeasurementMessageResponseBuilder responseBuilder =
-      new MeasurementMessageResponseBuilder(measurementMessage.organisationId);
+      new MeasurementMessageResponseBuilder(messageDto.organisationId);
 
-    if (physicalMeterValidator().isIncomplete(physicalMeter)
-      || logicalMeterValidator().isIncomplete(logicalMeter)) {
-      responseBuilder
-        .setFacilityId(facilityId)
-        .setMeterExternalId(address);
+    if (PHYSICAL_METER_VALIDATOR.isIncomplete(physicalMeter)
+      || LOGICAL_METER_VALIDATOR.isIncomplete(logicalMeter)) {
+      responseBuilder.setFacilityId(facilityId).setMeterExternalId(address);
     }
 
-    gateway
-      .filter(gw -> gatewayValidator().isIncomplete(gw))
-      .map(gw -> responseBuilder
-        .setFacilityId(facilityId)
-        .setGatewayExternalId(gw.serial));
+    gateway.filter(GATEWAY_VALIDATOR::isIncomplete)
+      .map(gw -> responseBuilder.setFacilityId(facilityId).setGatewayExternalId(gw.serial));
 
     return responseBuilder.build();
   }
@@ -186,7 +179,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     activeAtTimestamp
       .filter(at -> !at.id.equals(physicalMeter.id))
       .filter(at -> physicalMeter.activePeriod.getStopDateTime()
-        .filter(pStop -> zonedDateTime.isAfter(pStop))
+        .filter(zonedDateTime::isAfter)
         .isEmpty())
       .ifPresent(at -> {
         at.deactivate(zonedDateTime);
@@ -195,7 +188,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     // Move start time back in time if measurement is before current start time
     boolean movedStartTime = physicalMeter.activePeriod.getStartDateTime()
-      .filter(pStart -> zonedDateTime.isBefore(pStart))
+      .filter(zonedDateTime::isBefore)
       .map(pStart -> {
         physicalMeter.activate(zonedDateTime);
         return physicalMeterState.setModified(physicalMeter);
@@ -220,7 +213,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     PhysicalMeter physicalMeter
   ) {
     Optional<Quantity> quantity = mappedQuantity(value.quantity);
-    if (!quantity.isPresent()) {
+    if (quantity.isEmpty()) {
       log.warn(
         "Discarding measurement with unknown quantity for facility '{}': {}",
         physicalMeter.externalId,

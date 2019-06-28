@@ -35,7 +35,7 @@ describe('summaryApiActions', () => {
 
   beforeEach(() => {
     restClientWith('someToken');
-    mockRestClient = new MockAdapter(restClient);
+    mockRestClient = new MockAdapter(restClient.getDelegate());
   });
 
   describe('token has expired or is invalid', () => {

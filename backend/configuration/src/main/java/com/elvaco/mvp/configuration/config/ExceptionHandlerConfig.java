@@ -12,12 +12,12 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 
 @Configuration
-public class ExceptionHandlerConfig {
+class ExceptionHandlerConfig {
 
   private static final String GENERAL_ERROR_MESSAGE = "An error occured, please contact support";
 
   @Bean
-  public ErrorAttributes errorAttributes() {
+  ErrorAttributes errorAttributes() {
     return new DefaultErrorAttributes() {
       @Override
       public Map<String, Object> getErrorAttributes(

@@ -37,7 +37,7 @@ describe('themeActions', () => {
 
   beforeEach(() => {
     restClientWith('someToken');
-    mockRestClient = new MockAdapter(restClient);
+    mockRestClient = new MockAdapter(restClient.getDelegate());
   });
 
   describe('fetch theme', () => {

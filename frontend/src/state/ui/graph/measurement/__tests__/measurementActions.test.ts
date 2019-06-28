@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, {AxiosRequestConfig} from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
 import {routerActions} from 'connected-react-router';
 import {first, flatten, values} from 'lodash';
@@ -492,10 +492,12 @@ describe('measurementActions', () => {
 
       authenticate('test');
 
-      mockRestClient.onGet().reply(async (config) => {
-        requestedUrls.push(config.url!);
+      mockRestClient.onGet().reply(async (config: AxiosRequestConfig) => {
+        const url = config.url!.replace(config.baseURL!, '');
 
-        if (config.url!.match(/^\/measurements\/average/) || shouldShowAverage) {
+        requestedUrls.push(url);
+
+        if (url.match(/^\/measurements\/average/) || shouldShowAverage) {
           const average: MeasurementsApiResponse = legendItems.filter(it => isAggregate(it.type) || shouldShowAverage)
             .map(makeMeasurementAverageResponse);
           return [200, average];

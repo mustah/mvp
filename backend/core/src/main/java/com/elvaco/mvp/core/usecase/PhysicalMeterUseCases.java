@@ -72,8 +72,7 @@ public class PhysicalMeterUseCases {
     return Optional.of(organisationId)
       .filter(this::hasTenantAccess)
       .flatMap(orgId ->
-        physicalMeters.findBy(orgId, externalId)
-          .stream()
+        physicalMeters.findBy(orgId, externalId).stream()
           .filter(p -> p.activePeriod.contains(newStartTime))
           .findFirst());
   }

@@ -38,9 +38,9 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
-import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 
+import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DatePart;
@@ -79,6 +79,7 @@ import static org.jooq.impl.DSL.lead;
 import static org.jooq.impl.DSL.noCondition;
 import static org.jooq.impl.DSL.val;
 
+@RequiredArgsConstructor
 public class MeasurementRepository implements Measurements {
 
   private static final String VALUE_DATE_FIELD_NAME = "value_date";
@@ -89,28 +90,8 @@ public class MeasurementRepository implements Measurements {
   private final MeasurementJpaRepository measurementJpaRepository;
   private final QuantityProvider quantityProvider;
   private final UnitConverter unitConverter;
-  private final MeasurementEntityMapper measurementEntityMapper;
   private final FilterAcceptor logicalMeterMeasurementFilters;
-
-  public MeasurementRepository(
-    DSLContext dsl,
-    MeasurementJpaRepository measurementJpaRepository,
-    QuantityProvider quantityProvider,
-    UnitConverter unitConverter,
-    QuantityEntityMapper quantityEntityMapper,
-    FilterAcceptor logicalMeterMeasurementFilters
-  ) {
-    this.dsl = dsl;
-    this.measurementJpaRepository = measurementJpaRepository;
-    this.quantityProvider = quantityProvider;
-    this.unitConverter = unitConverter;
-    this.logicalMeterMeasurementFilters = logicalMeterMeasurementFilters;
-    this.measurementEntityMapper = new MeasurementEntityMapper(
-      unitConverter,
-      quantityProvider,
-      quantityEntityMapper
-    );
-  }
+  private final MeasurementEntityMapper measurementEntityMapper;
 
   static List<MeasurementValue> fillMissing(
     List<MeasurementValue> values,
