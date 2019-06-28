@@ -115,7 +115,7 @@ public class PeriodRange implements Serializable {
   }
 
   public boolean isRightOpen() {
-    return this == EMPTY || !this.getStopDateTime().isPresent();
+    return this == EMPTY || this.getStopDateTime().isEmpty();
   }
 
   private Function<ZonedDateTime, Boolean> startIncludedFunction(ZonedDateTime when) {

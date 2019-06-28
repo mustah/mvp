@@ -3,6 +3,7 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeasurementMessageResponseBuilder;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
@@ -42,6 +43,8 @@ import static java.util.Comparator.comparing;
 @RequiredArgsConstructor
 public class MeteringMeasurementMessageConsumer implements MeasurementMessageConsumer {
 
+  private static final Consumer<PhysicalMeter> DO_NOTHING = pm -> { };
+
   private static final LocalDateTime FIRST_VALID_DATE = LocalDateTime.parse("2001-01-01T00:00:00");
 
   private final LogicalMeterUseCases logicalMeterUseCases;
@@ -70,7 +73,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     State logicalMeterState = new State();
 
     LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
-      .orElseGet(() -> logicalMeterState.setModified(
+      .orElseGet(() -> logicalMeterState.setCreated(
         LogicalMeter.builder()
           .externalId(facilityId)
           .organisationId(organisation.id)
@@ -93,7 +96,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           )
         ));
 
-    if (logicalMeterState.modified) {
+    if (logicalMeterState.isCreated) {
       gateway.ifPresentOrElse(
         gw -> logicalMeterUseCases.save(logicalMeter.toBuilder().gateway(gw).build()),
         () -> logicalMeterUseCases.save(logicalMeter)
@@ -107,7 +110,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     State physicalMeterState = new State();
     PhysicalMeter physicalMeter =
       physicalMeterUseCases.findBy(organisation.id, facilityId, address)
-        .orElseGet(() -> physicalMeterState.setModified(
+        .orElseGet(() -> physicalMeterState.setCreated(
           PhysicalMeter.builder()
             .organisationId(organisation.id)
             .address(address)
@@ -123,7 +126,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       updateActivePeriods(physicalMeter, physicalMeterState, earliestDateTime);
     }
 
-    if (physicalMeterState.modified) {
+    if (physicalMeterState.isCreated) {
       physicalMeterUseCases.save(physicalMeter);
     }
 
@@ -158,53 +161,50 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   private void updateActivePeriods(
     PhysicalMeter physicalMeter,
     State physicalMeterState,
-    ZonedDateTime zonedDateTime
+    ZonedDateTime earliestDateTime
   ) {
     if (physicalMeter.activePeriod.isEmpty()) {
-      physicalMeter.activePeriod = from(zonedDateTime);
-      physicalMeterState.setModified(physicalMeter);
+      physicalMeter.activePeriod = from(earliestDateTime);
+      physicalMeterState.setCreated(physicalMeter);
     }
 
-    Optional<PhysicalMeter> activeAtTimestamp = physicalMeterUseCases.getActiveMeterAtTimestamp(
-      physicalMeter.organisationId,
-      physicalMeter.externalId,
-      zonedDateTime
-    );
+    Optional<PhysicalMeter> physicalMeterActiveAtTimestamp =
+      physicalMeterUseCases.getActiveMeterAtTimestamp(
+        physicalMeter.organisationId,
+        physicalMeter.externalId,
+        earliestDateTime
+      );
 
-    Optional<ZonedDateTime> oldStopForActiveAtTimestamp =
-      activeAtTimestamp.flatMap(at -> at.activePeriod.getStopDateTime());
+    Optional<ZonedDateTime> oldStopTimeDateForActiveMeter =
+      physicalMeterActiveAtTimestamp.flatMap(pm -> pm.activePeriod.getStopDateTime());
 
     // Close active at timestamp if it's another meter than the incoming measurements
     // and is not moving stop time forward
-    activeAtTimestamp
-      .filter(at -> !at.id.equals(physicalMeter.id))
-      .filter(at -> physicalMeter.activePeriod.getStopDateTime()
-        .filter(zonedDateTime::isAfter)
+    physicalMeterActiveAtTimestamp
+      .filter(pm -> !pm.id.equals(physicalMeter.id))
+      .filter(pm -> physicalMeter.activePeriod.getStopDateTime()
+        .filter(earliestDateTime::isAfter)
         .isEmpty())
-      .ifPresent(at -> {
-        at.deactivate(zonedDateTime);
-        physicalMeterUseCases.saveAndFlush(at);
-      });
+      .map(pm -> pm.deactivate(earliestDateTime))
+      .ifPresent(physicalMeterUseCases::saveAndFlush);
 
     // Move start time back in time if measurement is before current start time
-    boolean movedStartTime = physicalMeter.activePeriod.getStartDateTime()
-      .filter(zonedDateTime::isBefore)
-      .map(pStart -> {
-        physicalMeter.activate(zonedDateTime);
-        return physicalMeterState.setModified(physicalMeter);
-      })
-      .isPresent();
-
-    // Also set stop time if this is a new meter in between two existing
-    if (!movedStartTime) {
-      activeAtTimestamp
-        .filter(at -> !at.id.equals(physicalMeter.id))
-        .flatMap(at -> oldStopForActiveAtTimestamp)
-        .ifPresent(atStop -> {
-          physicalMeter.deactivate(atStop);
-          physicalMeterState.setModified(physicalMeter);
-        });
-    }
+    physicalMeter.activePeriod.getStartDateTime()
+      .filter(earliestDateTime::isBefore)
+      .map(physicalMeter::activate)
+      .map(pm -> physicalMeter.activate(earliestDateTime))
+      .map(physicalMeterState::setCreated)
+      .ifPresentOrElse(
+        DO_NOTHING,
+        () -> {
+          // Also set stop time if this is a new meter in between two existing
+          physicalMeterActiveAtTimestamp
+            .filter(at -> !at.id.equals(physicalMeter.id))
+            .flatMap(at -> oldStopTimeDateForActiveMeter)
+            .map(physicalMeter::deactivate)
+            .ifPresent(physicalMeterState::setCreated);
+        }
+      );
   }
 
   private Optional<Measurement> createMeasurement(
@@ -259,10 +259,10 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   }
 
   private static final class State {
-    private boolean modified = false;
+    private boolean isCreated = false;
 
-    private <T> T setModified(T object) {
-      modified = true;
+    private <T> T setCreated(T object) {
+      isCreated = true;
       return object;
     }
   }
