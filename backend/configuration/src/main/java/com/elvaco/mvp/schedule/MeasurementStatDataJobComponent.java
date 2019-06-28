@@ -69,7 +69,6 @@ class MeasurementStatDataJobComponent {
     public void run() {
       int count = 0;
       int exceptionCount = 0;
-      int sleepMillis = 10;
       while (!stopped) {
         try {
           count = measurements.popAndCalculate(1, queAge, numberOfWorkers, id);
