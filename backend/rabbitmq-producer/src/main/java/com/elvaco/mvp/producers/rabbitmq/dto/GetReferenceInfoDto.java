@@ -18,7 +18,6 @@ public class GetReferenceInfoDto extends MeteringMessageDto {
   public final String organisationId;
 
   @Nullable
-  @SerializedName("jobId")
   public final String jobId;
 
   @Nullable
