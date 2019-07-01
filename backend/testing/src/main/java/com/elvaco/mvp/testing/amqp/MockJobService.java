@@ -31,9 +31,7 @@ public class MockJobService<V> implements JobService<V> {
   }
 
   @Override
-  public void update(
-    String jobId, V jobInformation
-  ) {
+  public void update(String jobId, V jobInformation) {
     jobs.put(jobId, jobInformation);
   }
 

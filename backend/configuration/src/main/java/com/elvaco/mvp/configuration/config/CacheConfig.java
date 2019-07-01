@@ -42,7 +42,7 @@ class CacheConfig {
 
   @Bean
   MessageThrottler<String, GetReferenceInfoDto> meteringMessageThrottler() {
-    CacheAdapter<String, GetReferenceInfoDto> cacheAdapter = new CacheAdapter<>(
+    Cache<String, GetReferenceInfoDto> cacheAdapter = new CacheAdapter<>(
       ehCacheManager.getCache(
         METERING_MESSAGE_CACHE_NAME,
         String.class,
