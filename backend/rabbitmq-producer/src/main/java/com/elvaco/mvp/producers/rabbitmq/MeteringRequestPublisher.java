@@ -42,10 +42,7 @@ public class MeteringRequestPublisher {
       .organisationId(organisation.externalId)
       .facility(new IdDto(logicalMeter.externalId))
       .meter(logicalMeter.activePhysicalMeter()
-        .map(physicalMeter -> {
-          String id = physicalMeter.address;
-          return new IdDto(id);
-        })
+        .map(physicalMeter -> new IdDto(physicalMeter.address))
         .orElse(null))
       .build();
 

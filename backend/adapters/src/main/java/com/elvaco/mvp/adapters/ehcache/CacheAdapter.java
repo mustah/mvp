@@ -21,6 +21,11 @@ public class CacheAdapter<K, V> implements Cache<K, V> {
   }
 
   @Override
+  public V putIfAbsent(K key, V value) {
+    return delegate.putIfAbsent(key, value);
+  }
+
+  @Override
   public V get(K key) {
     return delegate.get(key);
   }

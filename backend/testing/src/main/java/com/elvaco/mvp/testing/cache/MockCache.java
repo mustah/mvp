@@ -2,7 +2,6 @@ package com.elvaco.mvp.testing.cache;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import com.elvaco.mvp.core.spi.cache.Cache;
 
@@ -21,6 +20,11 @@ public class MockCache<K, V> implements Cache<K, V> {
   }
 
   @Override
+  public V putIfAbsent(K key, V value) {
+    return map.putIfAbsent(key, value);
+  }
+
+  @Override
   public V get(K key) {
     return map.getOrDefault(key, null);
   }
@@ -32,9 +36,5 @@ public class MockCache<K, V> implements Cache<K, V> {
 
   public void remove(K key) {
     map.remove(key);
-  }
-
-  public Set<K> keySet() {
-    return map.keySet();
   }
 }
