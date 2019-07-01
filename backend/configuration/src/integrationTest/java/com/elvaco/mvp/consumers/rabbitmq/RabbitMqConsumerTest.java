@@ -8,11 +8,9 @@ import java.util.UUID;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayStatusDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
 
@@ -105,9 +103,9 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   @Test
   public void responseMessagesForMeasurementMessagesArePublishedAndOrgIsCreated() throws Exception {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-      new GatewayIdDto("gateway-123-456"),
-      new MeterIdDto("meter-123-456"),
-      new FacilityIdDto("facility-123-456"),
+      new IdDto("gateway-123-456"),
+      new IdDto("meter-123-456"),
+      new IdDto("facility-123-456"),
       "organisation-123-456",
       "test",
       List.of(new ValueDto(LocalDateTime.now(), 0.659, "°C", "Return temp."))
@@ -141,10 +139,12 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   public void newOrganisationInParalell() throws Exception {
     for (int org = 0; org < 1000; org++) {
       for (int id = 0; id < 10; id++) {
+        String id1 = "meter-123-" + org + "-" + id;
+        String id2 = "gateway-123-" + org + "-" + id;
         MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-          new GatewayIdDto("gateway-123-" + org + "-" + id),
-          new MeterIdDto("meter-123-" + org + "-" + id),
-          new FacilityIdDto("facility-123-" + org + "-" + id),
+          new IdDto(id2),
+          new IdDto(id1),
+          new IdDto("facility-123-" + org + "-" + id),
           "organisation-" + org,
           "test",
           List.of(new ValueDto(LocalDateTime.now(), 0.659, "°C", "Return temp."))

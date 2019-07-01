@@ -15,8 +15,8 @@ import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.producers.rabbitmq.SyncRequestStatusType;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
@@ -313,7 +313,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
       softly.assertThat(enqueuedMessage.meter).isNotNull();
 
       softly.assertThat(enqueuedMessage.facility)
-        .isEqualTo(new FacilityIdDto(logicalMeter.externalId));
+        .isEqualTo(new IdDto(logicalMeter.externalId));
 
       softly.assertThat(propertiesUseCases.shouldUpdateGeolocation(
         logicalMeter.id,

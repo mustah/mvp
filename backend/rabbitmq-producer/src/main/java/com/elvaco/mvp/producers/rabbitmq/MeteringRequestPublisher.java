@@ -12,13 +12,13 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 
 import lombok.RequiredArgsConstructor;
+
+import static java.util.UUID.randomUUID;
 
 @RequiredArgsConstructor
 public class MeteringRequestPublisher {
@@ -30,50 +30,51 @@ public class MeteringRequestPublisher {
 
   public String request(LogicalMeter logicalMeter) {
     ensureSuperUser();
-    Organisation meterOrganisation = findOrganisationOrThrowException(
+
+    Organisation organisation = findOrganisationOrElseThrow(
       logicalMeter.organisationId,
       "logical meter",
       logicalMeter.id
     );
 
-    String jobId = UUID.randomUUID().toString();
-
     GetReferenceInfoDto getReferenceInfoDto = GetReferenceInfoDto.builder()
-      .jobId(jobId)
-      .organisationId(meterOrganisation.externalId)
-      .facility(new FacilityIdDto(logicalMeter.externalId))
+      .jobId(randomUUID().toString())
+      .organisationId(organisation.externalId)
+      .facility(new IdDto(logicalMeter.externalId))
       .meter(logicalMeter.activePhysicalMeter()
-        .map(physicalMeter -> new MeterIdDto(physicalMeter.address))
+        .map(physicalMeter -> new IdDto(physicalMeter.address))
         .orElse(null))
       .build();
 
-    publishMessage(jobId, getReferenceInfoDto);
+    publishMessage(getReferenceInfoDto);
 
     return getReferenceInfoDto.jobId;
   }
 
   public String request(Gateway gateway) {
     ensureSuperUser();
-    findOrganisationOrThrowException(gateway.organisationId, "gateway", gateway.id);
-    Organisation gatewayOrganisation = findOrganisationOrThrowException(
+
+    findOrganisationOrElseThrow(gateway.organisationId, "gateway", gateway.id);
+
+    Organisation organisation = findOrganisationOrElseThrow(
       gateway.organisationId,
       "gateway",
       gateway.id
     );
-    String jobId = UUID.randomUUID().toString();
 
+    String id = gateway.serial;
     GetReferenceInfoDto getReferenceInfoDto = GetReferenceInfoDto.builder()
-      .jobId(jobId)
-      .organisationId(gatewayOrganisation.externalId)
-      .gateway(new GatewayIdDto(gateway.serial))
+      .jobId(randomUUID().toString())
+      .organisationId(organisation.externalId)
+      .gateway(new IdDto(id))
       .build();
 
-    publishMessage(jobId, getReferenceInfoDto);
+    publishMessage(getReferenceInfoDto);
 
     return getReferenceInfoDto.jobId;
   }
 
-  private void publishMessage(String jobId, GetReferenceInfoDto getReferenceInfoDto) {
+  private void publishMessage(GetReferenceInfoDto getReferenceInfoDto) {
     try {
       messagePublisher.publish(
         MessageSerializer.toJson(getReferenceInfoDto).getBytes(StandardCharsets.UTF_8)
@@ -81,23 +82,21 @@ public class MeteringRequestPublisher {
     } catch (Exception exception) {
       throw new UpstreamServiceUnavailable(exception.getMessage());
     }
-    meterSyncJobService.newPendingJob(jobId);
+    meterSyncJobService.newPendingJob(getReferenceInfoDto.jobId);
   }
 
-  private Organisation findOrganisationOrThrowException(
+  private Organisation findOrganisationOrElseThrow(
     UUID organisationId,
     String entityName,
     UUID id
   ) {
     return organisations.findById(organisationId)
-      .orElseThrow(
-        () -> new RuntimeException(String.format(
-          "Owning organisation %s of %s %s not found!",
-          organisationId,
-          entityName,
-          id
-        ))
-      );
+      .orElseThrow(() -> new RuntimeException(String.format(
+        "Owning organisation %s of %s %s not found!",
+        organisationId,
+        entityName,
+        id
+      )));
   }
 
   private void ensureSuperUser() {

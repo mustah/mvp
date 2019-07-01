@@ -14,11 +14,6 @@ public class MessageThrottler<K, V> {
 
   public boolean throttle(V value) {
     K key = keyFactory.apply(value);
-    if (cache.containsKey(key)) {
-      return true;
-    }
-
-    cache.put(key, value);
-    return false;
+    return cache.putIfAbsent(key, value) != null;
   }
 }

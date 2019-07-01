@@ -19,10 +19,8 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 
 import org.junit.Before;
@@ -71,8 +69,8 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
   public void survivesMissingGatewayFieldInMeasurementMessage() {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       null,
-      new MeterIdDto(EXTERNAL_ID),
-      new FacilityIdDto(EXTERNAL_ID),
+      new IdDto(EXTERNAL_ID),
+      new IdDto(EXTERNAL_ID),
       ORGANISATION_SLUG,
       "Test source system",
       List.of(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY))
@@ -89,9 +87,9 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
   @Test
   public void survivesEmptyGatewayFieldInMeasurementMessage() {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-      new GatewayIdDto(null),
-      new MeterIdDto(EXTERNAL_ID),
-      new FacilityIdDto(EXTERNAL_ID),
+      new IdDto(null),
+      new IdDto(EXTERNAL_ID),
+      new IdDto(EXTERNAL_ID),
       ORGANISATION_SLUG,
       "Test source system",
       List.of(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY))
@@ -141,9 +139,9 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
       .build());
 
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-      new GatewayIdDto(GATEWAY_EXTERNAL_ID),
-      new MeterIdDto(ADDRESS),
-      new FacilityIdDto(EXTERNAL_ID),
+      new IdDto(GATEWAY_EXTERNAL_ID),
+      new IdDto(ADDRESS),
+      new IdDto(EXTERNAL_ID),
       organisation.externalId,
       "Elvaco Metering",
       asList(
@@ -631,9 +629,9 @@ public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest 
 
   private MeteringMeasurementMessageDto newMeasurementMessage(ValueDto... valueDto) {
     return new MeteringMeasurementMessageDto(
-      new GatewayIdDto(GATEWAY_EXTERNAL_ID),
-      new MeterIdDto(ADDRESS),
-      new FacilityIdDto(EXTERNAL_ID),
+      new IdDto(GATEWAY_EXTERNAL_ID),
+      new IdDto(ADDRESS),
+      new IdDto(EXTERNAL_ID),
       ORGANISATION_EXTERNAL_ID,
       "Elvaco Metering",
       asList(valueDto)

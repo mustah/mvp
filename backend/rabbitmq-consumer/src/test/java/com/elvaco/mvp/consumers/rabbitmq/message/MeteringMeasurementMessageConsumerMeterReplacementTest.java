@@ -15,9 +15,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 
 import org.junit.Before;
@@ -454,32 +452,34 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest extends Mess
 
   private static class MeteringMeasurementMessageDtoBuilder {
 
-    String gatewayId = GATEWAY_EXTERNAL_ID;
-    String meterId = ADDRESS;
-    String facilityId = EXTERNAL_ID;
-    String organisationId = ORGANISATION_EXTERNAL_ID;
-    String sourceSystemId = "Elvaco Metering";
-    List<ValueDto> values = List.of(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY));
+    private String meterId = ADDRESS;
 
-    MeteringMeasurementMessageDtoBuilder meterId(String meterId) {
+    private List<ValueDto> values = List.of(new ValueDto(
+      MEASUREMENT_TIMESTAMP,
+      1.0,
+      "kWh",
+      QUANTITY
+    ));
+
+    private MeteringMeasurementMessageDtoBuilder meterId(String meterId) {
       this.meterId = meterId;
       return this;
     }
 
-    MeteringMeasurementMessageDtoBuilder valuesAtTimestamps(LocalDateTime... timestamps) {
+    private MeteringMeasurementMessageDtoBuilder valuesAtTimestamps(LocalDateTime... timestamps) {
       this.values = Arrays.stream(timestamps)
         .map(ts -> new ValueDto(ts, 1.0, "kWh", QUANTITY))
         .collect(toList());
       return this;
     }
 
-    MeteringMeasurementMessageDto build() {
+    private MeteringMeasurementMessageDto build() {
       return new MeteringMeasurementMessageDto(
-        new GatewayIdDto(gatewayId),
-        new MeterIdDto(meterId),
-        new FacilityIdDto(facilityId),
-        organisationId,
-        sourceSystemId,
+        new IdDto(GATEWAY_EXTERNAL_ID),
+        new IdDto(meterId),
+        new IdDto(EXTERNAL_ID),
+        ORGANISATION_EXTERNAL_ID,
+        "Elvaco Metering",
         values
       );
     }

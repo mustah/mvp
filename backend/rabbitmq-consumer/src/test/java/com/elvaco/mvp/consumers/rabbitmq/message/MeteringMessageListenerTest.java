@@ -7,10 +7,8 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.InfrastructureStatusMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.core.util.MessageThrottler;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.testing.cache.MockCache;
 
@@ -203,13 +201,13 @@ public class MeteringMessageListenerTest {
     public Optional<GetReferenceInfoDto> accept(MeteringMeasurementMessageDto message) {
       messageReceived = true;
       return Optional.of(
-        new GetReferenceInfoDto(
-          message.organisationId,
-          "job-1234",
-          new MeterIdDto(message.meter.id),
-          message.gateway().map(gatewayIdDto -> new GatewayIdDto(gatewayIdDto.id)).orElse(null),
-          new FacilityIdDto(message.facility.id)
-        )
+        GetReferenceInfoDto.builder()
+          .organisationId(message.organisationId)
+          .jobId("job-1234")
+          .meter(new IdDto(message.meter.id))
+          .gateway(message.gateway().map(gatewayIdDto -> new IdDto(gatewayIdDto.id)).orElse(null))
+          .facility(new IdDto(message.facility.id))
+          .build()
       );
     }
   }

@@ -15,8 +15,7 @@ import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.After;
@@ -170,8 +169,8 @@ public class AlarmMessageConsumerTest extends IntegrationTest {
 
   private MeteringAlarmMessageDto newAlarmMessage(AlarmDto... alarms) {
     return new MeteringAlarmMessageDto(
-      new MeterIdDto("meter-123"),
-      new FacilityIdDto("external-123"),
+      new IdDto("meter-123"),
+      new IdDto("external-123"),
       context().defaultOrganisation().externalId,
       "Test source system",
       asList(alarms)

@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
 
 import lombok.EqualsAndHashCode;
@@ -19,18 +17,18 @@ import static java.util.Objects.nonNull;
 @ToString(exclude = "values")
 public class MeteringMeasurementMessageDto extends MeteringMessageDto {
 
-  public final MeterIdDto meter;
-  public final FacilityIdDto facility;
+  public final IdDto meter;
+  public final IdDto facility;
   public final String organisationId;
   public final String sourceSystemId;
   public final List<ValueDto> values;
   @Nullable
-  private final GatewayIdDto gateway;
+  private final IdDto gateway;
 
   public MeteringMeasurementMessageDto(
-    @Nullable GatewayIdDto gateway,
-    MeterIdDto meter,
-    FacilityIdDto facility,
+    @Nullable IdDto gateway,
+    IdDto meter,
+    IdDto facility,
     String organisationId,
     String sourceSystemId,
     List<ValueDto> values
@@ -55,7 +53,7 @@ public class MeteringMeasurementMessageDto extends MeteringMessageDto {
     );
   }
 
-  public Optional<GatewayIdDto> gateway() {
+  public Optional<IdDto> gateway() {
     return Optional.ofNullable(gateway).filter(gatewayIdDto -> nonNull(gatewayIdDto.id));
   }
 }

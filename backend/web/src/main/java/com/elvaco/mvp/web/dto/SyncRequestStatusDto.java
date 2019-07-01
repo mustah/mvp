@@ -18,6 +18,7 @@ import lombok.ToString;
 public class SyncRequestStatusDto {
 
   public String jobId;
+
   @Nullable
   public String response;
 

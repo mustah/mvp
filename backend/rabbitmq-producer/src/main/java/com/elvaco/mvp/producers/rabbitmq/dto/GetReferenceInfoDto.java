@@ -18,24 +18,23 @@ public class GetReferenceInfoDto extends MeteringMessageDto {
   public final String organisationId;
 
   @Nullable
-  @SerializedName("jobId")
   public final String jobId;
 
   @Nullable
-  public final MeterIdDto meter;
+  public final IdDto meter;
 
   @Nullable
-  public final GatewayIdDto gateway;
+  public final IdDto gateway;
 
   @Nullable
-  public final FacilityIdDto facility;
+  public final IdDto facility;
 
   public GetReferenceInfoDto(
     String organisation,
     @Nullable String jobId,
-    @Nullable MeterIdDto meter,
-    @Nullable GatewayIdDto gateway,
-    @Nullable FacilityIdDto facility
+    @Nullable IdDto meter,
+    @Nullable IdDto gateway,
+    @Nullable IdDto facility
   ) {
     super(MessageType.METERING_GET_REFERENCE_INFO_V_1_0);
     this.organisationId = organisation;
