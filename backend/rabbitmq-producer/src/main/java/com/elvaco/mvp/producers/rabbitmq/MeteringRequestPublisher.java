@@ -12,10 +12,8 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 
 import lombok.RequiredArgsConstructor;
@@ -42,9 +40,12 @@ public class MeteringRequestPublisher {
     GetReferenceInfoDto getReferenceInfoDto = GetReferenceInfoDto.builder()
       .jobId(randomUUID().toString())
       .organisationId(organisation.externalId)
-      .facility(new FacilityIdDto(logicalMeter.externalId))
+      .facility(new IdDto(logicalMeter.externalId))
       .meter(logicalMeter.activePhysicalMeter()
-        .map(physicalMeter -> new MeterIdDto(physicalMeter.address))
+        .map(physicalMeter -> {
+          String id = physicalMeter.address;
+          return new IdDto(id);
+        })
         .orElse(null))
       .build();
 
@@ -64,10 +65,11 @@ public class MeteringRequestPublisher {
       gateway.id
     );
 
+    String id = gateway.serial;
     GetReferenceInfoDto getReferenceInfoDto = GetReferenceInfoDto.builder()
       .jobId(randomUUID().toString())
       .organisationId(organisation.externalId)
-      .gateway(new GatewayIdDto(gateway.serial))
+      .gateway(new IdDto(id))
       .build();
 
     publishMessage(getReferenceInfoDto);

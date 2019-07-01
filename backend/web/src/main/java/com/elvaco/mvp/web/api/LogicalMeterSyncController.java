@@ -83,9 +83,7 @@ public class LogicalMeterSyncController {
   }
 
   @GetMapping
-  public List<SyncRequestStatusDto> syncStatus(
-    @RequestParam List<String> jobIds
-  ) {
+  public List<SyncRequestStatusDto> syncStatus(@RequestParam List<String> jobIds) {
     if (!authenticatedUser.isSuperAdmin()) {
       throw new Unauthorized(String.format(
         "User '%s' is not allowed to view synchronization requests",

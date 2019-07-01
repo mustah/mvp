@@ -59,7 +59,8 @@ public class MeteringMessageListener implements MessageListener {
       stopAndLog("Reference Info", start);
       return null;
     } else if (meteringMessage instanceof MeteringAlarmMessageDto) {
-      return alarmMessageConsumer.accept((MeteringAlarmMessageDto) meteringMessage)
+      return alarmMessageConsumer
+        .accept((MeteringAlarmMessageDto) meteringMessage)
         .filter(this::throttleAndLog)
         .map(MessageSerializer::toJson)
         .orElse(null);

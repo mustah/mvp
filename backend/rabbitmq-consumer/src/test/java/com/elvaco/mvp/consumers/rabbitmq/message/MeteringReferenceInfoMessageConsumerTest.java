@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTest {
 
   private static final String MANUFACTURER = "ELV";
@@ -240,9 +240,7 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
       .withMeter(null);
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findById(meterId))
-      .isPresent()
-      .get()
+    assertThat(logicalMeters.findById(meterId).get())
       .extracting(m -> m.meterDefinition, m -> m.location)
       .containsExactly(MeterDefinition.DEFAULT_DISTRICT_HEATING, newLocation);
   }
@@ -932,27 +930,21 @@ public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTes
 
   @Test
   public void jobIdCache_NotUpdatedWhenJobIdIsEmpty() {
-    messageHandler.accept(
-      messageBuilder().jobId("").build()
-    );
+    messageHandler.accept(messageBuilder().jobId("").build());
 
     assertThat(jobService.getAll()).isEmpty();
   }
 
   @Test
   public void jobIdCache_NotUpdatedWhenJobIdIsNull() {
-    messageHandler.accept(
-      messageBuilder().jobId(null).build()
-    );
+    messageHandler.accept(messageBuilder().jobId(null).build());
 
     assertThat(jobService.getAll()).isEmpty();
   }
 
   @Test
   public void jobIdCache_NotUpdatedWhenJobIdNotAlreadyPresentInCache() {
-    messageHandler.accept(
-      messageBuilder().jobId("job-id").build()
-    );
+    messageHandler.accept(messageBuilder().jobId("job-id").build());
 
     assertThat(jobService.getAll()).isEmpty();
   }

@@ -12,8 +12,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterAlarmLogs;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
@@ -105,8 +104,8 @@ public class MeteringAlarmMessageConsumerTest {
 
   private MeteringAlarmMessageDto newAlarmMessage(AlarmDto... alarms) {
     return new MeteringAlarmMessageDto(
-      new MeterIdDto("meter-123"),
-      new FacilityIdDto("external-123"),
+      new IdDto("meter-123"),
+      new IdDto("external-123"),
       organisation.externalId,
       "Test source system",
       asList(alarms)

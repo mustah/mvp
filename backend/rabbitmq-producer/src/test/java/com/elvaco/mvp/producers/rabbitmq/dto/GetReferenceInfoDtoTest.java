@@ -17,9 +17,9 @@ public class GetReferenceInfoDtoTest {
     GetReferenceInfoDto dto = GetReferenceInfoDto.builder()
       .jobId("1")
       .organisationId("organisation")
-      .facility(new FacilityIdDto("facility-id"))
-      .meter(new MeterIdDto("meter-id"))
-      .gateway(new GatewayIdDto("gateway-id"))
+      .facility(new IdDto("facility-id"))
+      .meter(new IdDto("meter-id"))
+      .gateway(new IdDto("gateway-id"))
       .build();
 
     assertJsonEqual(
@@ -36,8 +36,8 @@ public class GetReferenceInfoDtoTest {
     GetReferenceInfoDto dto = GetReferenceInfoDto.builder()
       .organisationId("organisation")
       .jobId("1")
-      .facility(new FacilityIdDto("facility-id"))
-      .gateway(new GatewayIdDto("gateway-id"))
+      .facility(new IdDto("facility-id"))
+      .gateway(new IdDto("gateway-id"))
       .build();
     assertJsonEqual(
       MessageSerializer.toJson(dto),
@@ -52,9 +52,9 @@ public class GetReferenceInfoDtoTest {
   public void serializesCorrectlyWithoutJobId() {
     GetReferenceInfoDto dto = GetReferenceInfoDto.builder()
       .organisationId("organisation")
-      .facility(new FacilityIdDto("facility-id"))
-      .meter(new MeterIdDto("meter-id"))
-      .gateway(new GatewayIdDto("gateway-id"))
+      .facility(new IdDto("facility-id"))
+      .meter(new IdDto("meter-id"))
+      .gateway(new IdDto("gateway-id"))
       .build();
     assertJsonEqual(
       MessageSerializer.toJson(dto),

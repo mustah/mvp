@@ -11,9 +11,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.After;
@@ -114,8 +112,8 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     // Given first meter without gateway
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
       null,
-      new MeterIdDto("meterId-1"),
-      new FacilityIdDto("facility"),
+      new IdDto("meterId-1"),
+      new IdDto("facility"),
       "organisationId",
       "sourceSystemId",
       singletonList(newValueDto(when, 1.0))
@@ -123,9 +121,9 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
     // Meter replacement including gateway will save logicalMeter and gateway
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
-      new GatewayIdDto("gatewayId"),
-      new MeterIdDto("meterId-2"),
-      new FacilityIdDto("facility"),
+      new IdDto("gatewayId"),
+      new IdDto("meterId-2"),
+      new IdDto("facility"),
       "organisationId",
       "sourceSystemId",
       singletonList(newValueDto(when.plusDays(1), 2.0))
@@ -143,8 +141,8 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
       null,
-      new MeterIdDto("meterId-1"),
-      new FacilityIdDto("facility"),
+      new IdDto("meterId-1"),
+      new IdDto("facility"),
       "organisationId",
       "sourceSystemId",
       singletonList(newValueDto(when, 1.0))
@@ -152,8 +150,8 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
       null,
-      new MeterIdDto("meterId-2"),
-      new FacilityIdDto("facility"),
+      new IdDto("meterId-2"),
+      new IdDto("facility"),
       "organisationId",
       "sourceSystemId",
       singletonList(newValueDto(when.plusDays(1), 2.0))
@@ -162,8 +160,8 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     assertThatThrownBy(() ->
       measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
         null,
-        new MeterIdDto("meterId-2"),
-        new FacilityIdDto("facility"),
+        new IdDto("meterId-2"),
+        new IdDto("facility"),
         "organisationId",
         "sourceSystemId",
         singletonList(newValueDto(when.minusDays(1), 3.0))
@@ -230,9 +228,9 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   private MeteringMeasurementMessageDto newMeasurementMessage(List<ValueDto> values) {
     return new MeteringMeasurementMessageDto(
-      new GatewayIdDto("gateway-id"),
-      new MeterIdDto("meter-id"),
-      new FacilityIdDto("facility-id"),
+      new IdDto("gateway-id"),
+      new IdDto("meter-id"),
+      new IdDto("facility-id"),
       "org1",
       "integration test source system",
       values

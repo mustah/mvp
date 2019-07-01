@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 class JobServiceConfig {
 
   @Bean
-  public JobService<MeteringReferenceInfoMessageDto> meterSyncJobService(
+  JobService<MeteringReferenceInfoMessageDto> meterSyncJobService(
     Cache<String, MeteringReferenceInfoMessageDto> jobIdCache
   ) {
     return new MeterSyncJobService(jobIdCache);

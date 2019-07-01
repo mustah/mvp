@@ -139,11 +139,11 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     if (PHYSICAL_METER_VALIDATOR.isIncomplete(physicalMeter)
       || LOGICAL_METER_VALIDATOR.isIncomplete(logicalMeter)) {
-      responseBuilder.setFacilityId(facilityId).setMeterExternalId(address);
+      responseBuilder.facilityId(facilityId).meterExternalId(address);
     }
 
     gateway.filter(GATEWAY_VALIDATOR::isIncomplete)
-      .map(gw -> responseBuilder.setFacilityId(facilityId).setGatewayExternalId(gw.serial));
+      .map(gw -> responseBuilder.facilityId(facilityId).gatewayExternalId(gw.serial));
 
     return responseBuilder.build();
   }
