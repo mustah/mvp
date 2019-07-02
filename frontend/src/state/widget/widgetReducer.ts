@@ -9,7 +9,9 @@ export interface WidgetData extends Identifiable {
   data: any; // TODO please type this!!!
 }
 
-export type WidgetState = ObjectsById<WidgetData & RequestsHttp>;
+export type WidgetModel = WidgetData & RequestsHttp;
+
+export type WidgetState = ObjectsById<WidgetModel>;
 
 const initialState: WidgetState = {};
 

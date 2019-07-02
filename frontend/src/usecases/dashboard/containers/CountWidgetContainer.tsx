@@ -5,8 +5,9 @@ import {translate} from '../../../services/translationService';
 import {resetSelection, selectSelection} from '../../../state/user-selection/userSelectionActions';
 import {allCurrentMeterParameters, getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {fetchCountWidget} from '../../../state/widget/widgetActions';
+import {WidgetModel} from '../../../state/widget/widgetReducer';
 import {CountWidget, DispatchToProps, OwnProps, StateToProps} from '../components/CountWidget';
-import {getMeterCount} from '../dashboardSelectors';
+import {getMeterCount, isFetching} from '../dashboardSelectors';
 
 const mapStateToProps = (
   {domainModels: {userSelections}, widget}: RootState,
@@ -22,12 +23,13 @@ const mapStateToProps = (
     ? userSelection.name
     : translate('all meters');
 
+  const widgetModel: WidgetModel = widget[id];
   return {
     isSuccessFullyFetched: userSelections.isSuccessfullyFetched,
-    isFetching: userSelections.isFetching,
+    isFetching: userSelections.isFetching || isFetching(widgetModel),
     title,
     parameters,
-    meterCount: getMeterCount(widget, id)
+    meterCount: getMeterCount(widgetModel)
   };
 };
 

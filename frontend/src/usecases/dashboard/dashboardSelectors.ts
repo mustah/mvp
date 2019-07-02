@@ -1,15 +1,20 @@
+import {isDefined} from '../../helpers/commonHelpers';
+import {Maybe} from '../../helpers/Maybe';
 import {Dashboard, Dashboard as DashboardModel} from '../../state/domain-models/dashboard/dashboardModels';
 import {NormalizedState} from '../../state/domain-models/domainModels';
 import {getFirstDomainModel} from '../../state/domain-models/domainModelsSelectors';
-import {WidgetState} from '../../state/widget/widgetReducer';
-import {uuid} from '../../types/Types';
+import {WidgetModel} from '../../state/widget/widgetReducer';
 
-export const getMeterCount = (state: WidgetState, id: uuid): number => {
-  if (state[id] !== undefined && state[id].data !== undefined) {
-    return state[id].data || 0;
-  }
-  return 0;
-};
+export const isFetching = (widgetModel?: WidgetModel): boolean =>
+  Maybe.maybe(widgetModel)
+    .map(it => it.isFetching)
+    .orElse(false);
+
+export const getMeterCount = (widgetModel?: WidgetModel): number =>
+  Maybe.maybe(widgetModel)
+    .map(it => it.data)
+    .filter(isDefined)
+    .orElse(0);
 
 export const hasLayout = (dashboard: DashboardModel) => !(!dashboard.layout.layout);
 

@@ -31,6 +31,7 @@ const CountContentWidgetLoader = withWidgetLoader<IndicatorWidgetProps>(NumMeter
 
 export const CountWidget = ({
   fetchCountWidget,
+  isFetching,
   isSuccessFullyFetched,
   meterCount,
   onEdit,
@@ -44,7 +45,7 @@ export const CountWidget = ({
     if (isSuccessFullyFetched) {
       fetchCountWidget({widget, parameters});
     }
-  }, [widget, parameters, isSuccessFullyFetched]);
+  }, [widget, parameters, isSuccessFullyFetched, isFetching]);
 
   const deleteWidget: OnClick = () => onDelete(widget);
   const editWidget: OnClick = () => onEdit(widget);
@@ -58,7 +59,7 @@ export const CountWidget = ({
       headerClassName="count"
     >
       <CountContentWidgetLoader
-        isFetching={!isSuccessFullyFetched}
+        isFetching={isFetching}
         onClick={onSelectSelection}
         title={translate('meter', {count: meterCount})}
         value={meterCount}
