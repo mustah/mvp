@@ -9,13 +9,12 @@ import {Maybe} from '../../../helpers/Maybe';
 import {makeApiParametersOf} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {RequestsHttp} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {deleteWidget} from '../../../state/domain-models/widget/widgetActions';
 import {MapWidget} from '../../../state/domain-models/widget/widgetModels';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {fetchMapWidget, WidgetRequestParameters} from '../../../state/widget/widgetActions';
-import {WidgetData} from '../../../state/widget/widgetReducer';
+import {WidgetData, WidgetModel} from '../../../state/widget/widgetReducer';
 import {CallbackWith, ClearError, ErrorResponse, HasContent} from '../../../types/Types';
 import {MapMarkerCluster} from '../../map/components/Map';
 import {emptyClusters} from '../../map/helper/clusterHelper';
@@ -34,7 +33,7 @@ interface OwnProps extends WidgetDispatchers {
 }
 
 interface StateToProps extends MapComponentProps, HasContent, MapMarkersProps {
-  model: WidgetData & RequestsHttp;
+  model: WidgetModel;
   error: Maybe<ErrorResponse>;
   isFetching: boolean;
   title: string;
@@ -145,7 +144,7 @@ const mapStateToProps = (
     ? userSelection.name
     : firstUpperTranslated('all meters');
 
-  const widget = widgetState[id];
+  const widget: WidgetModel = widgetState[id];
   const hasContent = widget && widget.isSuccessfullyFetched;
 
   return {

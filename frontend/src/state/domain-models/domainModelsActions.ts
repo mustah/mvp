@@ -106,12 +106,6 @@ const asyncRequest = async <REQUEST_DATA, T>(
 export const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: RequestsHttp): boolean =>
   !isSuccessfullyFetched && !isFetching && !error;
 
-const shouldFetchEntity = (
-  id: uuid,
-  {isSuccessfullyFetched, isFetching, error, entities}: NormalizedState<Identifiable>,
-): boolean =>
-  !isSuccessfullyFetched && !isFetching && !error && !entities[id];
-
 export const fetchIfNeededForSector = <T extends Identifiable>(
   actionKey: ActionKey,
   endPoint: EndPoints,
@@ -144,6 +138,12 @@ export const fetchIfNeeded = <T extends Identifiable>(
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
 ) =>
   fetchIfNeededForSector<T>(endPoint, endPoint, entityType, formatData, requestCallbacks);
+
+const shouldFetchEntity = (
+  id: uuid,
+  {isSuccessfullyFetched, isFetching, error, entities}: NormalizedState<Identifiable>,
+): boolean =>
+  !isSuccessfullyFetched && !isFetching && !error && !entities[id];
 
 export const fetchEntityIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
