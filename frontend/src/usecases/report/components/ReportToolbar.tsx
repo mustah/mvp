@@ -128,7 +128,7 @@ export const ReportToolbar = withCssStyles(({
         <LegendActionButton
           color={hasLegendItems ? fg : colors.borderColor}
           onClick={showHideLegend}
-          disabled={!hasLegendItems}
+          disabled={!hasLegendItems || view === ToolbarView.table}
         />
       </ToolbarRightPane>
     </Toolbar>
