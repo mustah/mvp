@@ -10,7 +10,6 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
@@ -25,6 +24,8 @@ import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
+import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY;
+import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -35,6 +36,12 @@ import static org.assertj.core.api.Assertions.tuple;
 
 public class MeasurementMessageConsumerTest extends IntegrationTest {
 
+  public static final String METER_ID_1 = "meterId-1";
+  public static final String FACILITY = "facility";
+  public static final String ORGANISATION_ID = "organisationId";
+  public static final String SOURCE_SYSTEM_ID = "sourceSystemId";
+  public static final String METER_ID_2 = "meterId-2";
+  public static final String GATEWAY_SERIAL_1 = "A123";
   private static final ZonedDateTime CREATED = ZonedDateTime.of(
     LocalDateTime.parse("2018-03-07T16:13:09"),
     METERING_TIMEZONE
@@ -42,9 +49,6 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   @Autowired
   private MeasurementMessageConsumer measurementMessageConsumer;
-
-  @Autowired
-  private MeasurementJpaRepository measurementJpaRepository;
 
   @Autowired
   private CacheManager cacheManager;
@@ -112,26 +116,26 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     // Given first meter without gateway
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
       null,
-      new IdDto("meterId-1"),
-      new IdDto("facility"),
-      "organisationId",
-      "sourceSystemId",
+      new IdDto(METER_ID_1),
+      new IdDto(FACILITY),
+      ORGANISATION_ID,
+      SOURCE_SYSTEM_ID,
       singletonList(newValueDto(when, 1.0))
     ));
 
     // Meter replacement including gateway will save logicalMeter and gateway
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
-      new IdDto("gatewayId"),
-      new IdDto("meterId-2"),
-      new IdDto("facility"),
-      "organisationId",
-      "sourceSystemId",
+      new IdDto(GATEWAY_SERIAL_1),
+      new IdDto(METER_ID_2),
+      new IdDto(FACILITY),
+      ORGANISATION_ID,
+      SOURCE_SYSTEM_ID,
       singletonList(newValueDto(when.plusDays(1), 2.0))
     ));
 
     assertThat(measurementJpaRepository.findAll())
       .extracting(m -> m.getId().physicalMeter.address, m -> m.value)
-      .containsExactlyInAnyOrder(tuple("meterId-1", 1.0), tuple("meterId-2", 2.0));
+      .containsExactlyInAnyOrder(tuple(METER_ID_1, 1.0), tuple(METER_ID_2, 2.0));
   }
 
   @Test
@@ -141,29 +145,29 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
       null,
-      new IdDto("meterId-1"),
-      new IdDto("facility"),
-      "organisationId",
-      "sourceSystemId",
+      new IdDto(METER_ID_1),
+      new IdDto(FACILITY),
+      ORGANISATION_ID,
+      SOURCE_SYSTEM_ID,
       singletonList(newValueDto(when, 1.0))
     ));
 
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
       null,
-      new IdDto("meterId-2"),
-      new IdDto("facility"),
-      "organisationId",
-      "sourceSystemId",
+      new IdDto(METER_ID_2),
+      new IdDto(FACILITY),
+      ORGANISATION_ID,
+      SOURCE_SYSTEM_ID,
       singletonList(newValueDto(when.plusDays(1), 2.0))
     ));
 
     assertThatThrownBy(() ->
       measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
         null,
-        new IdDto("meterId-2"),
-        new IdDto("facility"),
-        "organisationId",
-        "sourceSystemId",
+        new IdDto(METER_ID_2),
+        new IdDto(FACILITY),
+        ORGANISATION_ID,
+        SOURCE_SYSTEM_ID,
         singletonList(newValueDto(when.minusDays(1), 3.0))
       )))
       .isInstanceOf(DataIntegrityViolationException.class)
@@ -175,8 +179,8 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
   public void duplicateMeasurementsInMessage_lastMeasurementInMessageIsUsed() {
     var when = CREATED.toLocalDateTime();
     var measurementMessage = newMeasurementMessage(asList(
-      newValueDto(when, 1.0, "kWh"),
-      newValueDto(when, 2.0, "kWh")
+      newValueDto(when, 1.0),
+      newValueDto(when, 2.0)
     ));
 
     measurementMessageConsumer.accept(measurementMessage);
@@ -192,9 +196,9 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
   public void invalidUnitForQuantityIsDiscarded() {
     var measurementMessage = newMeasurementMessage(
       asList(
-        new ValueDto(CREATED.toLocalDateTime(), 1.0, "m³", "Volume"),
-        new ValueDto(CREATED.toLocalDateTime(), 2.0, "kWh", "Volume"),
-        new ValueDto(CREATED.toLocalDateTime(), 3.0, "m³", "Energy")
+        new ValueDto(CREATED.toLocalDateTime(), 1.0, "m³", VOLUME.name),
+        new ValueDto(CREATED.toLocalDateTime(), 2.0, "kWh", VOLUME.name),
+        new ValueDto(CREATED.toLocalDateTime(), 3.0, "m³", ENERGY.name)
       ));
 
     measurementMessageConsumer.accept(measurementMessage);
@@ -209,7 +213,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
   @Test
   public void emptyUnitMeasurementIsDiscarded() {
     var measurementMessage = newMeasurementMessage(
-      singletonList(new ValueDto(LocalDateTime.now(), 1.0, "", "Volume"))
+      singletonList(new ValueDto(LocalDateTime.now(), 1.0, "", VOLUME.name))
     );
 
     measurementMessageConsumer.accept(measurementMessage);
@@ -228,21 +232,17 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   private MeteringMeasurementMessageDto newMeasurementMessage(List<ValueDto> values) {
     return new MeteringMeasurementMessageDto(
-      new IdDto("gateway-id"),
-      new IdDto("meter-id"),
-      new IdDto("facility-id"),
-      "org1",
-      "integration test source system",
+      new IdDto(GATEWAY_SERIAL_1),
+      new IdDto(METER_ID_1),
+      new IdDto(FACILITY),
+      ORGANISATION_ID,
+      SOURCE_SYSTEM_ID,
       values
     );
   }
 
   private ValueDto newValueDto(LocalDateTime when, double value) {
-    return newValueDto(when, value, "kWh");
-  }
-
-  private ValueDto newValueDto(LocalDateTime when, double value, String unit) {
-    return new ValueDto(when, value, unit, "Energy");
+    return new ValueDto(when, value, "kWh", "Energy");
   }
 
   private static void commitTransaction() {

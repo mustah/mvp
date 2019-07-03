@@ -36,10 +36,10 @@ import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.repository.Widgets;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
-
 import com.elvaco.mvp.database.repository.jpa.DashboardJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewaysMetersJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
@@ -99,6 +99,9 @@ public abstract class IntegrationTest implements ContextDsl {
 
   @Autowired
   protected GatewayJpaRepository gatewayJpaRepository;
+
+  @Autowired
+  protected GatewaysMetersJpaRepository gatewaysMetersJpaRepository;
 
   @Autowired
   protected GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
@@ -291,16 +294,25 @@ public abstract class IntegrationTest implements ContextDsl {
     double value
   ) {
     for (Quantity quantity : quantities) {
-      measurements.save(Measurement.builder()
-        .readoutTime(when)
-        .quantity(quantity.name)
-        .value(value)
-        .unit(quantity.storageUnit)
-        .physicalMeter(physicalMeter)
-        .build(),
+      measurements.save(
+        Measurement.builder()
+          .readoutTime(when)
+          .quantity(quantity.name)
+          .value(value)
+          .unit(quantity.storageUnit)
+          .physicalMeter(physicalMeter)
+          .build(),
         logicalMeter
 
       );
+    }
+  }
+
+  protected void waitForMeasurementStat() {
+    try {
+      Thread.sleep(statQueueAge + 100);
+    } catch (InterruptedException e) {
+      //Noop
     }
   }
 
@@ -316,6 +328,7 @@ public abstract class IntegrationTest implements ContextDsl {
     physicalMeterJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
+    gatewaysMetersJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     dashboardJpaRepository.deleteAll();
     widgetJpaRepository.deleteAll();
@@ -394,13 +407,4 @@ public abstract class IntegrationTest implements ContextDsl {
     }
     return integrationTestFixtureContextFactory;
   }
-
-  protected void waitForMeasurementStat() {
-    try {
-      Thread.sleep(statQueueAge + 100);
-    } catch (InterruptedException e) {
-      //Noop
-    }
-  }
-
 }

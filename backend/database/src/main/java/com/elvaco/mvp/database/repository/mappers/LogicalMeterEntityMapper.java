@@ -75,8 +75,8 @@ public final class LogicalMeterEntityMapper {
 
     logicalMeterEntity.location = LocationEntityMapper.toEntity(pk, logicalMeter.location);
 
-    logicalMeterEntity.gateways = logicalMeter.gateways.stream()
-      .map(GatewayEntityMapper::toEntity)
+    logicalMeterEntity.gatewayMeters = logicalMeter.gateways.stream()
+      .map(gw -> GatewayMeterEntityMapper.toEntity(gw, logicalMeterEntity))
       .collect(toSet());
 
     return logicalMeterEntity;
@@ -93,8 +93,8 @@ public final class LogicalMeterEntityMapper {
       .meterDefinition(meterDefinitionEntityMapper.toDomainModel(entity.meterDefinition))
       .created(entity.created)
       .physicalMeters(physicalMeters)
-      .gateways(entity.gateways.stream()
-        .map(GatewayEntityMapper::toDomainModel)
+      .gateways(entity.gatewayMeters.stream()
+        .map(GatewayMeterEntityMapper::toDomainModel)
         .collect(toList()))
       .location(LocationEntityMapper.toDomainModel(entity.location))
       .alarms(MeterAlarmLogEntityMapper.toLatestActiveAlarms(alarmDescriptions, physicalMeters))

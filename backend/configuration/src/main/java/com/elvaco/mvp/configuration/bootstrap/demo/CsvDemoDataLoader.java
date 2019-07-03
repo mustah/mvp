@@ -20,6 +20,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.core.spi.repository.GatewaysMeters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
+import static java.time.ZonedDateTime.now;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
@@ -53,6 +55,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
   private final Gateways gateways;
+  private final GatewaysMeters gatewaysMeters;
   private final SettingUseCases settingUseCases;
   private final StatusLogsDataLoader statusLogsDataLoader;
   private final Organisation rootOrganisation;
@@ -126,19 +129,27 @@ class CsvDemoDataLoader implements CommandLineRunner {
               .organisationId(rootOrganisation.id)
               .serial(csvData.gatewayId)
               .productModel(csvData.gatewayProductModel)
+              .created(now())
+              .lastSeen(now())
               .build();
             return new Parameters(logicalMeter, physicalMeter, gateway);
           })
       )
       .forEach(p -> {
         gateways.save(p.gateway);
-        logicalMeters.save(p.logicalMeter.toBuilder().gateway(p.gateway).build());
+        logicalMeters.save(p.logicalMeter);
+        gatewaysMeters.saveOrUpdate(
+          p.gateway.id,
+          p.logicalMeter.id,
+          p.logicalMeter.organisationId,
+          now()
+        );
         physicalMeters.save(p.physicalMeter.toBuilder().logicalMeterId(p.logicalMeter.id).build());
       });
   }
 
   private ZonedDateTime addDays() {
-    return ZonedDateTime.now().minusDays(daySeed++);
+    return now().minusDays(daySeed++);
   }
 
   private static Map<String, Location> mapAddressToLocation() throws IOException {

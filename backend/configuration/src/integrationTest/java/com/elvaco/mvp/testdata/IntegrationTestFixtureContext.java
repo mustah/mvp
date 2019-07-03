@@ -229,5 +229,4 @@ public class IntegrationTestFixtureContext implements TestFixtures {
       .logicalMeterId(logicalMeter.id)
       .build();
   }
-
 }

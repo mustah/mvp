@@ -71,9 +71,8 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     Organisation organisation = organisationUseCases.findOrCreate(messageDto.organisationId);
 
     State logicalMeterState = new State();
-
     LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
-      .orElseGet(() -> logicalMeterState.setCreated(
+      .orElseGet(() -> logicalMeterState.setModified(
         LogicalMeter.builder()
           .externalId(facilityId)
           .organisationId(organisation.id)
@@ -96,21 +95,30 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           )
         ));
 
-    if (logicalMeterState.isCreated) {
+    ZonedDateTime zonedDateTime = getEarliestTimestamp(messageDto);
+
+    if (logicalMeterState.modified.isPresent()) {
       gateway.ifPresentOrElse(
-        gw -> logicalMeterUseCases.save(logicalMeter.toBuilder().gateway(gw).build()),
+        gw -> logicalMeterUseCases.save(
+          logicalMeter.toBuilder().gateway(
+            gw.toBuilder()
+              .created(zonedDateTime)
+              .lastSeen(zonedDateTime)
+              .build())
+            .build()),
         () -> logicalMeterUseCases.save(logicalMeter)
       );
+    } else {
+      gateway.ifPresent(gw -> gatewayUseCases.setLastSeenForMeter(gw, logicalMeter, zonedDateTime));
     }
 
     String address = messageDto.meter.id;
-    ZonedDateTime earliestDateTime = getEarliestTimestamp(messageDto);
-    boolean isValidDate = earliestDateTime.isAfter(FIRST_VALID_DATE.atZone(METERING_TIMEZONE));
+    boolean isValidDate = zonedDateTime.isAfter(FIRST_VALID_DATE.atZone(METERING_TIMEZONE));
 
     State physicalMeterState = new State();
     PhysicalMeter physicalMeter =
       physicalMeterUseCases.findBy(organisation.id, facilityId, address)
-        .orElseGet(() -> physicalMeterState.setCreated(
+        .orElseGet(() -> physicalMeterState.setModified(
           PhysicalMeter.builder()
             .organisationId(organisation.id)
             .address(address)
@@ -118,17 +126,15 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
             .medium(Medium.UNKNOWN_MEDIUM)
             .logicalMeterId(logicalMeter.id)
             .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
-            .activePeriod(isValidDate ? from(earliestDateTime) : empty())
-            .build()
-        ));
+            .activePeriod(isValidDate ? from(zonedDateTime) : empty())
+            .build())
+        );
 
     if (isValidDate) {
-      updateActivePeriods(physicalMeter, physicalMeterState, earliestDateTime);
+      updateActivePeriods(physicalMeter, physicalMeterState, zonedDateTime);
     }
 
-    if (physicalMeterState.isCreated) {
-      physicalMeterUseCases.save(physicalMeter);
-    }
+    physicalMeterState.modified.ifPresent(o -> physicalMeterUseCases.save(physicalMeter));
 
     ZonedDateTime now = ZonedDateTime.now();
     messageDto.values.forEach(value -> createMeasurement(value, now, physicalMeter)
@@ -165,7 +171,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   ) {
     if (physicalMeter.activePeriod.isEmpty()) {
       physicalMeter.activePeriod = from(earliestDateTime);
-      physicalMeterState.setCreated(physicalMeter);
+      physicalMeterState.setModified(physicalMeter);
     }
 
     Optional<PhysicalMeter> physicalMeterActiveAtTimestamp =
@@ -193,7 +199,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .filter(earliestDateTime::isBefore)
       .map(physicalMeter::activate)
       .map(pm -> physicalMeter.activate(earliestDateTime))
-      .map(physicalMeterState::setCreated)
+      .map(physicalMeterState::setModified)
       .ifPresentOrElse(
         DO_NOTHING,
         () -> {
@@ -202,7 +208,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
             .filter(at -> !at.id.equals(physicalMeter.id))
             .flatMap(at -> oldStopTimeDateForActiveMeter)
             .map(physicalMeter::deactivate)
-            .ifPresent(physicalMeterState::setCreated);
+            .ifPresent(physicalMeterState::setModified);
         }
       );
   }
@@ -259,10 +265,10 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   }
 
   private static final class State {
-    private boolean isCreated = false;
+    private Optional modified = Optional.empty();
 
-    private <T> T setCreated(T object) {
-      isCreated = true;
+    private <T> T setModified(T object) {
+      modified = Optional.of(object);
       return object;
     }
   }

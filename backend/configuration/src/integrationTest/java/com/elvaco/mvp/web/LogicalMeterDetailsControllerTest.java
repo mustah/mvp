@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
+import static java.time.ZonedDateTime.now;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -406,7 +407,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .address("5678")
         .activePeriod(PeriodRange.halfOpenFrom(context().now(), null))
     );
-    given(gateway().meter(meter));
 
     var url = meterDetailsUrl(meter.id);
 
@@ -437,6 +437,26 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(content)
       .extracting(m -> m.gateway.status)
       .isEqualTo(new IdNamedDto("ok"));
+  }
+
+  @Test
+  public void gateway_LastSeenGatewayIsIncluded() {
+    var logicalMeter = given(logicalMeter());
+    ZonedDateTime dateTime = now();
+    given(gateway()
+      .lastSeen(dateTime)
+      .meter(logicalMeter));
+    var gateway2 = given(gateway()
+      .lastSeen(dateTime.plusDays(1))
+      .meter(logicalMeter));
+
+    var content = asMvpUser()
+      .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(content)
+      .extracting(m -> m.gateway.id)
+      .isEqualTo(gateway2.id);
   }
 
   @Test

@@ -78,7 +78,9 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     commitTransaction();
 
     var savedLogicalMeter = logicalMeterJpaRepository.findById(logicalMeter.id).get();
-    assertThat(savedLogicalMeter.gateways).extracting(qw -> qw.pk.id).containsExactly(gatewayId);
+    assertThat(savedLogicalMeter.gatewayMeters)
+      .extracting(gm -> gm.gateway.pk.id)
+      .containsExactly(gatewayId);
     assertThat(savedLogicalMeter.physicalMeters).extracting(m -> m.id).containsExactly(
       physicalMeterId);
 
@@ -127,8 +129,8 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       logicalMeterEntityMapper.toDomainModel(logicalMeter)
         .toBuilder().gateway(newGateway).build()));
 
-    assertThat(logicalMeterJpaRepository.findById(logicalMeter.pk.id).get().gateways)
-      .extracting(p -> p.serial)
+    assertThat(logicalMeterJpaRepository.findById(logicalMeter.pk.id).get().gatewayMeters)
+      .extracting(g -> g.gateway.serial)
       .containsOnly("NEWSERIAL");
 
     assertThat(gatewayJpaRepository.findById(gateway.id).get().serial)
