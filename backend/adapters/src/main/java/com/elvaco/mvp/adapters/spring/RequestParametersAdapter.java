@@ -45,6 +45,10 @@ public class RequestParametersAdapter implements RequestParameters {
     this(new LinkedMultiValueMap<>(), null);
   }
 
+  public static RequestParameters of() {
+    return of(null, null);
+  }
+
   public static RequestParameters of(@Nullable Map<String, List<String>> multiValueMap) {
     return of(multiValueMap, null);
   }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
@@ -31,138 +32,145 @@ import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @RequiredArgsConstructor
 @RestApi("/api/v1/measurements")
 public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
 
+  @PostMapping
+  public List<MeasurementSeriesDto> measurementsPost(
+    @JsonProperty @RequestBody MeasurementRequestDto requestBody
+  ) {
+    return measurements(
+      toLogicalMeterIdParameters(requestBody.logicalMeterId),
+      toQuantityParameters(requestBody.quantity),
+      requestBody.reportAfter,
+      requestBody.reportBefore,
+      requestBody.resolution
+    );
+  }
+
+  @PostMapping("/average")
+  public List<MeasurementSeriesDto> averagePost(
+    @JsonProperty @RequestBody MeasurementRequestDto requestBody
+  ) {
+    return average(
+      toLogicalMeterIdParameters(requestBody.logicalMeterId),
+      toQuantityParameters(requestBody.quantity),
+      requestBody.reportAfter,
+      requestBody.reportBefore,
+      requestBody.resolution,
+      requestBody.label
+    );
+  }
+
   @GetMapping("/average")
-  public List<MeasurementSeriesDto> average(
+  public List<MeasurementSeriesDto> averageGet(
     @RequestParam MultiValueMap<String, String> requestParams,
-    @RequestParam(name = "quantity") Set<QuantityParameter> optionalQuantityParameters,
-    @RequestParam(name = "reportAfter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportStart,
-
-    @RequestParam(required = false, name = "reportBefore")
-    @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
-
+    @RequestParam(name = "quantity") Set<QuantityParameter> quantityParameters,
+    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportAfter,
+    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportBefore,
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
-
-    Map<String, QuantityParameter> quantityMap = getMappedQuantities(
-      optionalQuantityParameters,
-      parameters
+    return average(
+      RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID),
+      quantityParameters,
+      reportAfter,
+      reportBefore,
+      resolution,
+      label
     );
+  }
 
-    ZonedDateTime reportStop = beforeOrNow(before);
-    TemporalResolution temporalResolution = resolutionOrDefault(
-      reportStart,
-      reportStop,
+  @GetMapping
+  public List<MeasurementSeriesDto> measurementsGet(
+    @RequestParam MultiValueMap<String, String> requestParams,
+    @RequestParam(name = "quantity") Optional<Set<QuantityParameter>> optionalQuantityParameters,
+    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportAfter,
+    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportBefore,
+    @RequestParam(required = false) TemporalResolution resolution
+  ) {
+    return measurements(
+      RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID),
+      optionalQuantityParameters.orElse(emptySet()),
+      reportAfter,
+      reportBefore,
       resolution
     );
+  }
+
+  private List<MeasurementSeriesDto> average(
+    RequestParameters parameters,
+    Set<QuantityParameter> quantities,
+    ZonedDateTime reportStart,
+    ZonedDateTime reportBefore,
+    TemporalResolution resolution,
+    String label
+  ) {
+    Map<String, QuantityParameter> quantityMap = getMappedQuantities(quantities, parameters);
+
+    ZonedDateTime reportStop = beforeOrNow(reportBefore);
 
     var parameter = new MeasurementParameter(
       parameters.setReportPeriod(reportStart, reportStop),
       new ArrayList<>(quantityMap.values()),
       reportStart,
       reportStop,
-      temporalResolution
+      resolutionOrDefault(reportStart, reportStop, resolution)
     );
 
     return measurementUseCases.findAverageForPeriod(parameter)
       .entrySet().stream()
-      .map(entry ->
-        toSeries(
-          entry.getValue(),
-          label,
-          String.format("average-%s", entry.getKey()),
-          quantityMap.get(entry.getKey())
-        ))
+      .map(entry -> toSeries(
+        entry.getValue(),
+        label,
+        String.format("average-%s", entry.getKey()),
+        quantityMap.get(entry.getKey())
+      ))
       .collect(toList());
   }
 
-  @PostMapping
-  public List<MeasurementSeriesDto> measurementsPost(
-    @JsonProperty @RequestBody MeasurementRequestDto measurementRequestDto
-  ) {
-    return measurements(
-      RequestParametersAdapter.of(null),
-      Optional.ofNullable(measurementRequestDto.quantity),
-      measurementRequestDto.reportAfter,
-      measurementRequestDto.reportBefore,
-      measurementRequestDto.resolution
-    );
-  }
-
-  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-  @GetMapping
-  public List<MeasurementSeriesDto> measurementsGet(
-    @RequestParam MultiValueMap<String, String> requestParams,
-    @RequestParam(name = "quantity") Optional<Set<QuantityParameter>> optionalQuantityParameters,
-    @RequestParam(name = "reportAfter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportStart,
-
-    @RequestParam(required = false)
-    @DateTimeFormat(iso = DATE_TIME) ZonedDateTime reportBefore,
-
-    @RequestParam(required = false) TemporalResolution resolution
-  ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
-
-    return measurements(
-      parameters,
-      optionalQuantityParameters,
-      reportStart,
-      reportBefore,
-      resolution
-    );
-  }
-
+  /**
+   * We need to limit the amount of measurements here. Even if we're only fetching
+   * measurements for one meter, we might be fetching them over long period. E.g, measurements
+   * for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
+   * measurements, which is a bit too much.
+   */
   private List<MeasurementSeriesDto> measurements(
     RequestParameters parameters,
-    Optional<Set<QuantityParameter>> optionalQuantityParameters,
+    Set<QuantityParameter> quantities,
     ZonedDateTime reportStart,
-    ZonedDateTime before,
-    TemporalResolution resolution
+    @Nullable ZonedDateTime before,
+    @Nullable TemporalResolution resolution
   ) {
-    // TODO: We need to limit the amount of measurements here. Even if we're only fetching
-    // measurements for one meter, we might be fetching them over long period. E.g, measurements
-    // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
-    // measurements, which is a bit too much.
-    Map<String, QuantityParameter> quantityMap = getMappedQuantities(
-      optionalQuantityParameters.orElse(emptySet()),
-      parameters
-    );
+    Map<String, QuantityParameter> quantityMap = getMappedQuantities(quantities, parameters);
 
     ZonedDateTime reportStop = beforeOrNow(before);
-    TemporalResolution temporalResolution = resolutionOrDefault(
-      reportStart,
-      reportStop,
-      resolution
-    );
 
     MeasurementParameter parameter = new MeasurementParameter(
       parameters.setReportPeriod(reportStart, reportStop),
       new ArrayList<>(quantityMap.values()),
       reportStart,
       reportStop,
-      temporalResolution
+      resolutionOrDefault(reportStart, reportStop, resolution)
     );
 
     return measurementUseCases.findSeriesForPeriod(parameter)
       .entrySet().stream()
-      .map(entry ->
-        toSeries(
-          entry.getValue(),
-          entry.getKey().logicalMeterId,
-          entry.getKey().externalId,
-          entry.getKey().mediumName,
-          entry.getKey().physicalMeterAddress,
-          quantityMap.get(entry.getKey().quantity)
-        ))
+      .map(entry -> toSeries(
+        entry.getValue(),
+        entry.getKey().logicalMeterId,
+        entry.getKey().externalId,
+        entry.getKey().mediumName,
+        entry.getKey().physicalMeterAddress,
+        quantityMap.get(entry.getKey().quantity)
+      ))
       .collect(toList());
   }
 
@@ -175,18 +183,28 @@ public class MeasurementController {
 
     if (quantityParameters.isEmpty()) {
       return preferredQuantityParameters;
+    } else {
+      return quantityParameters.stream()
+        .filter(qp -> preferredQuantityParameters.containsKey(qp.name))
+        .map(qp -> QuantityParameter.builder()
+          .name(qp.name)
+          .unit(qp.unit != null ? qp.unit : preferredQuantityParameters.get(qp.name).unit)
+          .displayMode(qp.displayMode != null
+            ? qp.displayMode
+            : preferredQuantityParameters.get(qp.name).displayMode)
+          .build())
+        .collect(toMap(qp -> qp.name, qp -> qp));
     }
+  }
 
-    return quantityParameters.stream()
-      .filter(qp -> preferredQuantityParameters.containsKey(qp.name))
-      .map(qp -> QuantityParameter.builder()
-        .name(qp.name)
-        .unit(qp.unit != null ? qp.unit : preferredQuantityParameters.get(qp.name).unit)
-        .displayMode(qp.displayMode != null
-          ? qp.displayMode
-          : preferredQuantityParameters.get(qp.name).displayMode)
-        .build())
-      .collect(toMap(qp -> qp.name, qp -> qp));
+  private static RequestParameters toLogicalMeterIdParameters(List<String> logicalMeterId) {
+    return RequestParametersAdapter.of().setAll(LOGICAL_METER_ID, logicalMeterId);
+  }
+
+  private static Set<QuantityParameter> toQuantityParameters(Set<String> quantities) {
+    return Optional.ofNullable(quantities).orElse(emptySet()).stream()
+      .map(QuantityParameter::of)
+      .collect(toUnmodifiableSet());
   }
 
   private static ZonedDateTime beforeOrNow(ZonedDateTime before) {

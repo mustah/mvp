@@ -15,7 +15,6 @@ import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.domainmodels.Units;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -1181,11 +1180,12 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
 
     MeasurementRequestDto measurementRequestDto = new MeasurementRequestDto(
-      List.of(heatMeter.id),
+      List.of(heatMeter.id.toString()),
       date,
       date.plusHours(1),
-      Set.of(QuantityParameter.of(DIFFERENCE_TEMPERATURE.name)),
-      TemporalResolution.hour
+      Set.of(DIFFERENCE_TEMPERATURE.name),
+      TemporalResolution.hour,
+      null
     );
 
     List<MeasurementSeriesDto> contents = requestFunction.apply(measurementRequestDto);
