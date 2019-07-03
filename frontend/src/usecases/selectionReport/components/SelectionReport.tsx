@@ -12,7 +12,7 @@ const isTabVisible = (show: boolean): string => show ? 'flex' : 'none';
 
 export const SelectionReport = ({view, legendItems, entities, result, addAllToSelectionReport}: Props) => {
   React.useEffect(() => {
-    if (result.length !== 0 && legendItems.length === 0) {
+    if (result.length && legendItems.length === 0) {
       addAllToSelectionReport(result.map(id => entities[id]).map(toLegendItem));
     }
   }, [result]);
@@ -21,12 +21,12 @@ export const SelectionReport = ({view, legendItems, entities, result, addAllToSe
     <Column>
       <ToolbarContainer showHideLegend={showHide}/>
       <Column style={{display: isTabVisible(view === ToolbarView.graph)}}>
-        <GraphContainer/>
+        {view === ToolbarView.graph && <GraphContainer/>}
       </Column>
       <Column style={{display: isTabVisible(view === ToolbarView.table)}}>
-        <MeasurementsContainer/>
+        {view === ToolbarView.table && <MeasurementsContainer/>}
       </Column>
-      <LegendContainer isVisible={isVisible} showHideLegend={showHide}/>
+      {view === ToolbarView.graph && <LegendContainer isVisible={isVisible} showHideLegend={showHide}/>}
     </Column>
   );
 };

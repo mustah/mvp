@@ -14,12 +14,12 @@ export const MeasurementContent = ({view}: ToolbarViewSettingsProps) => {
     <Column>
       <ToolbarContainer showHideLegend={showHide}/>
       <Column style={{display: display(view === ToolbarView.graph)}}>
-        <GraphContainer/>
+        {view === ToolbarView.graph && <GraphContainer/>}
       </Column>
       <Column style={{display: display(view === ToolbarView.table)}}>
-        <MeasurementsContainer/>
+        {view === ToolbarView.table && <MeasurementsContainer/>}
       </Column>
-      <LegendContainer isVisible={isVisible} showHideLegend={showHide}/>
+      {view === ToolbarView.graph && <LegendContainer isVisible={isVisible} showHideLegend={showHide}/>}
     </Column>
   );
 };

@@ -275,17 +275,17 @@ const fetchMeasurements = (
     if (fetchIfNeeded(getState)) {
       const meters: GraphDataRequests = metersByMediumRequests(parameters);
       const meterAverage: GraphDataRequests = averageForSelectedMetersRequests(parameters);
-      const average: GraphDataRequests = averageForUserSelectionsRequests(parameters, getState);
+      const userSelectionAverage: GraphDataRequests = averageForUserSelectionsRequests(parameters, getState);
       const compare: GraphDataRequests = compareMeterRequests(parameters);
 
-      if (meters.length || meterAverage.length || average.length || compare.length) {
+      if (meters.length || meterAverage.length || userSelectionAverage.length || compare.length) {
         dispatch(request());
         try {
           const [meterResponses, meterAverageResponses, averageResponses, compareResponses]: GraphDataResponse[][] =
             await Promise.all([
               Promise.all(meters),
               Promise.all(meterAverage),
-              Promise.all(average),
+              Promise.all(userSelectionAverage),
               Promise.all(compare)
             ]);
 
