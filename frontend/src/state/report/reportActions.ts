@@ -5,11 +5,12 @@ import {Maybe} from '../../helpers/Maybe';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Dispatch, uuid} from '../../types/Types';
-import {allQuantitiesMap, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
+import {allQuantitiesMap, Quantity} from '../ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../ui/message/messageActions';
 import {SelectionInterval, ThresholdQuery} from '../user-selection/userSelectionModels';
 import {getThreshold} from '../user-selection/userSelectionSelectors';
 import {
+  isKnownMedium,
   LegendItem,
   LegendItemSettings,
   LegendType,
@@ -54,7 +55,7 @@ export const removeAllByType = (sector: ReportSector) =>
 export const setReportTimePeriod = (sector: ReportSector) =>
   createStandardAction(`SET_REPORT_TIME_PERIOD_${sector}`)<SelectionInterval>();
 
-export const limit: number = 100;
+export const limit: number = 2000;
 
 interface DispatchWithinLimits {
   dispatch: Dispatch;
@@ -86,7 +87,7 @@ export const addToReport = (legendItem: LegendItem) =>
     const savedReports = getState().report.savedReports;
     const legendItems = getLegendItems(savedReports);
     const {type, id} = legendItem;
-    if (type !== Medium.unknown && !find(legendItems, {id})) {
+    if (isKnownMedium(type) && !find(legendItems, {id})) {
       const selectedQuantities = getSelectedQuantitiesMap(savedReports)[legendItem.type];
       const quantities = hasSelectedQuantities(savedReports)
         ? selectedQuantities
@@ -138,8 +139,7 @@ const addAllToReportSector = (
   reportSection: ReportSector,
   threshold?: ThresholdQuery,
 ) => {
-
-  const legendItems = newLegendItems.filter(it => it.type !== Medium.unknown);
+  const legendItems = newLegendItems.filter(it => isKnownMedium(it.type));
   const quantities = hasSelectedQuantities(savedReports) ? [] : take(legendItems, 1)
     .map(legendItem => getQuantity(legendItem, threshold));
   const quantity = first(quantities);

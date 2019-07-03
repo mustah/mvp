@@ -1,4 +1,5 @@
 import {Overwrite} from 'utility-types';
+import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
@@ -74,6 +75,15 @@ export interface MeasurementResponse {
   average: MeasurementsApiResponse;
   compare: MeasurementsApiResponse;
   measurements: MeasurementsApiResponse;
+}
+
+export interface MeasurementRequestModel {
+  label?: string;
+  logicalMeterId: uuid[];
+  quantity: string[];
+  reportAfter: string;
+  reportBefore: string;
+  resolution: TemporalResolution;
 }
 
 export interface QuantityAttributes {
