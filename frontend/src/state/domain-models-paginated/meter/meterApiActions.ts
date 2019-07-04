@@ -1,3 +1,4 @@
+import {getId} from '../../../helpers/collections';
 import {GetState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -10,7 +11,7 @@ import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 import {clearError, fetchIfNeeded} from '../paginatedDomainModelsActions';
 import {paginatedDeleteRequest} from '../paginatedDomainModelsEntityActions';
-import {getPaginatedResult} from '../paginatedDomainModelsSelectors';
+import {getAllMeters} from '../paginatedDomainModelsSelectors';
 import {Meter} from './meterModels';
 import {meterDataFormatter} from './meterSchema';
 
@@ -55,13 +56,12 @@ export const clearMetersErrorOnPage = () =>
 
 export const addMetersOnPageToReport = () =>
   (dispatch, getState: GetState) => {
-    const {ui: {pagination: {meters: {page}}}, paginatedDomainModels: {meters}} = getState();
-    const result = getPaginatedResult(meters, page);
-    dispatch(addAllToReport(result.map(id => meters.entities[id]).map(toLegendItem)));
+    const {paginatedDomainModels: {meters}} = getState();
+    dispatch(addAllToReport(getAllMeters(meters).map(toLegendItem)));
   };
 
 export const syncMetersOnPage = () =>
   (dispatch, getState: GetState) => {
-    const {ui: {pagination: {meters: {page}}}, paginatedDomainModels: {meters}} = getState();
-    dispatch(syncMeters(getPaginatedResult(meters, page)));
+    const {paginatedDomainModels: {meters}} = getState();
+    dispatch(syncMeters(getAllMeters(meters).map(getId)));
   };

@@ -44,7 +44,7 @@ export interface StateToProps {
   isSideMenuOpen: boolean;
   measurement: MeasurementState;
   parameters: EncodedUriParameters;
-  requestParameters: MeasurementParameters;
+  measurementParameters: MeasurementParameters;
   visibilitySummary?: VisibilitySummaryProps;
   threshold?: ThresholdQuery;
   userSelections: NormalizedState<UserSelection>;
@@ -59,15 +59,16 @@ export interface DispatchToProps {
   fetchUserSelections: Fetch;
 }
 
-const mapStateToProps = ({
-  domainModels: {userSelections},
-  measurement,
-  paginatedDomainModels: {meters},
-  report,
-  userSelection,
-  ui,
-}: RootState): StateToProps =>
-  ({
+const mapStateToProps = (rootState: RootState): StateToProps => {
+  const {
+    domainModels: {userSelections},
+    measurement,
+    paginatedDomainModels: {meters},
+    report,
+    userSelection,
+    ui,
+  } = rootState;
+  return ({
     hasLegendItems: hasLegendItems(report.savedReports),
     hasContent: hasMeasurementValues(measurement.measurementResponse),
     hiddenLines: getHiddenLines(report.savedReports),
@@ -75,13 +76,14 @@ const mapStateToProps = ({
     isSideMenuOpen: isSideMenuOpen(ui),
     measurement,
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
-    requestParameters: getMeasurementParameters(report),
+    measurementParameters: getMeasurementParameters(rootState),
     selectedQuantities: getSelectedQuantities(report.savedReports),
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
     userSelections,
     visibilitySummary: getVisibilitySummary(report.savedReports),
   });
+};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError(ReportSector.report),

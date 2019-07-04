@@ -5,6 +5,7 @@ import {readIntervalToTemporal} from '../../../helpers/dateHelpers';
 import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
 import {ResolutionAware} from '../../../state/report/reportModels';
 import {MeasurementParameters, MeasurementResponse} from '../../../state/ui/graph/measurement/measurementModels';
+import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
 import {toLegendItemAllSearchableQuantities} from '../../report/helpers/legendHelper';
 import {MeterDetailState} from './meterDetailModels';
@@ -35,6 +36,7 @@ export const getMeasurementParameters =
       reportDateRange: timePeriod,
       shouldComparePeriod: false,
       shouldShowAverage: false,
+      view: ToolbarView.table,
     })
   );
 

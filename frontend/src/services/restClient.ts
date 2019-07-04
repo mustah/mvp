@@ -70,13 +70,8 @@ class RestClient {
   }
 
   private doGet<T = any>(requestId: string, url: string, config?: AxiosRequestConfig): Promise<T> {
-    const request = this.requests[requestId];
-    if (request) {
-      request.cancel(requestCanceled);
-    }
-    const source: CancelTokenSource = axios.CancelToken.source();
-    this.requests[requestId] = source;
-    return this.delegate.get(url, {...config, cancelToken: source.token});
+    const {token: cancelToken} = this.cancelRequest(requestId);
+    return this.delegate.get(url, {...config, cancelToken});
   }
 
   private setResponseInterceptors(): void {
@@ -88,6 +83,16 @@ class RestClient {
         return Promise.reject(error);
       }
     });
+  }
+
+  private cancelRequest(requestId: string): CancelTokenSource {
+    const request = this.requests[requestId];
+    if (request) {
+      request.cancel(requestCanceled);
+    }
+    const source: CancelTokenSource = axios.CancelToken.source();
+    this.requests[requestId] = source;
+    return source;
   }
 
 }

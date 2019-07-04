@@ -1,21 +1,25 @@
-import {flatMap, groupBy, map, sortBy} from 'lodash';
+import {find, flatMap, groupBy, map, sortBy} from 'lodash';
 import {createAction, createStandardAction} from 'typesafe-actions';
 import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {DateRange, Period, TemporalResolution} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonHelpers';
-import {makeCompareCustomDateRange, makeCompareDateRange} from '../../../../helpers/dateHelpers';
+import {
+  makeCompareCustomDateRange,
+  makeCompareDateRange,
+  queryParametersOfDateRange
+} from '../../../../helpers/dateHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
 import {
   encodeRequestParameters,
-  makeReportPeriodParametersOf,
   makeUrl,
+  RequestParameter,
   requestParametersFrom
 } from '../../../../helpers/urlFactory';
 import {GetState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
-import {EncodedUriParameters, ErrorResponse, uuid} from '../../../../types/Types';
+import {ErrorResponse, uuid} from '../../../../types/Types';
 import {logout} from '../../../../usecases/auth/authActions';
 import {
   meterDetailMeasurementFailure,
@@ -35,11 +39,13 @@ import {
   ReportSector
 } from '../../../report/reportModels';
 import {SelectionInterval, UserSelection} from '../../../user-selection/userSelectionModels';
+import {ToolbarView} from '../../toolbar/toolbarModels';
 import {
   allQuantitiesMap,
   availableQuantities,
   getGroupHeaderTitle,
   MeasurementParameters,
+  MeasurementRequestModel,
   MeasurementResponse,
   MeasurementResponsePart,
   MeasurementsApiResponse,
@@ -67,19 +73,27 @@ export const exportToExcelAction = (sector: ReportSector) =>
 export const exportToExcelSuccess = (sector: ReportSector) =>
   createAction(`EXPORT_TO_EXCEL_SUCCESS_${sector}`);
 
-const measurementMeterUri = (
+const makeMeasurementRequestModel = (
+  dateRange: SelectionInterval,
+  logicalMeterId: uuid[],
   quantity: string[],
   resolution: TemporalResolution,
-  dateRange: SelectionInterval,
-  meterIds: uuid[],
-  label: string,
-): EncodedUriParameters =>
-  `${makeReportPeriodParametersOf(dateRange)}&${encodeRequestParameters({
+  label?: string,
+): MeasurementRequestModel => {
+  const {reportAfter, reportBefore} = queryParametersOfDateRange(
+    dateRange,
+    RequestParameter.reportAfter,
+    RequestParameter.reportBefore
+  );
+  return {
     label,
+    logicalMeterId,
     quantity,
+    reportAfter: reportAfter as string,
+    reportBefore: reportBefore as string,
     resolution,
-    logicalMeterId: meterIds.map(id => id.toString()),
-  })}`;
+  };
+};
 
 interface LabelItem extends LegendTyped {
   quantity: Quantity;
@@ -128,54 +142,82 @@ export const searchableQuantitiesFrom = (type: LegendType): Quantity[] =>
 export const makeQuantityParamFrom = (quantity: Quantity): string =>
   `${quantity}::${quantityAttributes[quantity].displayMode}`;
 
-export const meterLabelFactory = ({quantity}): string => quantity;
+export const undefinedLabelFactory = _ => undefined;
 
-export const meterAverageLabelFactory = ({type}): string => `${getGroupHeaderTitle(type)}`;
+export const mediumLabelFactory = ({type}: LabelItem): string => `${getGroupHeaderTitle(type)}`;
 
-export const metersByQuantityRequests = (parameters: MeasurementParameters): GraphDataRequests =>
-  makeMeasurementMetersUriParameters(parameters, EndPoints.measurements, meterLabelFactory)
-    .map(url => restClient.getParallel(url));
-
-export const urlsByType = (parameters: MeasurementParameters): EncodedUriParameters[] => {
-  const byType = groupBy(parameters.legendItems, it => it.type);
-  const legendItemsParameters = flatMap(
-    Object.keys(byType)
-      .map(type => byType[type])
-      .map(legendItems => ({...parameters, legendItems})));
-  return flatMap(legendItemsParameters
-    .map(p => makeMeasurementMetersUriParameters(p, EndPoints.measurementsAverage, meterAverageLabelFactory)));
-};
-
-export const makeMeasurementMetersUriParameters = (
+const measurementsRequestModelsByMedium = (
   {
     reportDateRange,
     legendItems,
     resolution,
   }: MeasurementParameters,
-  endpoint: EndPoints,
-  labelFactory: (labelItem: LabelItem) => string,
-): EncodedUriParameters[] => {
+  labelFactory: (labelItem: LabelItem) => string | undefined = undefinedLabelFactory,
+): MeasurementRequestModel[] => {
   const mediumToIds = mapMediumToIds(legendItems);
 
   return Object.keys(mediumToIds)
     .filter((medium: Medium) => mediumToIds[medium].length > 0)
     .filter(isKnownMedium)
-    .map((medium: Medium) => {
-      const quantityParams = searchableQuantitiesFrom(medium).map(makeQuantityParamFrom);
-      return measurementMeterUri(
-        quantityParams,
-        resolution,
-        reportDateRange,
-        mediumToIds[medium],
-        labelFactory({type: medium, quantity: getQuantity({type: medium})})
-      );
-    })
-    .map(parameters => makeUrl(endpoint, parameters));
+    .map(medium => makeMeasurementRequestModel(
+      reportDateRange,
+      mediumToIds[medium],
+      searchableQuantitiesFrom(medium).map(makeQuantityParamFrom),
+      resolution,
+      labelFactory({type: medium, quantity: getQuantity({type: medium})})
+    ));
 };
+
+const measurementsRequestModelsByQuantity = (
+  {
+    reportDateRange,
+    legendItems,
+    resolution,
+  }: MeasurementParameters,
+  labelFactory: (labelItem: LabelItem) => string | undefined = undefinedLabelFactory,
+): MeasurementRequestModel[] => {
+  const quantityToIds = mapQuantityToIds(legendItems);
+
+  return Object.keys(quantityToIds)
+    .filter((quantity: Quantity) => quantityToIds[quantity].length > 0)
+    .map((quantity: Quantity) => {
+      const {type} = find(legendItems, {id: quantityToIds[quantity][0]})!;
+      return makeMeasurementRequestModel(
+        reportDateRange,
+        quantityToIds[quantity],
+        [makeQuantityParamFrom(quantity)],
+        resolution,
+        labelFactory({type, quantity})
+      );
+    });
+};
+
+export const measurementsRequestModelsOf = (
+  parameters: MeasurementParameters,
+  labelFactory: (labelItem: LabelItem) => string | undefined = undefinedLabelFactory,
+): MeasurementRequestModel[] =>
+  parameters.view === ToolbarView.table
+    ? measurementsRequestModelsByMedium(parameters, labelFactory)
+    : measurementsRequestModelsByQuantity(parameters, labelFactory);
+
+export const requestModelsByType = (parameters: MeasurementParameters): MeasurementRequestModel[] => {
+  const byType = groupBy(parameters.legendItems, it => it.type);
+  const measurementParameters: MeasurementParameters[] = flatMap(
+    Object.keys(byType)
+      .map(type => byType[type])
+      .map(legendItems => ({...parameters, legendItems})));
+
+  return flatMap(measurementParameters.map(p => measurementsRequestModelsOf(p, mediumLabelFactory)));
+};
+
+export const metersMeasurementsRequests = (parameters: MeasurementParameters): GraphDataRequests =>
+  measurementsRequestModelsOf(parameters)
+    .map(requestModel => restClient.post(EndPoints.measurements, requestModel));
 
 const averageForSelectedMetersRequests = (parameters: MeasurementParameters): GraphDataRequests => {
   if (parameters.shouldShowAverage) {
-    return urlsByType(parameters).map(url => restClient.getParallel(url));
+    return requestModelsByType(parameters)
+      .map(requestModel => restClient.post(EndPoints.measurementsAverage, requestModel));
   } else {
     return [];
   }
@@ -189,7 +231,7 @@ const compareMeterRequests = (parameters: MeasurementParameters): GraphDataReque
         const dateRange = Maybe.maybe<DateRange>(customDateRange)
           .map(makeCompareCustomDateRange)
           .orElseGet(() => makeCompareDateRange(period));
-        return metersByQuantityRequests({
+        return metersMeasurementsRequests({
           ...it,
           reportDateRange: {period: Period.custom, customDateRange: dateRange}
         });
@@ -264,19 +306,19 @@ const fetchMeasurements = (
 ) =>
   async (dispatch, getState: GetState) => {
     if (fetchIfNeeded(getState)) {
-      const meters: GraphDataRequests = metersByQuantityRequests(parameters);
+      const meters: GraphDataRequests = metersMeasurementsRequests(parameters);
       const meterAverage: GraphDataRequests = averageForSelectedMetersRequests(parameters);
-      const average: GraphDataRequests = averageForUserSelectionsRequests(parameters, getState);
+      const userSelectionAverage: GraphDataRequests = averageForUserSelectionsRequests(parameters, getState);
       const compare: GraphDataRequests = compareMeterRequests(parameters);
 
-      if (meters.length || meterAverage.length || average.length || compare.length) {
+      if (meters.length || meterAverage.length || userSelectionAverage.length || compare.length) {
         dispatch(request());
         try {
           const [meterResponses, meterAverageResponses, averageResponses, compareResponses]: GraphDataResponse[][] =
             await Promise.all([
               Promise.all(meters),
               Promise.all(meterAverage),
-              Promise.all(average),
+              Promise.all(userSelectionAverage),
               Promise.all(compare)
             ]);
 

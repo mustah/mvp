@@ -6,6 +6,7 @@ import * as reportActions from '../../../report/reportActions';
 import {ReportSector} from '../../../report/reportModels';
 import {search} from '../../../search/searchActions';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
+import {changeToolbarView} from '../../toolbar/toolbarActions';
 import * as actions from './measurementActions';
 import {MeasurementResponse, MeasurementState} from './measurementModels';
 
@@ -60,6 +61,8 @@ const measurementReducerFor =
         case getType(reportActions.removeAllByType(sector)):
         case getType(reportActions.toggleQuantityByType(sector)):
         case getType(reportActions.toggleQuantityById(sector)):
+        case getType(changeToolbarView(ReportSector.report)):
+        case getType(changeToolbarView(ReportSector.selectionReport)):
           return initialState;
         default:
           return resetReducer(state, action, initialState);

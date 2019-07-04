@@ -18,9 +18,12 @@ import static com.elvaco.mvp.core.domainmodels.DisplayMode.CONSUMPTION;
 public class QuantityParameter {
 
   private static final String QUANTITY_UNIT_DELIMITER = ":";
+
   public String name;
+
   @Nullable
   public String unit;
+
   @Nullable
   public DisplayMode displayMode;
 
@@ -32,7 +35,7 @@ public class QuantityParameter {
     this(name, unit, null);
   }
 
-  public QuantityParameter(String name, String unit, DisplayMode displayMode) {
+  public QuantityParameter(String name, @Nullable String unit, @Nullable DisplayMode displayMode) {
     this.name = name;
     this.unit = unit;
     this.displayMode = displayMode;

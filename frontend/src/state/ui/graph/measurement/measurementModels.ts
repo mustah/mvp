@@ -1,9 +1,11 @@
 import {Overwrite} from 'utility-types';
+import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
 import {LegendItem, LegendType, ResolutionAware} from '../../../report/reportModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
+import {ToolbarView} from '../../toolbar/toolbarModels';
 
 export interface Measurement extends Identifiable {
   created: UnixTimestamp;
@@ -27,10 +29,11 @@ export interface MeasurementParameters extends ResolutionAware {
   reportDateRange: SelectionInterval;
   shouldComparePeriod: boolean;
   shouldShowAverage: boolean;
+  view: ToolbarView;
   displayMode?: QuantityDisplayMode;
 }
 
-export type FetchMeasurements = (requestParameters: MeasurementParameters) => void;
+export type FetchMeasurements = (measurementParameters: MeasurementParameters) => void;
 
 export interface Reading {
   id: UnixTimestamp;
@@ -74,6 +77,15 @@ export interface MeasurementResponse {
   average: MeasurementsApiResponse;
   compare: MeasurementsApiResponse;
   measurements: MeasurementsApiResponse;
+}
+
+export interface MeasurementRequestModel {
+  label?: string;
+  logicalMeterId: uuid[];
+  quantity: string[];
+  reportAfter: string;
+  reportBefore: string;
+  resolution: TemporalResolution;
 }
 
 export interface QuantityAttributes {

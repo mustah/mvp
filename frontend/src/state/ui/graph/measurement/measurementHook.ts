@@ -4,14 +4,14 @@ import {Props} from '../../../../usecases/report/components/MeasurementLineChart
 export const useFetchMeasurements = ({
   fetchMeasurements,
   fetchUserSelections,
+  measurementParameters,
   parameters,
-  requestParameters,
   userSelections,
 }: Props) => {
   React.useEffect(() => {
     fetchUserSelections();
     if (userSelections.isSuccessfullyFetched) {
-      fetchMeasurements(requestParameters);
+      fetchMeasurements(measurementParameters);
     }
-  }, [userSelections, requestParameters, parameters]);
+  }, [userSelections, measurementParameters, parameters]);
 };
