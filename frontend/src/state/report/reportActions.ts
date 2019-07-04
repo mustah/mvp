@@ -55,7 +55,8 @@ export const removeAllByType = (sector: ReportSector) =>
 export const setReportTimePeriod = (sector: ReportSector) =>
   createStandardAction(`SET_REPORT_TIME_PERIOD_${sector}`)<SelectionInterval>();
 
-export const limit: number = 2000;
+export const limit = 2000;
+export const numPreselected = 10;
 
 interface DispatchWithinLimits {
   dispatch: Dispatch;
@@ -148,7 +149,11 @@ const addAllToReportSector = (
   const items = [
     ...savedLegendItems,
     ...legendItems
-      .map(item => getQuantity(item, threshold) === quantity ? ({...item, quantities}) : item)
+      .map((item, i) =>
+        i < numPreselected && getQuantity(item, threshold) === quantity
+          ? ({...item, quantities})
+          : item
+      )
       .map(item => findByType(savedLegendItems, item)
         .map(it => ({...item, ...pickJustSettings(it)}))
         .orElse(item))
