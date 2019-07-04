@@ -1,5 +1,5 @@
 import {DataResult, process, State} from '@progress/kendo-data-query';
-import {ExcelExport} from '@progress/kendo-react-excel-export';
+import {ExcelExport, ExcelExportColumn} from '@progress/kendo-react-excel-export';
 import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import {first} from 'lodash';
 import * as React from 'react';
@@ -73,64 +73,39 @@ export const MeasurementList = ({
 
   const exporter = useExportToExcel({isExportingToExcel, exportToExcelSuccess, save});
 
-  const gridContent: React.ReactNode[] = [
-    (
-      <GridColumn
-        headerClassName="hidden"
-        className="hidden"
-        field="name"
-        key="name"
-        title={firstUpperTranslated('name')}
-      />
-    ),
-    (
-      <GridColumn
-        headerClassName="hidden"
-        className="hidden"
-        field="meterId"
-        key="meterId"
-        title={firstUpperTranslated('meter id')}
-      />
-    ),
-    (
-      <GridColumn
-        headerClassName="hidden"
-        className="hidden"
-        field="type"
-        key="type"
-        title={firstUpperTranslated('object type')}
-      />
-    ),
-    (
-      <GridColumn
-        headerClassName="left-most"
-        className="left-most"
-        field="when"
-        key="when"
-        title={firstUpperTranslated('readout')}
-      />
-    ),
-    ...quantityColumns,
-  ];
+  const renderExcelExportQuantityColumns = quantityColumns.map(
+    ({key, props: {field, title}}) => <ExcelExportColumn field={field} title={title} key={key as string}/>);
 
   const dataResult: DataResult = process(listItems, state);
 
   return (
     <Column className="Grouping-grid">
       <ExcelExport data={listItems} ref={exporter} filterable={true} fileName="measurements.xlsx">
-        <Grid
-          className={makeGridClassName(cssStyles)}
-          scrollable="none"
-          data={dataResult}
-          groupable={true}
-          cellRender={cellRender}
-          headerCellRender={headerCellRender}
-          rowRender={rowRender}
-          {...state}
-        >
-          {gridContent}
-        </Grid>
+        <ExcelExportColumn field="name" title={firstUpperTranslated('name')}/>
+        <ExcelExportColumn field="meterId" title={firstUpperTranslated('meter id')}/>
+        <ExcelExportColumn field="type" title={firstUpperTranslated('object type')}/>
+        <ExcelExportColumn field="when" title={firstUpperTranslated('readout')}/>
+        {renderExcelExportQuantityColumns}
       </ExcelExport>
+      <Grid
+        className={makeGridClassName(cssStyles)}
+        scrollable="none"
+        data={dataResult}
+        groupable={true}
+        cellRender={cellRender}
+        headerCellRender={headerCellRender}
+        rowRender={rowRender}
+        {...state}
+      >
+        <GridColumn
+          headerClassName="left-most"
+          className="left-most"
+          field="when"
+          key="when"
+          title={firstUpperTranslated('readout')}
+        />
+        {quantityColumns}
+      </Grid>
       <TimestampInfoMessage/>
     </Column>
   );
