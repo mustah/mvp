@@ -1,4 +1,4 @@
-import {flatMap, groupBy, map, sortBy} from 'lodash';
+import {find, flatMap, groupBy, map, sortBy} from 'lodash';
 import {createAction, createStandardAction} from 'typesafe-actions';
 import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/type-helpers';
 import {DateRange, Period, TemporalResolution} from '../../../../components/dates/dateModels';
@@ -39,6 +39,7 @@ import {
   ReportSector
 } from '../../../report/reportModels';
 import {SelectionInterval, UserSelection} from '../../../user-selection/userSelectionModels';
+import {ToolbarView} from '../../toolbar/toolbarModels';
 import {
   allQuantitiesMap,
   availableQuantities,
@@ -145,7 +146,7 @@ export const undefinedLabelFactory = _ => undefined;
 
 export const mediumLabelFactory = ({type}: LabelItem): string => `${getGroupHeaderTitle(type)}`;
 
-export const measurementsRequestModelsOf = (
+const measurementsRequestModelsByMedium = (
   {
     reportDateRange,
     legendItems,
@@ -167,17 +168,49 @@ export const measurementsRequestModelsOf = (
     ));
 };
 
+const measurementsRequestModelsByQuantity = (
+  {
+    reportDateRange,
+    legendItems,
+    resolution,
+  }: MeasurementParameters,
+  labelFactory: (labelItem: LabelItem) => string | undefined = undefinedLabelFactory,
+): MeasurementRequestModel[] => {
+  const quantityToIds = mapQuantityToIds(legendItems);
+
+  return Object.keys(quantityToIds)
+    .filter((quantity: Quantity) => quantityToIds[quantity].length > 0)
+    .map((quantity: Quantity) => {
+      const {type} = find(legendItems, {id: quantityToIds[quantity][0]})!;
+      return makeMeasurementRequestModel(
+        reportDateRange,
+        quantityToIds[quantity],
+        [makeQuantityParamFrom(quantity)],
+        resolution,
+        labelFactory({type, quantity})
+      );
+    });
+};
+
+export const measurementsRequestModelsOf = (
+  parameters: MeasurementParameters,
+  labelFactory: (labelItem: LabelItem) => string | undefined = undefinedLabelFactory,
+): MeasurementRequestModel[] =>
+  parameters.view === ToolbarView.table
+    ? measurementsRequestModelsByMedium(parameters, labelFactory)
+    : measurementsRequestModelsByQuantity(parameters, labelFactory);
+
 export const requestModelsByType = (parameters: MeasurementParameters): MeasurementRequestModel[] => {
   const byType = groupBy(parameters.legendItems, it => it.type);
-  const legendItemsParameters: MeasurementParameters[] = flatMap(
+  const measurementParameters: MeasurementParameters[] = flatMap(
     Object.keys(byType)
       .map(type => byType[type])
       .map(legendItems => ({...parameters, legendItems})));
 
-  return flatMap(legendItemsParameters.map(p => measurementsRequestModelsOf(p, mediumLabelFactory)));
+  return flatMap(measurementParameters.map(p => measurementsRequestModelsOf(p, mediumLabelFactory)));
 };
 
-export const metersByMediumRequests = (parameters: MeasurementParameters): GraphDataRequests =>
+export const metersMeasurementsRequests = (parameters: MeasurementParameters): GraphDataRequests =>
   measurementsRequestModelsOf(parameters)
     .map(requestModel => restClient.post(EndPoints.measurements, requestModel));
 
@@ -198,7 +231,7 @@ const compareMeterRequests = (parameters: MeasurementParameters): GraphDataReque
         const dateRange = Maybe.maybe<DateRange>(customDateRange)
           .map(makeCompareCustomDateRange)
           .orElseGet(() => makeCompareDateRange(period));
-        return metersByMediumRequests({
+        return metersMeasurementsRequests({
           ...it,
           reportDateRange: {period: Period.custom, customDateRange: dateRange}
         });
@@ -273,7 +306,7 @@ const fetchMeasurements = (
 ) =>
   async (dispatch, getState: GetState) => {
     if (fetchIfNeeded(getState)) {
-      const meters: GraphDataRequests = metersByMediumRequests(parameters);
+      const meters: GraphDataRequests = metersMeasurementsRequests(parameters);
       const meterAverage: GraphDataRequests = averageForSelectedMetersRequests(parameters);
       const userSelectionAverage: GraphDataRequests = averageForUserSelectionsRequests(parameters, getState);
       const compare: GraphDataRequests = compareMeterRequests(parameters);

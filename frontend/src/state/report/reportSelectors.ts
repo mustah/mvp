@@ -1,11 +1,12 @@
 import {flatMap, flatten, values} from 'lodash';
 import {createSelector} from 'reselect';
 import {getId, unique} from '../../helpers/collections';
-import {identity} from '../../helpers/commonHelpers';
+import {RootState} from '../../reducers/rootReducer';
 import {uuid} from '../../types/Types';
 import {VisibilitySummaryProps} from '../../usecases/report/components/VisibilitySummary';
 import {mapQuantityToIds} from '../ui/graph/measurement/measurementActions';
 import {MeasurementParameters, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
+import {ToolbarView} from '../ui/toolbar/toolbarModels';
 import {
   isMedium,
   LegendItem,
@@ -75,17 +76,23 @@ export const hasSelectedQuantities =
     selectedQuantities => selectedQuantities.length > 0
   );
 
-export const getMeasurementParameters =
-  createSelector<ReportState, ReportState, MeasurementParameters>(
-    identity,
-    ({
-      savedReports,
-      temporal: {resolution, timePeriod, shouldComparePeriod},
-    }) => ({
+const measurementParametersSelectorFrom = (key: 'report' | 'selectionReport') =>
+  createSelector<RootState, ReportState, ToolbarView, MeasurementParameters>(
+    state => state[key],
+    state => key === 'report' ? state.ui.toolbar.measurement.view : state.ui.toolbar.selectionReport.view,
+    (
+      {savedReports, temporal: {resolution, shouldComparePeriod, timePeriod}}: ReportState,
+      view: ToolbarView,
+    ) => ({
       legendItems: getLegendItems(savedReports),
       reportDateRange: timePeriod,
       resolution,
       shouldComparePeriod,
       shouldShowAverage: savedReports.meterPage.shouldShowAverage,
+      view
     })
   );
+
+export const getMeasurementParameters = measurementParametersSelectorFrom('report');
+
+export const getSelectionMeasurementParameters = measurementParametersSelectorFrom('selectionReport');

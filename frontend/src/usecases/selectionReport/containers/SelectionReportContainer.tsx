@@ -5,8 +5,8 @@ import {isMetersPageFetching} from '../../../state/domain-models-paginated/pagin
 import {ReportSector} from '../../../state/report/reportModels';
 import {
   getHiddenLines,
-  getMeasurementParameters,
   getSelectedQuantities,
+  getSelectionMeasurementParameters,
   getVisibilitySummary,
   hasLegendItems
 } from '../../../state/report/reportSelectors';
@@ -27,15 +27,16 @@ import {MeasurementLineChart} from '../../report/components/MeasurementLineChart
 import {Measurements} from '../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../report/containers/MeasurementsContainer';
 
-const mapStateToProps = ({
-  domainModels: {userSelections},
-  paginatedDomainModels: {meters},
-  selectionMeasurement,
-  selectionReport,
-  userSelection,
-  ui
-}: RootState): StateToProps =>
-  ({
+const mapStateToProps = (rootState: RootState): StateToProps => {
+  const {
+    domainModels: {userSelections},
+    paginatedDomainModels: {meters},
+    selectionMeasurement,
+    selectionReport,
+    userSelection,
+    ui
+  } = rootState;
+  return ({
     hasLegendItems: hasLegendItems(selectionReport.savedReports),
     hasContent: hasMeasurementValues(selectionMeasurement.measurementResponse),
     hiddenLines: getHiddenLines(selectionReport.savedReports),
@@ -43,13 +44,14 @@ const mapStateToProps = ({
     isSideMenuOpen: isSideMenuOpen(ui),
     measurement: selectionMeasurement,
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
-    requestParameters: getMeasurementParameters(selectionReport),
+    measurementParameters: getSelectionMeasurementParameters(rootState),
     selectedQuantities: getSelectedQuantities(selectionReport.savedReports),
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
     userSelections,
     visibilitySummary: getVisibilitySummary(selectionReport.savedReports),
   });
+};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError(ReportSector.selectionReport),

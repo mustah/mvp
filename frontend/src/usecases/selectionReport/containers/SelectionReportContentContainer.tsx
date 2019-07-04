@@ -41,7 +41,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addAllToSelectionReport
 }, dispatch);
 
-export const SelectionReportContentContainer = connect<StateToProps, DispatchToProps>(
-  mapStateToProps,
-  mapDispatchToProps
-)(SelectionReport);
+export const SelectionReportContentContainer = connect(mapStateToProps, mapDispatchToProps)(SelectionReport);

@@ -48,7 +48,7 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     isSideMenuOpen: isSideMenuOpen(ui),
     measurement: meterDetailMeasurement,
     parameters: '',
-    requestParameters: {
+    measurementParameters: {
       ...getMeasurementParameters({meter, resolution, timePeriod}),
       displayMode: QuantityDisplayMode.readout,
     },

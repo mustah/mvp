@@ -5,6 +5,7 @@ import {firstUpperTranslated} from '../../../../services/translationService';
 import {ErrorResponse, Identifiable, UnixTimestamp, uuid} from '../../../../types/Types';
 import {LegendItem, LegendType, ResolutionAware} from '../../../report/reportModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
+import {ToolbarView} from '../../toolbar/toolbarModels';
 
 export interface Measurement extends Identifiable {
   created: UnixTimestamp;
@@ -28,10 +29,11 @@ export interface MeasurementParameters extends ResolutionAware {
   reportDateRange: SelectionInterval;
   shouldComparePeriod: boolean;
   shouldShowAverage: boolean;
+  view: ToolbarView;
   displayMode?: QuantityDisplayMode;
 }
 
-export type FetchMeasurements = (requestParameters: MeasurementParameters) => void;
+export type FetchMeasurements = (measurementParameters: MeasurementParameters) => void;
 
 export interface Reading {
   id: UnixTimestamp;

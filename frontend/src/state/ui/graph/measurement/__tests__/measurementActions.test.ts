@@ -31,6 +31,7 @@ import {
 } from '../../../../report/reportModels';
 import {ParameterName, UserSelection} from '../../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../../user-selection/userSelectionReducer';
+import {ToolbarView} from '../../../toolbar/toolbarModels';
 import {
   exportReportToExcel,
   exportToExcelAction,
@@ -83,6 +84,7 @@ describe('measurementActions', () => {
     resolution: TemporalResolution.day,
     shouldComparePeriod: false,
     shouldShowAverage: false,
+    view: ToolbarView.table,
   };
 
   let mockRestClient;
@@ -154,11 +156,11 @@ describe('measurementActions', () => {
         const store = storeWith(initialState);
 
         const legendItems = [legendItemOf(Medium.unknown), legendItemOf(Medium.unknown)];
-        const requestParameters: MeasurementParameters = {...parameters, legendItems};
+        const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchMeasurementsAsync(requestParameters);
+        onFetchMeasurementsAsync(measurementParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
+        await store.dispatch(fetchMeasurementsForReport(measurementParameters) as any);
 
         expect(store.getActions()).toEqual([]);
       });
@@ -167,11 +169,11 @@ describe('measurementActions', () => {
         const store = storeWith(initialState, {user: makeUser(), isAuthenticated: true});
         const roomSensorMeter = legendItemOf(Medium.roomSensor);
         const legendItems = [roomSensorMeter];
-        const requestParameters: MeasurementParameters = {...parameters, legendItems};
+        const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchMeasurementsAsync(requestParameters);
+        onFetchMeasurementsAsync(measurementParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
+        await store.dispatch(fetchMeasurementsForReport(measurementParameters) as any);
 
         expect(store.getActions()).toEqual([
           measurementRequest(ReportSector.report)(),
@@ -190,11 +192,11 @@ describe('measurementActions', () => {
         const roomSensorMeter = legendItemOf(Medium.roomSensor);
         const gasMeter = legendItemOf(Medium.gas, 'facility-gas');
         const legendItems = [roomSensorMeter, gasMeter];
-        const requestParameters: MeasurementParameters = {...parameters, legendItems};
+        const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchMeasurementsAsync(requestParameters);
+        onFetchMeasurementsAsync(measurementParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
+        await store.dispatch(fetchMeasurementsForReport(measurementParameters) as any);
 
         expect(store.getActions()).toEqual([
           measurementRequest(ReportSector.report)(),
@@ -242,11 +244,11 @@ describe('measurementActions', () => {
       it('make average request for user selection', async () => {
         const item: LegendItem = {...toAggregateLegendItem({id: 1, name: 'foo'}), quantities: [Quantity.volume]};
         const legendItems = [item];
-        const requestParameters: MeasurementParameters = {...parameters, legendItems};
+        const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchSelectionAverageAsync(requestParameters);
+        onFetchSelectionAverageAsync(measurementParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+        await store.dispatch(fetchMeasurementsForReport(measurementParameters));
 
         expect(store.getActions()).toEqual([
           measurementRequest(ReportSector.report)(),
@@ -267,11 +269,11 @@ describe('measurementActions', () => {
           quantities: [Quantity.flow]
         };
         const legendItems: LegendItem[] = [aggregateItem];
-        const requestParameters: MeasurementParameters = {...parameters, legendItems};
+        const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchSelectionAverageAsync(requestParameters);
+        onFetchSelectionAverageAsync(measurementParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+        await store.dispatch(fetchMeasurementsForReport(measurementParameters));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -283,12 +285,12 @@ describe('measurementActions', () => {
           quantities: [Quantity.volume, Quantity.flow],
         };
         const legendItems: LegendItem[] = [first, aggregateItem];
-        const requestParameters: MeasurementParameters = {...parameters, legendItems};
+        const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchMeasurementsAsync(requestParameters);
-        onFetchSelectionAverageAsync(requestParameters);
+        onFetchMeasurementsAsync(measurementParameters);
+        onFetchSelectionAverageAsync(measurementParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+        await store.dispatch(fetchMeasurementsForReport(measurementParameters));
 
         const measurementResponse = makeMeasurementResponse(first);
         expect(store.getActions()).toEqual([
@@ -314,11 +316,11 @@ describe('measurementActions', () => {
         const item: LegendItem = legendItemOf(Medium.districtHeating);
         const legendItems: LegendItem[] = [item];
 
-        const requestParameters: MeasurementParameters = {...parameters, legendItems, shouldShowAverage: true};
+        const measurementParameters: MeasurementParameters = {...parameters, legendItems, shouldShowAverage: true};
 
-        onFetchMeasurementsAsync(requestParameters);
+        onFetchMeasurementsAsync(measurementParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters));
+        await store.dispatch(fetchMeasurementsForReport(measurementParameters));
 
         expect(store.getActions()).toEqual([
           measurementRequest(ReportSector.report)(),
@@ -333,11 +335,11 @@ describe('measurementActions', () => {
       it('does not fetch measurements when there are not items to fetch', async () => {
         const store = storeWith(initialState);
         const legendItems = [];
-        const requestParameters: MeasurementParameters = {...parameters, legendItems};
+        const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-        onFetchMeasurementsAsync(requestParameters);
+        onFetchMeasurementsAsync(measurementParameters);
 
-        await store.dispatch(fetchMeasurementsForReport(requestParameters) as any);
+        await store.dispatch(fetchMeasurementsForReport(measurementParameters) as any);
 
         expect(store.getActions()).toEqual([]);
       });
@@ -350,9 +352,9 @@ describe('measurementActions', () => {
           const item1: LegendItem = legendItemOf(medium, 'a');
           const item2: LegendItem = {...legendItemOf(medium, 'b'), quantities};
           const legendItems: LegendItem[] = [item1, item2];
-          const requestParameters: MeasurementParameters = {...parameters, legendItems};
+          const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-          expect(measurementsRequestModelsOf(requestParameters)).toHaveLength(1);
+          expect(measurementsRequestModelsOf(measurementParameters)).toHaveLength(1);
         });
 
         it('makes request for meters that have selected quantities and with different medium', () => {
@@ -419,9 +421,9 @@ describe('measurementActions', () => {
       const item3: LegendItem = {...legendItemOf(Medium.gas), label: 'c', quantities: [Quantity.volume]};
       const legendItems: LegendItem[] = [item1, item2, item3];
 
-      const requestParameters: MeasurementParameters = {...parameters, legendItems};
+      const measurementParameters: MeasurementParameters = {...parameters, legendItems};
 
-      expect(requestModelsByType(requestParameters)).toHaveLength(2);
+      expect(requestModelsByType(measurementParameters)).toHaveLength(2);
     });
 
   });
