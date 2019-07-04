@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LegendDto {
-  public UUID logicalMeterId;
+  public UUID id;
   public String facility;
   public String medium;
 }

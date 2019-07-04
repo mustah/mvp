@@ -28,7 +28,7 @@ public interface LogicalMeters {
 
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
-  List<LegendDto> findAllLegendsBy(RequestParameters parameters);
+  List<LegendDto> findAllLegendItemsBy(RequestParameters parameters, Pageable pageable);
 
   List<LogicalMeter> findAllBy(RequestParameters parameters);
 

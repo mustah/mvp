@@ -119,22 +119,11 @@ class LogicalMeterJooqJpaRepository
   }
 
   @Override
-  public List<LegendDto> findAllLegends(RequestParameters parameters) {
-    var query = dsl.select(
-      PHYSICAL_METER.LOGICAL_METER_ID,
-      PHYSICAL_METER.EXTERNAL_ID,
-      PHYSICAL_METER.MEDIUM
-    ).from(LOGICAL_METER);
-
-    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
-
-    return query.fetch()
-      .stream()
-      .map(record -> new LegendDto(
-        record.get(PHYSICAL_METER.LOGICAL_METER_ID),
-        record.get(PHYSICAL_METER.EXTERNAL_ID),
-        record.get(PHYSICAL_METER.MEDIUM)
-      )).collect(toList());
+  public List<LegendDto> findAllLegendItems(RequestParameters parameters, Pageable pageable) {
+    return findAll(parameters, pageable)
+      .getContent().stream()
+      .map(it -> new LegendDto(it.id, it.externalId, it.medium))
+      .collect(toList());
   }
 
   @Override

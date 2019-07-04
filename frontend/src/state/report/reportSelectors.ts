@@ -4,11 +4,16 @@ import {getId, unique} from '../../helpers/collections';
 import {RootState} from '../../reducers/rootReducer';
 import {uuid} from '../../types/Types';
 import {VisibilitySummaryProps} from '../../usecases/report/components/VisibilitySummary';
+import {toLegendItem} from '../../usecases/report/helpers/legendHelper';
+import {NormalizedState} from '../domain-models/domainModels';
+import {getAllEntities} from '../domain-models/domainModelsSelectors';
 import {mapQuantityToIds} from '../ui/graph/measurement/measurementActions';
 import {MeasurementParameters, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {ToolbarView} from '../ui/toolbar/toolbarModels';
+import {limit} from './reportActions';
 import {
   isMedium,
+  LegendDto,
   LegendItem,
   LegendType,
   LegendViewOptions,
@@ -96,3 +101,6 @@ const measurementParametersSelectorFrom = (key: 'report' | 'selectionReport') =>
 export const getMeasurementParameters = measurementParametersSelectorFrom('report');
 
 export const getSelectionMeasurementParameters = measurementParametersSelectorFrom('selectionReport');
+
+export const getLegendItemsWithLimit = (legendItems: NormalizedState<LegendDto>): LegendItem[] =>
+  getAllEntities(legendItems).splice(0, limit).map(toLegendItem);

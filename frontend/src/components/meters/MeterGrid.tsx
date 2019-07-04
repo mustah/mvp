@@ -9,6 +9,7 @@ import {OnChangePage, Pagination, SortOption} from '../../state/ui/pagination/pa
 import {
   CallbackWith,
   EncodedUriParameters,
+  Fetch,
   Fetching,
   FetchPaginated,
   HasContent,
@@ -33,6 +34,7 @@ export interface DispatchToProps {
   addToReport: OnClickWith<LegendItem>;
   changePage: OnChangePage;
   deleteMeter: OnDeleteMeter;
+  fetchLegendItems: Fetch;
   fetchMeters: FetchPaginated;
   sortMeters: CallbackWith<SortOption[]>;
   syncWithMetering: OnClickWithId;
@@ -48,11 +50,16 @@ const MeterListWrapper = compose<WrapperProps & ThemeContext, WrapperProps>(
 export const MeterGrid = (props: Props) => {
   const {
     fetchMeters,
+    fetchLegendItems,
     pagination: {page},
     parameters,
     sortOptions,
   } = props;
   useFetchMeters({fetchMeters, parameters, sortOptions, page});
+
+  React.useEffect(() => {
+    fetchLegendItems(parameters);
+  }, [parameters]);
 
   const wrapperProps: Props & EmptyContentProps = {
     ...props,

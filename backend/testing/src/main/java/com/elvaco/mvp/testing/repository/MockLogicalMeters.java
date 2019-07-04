@@ -75,7 +75,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public List<LegendDto> findAllLegendsBy(RequestParameters parameters) {
+  public List<LegendDto> findAllLegendItemsBy(RequestParameters parameters, Pageable pageable) {
     throw new NotImplementedYet();
   }
 

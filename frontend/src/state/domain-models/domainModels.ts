@@ -1,5 +1,6 @@
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {LegendDto} from '../report/reportModels';
 import {MeasurementState} from '../ui/graph/measurement/measurementModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
 import {CollectionStat} from './collection-stat/collectionStatModels';
@@ -41,6 +42,7 @@ export interface DomainModelsState {
   collectionStats: NormalizedState<CollectionStat>;
   dashboards: NormalizedState<Dashboard>;
   gatewayMapMarkers: NormalizedState<MapMarker>;
+  legendItems: NormalizedState<LegendDto>;
   meterMapMarkers: NormalizedState<MapMarker>;
   meters: NormalizedState<MeterDetails>;
   meterDefinitions: NormalizedState<MeterDefinition>;

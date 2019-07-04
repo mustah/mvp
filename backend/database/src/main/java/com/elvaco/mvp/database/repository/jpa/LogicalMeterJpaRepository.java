@@ -28,7 +28,7 @@ public interface LogicalMeterJpaRepository {
 
   Page<String> findFacilities(RequestParameters parameters, Pageable pageable);
 
-  List<LegendDto> findAllLegends(RequestParameters parameters);
+  List<LegendDto> findAllLegendItems(RequestParameters parameters, Pageable pageable);
 
   Set<LogicalMeterEntity> findAll(RequestParameters parameters);
 

@@ -23,8 +23,11 @@ public class LogicalMeterUseCases {
   private final AuthenticatedUser currentUser;
   private final LogicalMeters logicalMeters;
 
-  public List<LegendDto> findAllLegendsBy(RequestParameters parameters) {
-    return logicalMeters.findAllLegendsBy(parameters.ensureOrganisationFilters(currentUser));
+  public List<LegendDto> findAllLegendItemsBy(RequestParameters parameters, Pageable pageable) {
+    return logicalMeters.findAllLegendItemsBy(
+      parameters.ensureOrganisationFilters(currentUser),
+      pageable
+    );
   }
 
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {

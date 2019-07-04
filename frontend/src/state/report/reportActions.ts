@@ -3,14 +3,18 @@ import {createAction, createStandardAction} from 'typesafe-actions';
 import {TemporalResolution} from '../../components/dates/dateModels';
 import {Maybe} from '../../helpers/Maybe';
 import {GetState} from '../../reducers/rootReducer';
+import {EndPoints} from '../../services/endPoints';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Dispatch, uuid} from '../../types/Types';
+import {fetchIfNeeded} from '../domain-models/domainModelsActions';
+import {makeDataFormatter} from '../domain-models/domainModelSchema';
 import {allQuantitiesMap, Quantity} from '../ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../ui/message/messageActions';
 import {SelectionInterval, ThresholdQuery} from '../user-selection/userSelectionModels';
 import {getThreshold} from '../user-selection/userSelectionSelectors';
 import {
   isKnownMedium,
+  LegendDto,
   LegendItem,
   LegendItemSettings,
   LegendType,
@@ -55,7 +59,7 @@ export const removeAllByType = (sector: ReportSector) =>
 export const setReportTimePeriod = (sector: ReportSector) =>
   createStandardAction(`SET_REPORT_TIME_PERIOD_${sector}`)<SelectionInterval>();
 
-export const limit = 2000;
+export const limit = 500;
 export const numPreselected = 10;
 
 interface DispatchWithinLimits {
@@ -160,3 +164,9 @@ const addAllToReportSector = (
   ];
   selectItemsIfWithinLimits({dispatch, items, reportSection});
 };
+
+export const fetchLegendItems = fetchIfNeeded<LegendDto>(
+  EndPoints.legendItems,
+  'legendItems',
+  makeDataFormatter('legendItems'),
+);

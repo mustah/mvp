@@ -1,8 +1,8 @@
 import {EndPoints} from '../../../services/endPoints';
 import {Sectors} from '../../../types/Types';
 import {clearError, fetchIfNeeded, fetchIfNeededForSector} from '../domainModelsActions';
+import {makeDataFormatter} from '../domainModelSchema';
 import {CollectionStat} from './collectionStatModels';
-import {makeDataFormatter} from './collectionStatSchema';
 
 export const meterCollectionStatClearError = clearError(Sectors.meterCollection);
 

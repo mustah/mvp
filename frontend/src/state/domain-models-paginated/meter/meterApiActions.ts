@@ -4,8 +4,8 @@ import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {Dispatch, ErrorResponse, uuid} from '../../../types/Types';
 import {syncMeters} from '../../../usecases/meter/meterActions';
-import {toLegendItem} from '../../../usecases/report/helpers/legendHelper';
 import {addAllToReport} from '../../report/reportActions';
+import {getLegendItemsWithLimit} from '../../report/reportSelectors';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
@@ -56,8 +56,8 @@ export const clearMetersErrorOnPage = () =>
 
 export const addMetersOnPageToReport = () =>
   (dispatch, getState: GetState) => {
-    const {paginatedDomainModels: {meters}} = getState();
-    dispatch(addAllToReport(getAllMeters(meters).map(toLegendItem)));
+    const {domainModels: {legendItems}} = getState();
+    dispatch(addAllToReport(getLegendItemsWithLimit(legendItems)));
   };
 
 export const syncMetersOnPage = () =>

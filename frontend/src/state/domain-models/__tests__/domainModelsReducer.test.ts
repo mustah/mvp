@@ -284,6 +284,7 @@ describe('domainModelsReducer', () => {
     const initialState: DomainModelsState = {
       allCollectionStats: initialDomain(),
       gatewayMapMarkers: initialDomain(),
+      legendItems: initialDomain(),
       meters: initialDomain(),
       meterMapMarkers: initialDomain(),
       organisations: initialDomain(),
@@ -303,6 +304,7 @@ describe('domainModelsReducer', () => {
     const state: DomainModelsState = {
       allCollectionStats: {...initialState.allCollectionStats, isFetching: true},
       gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
+      legendItems: {...initialState.legendItems, isFetching: true},
       meters: {...initialState.meters, isFetching: true},
       meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
       organisations: {...initialState.organisations, isFetching: true},
