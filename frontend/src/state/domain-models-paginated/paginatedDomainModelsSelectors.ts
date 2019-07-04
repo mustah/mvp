@@ -15,10 +15,6 @@ export interface PageState<T extends Identifiable> {
   state: NormalizedPaginatedState<T>;
 }
 
-export const getPaginatedResult =
-  <T extends Identifiable>({result}: NormalizedPaginatedState<T>, page: number): uuid[] =>
-    result[page] && result[page].result || [];
-
 export const getPageIsFetching =
   <T extends Identifiable>({result}: NormalizedPaginatedState<T>, page: number): boolean =>
     result[page] ? result[page].isFetching : false;
