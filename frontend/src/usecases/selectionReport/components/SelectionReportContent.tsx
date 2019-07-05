@@ -3,13 +3,14 @@ import {Column} from '../../../components/layouts/column/Column';
 import {useToggleVisibility} from '../../../hooks/toogleVisibilityHook';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {LegendContainer} from '../containers/LegendContainer';
-import {GraphContainer, MeasurementsContainer} from '../containers/SelectionReportContainer';
+import {SelectionMeasurementsExcelExportContainer} from '../containers/SelectionMeasurementsExcelExportContainer';
+import {MeasurementLineContainer, MeasurementsContainer} from '../containers/SelectionReportContainers';
 import {Props} from '../containers/SelectionReportContentContainer';
 import {ToolbarContainer} from '../containers/ToolbarContainer';
 
 const isTabVisible = (show: boolean): string => show ? 'flex' : 'none';
 
-export const SelectionReport = ({
+export const SelectionReportContent = ({
   addAllToSelectionReport,
   fetchLegendItems,
   isSuccessfullyFetched,
@@ -32,12 +33,17 @@ export const SelectionReport = ({
   return (
     <Column>
       <ToolbarContainer showHideLegend={showHide}/>
+
+      <SelectionMeasurementsExcelExportContainer/>
+
       <Column style={{display: isTabVisible(view === ToolbarView.graph)}}>
-        {view === ToolbarView.graph && <GraphContainer/>}
+        {view === ToolbarView.graph && <MeasurementLineContainer/>}
       </Column>
+
       <Column style={{display: isTabVisible(view === ToolbarView.table)}}>
         {view === ToolbarView.table && <MeasurementsContainer/>}
       </Column>
+
       {view === ToolbarView.graph && <LegendContainer isVisible={isVisible} showHideLegend={showHide}/>}
     </Column>
   );

@@ -20,6 +20,7 @@ import {
   ReportState,
   SavedReportsState,
   SelectedQuantities,
+  TemporalReportState,
   ViewOptions
 } from './reportModels';
 
@@ -101,6 +102,23 @@ const measurementParametersSelectorFrom = (key: 'report' | 'selectionReport') =>
 export const getMeasurementParameters = measurementParametersSelectorFrom('report');
 
 export const getSelectionMeasurementParameters = measurementParametersSelectorFrom('selectionReport');
+
+export const getAllSelectionMeasurementParameters =
+  createSelector<RootState, NormalizedState<LegendDto>, TemporalReportState, MeasurementParameters>(
+    state => state.domainModels.legendItems,
+    state => state.selectionReport.temporal,
+    (
+      legendItems,
+      {resolution, shouldComparePeriod, timePeriod: reportDateRange}: TemporalReportState,
+    ) => ({
+      legendItems: getAllEntities(legendItems).map(toLegendItem),
+      reportDateRange,
+      resolution,
+      shouldComparePeriod,
+      shouldShowAverage: false,
+      view: ToolbarView.table,
+    })
+  );
 
 export const getLegendItemsWithLimit = (legendItems: NormalizedState<LegendDto>): LegendItem[] =>
   getAllEntities(legendItems).splice(0, limit).map(toLegendItem);

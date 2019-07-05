@@ -53,8 +53,8 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
       displayMode: QuantityDisplayMode.readout,
     },
     selectedQuantities,
+    shouldFetchMeasurements: userSelections.isSuccessfullyFetched,
     userSelectionId: getUserSelectionId(rootState.userSelection),
-    userSelections,
   };
 };
 

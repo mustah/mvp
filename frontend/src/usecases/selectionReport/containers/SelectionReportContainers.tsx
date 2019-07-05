@@ -11,7 +11,6 @@ import {
   hasLegendItems
 } from '../../../state/report/reportSelectors';
 import {
-  exportSelectionReportToExcel,
   fetchMeasurementsForSelectionReport,
   measurementClearError
 } from '../../../state/ui/graph/measurement/measurementActions';
@@ -46,21 +45,20 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
     measurementParameters: getSelectionMeasurementParameters(rootState),
     selectedQuantities: getSelectedQuantities(selectionReport.savedReports),
+    shouldFetchMeasurements: userSelections.isSuccessfullyFetched,
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
-    userSelections,
     visibilitySummary: getVisibilitySummary(selectionReport.savedReports),
   });
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError(ReportSector.selectionReport),
-  exportToExcelSuccess: exportSelectionReportToExcel,
   fetchMeasurements: fetchMeasurementsForSelectionReport,
   fetchUserSelections,
 }, dispatch);
 
-export const GraphContainer =
+export const MeasurementLineContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MeasurementLineChart);
 
 export const MeasurementsContainer =

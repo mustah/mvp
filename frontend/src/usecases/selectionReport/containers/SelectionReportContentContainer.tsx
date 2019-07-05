@@ -7,7 +7,7 @@ import {getLegendItemsWithLimit} from '../../../state/report/reportSelectors';
 import {ToolbarViewSettingsProps} from '../../../state/ui/toolbar/toolbarModels';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {CallbackWith, EncodedUriParameters, Fetch} from '../../../types/Types';
-import {SelectionReport} from '../components/SelectionReport';
+import {SelectionReportContent} from '../components/SelectionReportContent';
 
 interface StateToProps extends ToolbarViewSettingsProps {
   isSuccessfullyFetched: boolean;
@@ -39,4 +39,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchLegendItems,
 }, dispatch);
 
-export const SelectionReportContentContainer = connect(mapStateToProps, mapDispatchToProps)(SelectionReport);
+export const SelectionReportContentContainer = connect(mapStateToProps, mapDispatchToProps)(SelectionReportContent);

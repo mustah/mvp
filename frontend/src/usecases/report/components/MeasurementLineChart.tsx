@@ -10,20 +10,20 @@ import {VisibilitySummary} from './VisibilitySummary';
 
 export type Props = StateToProps & DispatchToProps;
 
-export const MeasurementLineChart = (props: Props) => {
-  const {
-    clearError,
-    hiddenLines,
-    hasContent,
-    hasLegendItems,
-    isFetching,
-    isSideMenuOpen,
-    measurement: {error, measurementResponse},
-    selectedQuantities,
-    threshold,
-    visibilitySummary,
-  } = props;
-  useFetchMeasurements(props);
+export const MeasurementLineChart = ({
+  clearError,
+  hiddenLines,
+  hasContent,
+  hasLegendItems,
+  isFetching,
+  isSideMenuOpen,
+  measurement: {error, measurementResponse},
+  selectedQuantities,
+  threshold,
+  visibilitySummary,
+  ...fetchMeasurementProps
+}: Props) => {
+  useFetchMeasurements(fetchMeasurementProps);
 
   const graphContents: GraphContents = useGraphContents(measurementResponse, selectedQuantities);
 

@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {isMetersPageFetching} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {ReportSector} from '../../../state/report/reportModels';
 import {
   getHiddenLines,
@@ -12,7 +11,6 @@ import {
   hasLegendItems
 } from '../../../state/report/reportSelectors';
 import {
-  exportToExcelSuccess,
   fetchMeasurementsForReport,
   measurementClearError
 } from '../../../state/ui/graph/measurement/measurementActions';
@@ -25,13 +23,13 @@ import {
 import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
-import {ThresholdQuery, UserSelection} from '../../../state/user-selection/userSelectionModels';
+import {ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {
   getMeterParameters,
   getThreshold,
   getUserSelectionId
 } from '../../../state/user-selection/userSelectionSelectors';
-import {Callback, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
+import {EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
 import {VisibilitySummaryProps} from '../components/VisibilitySummary';
@@ -47,14 +45,13 @@ export interface StateToProps {
   measurementParameters: MeasurementParameters;
   visibilitySummary?: VisibilitySummaryProps;
   threshold?: ThresholdQuery;
-  userSelections: NormalizedState<UserSelection>;
   userSelectionId: uuid;
   selectedQuantities: Quantity[];
+  shouldFetchMeasurements: boolean;
 }
 
 export interface DispatchToProps {
   clearError: OnClick;
-  exportToExcelSuccess: Callback;
   fetchMeasurements: FetchMeasurements;
   fetchUserSelections: Fetch;
 }
@@ -78,16 +75,15 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     parameters: getMeterParameters({userSelection: userSelection.userSelection}),
     measurementParameters: getMeasurementParameters(rootState),
     selectedQuantities: getSelectedQuantities(report.savedReports),
+    shouldFetchMeasurements: userSelections.isSuccessfullyFetched,
     threshold: getThreshold(userSelection),
     userSelectionId: getUserSelectionId(userSelection),
-    userSelections,
     visibilitySummary: getVisibilitySummary(report.savedReports),
   });
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError(ReportSector.report),
-  exportToExcelSuccess: exportToExcelSuccess(ReportSector.report),
   fetchMeasurements: fetchMeasurementsForReport,
   fetchUserSelections,
 }, dispatch);

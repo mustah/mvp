@@ -87,7 +87,7 @@ export const ReportToolbar = withCssStyles(({
         <RowMiddle>
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
-            disabled={isFetching || isExportingToExcel || !hasMeasurements || view === ToolbarView.graph}
+            disabled={isFetching || isExportingToExcel || !hasMeasurements}
             onClick={exportToExcel}
             style={{marginLeft: 0}}
             tooltip={firstUpperTranslated('export to excel')}
