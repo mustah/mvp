@@ -1,7 +1,7 @@
 import {flatMap} from 'lodash';
 import {unique} from '../../../helpers/collections';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
-import {LegendItem, LegendItemSettings, SavedReportsState} from '../../../state/report/reportModels';
+import {LegendDto, LegendItem, LegendItemSettings, SavedReportsState} from '../../../state/report/reportModels';
 import {getLegendItems} from '../../../state/report/reportSelectors';
 import {searchableQuantitiesFrom} from '../../../state/ui/graph/measurement/measurementActions';
 import {
@@ -29,7 +29,7 @@ export const toLegendItemAllSearchableQuantities = ({id, facility, medium}: Mete
   });
 };
 
-export const toLegendItem = ({id, facility, medium}: Meter): LegendItem => ({
+export const toLegendItem = ({id, facility, medium}: Meter | LegendDto): LegendItem => ({
   id,
   label: facility as string,
   type: getMediumType(medium),

@@ -1,9 +1,4 @@
-import {normalize, schema} from 'normalizr';
-import {Normalized} from '../domainModels';
-import {DataFormatter} from '../domainModelsActions';
+import {makeDataFormatter} from '../domainModelSchema';
 import {Dashboard} from './dashboardModels';
 
-const dashboardSchema = [new schema.Entity('dashboards')];
-
-export const dashboardDataFormatter: DataFormatter<Normalized<Dashboard>> =
-  (response) => normalize(response, dashboardSchema);
+export const dashboardDataFormatter = makeDataFormatter<Dashboard>('dashboards');

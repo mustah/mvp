@@ -105,8 +105,15 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LegendDto> findAllLegendsBy(RequestParameters parameters) {
-    return logicalMeterJpaRepository.findAllLegends(parameters);
+  public List<LegendDto> findAllLegendItemsBy(RequestParameters parameters, Pageable pageable) {
+    return logicalMeterJpaRepository.findAllLegendItems(
+      parameters,
+      PageRequest.of(
+        pageable.getPageNumber(),
+        parameters.getLimit(),
+        SortMapper.getAsSpringSort(pageable.getSort())
+      )
+    );
   }
 
   @Override

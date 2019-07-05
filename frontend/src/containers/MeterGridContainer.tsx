@@ -5,7 +5,7 @@ import {RootState} from '../reducers/rootReducer';
 import {deleteMeter, fetchMeters} from '../state/domain-models-paginated/meter/meterApiActions';
 import {sortMeters} from '../state/domain-models-paginated/paginatedDomainModelsActions';
 import {getAllMeters, getPageIsFetching} from '../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {addToReport} from '../state/report/reportActions';
+import {addToReport, fetchLegendItems} from '../state/report/reportActions';
 import {changePage} from '../state/ui/pagination/paginationActions';
 import {Pagination} from '../state/ui/pagination/paginationModels';
 import {getPaginatedMeterParameters} from '../state/user-selection/userSelectionSelectors';
@@ -40,6 +40,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addToReport,
   changePage,
   deleteMeter,
+  fetchLegendItems,
   fetchMeters,
   sortMeters,
   syncWithMetering,

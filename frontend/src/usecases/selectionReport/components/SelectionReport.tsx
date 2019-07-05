@@ -9,13 +9,26 @@ import {ToolbarContainer} from '../containers/ToolbarContainer';
 
 const isTabVisible = (show: boolean): string => show ? 'flex' : 'none';
 
-export const SelectionReport = ({isFetching, legendItems, newLegendItems, addAllToSelectionReport, view}: Props) => {
+export const SelectionReport = ({
+  addAllToSelectionReport,
+  fetchLegendItems,
+  isSuccessfullyFetched,
+  legendItems,
+  parameters,
+  view
+}: Props) => {
   React.useEffect(() => {
-    if (newLegendItems.length && newLegendItems.length !== legendItems.length) {
-      addAllToSelectionReport(newLegendItems);
+    fetchLegendItems(parameters);
+  }, [parameters]);
+
+  React.useEffect(() => {
+    if (isSuccessfullyFetched && legendItems.length) {
+      addAllToSelectionReport(legendItems);
     }
-  }, [legendItems, isFetching]);
+  }, [isSuccessfullyFetched]);
+
   const {isVisible, showHide} = useToggleVisibility(false);
+
   return (
     <Column>
       <ToolbarContainer showHideLegend={showHide}/>

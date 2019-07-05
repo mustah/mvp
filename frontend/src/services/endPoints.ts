@@ -10,6 +10,7 @@ export const enum EndPoints {
   organisationsToSelect = '/selections/organisations',
   reported = '/selections/reported',
   secondaryAddresses = '/selections/secondary-addresses',
+  legendItems = '/meters/legends',
   meters = '/meters',
   meterDetails = '/meters/details',
   syncMeters = '/meters/sync',

@@ -16,6 +16,11 @@ export interface LegendItemSettings {
   isRowExpanded?: boolean;
 }
 
+export interface LegendDto extends Identifiable {
+  facility: string;
+  medium: string;
+}
+
 export interface LegendItem extends LegendTyped, LegendItemSettings {
   id: uuid;
   label: string;

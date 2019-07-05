@@ -9,6 +9,7 @@ import {setMeterCollectionStatsTimePeriod} from '../../usecases/collection/colle
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterDetailMeasurementRequest} from '../../usecases/meter/measurements/meterDetailMeasurementActions';
 import {meterDetailMeasurement} from '../../usecases/meter/measurements/meterDetailMeasurementReducer';
+import {LegendDto} from '../report/reportModels';
 import {search} from '../search/searchActions';
 import {QueryParameter} from '../search/searchModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
@@ -262,11 +263,18 @@ export const widgets = reducerFor<Widget>(
   resetStateOnLogoutReducer
 );
 
+export const legendItems = reducerFor<LegendDto>(
+  'legendItems',
+  EndPoints.legendItems,
+  resetStateReducer
+);
+
 export const domainModels = combineReducers<DomainModelsState>({
   allCollectionStats,
   collectionStats,
   dashboards,
   gatewayMapMarkers,
+  legendItems,
   mediums,
   meterCollectionStats,
   meters,
