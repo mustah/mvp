@@ -52,7 +52,8 @@ import {
   MeasurementState,
   Medium,
   Quantity,
-  quantityAttributes
+  quantityAttributes,
+  QuantityDisplayMode
 } from './measurementModels';
 
 export const measurementRequest = (sector: ReportSector) =>
@@ -139,8 +140,8 @@ export const mapQuantityToIds = (items: LegendItem[]): QuantityIdsMap =>
 export const searchableQuantitiesFrom = (type: LegendType): Quantity[] =>
   allQuantitiesMap[type].filter(availableQuantities);
 
-export const makeQuantityParamFrom = (quantity: Quantity): string =>
-  `${quantity}::${quantityAttributes[quantity].displayMode}`;
+export const makeQuantityParamFrom = (quantity: Quantity, displayMode?: QuantityDisplayMode): string =>
+  `${quantity}::${displayMode || quantityAttributes[quantity].displayMode}`;
 
 export const undefinedLabelFactory = _ => undefined;
 
@@ -148,6 +149,7 @@ export const mediumLabelFactory = ({type}: LabelItem): string => `${getGroupHead
 
 const measurementsRequestModelsByMedium = (
   {
+    displayMode,
     reportDateRange,
     legendItems,
     resolution,
@@ -159,13 +161,16 @@ const measurementsRequestModelsByMedium = (
   return Object.keys(mediumToIds)
     .filter((medium: Medium) => mediumToIds[medium].length > 0)
     .filter(isKnownMedium)
-    .map(medium => makeMeasurementRequestModel(
-      reportDateRange,
-      mediumToIds[medium],
-      searchableQuantitiesFrom(medium).map(makeQuantityParamFrom),
-      resolution,
-      labelFactory({type: medium, quantity: getQuantity({type: medium})})
-    ));
+    .map(medium => {
+      const quantityParams = searchableQuantitiesFrom(medium).map(it => makeQuantityParamFrom(it, displayMode));
+      return makeMeasurementRequestModel(
+        reportDateRange,
+        mediumToIds[medium],
+        quantityParams,
+        resolution,
+        labelFactory({type: medium, quantity: getQuantity({type: medium})})
+      );
+    });
 };
 
 const measurementsRequestModelsByQuantity = (
