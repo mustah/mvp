@@ -49,7 +49,6 @@ import {
   MeasurementResponse,
   MeasurementResponsePart,
   MeasurementsApiResponse,
-  MeasurementState,
   Medium,
   Quantity,
   quantityAttributes,
@@ -284,17 +283,17 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
 });
 
 const shouldFetchMeasurementsSelectionReport: FetchIfNeeded = (getState: GetState): boolean => {
-  const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().selectionMeasurement;
-  return !isSuccessfullyFetched && !isFetching && error.isNothing();
+  const {isExportingToExcel, isFetching, isSuccessfullyFetched, error} = getState().selectionMeasurement;
+  return isExportingToExcel || !isSuccessfullyFetched && !isFetching && error.isNothing();
 };
 
 const shouldFetchMeasurementsReport: FetchIfNeeded = (getState: GetState): boolean => {
-  const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().measurement;
+  const {isFetching, isSuccessfullyFetched, error} = getState().measurement;
   return !isSuccessfullyFetched && !isFetching && error.isNothing();
 };
 
 const shouldFetchMeasurementsMeterDetails: FetchIfNeeded = (getState: GetState): boolean => {
-  const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().domainModels.meterDetailMeasurement;
+  const {isFetching, isSuccessfullyFetched, error} = getState().domainModels.meterDetailMeasurement;
   return !isSuccessfullyFetched && !isFetching && error.isNothing();
 };
 

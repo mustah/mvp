@@ -15,21 +15,18 @@ const MeasurementListWrapper = compose<WrapperProps & ThemeContext, WrapperProps
   withEmptyContent
 )(MeasurementList);
 
-export const Measurements = (props: Props) => {
-  const {
-    clearError,
-    exportToExcelSuccess,
-    hasContent,
-    hasLegendItems,
-    isFetching,
-    measurement: {error, measurementResponse: {average, measurements}, isExportingToExcel}
-  } = props;
-  useFetchMeasurements(props);
+export const Measurements = ({
+  clearError,
+  hasContent,
+  hasLegendItems,
+  isFetching,
+  measurement: {error, measurementResponse: {average, measurements}},
+  ...fetchMeasurementProps
+}: Props) => {
+  useFetchMeasurements(fetchMeasurementProps);
 
   const wrapperProps: WrapperProps = {
-    exportToExcelSuccess,
     hasContent,
-    isExportingToExcel,
     measurements: React.useMemo(() => [...average, ...measurements], [average, measurements]),
     noContentText: firstUpperTranslated(hasLegendItems ? 'no measurements' : 'no meters'),
   };
