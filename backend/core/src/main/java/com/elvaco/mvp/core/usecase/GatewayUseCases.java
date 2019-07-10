@@ -1,16 +1,19 @@
 package com.elvaco.mvp.core.usecase;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.core.spi.repository.GatewaysMeters;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class GatewayUseCases {
 
   private final Gateways gateways;
+  private final GatewaysMeters gatewaysMeters;
   private final AuthenticatedUser currentUser;
 
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
@@ -49,5 +53,13 @@ public class GatewayUseCases {
     } else {
       return gateways.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
     }
+  }
+
+  public void setLastSeenForMeter(
+    Gateway gateway,
+    LogicalMeter logicalMeter,
+    ZonedDateTime lastSeen
+  ) {
+    gatewaysMeters.saveOrUpdate(gateway.id, logicalMeter.id, logicalMeter.organisationId, lastSeen);
   }
 }

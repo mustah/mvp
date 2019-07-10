@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Add created and last seen date for gateways meters" author="asagod">
+    <addColumn tableName="gateways_meters">
+      <column name="created" type="timestamp with time zone" />
+    </addColumn>
+    <addColumn tableName="gateways_meters">
+      <column name="last_seen" type="timestamp with time zone" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="Drop hibernate_organisation_id from gateways" author="asagod">
+    <dropColumn tableName="gateways_meters" columnName="hibernate_organisation_id"/>
+  </changeSet>
+
+</databaseChangeLog>

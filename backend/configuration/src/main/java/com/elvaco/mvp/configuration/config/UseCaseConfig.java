@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.CollectionStats;
 import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.core.spi.repository.GatewaysMeters;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -56,6 +57,7 @@ class UseCaseConfig {
   private final Measurements measurements;
   private final Organisations organisations;
   private final Gateways gateways;
+  private final GatewaysMeters gatewaysMeters;
   private final PhysicalMeters physicalMeters;
   private final MeterStatusLogs meterStatusLogs;
   private final TokenService tokenService;
@@ -118,7 +120,7 @@ class UseCaseConfig {
 
   @Bean
   GatewayUseCases gatewayUseCases(AuthenticatedUser currentUser) {
-    return new GatewayUseCases(gateways, currentUser);
+    return new GatewayUseCases(gateways, gatewaysMeters, currentUser);
   }
 
   @Bean

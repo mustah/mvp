@@ -11,6 +11,7 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @RequiredArgsConstructor
 public final class GatewayWithMetersMapper {
@@ -25,7 +26,9 @@ public final class GatewayWithMetersMapper {
       .productModel(entity.productModel)
       .ip(entity.ip)
       .phoneNumber(entity.phoneNumber)
-      .meters(toLogicalMeters(entity.meters))
+      .meters(toLogicalMeters(entity.gatewayMeters.stream()
+        .map(gm -> gm.logicalMeter)
+        .collect(toSet())))
       .statusLogs(entity.statusLogs.stream()
         .map(GatewayStatusLogEntityMapper::toDomainModel)
         .collect(toList()))

@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.testing.repository.MockGateways;
+import com.elvaco.mvp.testing.repository.MockGatewaysMeters;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Test;
@@ -63,6 +64,7 @@ public class GatewayUseCasesTest {
   private GatewayUseCases useCasesWithCurrentUser(User currentUser) {
     return new GatewayUseCases(
       new MockGateways(),
+      new MockGatewaysMeters(),
       new MockAuthenticatedUser(currentUser, "token123")
     );
   }

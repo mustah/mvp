@@ -27,6 +27,20 @@ abstract class BaseJooqRepository<T, I extends Serializable>
     this.entityClass = entityClass;
   }
 
+  int executeUpdate(Query query) {
+    var nativeQuery = entityManager.createNativeQuery(query.getSQL());
+
+    int i = 0;
+    for (Param<?> param : query.getParams().values()) {
+      if (!param.isInline()) {
+        nativeQuery.setParameter(i + 1, convertToDatabaseType(param));
+        i++;
+      }
+    }
+
+    return nativeQuery.executeUpdate();
+  }
+
   List<T> nativeQuery(Query query) {
     return nativeQuery(query, entityClass);
   }
@@ -42,23 +56,9 @@ abstract class BaseJooqRepository<T, I extends Serializable>
       }
     }
     @SuppressWarnings("unchecked") //Let's hope JPA does the right thing
-    List<E> resultList = nativeQuery.getResultList();
+      List<E> resultList = nativeQuery.getResultList();
 
     return resultList;
-  }
-
-  void executeUpdate(Query query) {
-    var nativeQuery = entityManager.createNativeQuery(query.getSQL());
-
-    int i = 0;
-    for (Param<?> param : query.getParams().values()) {
-      if (!param.isInline()) {
-        nativeQuery.setParameter(i + 1, convertToDatabaseType(param));
-        i++;
-      }
-    }
-
-    nativeQuery.executeUpdate();
   }
 
   private static <T> Object convertToDatabaseType(Param<T> param) {

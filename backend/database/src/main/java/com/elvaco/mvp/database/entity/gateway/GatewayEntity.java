@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -16,7 +15,6 @@ import javax.persistence.Table;
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.JsonField;
-import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -28,7 +26,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 
 @NoArgsConstructor
-@ToString(exclude = "meters")
+@ToString(exclude = "gatewayMeters")
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
@@ -49,8 +47,9 @@ public class GatewayEntity extends IdentifiableType<EntityPk> {
 
   public String phoneNumber;
 
-  @ManyToMany(mappedBy = "gateways")
-  public Set<LogicalMeterEntity> meters = new HashSet<>();
+  @OneToMany(mappedBy = "gateway")
+  @NotAudited
+  public Set<GatewayMeterEntity> gatewayMeters = new HashSet<>();
 
   @OrderBy("stop desc, start desc")
   @OneToMany(mappedBy = "gatewayId", fetch = FetchType.LAZY)
@@ -75,7 +74,7 @@ public class GatewayEntity extends IdentifiableType<EntityPk> {
     this.productModel = productModel;
     this.ip = ip;
     this.phoneNumber = phoneNumber;
-    this.meters = emptySet();
+    this.gatewayMeters = emptySet();
     this.statusLogs = unmodifiableSet(statusLogs);
     this.extraInfo = extraInfo;
   }

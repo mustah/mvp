@@ -6,13 +6,11 @@ import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -21,7 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
-import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.gateway.GatewayMeterEntity;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -31,10 +29,9 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.MERGE;
 
 @NoArgsConstructor
-@ToString(exclude = "gateways")
+@ToString(exclude = "gatewayMeters")
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "logical_meter",
@@ -51,19 +48,9 @@ public class LogicalMeterEntity extends IdentifiableType<EntityPk> {
   @OneToMany(mappedBy = "logicalMeterPk", fetch = FetchType.EAGER)
   public Set<PhysicalMeterEntity> physicalMeters = new HashSet<>();
 
+  @OneToMany(mappedBy = "logicalMeter", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
   @NotAudited
-  @ManyToMany(fetch = FetchType.EAGER, cascade = MERGE)
-  @JoinTable(
-    name = "gateways_meters",
-    joinColumns = {
-      @JoinColumn(name = "logical_meter_id", referencedColumnName = "id"),
-      @JoinColumn(name = "organisation_id", referencedColumnName = "organisationId")
-    },
-    inverseJoinColumns = {
-      @JoinColumn(name = "gateway_id", referencedColumnName = "id"),
-      @JoinColumn(name = "hibernate_organisation_id", referencedColumnName = "organisationId")
-    })
-  public Set<GatewayEntity> gateways = new HashSet<>();
+  public Set<GatewayMeterEntity> gatewayMeters = new HashSet<>();
 
   @ManyToOne(optional = false)
   public MeterDefinitionEntity meterDefinition;
@@ -78,7 +65,7 @@ public class LogicalMeterEntity extends IdentifiableType<EntityPk> {
   @PrimaryKeyJoinColumn
   @Fetch(FetchMode.JOIN)
   public LocationEntity location;
-
+  
   @Column
   public String utcOffset;
 

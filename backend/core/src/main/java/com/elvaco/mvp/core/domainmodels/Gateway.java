@@ -30,6 +30,9 @@ public class Gateway implements Identifiable<UUID>, PrimaryKeyed {
   public final String productModel;
   public final String ip;
   public final String phoneNumber;
+  public final ZonedDateTime created;
+  public final ZonedDateTime lastSeen;
+
   @Default
   public final JsonNode extraInfo = toJsonNode("{}");
   @Default

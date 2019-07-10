@@ -42,6 +42,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.oslo;
+import static java.time.ZonedDateTime.now;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -162,6 +163,28 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .get(0);
 
     assertThat(logicalMeterDto.gatewaySerial).isEqualTo("GATEWAY-SERIAL");
+  }
+
+  @Test
+  public void pagedMeter_TwoGateways_LastSeenIsReturnedWithMeter() {
+    ZonedDateTime lastSeen = now();
+    var gw1 = given(gateway().serial("ABC123")).toBuilder()
+      .lastSeen(lastSeen)
+      .build();
+    var gw2 = given(gateway().serial("DEF456")).toBuilder()
+      .lastSeen(lastSeen.minusDays(1))
+      .build();
+
+    given(logicalMeter().gateway(gw1).gateway(gw2));
+
+    List<PagedLogicalMeterDto> meters = asMvpUser()
+      .getPage("/meters", PagedLogicalMeterDto.class)
+      .getContent();
+
+    assertThat(meters)
+      .hasSize(1)
+      .extracting(m -> m.gatewaySerial)
+      .containsExactly("ABC123");
   }
 
   @Test

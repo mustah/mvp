@@ -17,6 +17,7 @@ import com.elvaco.mvp.core.spi.repository.CollectionStats;
 import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.core.spi.repository.GatewaysMeters;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -41,6 +42,7 @@ import com.elvaco.mvp.database.repository.access.CollectionStatsRepository;
 import com.elvaco.mvp.database.repository.access.DashboardRepository;
 import com.elvaco.mvp.database.repository.access.GatewayRepository;
 import com.elvaco.mvp.database.repository.access.GatewayStatusLogsRepository;
+import com.elvaco.mvp.database.repository.access.GatewaysMetersRepository;
 import com.elvaco.mvp.database.repository.access.LocationRepository;
 import com.elvaco.mvp.database.repository.access.LogicalMeterRepository;
 import com.elvaco.mvp.database.repository.access.MeasurementRepository;
@@ -65,6 +67,7 @@ import com.elvaco.mvp.database.repository.jpa.DashboardJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.DisplayQuantityJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewaysMetersJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
@@ -122,6 +125,7 @@ class DataProviderConfig {
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
   private final GatewayJpaRepository gatewayJpaRepository;
+  private final GatewaysMetersJpaRepository gatewaysMetersJpaRepository;
   private final RoleJpaRepository roleJpaRepository;
   private final UserSelectionJpaRepository userSelectionJpaRepository;
   private final MapMarkerJpaRepository logicalMeterMapMarkerJooqJpaRepository;
@@ -316,6 +320,11 @@ class DataProviderConfig {
   @Bean
   Gateways gateways(GatewayWithMetersMapper gatewayWithMetersMapper) {
     return new GatewayRepository(gatewayJpaRepository, gatewayWithMetersMapper);
+  }
+
+  @Bean
+  GatewaysMeters gatewaysMeters() {
+    return new GatewaysMetersRepository(gatewaysMetersJpaRepository);
   }
 
   @Bean

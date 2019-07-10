@@ -39,6 +39,7 @@ import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
+import static java.time.ZonedDateTime.now;
 import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -205,7 +206,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter3 = savePhysicalMeterWith(meter3, StatusType.ERROR);
 
     AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
-      .start(ZonedDateTime.now());
+      .start(now());
 
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());
@@ -236,7 +237,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter3 = savePhysicalMeterWith(meter3, StatusType.ERROR);
 
     AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
-      .start(ZonedDateTime.now());
+      .start(now());
 
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());
@@ -322,7 +323,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     PhysicalMeter physicalMeter = savePhysicalMeterWith(meter, StatusType.OK);
 
-    ZonedDateTime now = ZonedDateTime.now();
+    ZonedDateTime now = now();
     AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
       .start(now.minusDays(2)).stop(now.minusDays(1)).mask(1);
 
@@ -349,7 +350,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter3 = savePhysicalMeterWith(meter3, StatusType.ERROR);
 
     AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
-      .start(ZonedDateTime.now());
+      .start(now());
 
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());

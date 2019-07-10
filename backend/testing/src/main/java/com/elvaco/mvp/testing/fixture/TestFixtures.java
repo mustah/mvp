@@ -107,11 +107,14 @@ public interface TestFixtures {
 
   default GatewayBuilder gateway() {
     UUID gatewayId = randomUUID();
+    ZonedDateTime dateTime = now();
     return Gateway.builder()
       .organisationId(organisationId())
       .id(gatewayId)
       .serial(gatewayId.toString())
-      .productModel(randomUUID().toString());
+      .productModel(randomUUID().toString())
+      .created(dateTime)
+      .lastSeen(dateTime);
   }
 
   default MeterDefinitionBuilder meterDefinition() {

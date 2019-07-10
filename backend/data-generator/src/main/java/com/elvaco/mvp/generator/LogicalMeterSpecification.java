@@ -18,6 +18,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 
+import static java.time.ZonedDateTime.now;
 import static java.util.Arrays.asList;
 
 class LogicalMeterSpecification {
@@ -99,6 +100,8 @@ class LogicalMeterSpecification {
       .organisationId(organisation.id)
       .serial(generateSerial())
       .productModel(pickProductModel())
+      .created(now())
+      .lastSeen(now())
       .build();
 
     LogicalMeter logicalMeter = LogicalMeter.builder()
