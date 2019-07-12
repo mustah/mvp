@@ -76,7 +76,7 @@ class LogicalMeterMeasurementFilterVisitor extends CommonFilterVisitor {
     List<SelectField<?>> gatewaysMetersFields = GATEWAYS_METERS.fieldStream().collect(toList());
     Field<Integer> rowNumber = rowNumber().over()
       .partitionBy(GATEWAYS_METERS.ORGANISATION_ID, GATEWAYS_METERS.LOGICAL_METER_ID)
-      .orderBy(GATEWAYS_METERS.LAST_SEEN.desc()).as("row_number");
+      .orderBy(GATEWAYS_METERS.LAST_SEEN.desc().nullsLast()).as("row_number");
     gatewaysMetersFields.add(rowNumber);
 
     return
