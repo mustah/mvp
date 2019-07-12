@@ -166,16 +166,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void pagedMeter_TwoGateways_LastSeenIsReturnedWithMeter() {
-    ZonedDateTime lastSeen = now();
-    var gw1 = given(gateway().serial("ABC123")).toBuilder()
-      .lastSeen(lastSeen)
-      .build();
-    var gw2 = given(gateway().serial("DEF456")).toBuilder()
-      .lastSeen(lastSeen.minusDays(1))
-      .build();
+  public void pagedMeter_OneGateway_LastSeenNullIsHandled() {
+    var gw1 = given(gateway().serial("ABC123"));
 
-    given(logicalMeter().gateway(gw1).gateway(gw2));
+    given(logicalMeter()
+      .gateway(gw1.toBuilder().lastSeen(null).build()));
 
     List<PagedLogicalMeterDto> meters = asMvpUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
@@ -185,6 +180,46 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .hasSize(1)
       .extracting(m -> m.gatewaySerial)
       .containsExactly("ABC123");
+  }
+
+  @Test
+  public void pagedMeter_TwoGateways_LastSeenNullIsLater() {
+    ZonedDateTime lastSeen = now();
+    var gw1 = given(gateway().serial("ABC123"));
+    var gw2 = given(gateway().serial("DEF456"));
+
+    given(logicalMeter()
+      .gateway(gw1.toBuilder().lastSeen(lastSeen).build())
+      .gateway(gw2.toBuilder().lastSeen(null).build()));
+
+    List<PagedLogicalMeterDto> meters = asMvpUser()
+      .getPage("/meters", PagedLogicalMeterDto.class)
+      .getContent();
+
+    assertThat(meters)
+      .hasSize(1)
+      .extracting(m -> m.gatewaySerial)
+      .containsExactly("ABC123");
+  }
+
+  @Test
+  public void pagedMeter_TwoGateways_LastSeenIsReturnedWithMeter() {
+    ZonedDateTime lastSeen = now();
+    var gw1 = given(gateway().serial("ABC123"));
+    var gw2 = given(gateway().serial("DEF456"));
+
+    given(logicalMeter()
+      .gateway(gw1.toBuilder().lastSeen(lastSeen.minusDays(1)).build())
+      .gateway(gw2.toBuilder().lastSeen(lastSeen).build()));
+
+    List<PagedLogicalMeterDto> meters = asMvpUser()
+      .getPage("/meters", PagedLogicalMeterDto.class)
+      .getContent();
+
+    assertThat(meters)
+      .hasSize(1)
+      .extracting(m -> m.gatewaySerial)
+      .containsExactly("DEF456");
   }
 
   @Test

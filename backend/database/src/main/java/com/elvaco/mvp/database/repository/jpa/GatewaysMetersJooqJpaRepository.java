@@ -49,7 +49,9 @@ public class GatewaysMetersJooqJpaRepository
         .where(GATEWAYS_METERS.ORGANISATION_ID.eq(organisationId))
         .and(GATEWAYS_METERS.GATEWAY_ID.eq(gatewayId))
         .and(GATEWAYS_METERS.LOGICAL_METER_ID.eq(logicalMeterId))
-        .and(GATEWAYS_METERS.LAST_SEEN.lessThan(lastSeen.toOffsetDateTime()))
+        .and(GATEWAYS_METERS.LAST_SEEN.isNull()
+          .or(GATEWAYS_METERS.LAST_SEEN.lessThan(lastSeen.toOffsetDateTime()))
+        )
     );
 
     if (found < 1) {
