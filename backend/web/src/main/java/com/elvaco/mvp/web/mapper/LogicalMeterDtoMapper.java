@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.mapper;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -27,6 +26,7 @@ import lombok.experimental.UtilityClass;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationDto;
 import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsLast;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 
@@ -111,8 +111,7 @@ public class LogicalMeterDtoMapper {
       .orElse(null);
 
     meterDto.gateway = logicalMeter.gateways.stream()
-      .sorted(Comparator.comparing(gw -> gw.lastSeen, reverseOrder()))
-      .findFirst()
+      .min(comparing(gw -> gw.lastSeen, nullsLast(reverseOrder())))
       .map(GatewayDtoMapper::toGatewayMandatory)
       .orElse(null);
 

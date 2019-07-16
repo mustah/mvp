@@ -460,6 +460,26 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void gateway_LastSeenNullIsHandled() {
+    var logicalMeter = given(logicalMeter());
+    ZonedDateTime dateTime = now();
+    given(gateway()
+      .lastSeen(null)
+      .meter(logicalMeter));
+    var gateway2 = given(gateway()
+      .lastSeen(dateTime)
+      .meter(logicalMeter));
+
+    var content = asMvpUser()
+      .get(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(content)
+      .extracting(m -> m.gateway.id)
+      .isEqualTo(gateway2.id);
+  }
+
+  @Test
   public void alarm_hasDescription() {
     var meter = given(
       logicalMeter(),
