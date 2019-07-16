@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 public class MeteringMessageListener implements MessageListener {
 
   private static final Logger MESSAGE_LOGGER = LoggerFactory.getLogger("MeteringMessageLogger");
+  private static final Logger OUTGOING_MESSAGE_LOGGER = LoggerFactory.getLogger(
+    "OutgoingMessageLogger");
 
   private final MessageParser messageParser;
   private final MeasurementMessageConsumer measurementMessageConsumer;
@@ -35,7 +37,15 @@ public class MeteringMessageListener implements MessageListener {
   public String onMessage(String message) {
     try {
       MESSAGE_LOGGER.info(message);
-      return messageParser.parse(message).map(this::handleMessage).orElse(null);
+      return messageParser.parse(message)
+        .map(this::handleMessage)
+        .map(
+          msg -> {
+            OUTGOING_MESSAGE_LOGGER.info(msg);
+            return msg;
+          }
+        )
+        .orElse(null);
     } catch (RuntimeException exception) {
       log.warn("Message handling raised exception. Offending message is: {}", message);
       throw exception;
