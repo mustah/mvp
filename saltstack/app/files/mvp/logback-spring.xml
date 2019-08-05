@@ -27,8 +27,28 @@
     </rollingPolicy>
   </appender>
 
+  <appender name="OutgoingMessageLoggerRollingFileAppender"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOGS}/outgoingmessages.log</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d %m%n</Pattern>
+      <charset>utf8</charset>
+    </encoder>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOGS}/outgoingmessages-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>3</maxHistory>
+      <totalSizeCap>2GB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
   <logger name="MeteringMessageLogger" level="info" additivity="false">
     <appender-ref ref="MeteringMessageLoggerRollingFileAppender"/>
+  </logger>
+
+  <logger name="OutgoingMessageLogger" level="info" additivity="false">
+    <appender-ref ref="OutgoingMessageLoggerRollingFileAppender"/>
   </logger>
 
   <root level="info">
