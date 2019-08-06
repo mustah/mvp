@@ -69,24 +69,24 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   @Transactional
   public void gatewayAndPhysicalMeterRemainsAtDelete() {
     var logicalMeter = given(logicalMeter().gateway(gateway().build()), physicalMeter());
-    assertThat(logicalMeter.gateways).hasSize(1);
-    assertThat(logicalMeter.physicalMeters).hasSize(1);
-
     var gatewayId = logicalMeter.gateways.get(0).id;
     var physicalMeterId = logicalMeter.physicalMeters.get(0).id;
 
-    commitTransaction();
+    commitAndStartTransaction();
 
     var savedLogicalMeter = logicalMeterJpaRepository.findById(logicalMeter.id).get();
+
     assertThat(savedLogicalMeter.gatewayMeters)
       .extracting(gm -> gm.gateway.pk.id)
       .containsExactly(gatewayId);
-    assertThat(savedLogicalMeter.physicalMeters).extracting(m -> m.id).containsExactly(
-      physicalMeterId);
+
+    assertThat(savedLogicalMeter.physicalMeters)
+      .extracting(m -> m.id)
+      .containsExactly(physicalMeterId);
 
     logicalMeterJpaRepository.delete(logicalMeter.id, logicalMeter.organisationId);
 
-    commitTransaction();
+    commitAndStartTransaction();
 
     assertThat(gatewayJpaRepository.findById(gatewayId)).isPresent();
 
@@ -239,7 +239,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     ));
   }
 
-  private static void commitTransaction() {
+  private static void commitAndStartTransaction() {
     TestTransaction.flagForCommit();
     TestTransaction.end();
     TestTransaction.start();

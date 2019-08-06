@@ -12,7 +12,6 @@ services:
     image: "gitlab.elvaco.se:4567/elvaco/mvp/geoservice:${MVP_TAG:-production}"
     environment:
       GEOSERVICE_OPTS: -Dspring.profiles.active=postgresql -Dliquibase.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dspring.liquibase.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dspring.datasource.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dspring.liquibase.user=geoservice -Dspring.liquibase.password=geoservice -Dliquibase.user=geoservice -Dliquibase.password=geoservice -Delastic.apm.environment=${APM_ENV:-local-test}
-
     ports:
       - "8081:8081"
     links:

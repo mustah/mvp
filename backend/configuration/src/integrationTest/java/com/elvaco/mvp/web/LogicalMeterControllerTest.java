@@ -620,7 +620,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .get().id))
         .isEmpty();
 
-      softly.assertThat(measurementJpaRepository.findAll().isEmpty());
+      softly.assertThat(measurementJpaRepository.findAll()).isEmpty();
     });
   }
 
@@ -865,12 +865,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void meterShouldHaveNoAlarms() {
     given(logicalMeter());
 
-    ZonedDateTime start = context().now();
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
-      .getPage(
-        metersUrl(start, start.plusHours(1)),
-        PagedLogicalMeterDto.class
-      );
+      .getPage(metersUrl(), PagedLogicalMeterDto.class);
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -936,10 +932,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     AlarmLogEntry alarmLogEntry = alarms.stream().findFirst().get();
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
-      .getPage(
-        metersUrl(context().now(), context().now().plusHours(1)),
-        PagedLogicalMeterDto.class
-      );
+      .getPage(metersUrl(), PagedLogicalMeterDto.class);
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -963,11 +956,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .description("testing")
     );
 
-    var response = asMvpUser()
-      .getPage(
-        metersUrl(context().now().plusHours(3), context().now().plusHours(3).plusMinutes(30)),
-        PagedLogicalMeterDto.class
-      );
+    var response = asMvpUser().getPage(metersUrl(), PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -988,10 +977,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ).stream().filter(a -> a.stop == null).findAny().orElseThrow();
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asMvpUser()
-      .getPage(
-        metersUrl(context().now(), context().now().plusHours(4)),
-        PagedLogicalMeterDto.class
-      );
+      .getPage(metersUrl(), PagedLogicalMeterDto.class);
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -1139,7 +1125,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .isEqualTo(1);
   }
 
-  private static UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
+  private static UrlTemplate metersUrl() {
     return Url.builder()
       .path("/meters")
       .build();
