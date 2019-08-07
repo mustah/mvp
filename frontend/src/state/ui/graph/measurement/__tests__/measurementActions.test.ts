@@ -51,7 +51,8 @@ import {
   MeasurementState,
   MeasurementValue,
   Medium,
-  Quantity
+  Quantity,
+  quantityComparator
 } from '../measurementModels';
 import {initialState} from '../measurementReducer';
 
@@ -368,8 +369,8 @@ describe('measurementActions', () => {
           expect(requestModels[0].quantity).toEqual([
             'Energy::consumption',
             'Volume::consumption',
-            'Power::readout',
             'Flow::readout',
+            'Power::readout',
             'Forward temperature::readout',
             'Return temperature::readout',
             'Difference temperature::readout'
@@ -563,6 +564,56 @@ describe('measurementActions', () => {
       expect(flatten(objectValues(mapMediumToIds(legendItems)))).toEqual([]);
     });
 
+  });
+
+  describe('sorted quantities', () => {
+
+    it('sorts using quantity comparator', () => {
+      expect([Quantity.power, Quantity.flow].sort(quantityComparator)).toEqual([Quantity.flow, Quantity.power]);
+
+      expect([
+        Quantity.energy,
+        Quantity.differenceTemperature,
+        Quantity.flow,
+      ].sort(quantityComparator)).toEqual([
+        Quantity.energy,
+        Quantity.flow,
+        Quantity.differenceTemperature,
+      ]);
+
+      expect([
+        Quantity.differenceTemperature,
+        Quantity.energy,
+        Quantity.power,
+        Quantity.flow,
+        Quantity.volume,
+      ].sort(quantityComparator)).toEqual([
+        Quantity.energy,
+        Quantity.volume,
+        Quantity.flow,
+        Quantity.power,
+        Quantity.differenceTemperature,
+      ]);
+
+      expect([
+        Quantity.forwardTemperature,
+        Quantity.volume,
+        Quantity.returnTemperature,
+        Quantity.energy,
+        Quantity.power,
+        Quantity.flow,
+        Quantity.differenceTemperature,
+      ].sort(quantityComparator)).toEqual([
+        Quantity.energy,
+        Quantity.volume,
+        Quantity.flow,
+        Quantity.power,
+        Quantity.forwardTemperature,
+        Quantity.returnTemperature,
+        Quantity.differenceTemperature,
+      ]);
+
+    });
   });
 
 });

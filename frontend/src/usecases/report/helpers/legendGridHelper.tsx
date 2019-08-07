@@ -16,7 +16,12 @@ import {
   QuantityId,
   SelectedQuantities
 } from '../../../state/report/reportModels';
-import {allQuantitiesMap, getGroupHeaderTitle, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  allQuantitiesMap,
+  getGroupHeaderTitle,
+  Quantity,
+  quantityComparator
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickEventHandler, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
 import {colorFor} from './lineChartHelper';
@@ -149,11 +154,12 @@ const renderQuantityCell =
 export const quantityColumnWidth = 76;
 
 export const renderColumns = (props: QuantityCell): React.ReactNode[] =>
-  props.columnQuantities.map(quantity => (
-    <GridColumn
-      key={`legend-columns-${quantity}`}
-      title={`${translate(`${quantity} short`)}`}
-      cell={renderQuantityCell({...props, quantity})}
-      width={quantityColumnWidth}
-    />
-  ));
+  props.columnQuantities.sort(quantityComparator)
+    .map(quantity => (
+      <GridColumn
+        key={`legend-columns-${quantity}`}
+        title={`${translate(`${quantity} short`)}`}
+        cell={renderQuantityCell({...props, quantity})}
+        width={quantityColumnWidth}
+      />
+    ));

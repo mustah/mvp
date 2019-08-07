@@ -184,8 +184,8 @@ export const allQuantitiesMap: { [p in LegendType]: Quantity[] } = {
   [Medium.districtHeating]: [
     Quantity.energy,
     Quantity.volume,
-    Quantity.power,
     Quantity.flow,
+    Quantity.power,
     Quantity.forwardTemperature,
     Quantity.returnTemperature,
     Quantity.differenceTemperature,
@@ -193,8 +193,8 @@ export const allQuantitiesMap: { [p in LegendType]: Quantity[] } = {
   [Medium.districtCooling]: [
     Quantity.energy,
     Quantity.volume,
-    Quantity.power,
     Quantity.flow,
+    Quantity.power,
     Quantity.forwardTemperature,
     Quantity.returnTemperature,
     Quantity.differenceTemperature,
@@ -228,3 +228,21 @@ const quantitiesToExclude = [
 ];
 
 export const availableQuantities = (quantity: Quantity) => quantitiesToExclude.indexOf(quantity) === -1;
+
+export const weightedQuantity: { [p in Quantity]: number } = {
+  [Quantity.energy]: 200,
+  [Quantity.volume]: 190,
+  [Quantity.flow]: 180,
+  [Quantity.power]: 170,
+  [Quantity.forwardTemperature]: 160,
+  [Quantity.returnTemperature]: 150,
+  [Quantity.differenceTemperature]: 140,
+  [Quantity.temperature]: 130,
+  [Quantity.externalTemperature]: 120,
+  [Quantity.relativeHumidity]: 110,
+  [Quantity.energyReactive]: 50,
+  [Quantity.energyReturn]: 40,
+};
+
+export const quantityComparator = (a: Quantity, b: Quantity): number =>
+  weightedQuantity[a] < weightedQuantity[b] ? 1 : -1;
