@@ -9,9 +9,6 @@ import lombok.experimental.UtilityClass;
 public class MediumDtoMapper {
 
   public static MediumDto toDto(Medium medium) {
-    return new MediumDto(
-      medium.id,
-      medium.name
-    );
+    return new MediumDto(medium.id, medium.name);
   }
 }

@@ -12,7 +12,6 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.dto.LegendDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.AlarmDto;
@@ -48,7 +47,7 @@ public class LogicalMeterDtoMapper {
     return null;
   }
 
-  public PagedLogicalMeterDto toPagedDto(LogicalMeterSummaryDto logicalMeter) {
+  public static PagedLogicalMeterDto toPagedDto(LogicalMeterSummaryDto logicalMeter) {
     var meterDto = new PagedLogicalMeterDto();
     meterDto.id = logicalMeter.id;
     meterDto.organisationId = logicalMeter.organisationId;
@@ -82,7 +81,7 @@ public class LogicalMeterDtoMapper {
     return toDto(logicalMeter, ZonedDateTime.now());
   }
 
-  public static LogicalMeterDto toDto(LogicalMeter logicalMeter, ZonedDateTime when) {
+  private static LogicalMeterDto toDto(LogicalMeter logicalMeter, ZonedDateTime when) {
     String created = formatUtc(logicalMeter.created);
     Optional<StatusLogEntry> statusLog = logicalMeter.activeStatusLog();
     LogicalMeterDto meterDto = new LogicalMeterDto();
@@ -127,14 +126,6 @@ public class LogicalMeterDtoMapper {
     meterDto.organisationId = logicalMeter.organisationId;
 
     return meterDto;
-  }
-
-  public static LegendDto toLegendDto(LogicalMeter logicalMeter) {
-    return new LegendDto(
-      logicalMeter.id,
-      logicalMeter.getMedium().name,
-      logicalMeter.externalId
-    );
   }
 
   private static List<EventLogDto> getEventLog(LogicalMeter logicalMeter) {

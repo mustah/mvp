@@ -113,6 +113,8 @@ public class MeasurementMessageConsumerGatewayTest extends IntegrationTest {
     var logicalMeter = logicalMeterJpaRepository.findBy(context().organisationId(), FACILITY);
     assertThat(logicalMeter).isPresent();
 
+    commitTransaction();
+
     assertThat(gatewaysMetersJpaRepository.findByLogicalMeterIdAndOrganisationId(
       logicalMeter.get().pk.id,
       context().organisationId()
