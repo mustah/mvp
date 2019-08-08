@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("rawtypes")
 public class GatewayControllerTest extends IntegrationTest {
 
   private Organisation dailyPlanet;
