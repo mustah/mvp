@@ -207,12 +207,12 @@ public class OrganisationUseCases {
   }
 
   private void sanityCheck(Theme theme) {
-    var len = 100;
     var nr = 100;
     if (theme.properties.size() > nr) {
       throw new IllegalArgumentException("Too many theme properties, max allowed is " + nr);
     }
 
+    var len = 100;
     if (theme.properties.entrySet().stream()
       .anyMatch(p ->
         (p.getKey() != null && p.getKey().length() > len)
