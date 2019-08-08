@@ -21,7 +21,6 @@ import com.elvaco.mvp.testdata.UrlTemplate;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.DoubleComparator;
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
@@ -39,11 +38,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CollectionStatsControllerTest extends IntegrationTest {
-
-  @After
-  public void tearDown() {
-    measurementJpaRepository.deleteAll();
-  }
 
   @Test
   public void nullWhenNoInterval() {
@@ -659,7 +653,7 @@ public class CollectionStatsControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void collectionPercentageDifferentReadIntervall() {
+  public void collectionPercentageDifferentReadInterval() {
     PhysicalMeter phys0 = physicalMeter().readIntervalMinutes(0).build();
     PhysicalMeter phys24 = physicalMeter().readIntervalMinutes(1440).build();
     List<LogicalMeter> meters = new ArrayList<>(given(
@@ -686,6 +680,11 @@ public class CollectionStatsControllerTest extends IntegrationTest {
     assertThat(listedPercentage.getBody()).hasSize(2);
     assertThat(listedPercentage.getBody().get(0).collectionPercentage).isEqualTo(50.0);
     assertThat(listedPercentage.getBody().get(1).collectionPercentage).isEqualTo(0.0);
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    measurementJpaRepository.deleteAll();
   }
 
   private void testSorting(

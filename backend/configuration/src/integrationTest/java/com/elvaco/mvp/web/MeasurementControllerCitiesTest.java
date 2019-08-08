@@ -14,7 +14,6 @@ import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class MeasurementControllerCitiesTest extends IntegrationTest {
-
-  @After
-  public void tearDown() {
-    measurementJpaRepository.deleteAll();
-  }
 
   @Test
   public void oneCityAverage() {

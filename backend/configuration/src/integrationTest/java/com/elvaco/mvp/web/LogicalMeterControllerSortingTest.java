@@ -38,7 +38,7 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
   }
 
   @Test
-  public void findAll_SortsByFacilityIfSortPropertyIsInvalid() {
+  public void findAll_SortsByFacilityAscIfSortPropertyIsInvalidDesc() {
     given(
       logicalMeter().externalId("0005"),
       logicalMeter().externalId("0001"),
@@ -48,10 +48,8 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
     );
 
     testSorting(
-      //this says desc
       "invalid,desc",
       meter -> meter.facility,
-      // but since the property is invalid, we do asc anyway
       List.of("0001", "0002", "0003", "0004", "0005")
     );
   }

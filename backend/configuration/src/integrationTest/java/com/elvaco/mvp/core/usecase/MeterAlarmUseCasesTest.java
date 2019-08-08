@@ -17,6 +17,7 @@ public class MeterAlarmUseCasesTest extends IntegrationTest {
 
   @Autowired
   private MeterAlarmLogs meterAlarmLogs;
+
   @Autowired
   private MeterAlarmUseCases meterAlarmUseCases;
 
@@ -57,7 +58,6 @@ public class MeterAlarmUseCasesTest extends IntegrationTest {
       .withQuantity(Quantity.VOLUME)
       .withValues(3.0));
 
-
     meterAlarmLogs.save(AlarmLogEntry.builder()
       .primaryKey(physicalMeter.primaryKey())
       .start(now.minusDays(5).truncatedTo(ChronoUnit.HOURS))
@@ -82,7 +82,6 @@ public class MeterAlarmUseCasesTest extends IntegrationTest {
       .withQuantity(Quantity.VOLUME)
       .withValues(3.0));
 
-
     meterAlarmLogs.save(AlarmLogEntry.builder()
       .primaryKey(physicalMeter.primaryKey())
       .start(now.minusDays(5).truncatedTo(ChronoUnit.HOURS))
@@ -106,7 +105,6 @@ public class MeterAlarmUseCasesTest extends IntegrationTest {
       .withQuantity(Quantity.VOLUME)
       .withValues(3.0));
 
-
     meterAlarmLogs.save(AlarmLogEntry.builder()
       .primaryKey(physicalMeter.primaryKey())
       .start(now.minusDays(5).truncatedTo(ChronoUnit.HOURS))
@@ -115,5 +113,10 @@ public class MeterAlarmUseCasesTest extends IntegrationTest {
     meterAlarmUseCases.closeAlarms();
 
     assertThat(meterAlarmLogs.findActiveAlarmsOlderThan(ZonedDateTime.now()).toArray()).hasSize(1);
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    measurementJpaRepository.deleteAll();
   }
 }

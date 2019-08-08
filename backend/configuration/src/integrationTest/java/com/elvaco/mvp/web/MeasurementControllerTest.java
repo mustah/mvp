@@ -27,7 +27,6 @@ import com.elvaco.mvp.web.dto.MeasurementValueDto;
 
 import org.assertj.core.data.Offset;
 import org.assertj.core.util.DoubleComparator;
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,11 +61,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   private static final double DIFF_TEMP_VALUE_KELVIN = 558.74;
   private static final double HUMIDITY_VALUE = 55.3;
   private static final double TEMP_VALUE = 21.7;
-
-  @After
-  public void tearDown() {
-    measurementJpaRepository.deleteAll();
-  }
 
   @Test
   public void measurementsRetrievableAtEndpoint() {
@@ -1196,6 +1190,11 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(dto.values).hasSize(2);
     assertThat(dto.values.get(0).value).isNull();
     assertThat(dto.values.get(1).value).isEqualTo(DIFF_TEMP_VALUE_KELVIN, OFFSET);
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    measurementJpaRepository.deleteAll();
   }
 
   private String logicalMeterIdRequestString(int numberOfMeters) {
