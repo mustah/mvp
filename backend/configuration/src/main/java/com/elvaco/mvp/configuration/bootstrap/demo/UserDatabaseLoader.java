@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -86,12 +85,9 @@ class UserDatabaseLoader implements CommandLineRunner {
       tokenFactory.newToken()
     );
 
-    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
-    Authentication authentication = new AuthenticationToken(
-      authenticatedUser.getToken(),
-      authenticatedUser
-    );
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+    tokenService.saveToken(authenticatedUser);
+    SecurityContextHolder.getContext()
+      .setAuthentication(AuthenticationToken.from(authenticatedUser));
 
     List<User> users = asList(
       new User(

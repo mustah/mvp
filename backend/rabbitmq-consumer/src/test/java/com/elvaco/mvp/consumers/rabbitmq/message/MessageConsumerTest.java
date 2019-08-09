@@ -16,7 +16,6 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.GatewaysMeters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -111,7 +110,6 @@ public abstract class MessageConsumerTest {
   Organisations organisations;
   LogicalMeters logicalMeters;
   Gateways gateways;
-  GatewaysMeters gatewaysMeters;
   MeterDefinitions meterDefinitions;
   LogicalMeterUseCases logicalMeterUseCases;
   PhysicalMeterUseCases physicalMeterUseCases;
@@ -160,7 +158,6 @@ public abstract class MessageConsumerTest {
     organisations = new MockOrganisations();
     logicalMeters = new MockLogicalMetersWithCascading(physicalMeters);
     gateways = new MockGateways();
-    gatewaysMeters = new MockGatewaysMeters();
     geocodeService = new MockGeocodeService();
     propertiesUseCases = new PropertiesUseCases(authenticatedUser, new MockProperties());
     meterDefinitions = new MockMeterDefinitions();
@@ -190,7 +187,7 @@ public abstract class MessageConsumerTest {
       new MockOrganisationAssets(),
       new MockOrganisationThemes()
     );
-    gatewayUseCases = new GatewayUseCases(gateways, gatewaysMeters, authenticatedUser);
+    gatewayUseCases = new GatewayUseCases(gateways, new MockGatewaysMeters(), authenticatedUser);
 
     meterDefinitionUseCases = new MeterDefinitionUseCases(
       authenticatedUser,

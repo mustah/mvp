@@ -23,9 +23,8 @@ public class OrganisationUseCasesTest extends DefaultTestFixture {
 
   @Before
   public void before() {
-    var currentUser = new MockAuthenticatedUser(ELVACO_SUPER_ADMIN_USER, "token123");
     organisationUseCases = new OrganisationUseCases(
-      currentUser,
+      new MockAuthenticatedUser(ELVACO_SUPER_ADMIN_USER, "token123"),
       new MockOrganisations(),
       null,
       new MockOrganisationAssets(),

@@ -13,7 +13,7 @@ import com.elvaco.mvp.web.converter.AssetTypeConverter;
 import com.elvaco.mvp.web.converter.CityConverter;
 import com.elvaco.mvp.web.converter.QuantityConverter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
@@ -39,6 +39,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain;
 
 import static java.util.Collections.singletonList;
 
+@RequiredArgsConstructor
 @EnableWebSecurity
 @SpringBootApplication(
   scanBasePackages = "com.elvaco.mvp",
@@ -48,11 +49,6 @@ import static java.util.Collections.singletonList;
 public class MvpApplication implements WebMvcConfigurer {
 
   private final AuthenticatedUser currentUser;
-
-  @Autowired
-  public MvpApplication(AuthenticatedUser currentUser) {
-    this.currentUser = currentUser;
-  }
 
   public static void main(String[] args) {
     SpringApplication.run(MvpApplication.class, args);

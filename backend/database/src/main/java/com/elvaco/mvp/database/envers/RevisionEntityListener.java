@@ -11,13 +11,11 @@ public class RevisionEntityListener implements RevisionListener {
 
   @Override
   public void newRevision(Object revisionEntity) {
-    RevisionEntity customRevisionEntity =
-      (RevisionEntity) revisionEntity;
+    RevisionEntity customRevisionEntity = (RevisionEntity) revisionEntity;
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     // TODO: handle other types of details...
     if (auth != null && auth.getDetails() instanceof AuthenticatedUser) {
-      customRevisionEntity.userEntityId =
-        ((AuthenticatedUser) auth.getDetails()).getUserId();
+      customRevisionEntity.userEntityId = ((AuthenticatedUser) auth.getDetails()).getUserId();
     }
   }
 }

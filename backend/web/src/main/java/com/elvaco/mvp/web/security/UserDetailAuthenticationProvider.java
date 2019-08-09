@@ -2,8 +2,10 @@ package com.elvaco.mvp.web.security;
 
 import java.util.Optional;
 
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -15,31 +17,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static java.util.Objects.requireNonNull;
-
 @Slf4j
+@RequiredArgsConstructor
 public class UserDetailAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
   private final TokenService tokenService;
 
-  public UserDetailAuthenticationProvider(
-    UserDetailsService userDetailsService,
-    PasswordEncoder passwordEncoder,
-    TokenService tokenService
-  ) {
-    this.userDetailsService = requireNonNull(userDetailsService);
-    this.passwordEncoder = requireNonNull(passwordEncoder);
-    this.tokenService = tokenService;
-  }
-
   @Override
   protected final UserDetails retrieveUser(
     String username,
     UsernamePasswordAuthenticationToken authentication
-  )
-    throws AuthenticationException {
+  ) throws AuthenticationException {
     try {
       return userDetailsService.loadUserByUsername(username);
     } catch (UsernameNotFoundException userNotFound) {
@@ -53,14 +43,12 @@ public class UserDetailAuthenticationProvider extends AbstractUserDetailsAuthent
   protected void additionalAuthenticationChecks(
     UserDetails userDetails,
     UsernamePasswordAuthenticationToken authentication
-  )
-    throws AuthenticationException {
+  ) throws AuthenticationException {
     Optional.ofNullable(authentication.getCredentials())
       .map(Object::toString)
       .filter(rawPassword -> passwordEncoder.matches(rawPassword, userDetails.getPassword()))
       .orElseThrow(this::badCredentials);
-    MvpUserDetails authenticatedUser = (MvpUserDetails) userDetails;
-    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
+    tokenService.saveToken((AuthenticatedUser) userDetails);
   }
 
   private BadCredentialsException badCredentials() {

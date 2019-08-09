@@ -1,6 +1,9 @@
 package com.elvaco.mvp.web.security;
 
+import com.elvaco.mvp.core.security.AuthenticatedUser;
+
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
 import static java.util.Objects.requireNonNull;
 
@@ -9,20 +12,16 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
   private final String token;
   private final Object principal;
 
-  public AuthenticationToken(String token, Object details) {
+  private AuthenticationToken(String token, Object details) {
     super(null);
     this.token = requireNonNull(token, "Token cannot be null");
-    this.setDetails(details);
     this.principal = details;
+    this.setDetails(details);
+    this.setAuthenticated(true);
   }
 
-  public String getToken() {
-    return token;
-  }
-
-  @Override
-  public boolean isAuthenticated() {
-    return token != null;
+  public static Authentication from(AuthenticatedUser user) {
+    return new AuthenticationToken(user.getToken(), user);
   }
 
   @Override

@@ -17,8 +17,8 @@ public class MockTokenService implements TokenService {
   }
 
   @Override
-  public void saveToken(String token, AuthenticatedUser authenticatedUser) {
-    cache.put(token, authenticatedUser);
+  public void saveToken(AuthenticatedUser authenticatedUser) {
+    cache.put(authenticatedUser.getToken(), authenticatedUser);
   }
 
   @Override

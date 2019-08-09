@@ -10,19 +10,18 @@ import com.elvaco.mvp.core.domainmodels.Usernamed;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.util.RoleComparator;
 
+import lombok.RequiredArgsConstructor;
+
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 
+@RequiredArgsConstructor
 public class OrganisationPermissions {
 
   private static final RoleComparator ROLE_COMPARATOR = new RoleComparator();
 
   private final Users users;
-
-  public OrganisationPermissions(Users users) {
-    this.users = users;
-  }
 
   public boolean isAllowed(
     AuthenticatedUser authenticatedUser,

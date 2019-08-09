@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.config;
 import java.time.Duration;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 
@@ -20,7 +21,6 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.elvaco.mvp.cache.EhTokenServiceCache.TOKEN_SERVICE_CACHE_NAME;
 import static com.elvaco.mvp.configuration.config.CacheConfig.JOB_ID_CACHE_NAME;
 import static com.elvaco.mvp.configuration.config.CacheConfig.METERING_MESSAGE_CACHE_NAME;
 import static java.util.Arrays.asList;
@@ -62,7 +62,7 @@ class CacheManagerConfig {
   CacheManager ehCacheManager() {
     return newCacheManagerBuilder()
       .withCache(
-        TOKEN_SERVICE_CACHE_NAME,
+        TokenService.CACHE_NAME,
         newCacheConfigurationBuilder(
           String.class,
           AuthenticatedUser.class,

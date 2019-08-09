@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.SubOrganisationParameters;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
 public class MockAuthenticatedUser implements AuthenticatedUser {
@@ -20,7 +19,12 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   private final transient User user;
   private final String token;
 
-  public MockAuthenticatedUser(List<Role> roles) {
+  public MockAuthenticatedUser(User user, String token) {
+    this.user = user;
+    this.token = token;
+  }
+
+  private MockAuthenticatedUser(List<Role> roles) {
     this(
       new User(
         randomUUID(),
@@ -35,21 +39,16 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
     );
   }
 
-  public MockAuthenticatedUser(User user, String token) {
-    this.user = user;
-    this.token = token;
-  }
-
   public static MockAuthenticatedUser superAdmin() {
-    return new MockAuthenticatedUser(singletonList(Role.SUPER_ADMIN));
+    return new MockAuthenticatedUser(List.of(Role.SUPER_ADMIN));
   }
 
   public static MockAuthenticatedUser mvpAdmin() {
-    return new MockAuthenticatedUser(singletonList(Role.MVP_ADMIN));
+    return new MockAuthenticatedUser(List.of(Role.MVP_ADMIN));
   }
 
   public static MockAuthenticatedUser mvpUser() {
-    return new MockAuthenticatedUser(singletonList(Role.MVP_USER));
+    return new MockAuthenticatedUser(List.of(Role.MVP_USER));
   }
 
   @Override

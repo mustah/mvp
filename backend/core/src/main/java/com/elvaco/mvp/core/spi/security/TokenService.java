@@ -6,9 +6,11 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 
 public interface TokenService {
 
+  String CACHE_NAME = "tokenServiceCache";
+
   Optional<AuthenticatedUser> getToken(String key);
 
-  void saveToken(String token, AuthenticatedUser authenticatedUser);
+  void saveToken(AuthenticatedUser authenticatedUser);
 
   void removeToken(String token);
 
