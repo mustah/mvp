@@ -17,9 +17,6 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
-import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
-import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
-import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.testdata.UrlTemplate;
@@ -29,9 +26,7 @@ import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import com.elvaco.mvp.web.dto.MapMarkersDto;
 
 import com.google.common.collect.ImmutableMultimap;
-import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -47,22 +42,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MapMarkerControllerTest extends IntegrationTest {
 
   private static final ZonedDateTime NOW = ZonedDateTime.parse("2018-02-01T00:11:22Z");
-
-  @Autowired
-  private MeterStatusLogs meterStatusLogs;
-
-  @Autowired
-  private GatewayStatusLogs gatewayStatusLogs;
-
-  @Autowired
-  private MeterAlarmLogs meterAlarmLogs;
-
-  @After
-  public void tearDown() {
-    meterAlarmLogJpaRepository.deleteAll();
-    gatewayStatusLogJpaRepository.deleteAll();
-    gatewayJpaRepository.deleteAll();
-  }
 
   @Test
   public void locationForMeterNotFound() {

@@ -204,8 +204,9 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   }
 
   Collection<Measurement> given(MeasurementSeriesBuilder seriesBuilder) {
-    return seriesBuilder.build().stream().map(
-      measurement -> measurements.save(measurement, seriesBuilder.logicalMeter)).collect(toList());
+    return seriesBuilder.build().stream()
+      .map(measurement -> measurements.save(measurement, seriesBuilder.logicalMeter))
+      .collect(toList());
   }
 
   Widget given(WidgetBuilder widgetBuilder) {

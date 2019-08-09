@@ -308,7 +308,7 @@ public abstract class IntegrationTest implements ContextDsl {
     }
   }
 
-  protected void waitForMeasurementStat() {
+  protected final void waitForMeasurementStat() {
     try {
       Thread.sleep(statQueueAge + 100);
     } catch (InterruptedException ignore) { }
