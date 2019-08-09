@@ -97,6 +97,7 @@
   <include file="xml/update_jsonb_period_values.xml" relativeToChangelogFile="true"/>
   <include file="xml/update_roles.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_gateways_meters_dates.xml" relativeToChangelogFile="true"/>
+  <include file="xml/add_otc_admin_role.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>
