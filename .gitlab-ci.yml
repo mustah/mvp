@@ -61,7 +61,7 @@ before_script:
       - acceptance_tests/target/cucumber
     expire_in: 2 days
   script:
-    - gradle cucumber '-Pno-docker'
+    - ./gradlew cucumber '-Pno-docker'
 
 # === Jobs ===
 docker:postgresql:
@@ -113,7 +113,7 @@ prepare:gradle-clean:
   stage: prepare
   dependencies: []
   script:
-    - gradle clean
+    - ./gradlew clean
   only:
     - schedules
     - master
@@ -155,7 +155,7 @@ build:
   dependencies:
     - prepare:version
   script:
-    - gradle classes checkstyle spotbugs test assemble -PisCI
+    - ./gradlew classes checkstyle spotbugs test assemble -PisCI
   artifacts:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
@@ -284,7 +284,7 @@ test:system:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
   script:
-    - gradle -PisCI -x update -x generateProdJooqSchemaSource systemTest
+    - ./gradlew -PisCI -x update -x generateProdJooqSchemaSource systemTest
   artifacts:
     name: "${CI_COMMIT_REF_NAME}-system"
     when: on_failure
