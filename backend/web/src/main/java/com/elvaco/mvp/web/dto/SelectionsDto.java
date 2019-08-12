@@ -4,13 +4,10 @@ import java.util.List;
 
 import lombok.experimental.UtilityClass;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-
 @UtilityClass
 public class SelectionsDto {
 
-  public static final List<IdNamedDto> METER_ALARMS = unmodifiableList(asList(
+  public static final List<IdNamedDto> METER_ALARMS = List.of(
     new IdNamedDto("no error"),
     new IdNamedDto("battery low"),
     new IdNamedDto("flow sensor error (air)"),
@@ -27,5 +24,5 @@ public class SelectionsDto {
     new IdNamedDto("supply voltage error"),
     new IdNamedDto("time for battery change"),
     new IdNamedDto("internal meter error")
-  ));
+  );
 }

@@ -52,6 +52,7 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   public final User mvpUser;
   public final User mvpAdmin;
   public final User superAdmin;
+
   private final LogicalMeters logicalMeters;
   private final Gateways gateways;
   private final PhysicalMeters physicalMeters;
@@ -78,9 +79,7 @@ public class IntegrationTestFixtureContext implements TestFixtures {
       userSelections.save(organisation.selection);
     }
 
-    return organisations.saveAndFlush(
-      organisation
-    );
+    return organisations.saveAndFlush(organisation);
   }
 
   OrganisationWithUsers given(OrganisationBuilder organisationBuilder, UserBuilder... newUsers) {
@@ -88,10 +87,7 @@ public class IntegrationTestFixtureContext implements TestFixtures {
     List<User> orgUsers = new ArrayList<>(newUsers.length);
     for (UserBuilder newUser : newUsers) {
       User builtUser = newUser.organisation(organisation).build();
-      orgUsers.add(
-        users.save(builtUser)
-          .withPassword(builtUser.password)
-      );
+      orgUsers.add(users.save(builtUser).withPassword(builtUser.password));
     }
     return new OrganisationWithUsers(organisation, orgUsers);
   }
@@ -104,10 +100,6 @@ public class IntegrationTestFixtureContext implements TestFixtures {
     var logicalMeter = logicalMeters.save(logicalMeter().build());
     var physicalMeter = physicalMeters.save(connect(logicalMeter, physicalMeterBuilder.build()));
     return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
-  }
-
-  LogicalMeter given(LogicalMeterBuilder logicalMeterBuilder) {
-    return given(logicalMeterBuilder, true);
   }
 
   LogicalMeter given(LogicalMeterBuilder logicalMeterBuilder, boolean withConnectedPhysicalMeter) {
@@ -182,9 +174,7 @@ public class IntegrationTestFixtureContext implements TestFixtures {
       .collect(toList()));
   }
 
-  Collection<? extends AlarmLogEntry> given(
-    AlarmLogEntryBuilder... alarmLogEntryBuilders
-  ) {
+  Collection<? extends AlarmLogEntry> given(AlarmLogEntryBuilder... alarmLogEntryBuilders) {
     return meterAlarmLogs.save(Arrays.stream(alarmLogEntryBuilders)
       .map(AlarmLogEntryBuilder::build)
       .collect(toList()));
@@ -214,12 +204,17 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   }
 
   Collection<Measurement> given(MeasurementSeriesBuilder seriesBuilder) {
-    return seriesBuilder.build().stream().map(
-      measurement -> measurements.save(measurement, seriesBuilder.logicalMeter)).collect(toList());
+    return seriesBuilder.build().stream()
+      .map(measurement -> measurements.save(measurement, seriesBuilder.logicalMeter))
+      .collect(toList());
   }
 
   Widget given(WidgetBuilder widgetBuilder) {
     return widgets.save(widgetBuilder.build());
+  }
+
+  private LogicalMeter given(LogicalMeterBuilder logicalMeterBuilder) {
+    return given(logicalMeterBuilder, true);
   }
 
   private static PhysicalMeter connect(LogicalMeter logicalMeter, PhysicalMeter physicalMeter) {

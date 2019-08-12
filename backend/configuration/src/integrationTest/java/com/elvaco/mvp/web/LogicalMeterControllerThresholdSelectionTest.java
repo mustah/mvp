@@ -3,18 +3,21 @@ package com.elvaco.mvp.web;
 import java.time.ZonedDateTime;
 import java.util.stream.DoubleStream;
 
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ROOM_SENSOR;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
@@ -22,14 +25,20 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTest {
 
+  private ZonedDateTime now;
+
+  @Before
+  public void setUp() {
+    now = context().now();
+  }
+
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_OnAnotherDay() {
-    ZonedDateTime now = context().now();
     var meter = given(physicalMeter());
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(-1));
     given(measurementSeries()
       .forMeter(meter)
@@ -54,12 +63,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatchingOneButNotAll() {
-    ZonedDateTime now = context().now();
     var meter = given(physicalMeter());
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(-1, 1.1));
 
     Url url = Url.builder()
@@ -83,10 +91,9 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(1.1));
 
-    ZonedDateTime now = context().now();
     Url url = Url.builder()
       .path("/meters")
       .parameter(THRESHOLD_AFTER, now)
@@ -108,9 +115,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(-0.1));
-    var now = context().now();
 
     Url url = Url.builder()
       .path("/meters")
@@ -129,12 +135,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_LessThanOrEquals() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(0));
 
     Url url = Url.builder()
@@ -154,12 +159,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_GreaterThanOrEquals() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(9));
 
     Url url = Url.builder()
@@ -179,12 +183,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_GreaterThan() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(9001));
 
     Url url = Url.builder()
@@ -204,12 +207,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_DifferentUnitSameDimension() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(8999));
 
     Url url = Url.builder()
@@ -229,12 +231,11 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void findAllMeters_WithMeasurementThresholdWrongDimension() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter());
     given(measurementSeries()
       .forMeter(meter)
       .withQuantity(Quantity.POWER)
-      .startingAt(context().now())
+      .startingAt(now)
       .withValues(8999));
 
     Url url = Url.builder()
@@ -256,7 +257,6 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void atAnyTime_24hIntervalAsHourConsumption() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
     given(measurementSeries()
       .forMeter(meter)
@@ -285,7 +285,6 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void atAnyTime_15mIntervalAsHourConsumption() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(15));
     given(measurementSeries()
       .forMeter(meter)
@@ -314,8 +313,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_FindLeakingMeters() {
-    ZonedDateTime now = context().now();
-    var leakingMeter = given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_HOT_WATER));
+    var leakingMeter = given(logicalMeter().meterDefinition(DEFAULT_HOT_WATER));
 
     //first, it leaks for a day
     given(measurementSeries()
@@ -354,9 +352,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_FindZeroConsumptionMeter() {
-    ZonedDateTime now = context().now();
     var brokenMeter =
-      given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
+      given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
     // first, it works for a day
     given(measurementSeries()
@@ -395,8 +392,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_FindBelowPromisedTemperatureMeters() {
-    ZonedDateTime now = context().now();
-    var brokenMeter = given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_ROOM_SENSOR));
+    var brokenMeter = given(logicalMeter().meterDefinition(DEFAULT_ROOM_SENSOR));
 
     // first, it's cold
     given(measurementSeries()
@@ -435,7 +431,6 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_DurationLongerThanSelectionPeriod() {
-    ZonedDateTime now = context().now();
     ResponseEntity<ErrorMessageDto> response = asMvpUser()
       .get(Url.builder()
         .path("/meters")
@@ -451,7 +446,6 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_0mIntervalDoesNotCrashEverything() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(0));
     given(measurementSeries()
       .forMeter(meter)
@@ -473,7 +467,6 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_15mIntervalAsHourConsumption() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(15));
     given(measurementSeries()
       .forMeter(meter)
@@ -502,7 +495,6 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_24hIntervalAsHourConsumption() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
     given(measurementSeries()
       .forMeter(meter)
@@ -531,7 +523,6 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_NonConsumptionQuantityIsNotConvertedToHourly() {
-    ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
     given(measurementSeries()
       .forMeter(meter)
@@ -556,5 +547,10 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       .build(), PagedLogicalMeterDto.class);
 
     assertThat(page.getTotalElements()).isEqualTo(1);
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    measurementJpaRepository.deleteAll();
   }
 }

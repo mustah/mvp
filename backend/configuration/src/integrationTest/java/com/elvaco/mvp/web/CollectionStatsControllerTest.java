@@ -21,7 +21,6 @@ import com.elvaco.mvp.testdata.UrlTemplate;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.DoubleComparator;
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
@@ -40,11 +39,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CollectionStatsControllerTest extends IntegrationTest {
 
-  @After
-  public void tearDown() {
-    measurementJpaRepository.deleteAll();
-  }
-
   @Test
   public void nullWhenNoInterval() {
     var districtHeatingMeter = given(logicalMeter(), physicalMeter().readIntervalMinutes(0));
@@ -54,7 +48,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .withQuantity(Quantity.ENERGY)
       .startingAt(context().now())
       .withValues(1.0));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusHours(1)),
@@ -70,7 +66,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
   @Test
   public void zeroPercentWhenNoMeasurements() {
     given(logicalMeter());
+
     waitForMeasurementStat();
+
     var meters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(1)),
@@ -92,7 +90,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .startingAt(context().now())
       .withValues(1.0));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> response = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusHours(2)),
@@ -116,7 +116,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(context().now().plusMinutes(5))
       .withInterval(Duration.ofMinutes(5))
       .withValues(DoubleStream.iterate(1, d -> d).limit(24 * 12 - 1).toArray()));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> response = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(1)),
@@ -139,7 +141,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .withQuantity(Quantity.ENERGY)
       .startingAt(context().now())
       .withValues(1.0));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> response = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusHours(2)),
@@ -174,7 +178,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(1.0, 2.0)
     );
+
     waitForMeasurementStat();
+
     var response = asMvpUser()
       .getPage(
         statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(5)),
@@ -206,7 +212,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(1.0, 2.0)
     );
+
     waitForMeasurementStat();
+
     var content = asMvpUser()
       .getPage(
         statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(4)),
@@ -226,7 +234,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(context().yesterday())
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(1.0));
+
     waitForMeasurementStat();
+
     CollectionStatsDto logicalMeterDto = asMvpUser()
       .getPage(
         statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(3)),
@@ -263,7 +273,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(secondMeterActivePeriod.getStartDateTime().get().plusHours(1))
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(2, d -> d + 1.0).limit(23).toArray()));
+
     waitForMeasurementStat();
+
     List<CollectionStatsDto> pagedMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(
@@ -299,7 +311,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(context().now())
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(24).toArray()));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> paginatedLogicalMeters = client
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(1)),
@@ -331,7 +345,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(context().now())
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(2)),
@@ -370,7 +386,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(context().now())
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(2)),
@@ -418,7 +436,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(now)
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(0, d -> d - 1.0).limit(12).toArray()));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         Url.builder()
@@ -478,7 +498,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(context().now())
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(2)),
@@ -546,7 +568,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(context().now().plusHours(12))
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(DoubleStream.iterate(1, d -> d + 1.0).limit(36).toArray()));
+
     waitForMeasurementStat();
+
     Page<CollectionStatsDto> paginatedLogicalMeters = asMvpUser()
       .getPage(
         statsFacilityUrl(context().now(), context().now().plusDays(2)),
@@ -585,6 +609,7 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .withValues(1.0, 1, 1, 1));
 
     waitForMeasurementStat();
+
     testSorting(
       "collectionPercentage,asc",
       meter -> meter.facility,
@@ -623,6 +648,7 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .withValues(1.0, 1, 1, 1));
 
     waitForMeasurementStat();
+
     testSorting(
       "lastData,asc",
       meter -> meter.facility,
@@ -659,7 +685,7 @@ public class CollectionStatsControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void collectionPercentageDifferentReadIntervall() {
+  public void collectionPercentageDifferentReadInterval() {
     PhysicalMeter phys0 = physicalMeter().readIntervalMinutes(0).build();
     PhysicalMeter phys24 = physicalMeter().readIntervalMinutes(1440).build();
     List<LogicalMeter> meters = new ArrayList<>(given(
@@ -677,7 +703,9 @@ public class CollectionStatsControllerTest extends IntegrationTest {
       .startingAt(context().yesterday())
       .withQuantity(Quantity.RETURN_TEMPERATURE)
       .withValues(1.0, 1, 1, 1, 1));
+
     waitForMeasurementStat();
+
     var listedPercentage = asMvpUser()
       .getList(
         statsDateUrl(context().yesterday(), context().yesterday().plusDays(2)),
@@ -686,6 +714,11 @@ public class CollectionStatsControllerTest extends IntegrationTest {
     assertThat(listedPercentage.getBody()).hasSize(2);
     assertThat(listedPercentage.getBody().get(0).collectionPercentage).isEqualTo(50.0);
     assertThat(listedPercentage.getBody().get(1).collectionPercentage).isEqualTo(0.0);
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    measurementJpaRepository.deleteAll();
   }
 
   private void testSorting(

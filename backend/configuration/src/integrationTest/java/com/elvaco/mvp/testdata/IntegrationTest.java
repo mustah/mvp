@@ -1,13 +1,13 @@
 package com.elvaco.mvp.testdata;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.access.MediumProvider;
@@ -308,12 +308,10 @@ public abstract class IntegrationTest implements ContextDsl {
     }
   }
 
-  protected void waitForMeasurementStat() {
+  protected final void waitForMeasurementStat() {
     try {
       Thread.sleep(statQueueAge + 100);
-    } catch (InterruptedException e) {
-      //Noop
-    }
+    } catch (InterruptedException ignore) { }
   }
 
   private void destroyContext() {
@@ -366,13 +364,12 @@ public abstract class IntegrationTest implements ContextDsl {
   }
 
   private String getCallingTestCaseName() {
-    return
-      Arrays.stream(Thread.currentThread().getStackTrace())
-        .filter(ste -> ste.getClassName().endsWith("Test"))
-        .filter(ste -> ste.getClassName().equalsIgnoreCase(this.getClass().getName()))
-        .findFirst()
-        .map(ste -> testCaseToContextName(ste.getClassName(), ste.getMethodName()))
-        .orElse("UnknownTestSuite");
+    return Stream.of(Thread.currentThread().getStackTrace())
+      .filter(ste -> ste.getClassName().endsWith("Test"))
+      .filter(ste -> ste.getClassName().equalsIgnoreCase(this.getClass().getName()))
+      .findFirst()
+      .map(ste -> testCaseToContextName(ste.getClassName(), ste.getMethodName()))
+      .orElse("UnknownTestSuite");
   }
 
   private String testCaseToContextName(String className, String methodName) {

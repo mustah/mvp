@@ -94,7 +94,7 @@ public class ApiExceptionHandlerTest {
   }
 
   private static class ClientAbortException extends IOException {
-    public ClientAbortException() {
+    private ClientAbortException() {
       super(new NullPointerException("Test"));
     }
   }

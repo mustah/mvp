@@ -8,11 +8,8 @@ import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Quantities;
 import com.elvaco.mvp.core.spi.repository.Roles;
-import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Test;
@@ -24,19 +21,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DataProviderConfigTest extends IntegrationTest {
 
   @Autowired
-  private Users users;
-
-  @Autowired
-  private Organisations organisations;
-
-  @Autowired
   private Organisation rootOrganisation;
 
   @Autowired
   private Roles roles;
-
-  @Autowired
-  private MeterDefinitions meterDefinitions;
 
   @Autowired
   private Quantities quantities;
@@ -83,33 +71,32 @@ public class DataProviderConfigTest extends IntegrationTest {
   @Test
   public void meterDefinitions() {
     List<MeterDefinition> all = meterDefinitions.findAll();
-    assertThat(all)
-      .hasSize(productionDataProvider.meterDefinitions().size());
 
-    all.stream()
-      .forEach(saved -> {
-        var unsavedMeterDefinition = productionDataProvider.meterDefinitions().stream()
-          .filter(unsaved -> unsaved.medium.name.equals(saved.medium.name))
-          .findAny()
-          .orElseThrow();
+    assertThat(all).hasSize(productionDataProvider.meterDefinitions().size());
 
-        assertThat(unsavedMeterDefinition)
-          .isEqualToIgnoringGivenFields(saved, "quantities", "medium", "id");
+    all.forEach(saved -> {
+      var unsavedMeterDefinition = productionDataProvider.meterDefinitions().stream()
+        .filter(unsaved -> unsaved.medium.name.equals(saved.medium.name))
+        .findAny()
+        .orElseThrow();
 
-        assertThat(unsavedMeterDefinition.medium)
-          .isEqualToIgnoringGivenFields(saved.medium, "id");
+      assertThat(unsavedMeterDefinition)
+        .isEqualToIgnoringGivenFields(saved, "quantities", "medium", "id");
 
-        assertQuantitiesMatchFixtureIgnoringId(
-          saved.quantities.stream()
-            .map(displayQuantity -> displayQuantity.quantity)
-            .collect(
-              toSet()),
-          unsavedMeterDefinition.quantities.stream()
-            .map(displayQuantity -> displayQuantity.quantity)
-            .collect(
-              toSet())
-        );
-      });
+      assertThat(unsavedMeterDefinition.medium)
+        .isEqualToIgnoringGivenFields(saved.medium, "id");
+
+      assertQuantitiesMatchFixtureIgnoringId(
+        saved.quantities.stream()
+          .map(displayQuantity -> displayQuantity.quantity)
+          .collect(
+            toSet()),
+        unsavedMeterDefinition.quantities.stream()
+          .map(displayQuantity -> displayQuantity.quantity)
+          .collect(
+            toSet())
+      );
+    });
   }
 
   @Test

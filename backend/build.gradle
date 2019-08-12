@@ -4,7 +4,7 @@ buildscript {
     ehcacheVersion = '3.6.2'
     lombokVersion = '1.18.4'
     assertjVersion = '3.11.1'
-    junitVersion = '4.13-beta-1'
+    junitVersion = '4.13-beta-3'
     jooqVersion = '3.11.10'
     postgresqlVersion = '42.2.5'
     elasticApmVersion = '1.4.0'

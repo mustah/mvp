@@ -11,7 +11,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,17 +34,12 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Autowired
   private QuantityEntityMapper quantityEntityMapper;
 
-  @After
-  public void tearDown() {
-    measurementJpaRepository.deleteAll();
-  }
-
   @Test
   public void findFirstReadoutWithinRange() {
     var meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME.plusHours(2), 3.0, "Energy");
-    newMeasurement(meter, START_TIME, 1.0, "Energy");
-    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "Energy");
+    newMeasurement(meter, START_TIME.plusHours(2), 3.0);
+    newMeasurement(meter, START_TIME, 1.0);
+    newMeasurement(meter, START_TIME.plusHours(1), 2.0);
 
     var firstEnergy = measurementJpaRepository
       .firstForPhysicalMeter(
@@ -71,6 +65,11 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     assertThat(firstEnergy.value).isEqualTo(3.0);
   }
 
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    measurementJpaRepository.deleteAll();
+  }
+
   private PhysicalMeterEntity newPhysicalMeterEntity() {
     UUID uuid = UUID.randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
@@ -93,15 +92,14 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   private void newMeasurement(
     PhysicalMeterEntity meter,
     OffsetDateTime when,
-    double value,
-    String quantity
+    double value
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       when.toZonedDateTime(),
       when.toZonedDateTime(),
       null,
-      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)
-        .orElseThrow(() -> new NoSuchQuantity(quantity))),
+      quantityEntityMapper.toEntity(quantityProvider.getByName("Energy")
+        .orElseThrow(() -> new NoSuchQuantity("Energy"))),
       value,
       meter
     ));

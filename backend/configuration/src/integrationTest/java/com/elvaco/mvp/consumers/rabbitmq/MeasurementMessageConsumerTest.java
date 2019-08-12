@@ -36,12 +36,12 @@ import static org.assertj.core.api.Assertions.tuple;
 
 public class MeasurementMessageConsumerTest extends IntegrationTest {
 
-  public static final String METER_ID_1 = "meterId-1";
-  public static final String FACILITY = "facility";
-  public static final String ORGANISATION_ID = "organisationId";
-  public static final String SOURCE_SYSTEM_ID = "sourceSystemId";
-  public static final String METER_ID_2 = "meterId-2";
-  public static final String GATEWAY_SERIAL_1 = "A123";
+  private static final String METER_ID_1 = "meterId-1";
+  private static final String FACILITY = "facility";
+  private static final String ORGANISATION_ID = "organisationId";
+  private static final String SOURCE_SYSTEM_ID = "sourceSystemId";
+  private static final String METER_ID_2 = "meterId-2";
+  private static final String GATEWAY_SERIAL_1 = "A123";
   private static final ZonedDateTime CREATED = ZonedDateTime.of(
     LocalDateTime.parse("2018-03-07T16:13:09"),
     METERING_TIMEZONE
@@ -94,11 +94,11 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(2);
 
-    commitTransaction();
+    commitAndStartTransaction();
 
     logicalMeters.delete(logicalMeters.findAllBy(new RequestParametersAdapter()).get(0));
 
-    commitTransaction();
+    commitAndStartTransaction();
 
     measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 2.0))));
 
@@ -245,7 +245,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     return new ValueDto(when, value, "kWh", "Energy");
   }
 
-  private static void commitTransaction() {
+  private static void commitAndStartTransaction() {
     TestTransaction.flagForCommit();
     TestTransaction.end();
     TestTransaction.start();

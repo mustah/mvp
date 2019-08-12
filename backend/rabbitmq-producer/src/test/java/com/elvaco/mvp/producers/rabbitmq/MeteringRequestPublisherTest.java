@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.testing.amqp.MockJobService;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
@@ -17,9 +18,7 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,10 +26,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class MeteringRequestPublisherTest {
 
   private SpyMessagePublisher spy;
+  private MockJobService<MeteringReferenceInfoMessageDto> jobService;
 
   @Before
   public void setUp() {
     spy = new SpyMessagePublisher();
+    jobService = new MockJobService<>();
   }
 
   @Test
@@ -60,14 +61,13 @@ public class MeteringRequestPublisherTest {
   @Test
   public void superAdminCanIssueRequest() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
       emptyList()
     );
 
-    meteringRequestPublisher.request(logicalMeter);
+    makeMeteringRequestPublisher(user).request(logicalMeter);
 
     assertThat(spy.getPublishedMessages()).hasSize(1);
   }
@@ -75,14 +75,13 @@ public class MeteringRequestPublisherTest {
   @Test
   public void meterOrganisationIsUsedInRequest() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
       emptyList()
     );
 
-    meteringRequestPublisher.request(logicalMeter);
+    makeMeteringRequestPublisher(user).request(logicalMeter);
 
     assertThat(spy.deserialize(0).organisationId).isEqualTo(user.getOrganisation().externalId);
   }
@@ -93,9 +92,9 @@ public class MeteringRequestPublisherTest {
     Organisation otherOrganisation = Organisation.of("other organisation");
     MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
       user,
-      new MockOrganisations(asList(user.getOrganisation(), otherOrganisation)),
+      new MockOrganisations(List.of(user.getOrganisation(), otherOrganisation)),
       spy,
-      new MockJobService()
+      jobService
     );
     LogicalMeter logicalMeter = newLogicalMeter(
       otherOrganisation.id,
@@ -111,14 +110,13 @@ public class MeteringRequestPublisherTest {
   @Test
   public void meterExternalIdIsUsedAsFacilityIdInRequest() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
       emptyList()
     );
 
-    meteringRequestPublisher.request(logicalMeter);
+    makeMeteringRequestPublisher(user).request(logicalMeter);
 
     assertThat(spy.deserialize(0).facility.id).isEqualTo(logicalMeter.externalId);
   }
@@ -126,18 +124,18 @@ public class MeteringRequestPublisherTest {
   @Test
   public void physicalMeterAddressIsUsedAsMeterIdInRequest() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
+
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
       .activePeriod(PeriodRange.unbounded())
       .address("physical-meter-address")
       .build();
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
-      singletonList(physicalMeter),
+      List.of(physicalMeter),
       emptyList()
     );
 
-    meteringRequestPublisher.request(logicalMeter);
+    makeMeteringRequestPublisher(user).request(logicalMeter);
 
     assertThat(spy.deserialize(0).meter.id).isEqualTo("physical-meter-address");
   }
@@ -145,14 +143,13 @@ public class MeteringRequestPublisherTest {
   @Test
   public void jobIdIsReturnedAndSetInRequest() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
       emptyList()
     );
 
-    String jobId = meteringRequestPublisher.request(logicalMeter);
+    String jobId = makeMeteringRequestPublisher(user).request(logicalMeter);
 
     String actual = spy.deserialize(0).jobId;
     assertThat(jobId).isNotEmpty();
@@ -162,9 +159,6 @@ public class MeteringRequestPublisherTest {
   @Test
   public void gatewayIdIsNotSet() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    MockJobService jobService = new MockJobService();
-    MeteringRequestPublisher meteringRequestPublisher =
-      makeMeteringRequestPublisher(user, jobService);
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
       .address("physical-meter-address")
       .build();
@@ -177,11 +171,11 @@ public class MeteringRequestPublisherTest {
 
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
-      singletonList(physicalMeter),
-      singletonList(gateway)
+      List.of(physicalMeter),
+      List.of(gateway)
     );
 
-    meteringRequestPublisher.request(logicalMeter);
+    makeMeteringRequestPublisher(user).request(logicalMeter);
 
     assertThat(spy.deserialize(0).gateway).isEqualTo(null);
 
@@ -191,16 +185,13 @@ public class MeteringRequestPublisherTest {
   @Test
   public void syncGatewayId() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    MockJobService jobService = new MockJobService();
-    MeteringRequestPublisher meteringRequestPublisher =
-      makeMeteringRequestPublisher(user, jobService);
     Gateway gateway = Gateway.builder()
       .organisationId(user.getOrganisationId())
       .serial("gateway-serial")
       .productModel("gateway-product-model")
       .build();
 
-    meteringRequestPublisher.request(gateway);
+    makeMeteringRequestPublisher(user).request(gateway);
 
     assertThat(spy.deserialize(0).gateway.id).isEqualTo("gateway-serial");
 
@@ -212,11 +203,11 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
       user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
+      new MockOrganisations(List.of(user.getOrganisation())),
       messageBody -> {
         throw new RuntimeException("Something went horribly wrong!");
       },
-      new MockJobService()
+      jobService
     );
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -229,18 +220,11 @@ public class MeteringRequestPublisherTest {
   }
 
   private MeteringRequestPublisher makeMeteringRequestPublisher(MockAuthenticatedUser user) {
-    return makeMeteringRequestPublisher(user, new MockJobService());
-  }
-
-  private MeteringRequestPublisher makeMeteringRequestPublisher(
-    MockAuthenticatedUser user,
-    MockJobService service
-  ) {
     return new MeteringRequestPublisher(
       user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
+      new MockOrganisations(List.of(user.getOrganisation())),
       spy,
-      service
+      jobService
     );
   }
 

@@ -1,6 +1,6 @@
 # === Global ===
 image:
-  name: gradle:jdk11
+  name: gradle:5.5.0-jdk11
 
 stages:
   - docker
@@ -61,7 +61,7 @@ before_script:
       - acceptance_tests/target/cucumber
     expire_in: 2 days
   script:
-    - gradle cucumber '-Pno-docker'
+    - ./gradlew cucumber '-Pno-docker'
 
 # === Jobs ===
 docker:postgresql:
@@ -108,23 +108,12 @@ docker:ci-utils:
     - docker build -t $DOCKER_REGISTRY_URL/ci-utils:latest -f docker/Dockerfile-ci-utils .
     - docker push $DOCKER_REGISTRY_URL/ci-utils:latest
 
-docker:gradle-jdk:
-  extends: .no_cache
-  stage: docker
-  dependencies: []
-  tags:
-    - shell
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-    - docker build -t $DOCKER_REGISTRY_URL/gradle-jdk11:latest -f docker/Dockerfile-gradle-jdk11 .
-    - docker push $DOCKER_REGISTRY_URL/gradle-jdk11:latest
-
 prepare:gradle-clean:
   extends: .cache_gradle
   stage: prepare
   dependencies: []
   script:
-    - gradle clean
+    - ./gradlew clean
   only:
     - schedules
     - master
@@ -159,7 +148,6 @@ prepare:update-salt:
 
 build:
   extends: .cache_gradle
-  image: $DOCKER_REGISTRY_URL/gradle-jdk11:latest
   stage: build
   services:
     - name: $DOCKER_REGISTRY_URL/postgresql:latest
@@ -167,7 +155,7 @@ build:
   dependencies:
     - prepare:version
   script:
-    - gradle classes checkstyle spotbugs test assemble -PisCI
+    - ./gradlew classes checkstyle spotbugs test assemble -PisCI
   artifacts:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
@@ -179,7 +167,6 @@ build:
       - backend/*/build/generated
       - acceptance_tests/build/libs/*.jar
       - acceptance_tests/build/classes/*
-
 
 pre-test:docker-mvp-app:
   extends: .no_cache
@@ -226,8 +213,10 @@ pre-test:docker-geoservice-app:
 test:karate:
   image: $DOCKER_REGISTRY_URL/acceptance-test:latest
   stage: test
+  variables:
+    DOCKER_TLS_CERTDIR: ""
   services:
-    - name: docker:dind
+    - name: docker:18.09.7-dind
       alias: docker-host
   dependencies:
     - build
@@ -262,7 +251,7 @@ test:acceptance:
     - docker inspect mvp_google-chrome_1
     - ./gradlew -Pno-docker cucumber
   services:
-    - name: docker:dind
+    - name: docker:18.09.7-dind
       alias: docker-host
   artifacts:
     name: "${CI_COMMIT_REF_NAME}-cucumber"
@@ -272,6 +261,7 @@ test:acceptance:
     expire_in: 2 days
   variables:
     DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
     MVP_TAG: ${CI_COMMIT_REF_NAME}
     MVP_SERVER: "http://docker-host"
     MVP_WEB_SERVER: "http://application"
@@ -284,12 +274,17 @@ test:system:
   dependencies:
     - build
   services:
+    - name: docker:18.09.7-dind
+      alias: docker-host
     - name: $DOCKER_REGISTRY_URL/postgresql:latest
       alias: pg_host
     - name: rabbitmq
       alias: rabbit_host
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   script:
-    - gradle -PisCI -x update -x generateProdJooqSchemaSource systemTest
+    - ./gradlew -PisCI -x update -x generateProdJooqSchemaSource systemTest
   artifacts:
     name: "${CI_COMMIT_REF_NAME}-system"
     when: on_failure
@@ -314,6 +309,7 @@ test:upgrade:
   image: $DOCKER_REGISTRY_URL/test-upgrade:latest
   variables:
     DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
     MVP_UPGRADE_FROM_TAG: production
     MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_NAME}
     TEST_HOST: docker-host
@@ -326,7 +322,7 @@ test:upgrade:
   after_script:
     - docker-compose down -v
   services:
-    - name: docker:dind
+    - name: docker:18.09.7-dind
       alias: docker-host
   script:
     - docker info

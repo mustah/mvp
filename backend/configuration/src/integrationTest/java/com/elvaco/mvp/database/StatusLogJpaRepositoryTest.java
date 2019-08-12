@@ -14,7 +14,6 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
-import org.junit.After;
 import org.junit.Test;
 
 import static java.util.Collections.emptySet;
@@ -22,12 +21,6 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
 
 public class StatusLogJpaRepositoryTest extends IntegrationTest {
-
-  @After
-  public void tearDown() {
-    gatewayStatusLogJpaRepository.deleteAll();
-    gatewayJpaRepository.deleteAll();
-  }
 
   @Test
   public void duplicateMeterLogsAreRejected() {

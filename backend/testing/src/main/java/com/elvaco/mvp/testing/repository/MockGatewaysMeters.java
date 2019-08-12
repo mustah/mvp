@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.spi.repository.GatewaysMeters;
 
 public class MockGatewaysMeters implements GatewaysMeters {
 
+  @Override
   public void saveOrUpdate(
     UUID gatewayId,
     UUID logicalMeterId,

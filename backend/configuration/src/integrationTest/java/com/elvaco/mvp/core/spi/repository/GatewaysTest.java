@@ -8,9 +8,7 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
-import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.UUID.randomUUID;
@@ -19,15 +17,6 @@ import static org.assertj.core.api.Assertions.tuple;
 
 @Transactional
 public class GatewaysTest extends IntegrationTest {
-
-  @Autowired
-  private Gateways gateways;
-
-  @After
-  public void tearDown() {
-    gatewayStatusLogJpaRepository.deleteAll();
-    gatewayJpaRepository.deleteAll();
-  }
 
   @Test
   public void savingGatewaySavesLogs() {

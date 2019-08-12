@@ -1,4 +1,4 @@
-package com.elvaco.mvp.access;
+package com.elvaco.mvp.database.access;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;

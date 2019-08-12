@@ -22,15 +22,16 @@ import static org.assertj.core.api.Assertions.tuple;
 
 public class MeasurementMessageConsumerGatewayTest extends IntegrationTest {
 
-  public static final String METER_ID_1 = "meterId-1";
-  public static final String FACILITY = "facility";
-  public static final String SOURCE_SYSTEM_ID = "sourceSystemId";
-  public static final String GATEWAY_SERIAL_1 = "A123";
-  public static final String GATEWAY_SERIAL_2 = "B456";
+  private static final String METER_ID_1 = "meterId-1";
+  private static final String FACILITY = "facility";
+  private static final String SOURCE_SYSTEM_ID = "sourceSystemId";
+  private static final String GATEWAY_SERIAL_1 = "A123";
+  private static final String GATEWAY_SERIAL_2 = "B456";
   private static final ZonedDateTime CREATED = ZonedDateTime.of(
     LocalDateTime.parse("2018-03-07T16:13:09"),
     METERING_TIMEZONE
   );
+
   @Autowired
   private MeasurementMessageConsumer measurementMessageConsumer;
 
@@ -104,10 +105,6 @@ public class MeasurementMessageConsumerGatewayTest extends IntegrationTest {
       singletonList(newValueDto(when.plusDays(1), 8.0))
     ));
 
-    // Still a mystery why this is needed, use of both jpa and jooq in the same update
-    // transaction but jooq is executed as sql through the entity manager
-    commitTransaction();
-
     assertThat(gatewayJpaRepository.findAll())
       .hasSize(1)
       .extracting(g -> g.serial)
@@ -115,6 +112,8 @@ public class MeasurementMessageConsumerGatewayTest extends IntegrationTest {
 
     var logicalMeter = logicalMeterJpaRepository.findBy(context().organisationId(), FACILITY);
     assertThat(logicalMeter).isPresent();
+
+    commitTransaction();
 
     assertThat(gatewaysMetersJpaRepository.findByLogicalMeterIdAndOrganisationId(
       logicalMeter.get().pk.id,
@@ -149,8 +148,6 @@ public class MeasurementMessageConsumerGatewayTest extends IntegrationTest {
       singletonList(newValueDto(when.minusDays(1), 2.0))
     ));
 
-    // Still a mystery why this is needed, use of both jpa and jooq in the same update
-    // transaction but jooq is executed as sql through the entity manager
     commitTransaction();
 
     assertThat(gatewayJpaRepository.findAll())
@@ -175,6 +172,10 @@ public class MeasurementMessageConsumerGatewayTest extends IntegrationTest {
     return new ValueDto(when, value, "kWh", "Energy");
   }
 
+  /**
+   * Still a mystery why this is needed, use of both jpa and jooq in the same update transaction
+   * but jooq is executed as sql through the entity manager.
+   */
   private static void commitTransaction() {
     TestTransaction.flagForCommit();
     TestTransaction.end();
