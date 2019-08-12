@@ -65,12 +65,9 @@ const ExcelExportComponent = ({
   measurement: {measurementResponse: {measurements}, isExportingToExcel},
   exportToExcelSuccess,
 }: Props) => {
-  const [listItems, quantityColumns] = React.useMemo(() => renderColumns(measurements), [measurements]);
+  const [listItems, columns] = React.useMemo(() => renderColumns(measurements), [measurements]);
 
   const exporter = useExportToExcel({isExportingToExcel, exportToExcelSuccess, save});
-
-  const renderExcelExportQuantityColumns = quantityColumns.map(
-    ({key, props: {field, title}}) => <ExcelExportColumn field={field} title={title} key={key as string}/>);
 
   return (
     <>
@@ -79,7 +76,7 @@ const ExcelExportComponent = ({
         <ExcelExportColumn field="meterId" title={firstUpperTranslated('meter id')}/>
         <ExcelExportColumn field="type" title={firstUpperTranslated('object type')}/>
         <ExcelExportColumn field="when" title={firstUpperTranslated('readout')}/>
-        {renderExcelExportQuantityColumns}
+        {columns.map(({field, title}) => <ExcelExportColumn field={field} title={title} key={title}/>)}
       </ExcelExport>
     </>
   );

@@ -1,10 +1,4 @@
-import {
-  GridCellProps,
-  GridColumn,
-  GridColumnProps,
-  GridHeaderCellProps,
-  GridRowProps
-} from '@progress/kendo-react-grid';
+import {GridCellProps, GridColumnProps, GridHeaderCellProps, GridRowProps} from '@progress/kendo-react-grid';
 import {GridRowType} from '@progress/kendo-react-grid/dist/es/interfaces/GridRowType';
 import {toArray} from 'lodash';
 import * as React from 'react';
@@ -20,7 +14,10 @@ import {
   getGroupHeaderTitle,
   getMediumType,
   MeasurementResponsePart,
-  MeasurementsApiResponse
+  MeasurementsApiResponse,
+  Quantity,
+  quantityComparator,
+  weightedQuantity
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
 
@@ -78,13 +75,14 @@ interface ListItem extends LegendTyped {
   when: string;
 }
 
+type ColumnProps = GridColumnProps & {quantity: Quantity};
+
 export const renderColumns =
-  (measurements: MeasurementsApiResponse): [ListItem[], Array<React.ReactElement<GridColumnProps>>] => {
+  (measurements: MeasurementsApiResponse): [ListItem[], GridColumnProps[]] => {
     const rows: Dictionary<ListItem> = {};
-    const columns: Dictionary<React.ReactElement<GridColumnProps>> = {};
+    const columns: Dictionary<ColumnProps> = {};
 
     measurements.forEach(({
-      id,
       name,
       label,
       medium,
@@ -112,17 +110,15 @@ export const renderColumns =
       });
 
       if (columns[quantity] === undefined) {
-        const title = `${capitalized(translate(`${quantity} short`))} (${unit})`;
-        columns[quantity] = (
-          <GridColumn
-            headerClassName="quantity"
-            key={`${id}-${title}`}
-            title={title}
-            field={`values.${quantity}`}
-          />
-        );
+        columns[quantity] = {
+          field: `values.${quantity}`,
+          headerClassName: 'quantity',
+          orderIndex: weightedQuantity[quantity],
+          quantity,
+          title: `${capitalized(translate(`${quantity} short`))} (${unit})`
+        };
       }
     });
 
-    return [toArray(rows).reverse(), toArray(columns)];
+    return [toArray(rows).reverse(), toArray(columns).sort((a, b) => quantityComparator(a.quantity, b.quantity))];
   };

@@ -16,7 +16,7 @@ export interface MeasurementListProps {
 const state: State = {group: [{field: 'label', dir: 'desc'}], sort: [{field: 'label', dir: 'asc'}]};
 
 export const MeasurementList = ({cssStyles, measurements}: MeasurementListProps & ThemeContext) => {
-  const [listItems, quantityColumns] = React.useMemo(() => renderColumns(measurements), [measurements]);
+  const [listItems, columns] = React.useMemo(() => renderColumns(measurements), [measurements]);
 
   const dataResult: DataResult = process(listItems, state);
 
@@ -36,10 +36,9 @@ export const MeasurementList = ({cssStyles, measurements}: MeasurementListProps 
           headerClassName="left-most"
           className="left-most"
           field="when"
-          key="when"
           title={firstUpperTranslated('readout')}
         />
-        {quantityColumns}
+        {columns.map((it, index) => <GridColumn {...it} orderIndex={index} key={it.title}/>)}
       </Grid>
       <TimestampInfoMessage/>
     </Column>
