@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.exception.InvalidFormat;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.core.usecase.OrganisationThemeUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
@@ -51,6 +52,7 @@ import static java.util.stream.Collectors.toMap;
 public class OrganisationController {
 
   private final OrganisationUseCases organisationUseCases;
+  private final OrganisationThemeUseCases organisationThemeUseCases;
   private final UserSelectionUseCases selections;
 
   @GetMapping
@@ -126,7 +128,7 @@ public class OrganisationController {
     var organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
 
-    organisationUseCases.createAsset(
+    organisationThemeUseCases.createAsset(
       organisation,
       Asset.builder()
         .assetType(assetType)
@@ -146,34 +148,37 @@ public class OrganisationController {
     var organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
 
-    organisationUseCases.deleteAsset(organisation, assetType);
+    organisationThemeUseCases.deleteAsset(organisation, assetType);
   }
 
   @GetMapping("{slug}/assets/{assetTypeOptional}")
   public ResponseEntity<byte[]> logotype(
     @PathVariable String slug,
     @PathVariable Optional<AssetType> assetTypeOptional,
-    @RequestHeader(value = "If-None-Match") Optional<String> ifNoneMatch
+    @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch
   ) {
     var assetType = assetTypeOptional.orElseThrow(InvalidFormat::assetType);
 
-    return organisationUseCases.findAssetOrFallback(
-      slug,
+    var organisation = organisationUseCases.findBySlug(slug).orElse(null);
+
+    return organisationThemeUseCases.findAssetOrFallback(
+      organisation,
       assetType,
-      ifNoneMatch.orElse(null)
+      ifNoneMatch
     )
-      .map(asset ->
-        ResponseEntity.ok()
-          .cacheControl(CacheControl.noCache())
-          .eTag(asset.checksum)
-          .contentType(MediaType.valueOf(asset.contentType))
-          .body(asset.content)
+      .map(asset -> ResponseEntity.ok()
+        .cacheControl(CacheControl.noCache())
+        .eTag(asset.checksum)
+        .contentType(MediaType.valueOf(asset.contentType))
+        .body(asset.content)
       )
       .orElseGet(() -> {
         var response = ResponseEntity.ok()
           .cacheControl(CacheControl.noCache());
 
-        ifNoneMatch.ifPresent(response::eTag);
+        if (ifNoneMatch != null) {
+          response.eTag(ifNoneMatch);
+        }
 
         return response.build();
       });
@@ -181,7 +186,8 @@ public class OrganisationController {
 
   @GetMapping("{slug}/theme")
   public List<PropertyDto> themeOfSlug(@PathVariable String slug) {
-    return organisationUseCases.findTheme(slug)
+    return organisationUseCases.findBySlug(slug)
+      .map(organisationThemeUseCases::findTheme)
       .map(theme -> theme.properties.entrySet().stream()
         .map(entry -> new PropertyDto(entry.getKey(), entry.getValue()))
         .collect(toList()))
@@ -196,12 +202,12 @@ public class OrganisationController {
     var organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
 
-    organisationUseCases.saveTheme(
+    organisationThemeUseCases.saveTheme(
       Theme.builder().organisationId(organisation.id)
         .properties(properties.stream().collect(toMap(p -> p.key, p -> p.value))).build()
     );
 
-    return organisationUseCases.findTheme(organisation).properties.entrySet().stream()
+    return organisationThemeUseCases.findTheme(organisation).properties.entrySet().stream()
       .map(entry -> new PropertyDto(entry.getKey(), entry.getValue()))
       .collect(toList());
   }
@@ -211,6 +217,6 @@ public class OrganisationController {
     var organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
 
-    organisationUseCases.deleteTheme(organisation);
+    organisationThemeUseCases.deleteTheme(organisation);
   }
 }

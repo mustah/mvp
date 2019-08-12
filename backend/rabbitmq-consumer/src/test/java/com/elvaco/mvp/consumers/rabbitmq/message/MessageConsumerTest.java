@@ -37,8 +37,6 @@ import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterDefinitions;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
-import com.elvaco.mvp.testing.repository.MockOrganisationAssets;
-import com.elvaco.mvp.testing.repository.MockOrganisationThemes;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockProperties;
@@ -183,9 +181,7 @@ public abstract class MessageConsumerTest {
           .organisationElvaco()
           .asSuperAdmin()
           .build()
-      ))),
-      new MockOrganisationAssets(),
-      new MockOrganisationThemes()
+      )))
     );
     gatewayUseCases = new GatewayUseCases(gateways, new MockGatewaysMeters(), authenticatedUser);
 

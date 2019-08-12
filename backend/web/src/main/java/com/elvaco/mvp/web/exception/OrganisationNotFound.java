@@ -13,4 +13,8 @@ public class OrganisationNotFound extends RuntimeException {
   public OrganisationNotFound(UUID id) {
     super("Unable to find organisation with ID '" + id.toString() + "'");
   }
+
+  public OrganisationNotFound(String slug) {
+    super("Unable to find organisation with slug '" + slug + "'");
+  }
 }
