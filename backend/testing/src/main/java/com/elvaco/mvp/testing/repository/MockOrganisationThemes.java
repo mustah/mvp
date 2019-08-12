@@ -12,10 +12,10 @@ public class MockOrganisationThemes implements OrganisationThemes {
   }
 
   @Override
-  public Theme findByOrganisation(Organisation organisation) {
+  public Theme findBy(Organisation organisation) {
     return null;
   }
 
   @Override
-  public void deleteThemeForOrganisation(Organisation organisation) {}
+  public void deleteTheme(Organisation organisation) {}
 }

@@ -290,7 +290,7 @@ public final class RestClient {
 
   private RestClient addHeader(String headerName, String value) {
     template.getRestTemplate().setInterceptors(
-      singletonList((request, body, execution) -> {
+      List.of((request, body, execution) -> {
         request.getHeaders().add(headerName, value);
         return execution.execute(request, body);
       }));

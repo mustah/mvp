@@ -7,7 +7,7 @@ public interface OrganisationThemes {
 
   Theme save(Theme theme);
 
-  Theme findByOrganisation(Organisation organisation);
+  Theme findBy(Organisation organisation);
 
-  void deleteThemeForOrganisation(Organisation organisation);
+  void deleteTheme(Organisation organisation);
 }

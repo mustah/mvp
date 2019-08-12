@@ -27,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 import static com.elvaco.mvp.core.security.Permission.CREATE;
 import static com.elvaco.mvp.core.security.Permission.UPDATE;
 import static com.elvaco.mvp.core.spi.data.EmptyPage.emptyPage;
-import static java.util.Collections.emptyList;
 
 @RequiredArgsConstructor
 public class OrganisationUseCases {
@@ -49,8 +48,9 @@ public class OrganisationUseCases {
       return organisations.findAll();
     } else if (currentUser.isMvpAdmin()) {
       return organisations.findOrganisationAndSubOrganisations(currentUser.getOrganisationId());
+    } else {
+      return List.of();
     }
-    return emptyList();
   }
 
   public List<Organisation> findAllSubOrganisations(UUID organisationId) {
@@ -58,8 +58,9 @@ public class OrganisationUseCases {
       return organisations.findAllSubOrganisations(organisationId);
     } else if (currentUser.isMvpAdmin()) {
       return organisations.findAllSubOrganisations(currentUser.getOrganisationId());
+    } else {
+      return List.of();
     }
-    return emptyList();
   }
 
   public Page<Organisation> findAllMainOrganisations(
@@ -78,7 +79,7 @@ public class OrganisationUseCases {
 
   public Optional<Organisation> findById(UUID id) {
     return organisations.findById(id)
-      .filter(this::mayRead);
+      .filter(this::isAllowedToRead);
   }
 
   public Organisation create(Organisation organisation) {
@@ -97,7 +98,7 @@ public class OrganisationUseCases {
 
   public Organisation findOrCreate(String externalId) {
     return organisations.findByExternalId(externalId)
-      .filter(this::mayRead)
+      .filter(this::isAllowedToRead)
       .orElseGet(() -> create(Organisation.of(externalId)));
   }
 
@@ -164,12 +165,12 @@ public class OrganisationUseCases {
   }
 
   public Theme findTheme(Organisation organisation) {
-    return organisationTheme.findByOrganisation(organisation);
+    return organisationTheme.findBy(organisation);
   }
 
   public Optional<Theme> findTheme(String slug) {
     return organisations.findBySlug(slug)
-      .map(organisationTheme::findByOrganisation);
+      .map(organisationTheme::findBy);
   }
 
   public void saveTheme(Theme theme) {
@@ -180,7 +181,7 @@ public class OrganisationUseCases {
 
   public void deleteTheme(Organisation organisation) {
     ensureAllowedToModifyAsset();
-    organisationTheme.deleteThemeForOrganisation(organisation);
+    organisationTheme.deleteTheme(organisation);
   }
 
   public Optional<Organisation> findBySlug(String slug) {
@@ -196,7 +197,7 @@ public class OrganisationUseCases {
       + "this organisation");
   }
 
-  private boolean mayRead(Organisation organisation) {
+  private boolean isAllowedToRead(Organisation organisation) {
     return organisationPermissions.isAllowedToRead(currentUser, organisation);
   }
 
