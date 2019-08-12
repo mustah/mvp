@@ -157,12 +157,11 @@ public class OrganisationController {
   ) {
     var assetType = assetTypeOptional.orElseThrow(InvalidFormat::assetType);
 
-    return organisationUseCases
-      .findAssetOrFallback(
-        slug,
-        assetType,
-        ifNoneMatch
-      )
+    return organisationUseCases.findAssetOrFallback(
+      slug,
+      assetType,
+      ifNoneMatch.orElse(null)
+    )
       .map(asset ->
         ResponseEntity.ok()
           .cacheControl(CacheControl.noCache())

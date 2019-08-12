@@ -21,11 +21,10 @@ import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.OTHER_ADMIN_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.OTHER_ELVACO_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.OTHER_USER;
-import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static junit.framework.TestCase.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 public class OrganisationPermissionsTest {
 
@@ -33,7 +32,7 @@ public class OrganisationPermissionsTest {
 
   @Before
   public void setUp() {
-    Users users = new MockUsers(asList(
+    Users users = new MockUsers(List.of(
       ELVACO_SUPER_ADMIN_USER,
       ELVACO_ADMIN_USER,
       ELVACO_USER,
@@ -271,18 +270,12 @@ public class OrganisationPermissionsTest {
 
   @Test
   public void unhandledRoleThrowsException() {
-    RuntimeException exception = null;
-    try {
-      hasPermission(
-        ELVACO_SUPER_ADMIN_USER,
-        userWithRole(ELVACO_SUPER_ADMIN_USER, new Role("Dictator")),
-        ELVACO_ADMIN_USER,
-        UPDATE
-      );
-    } catch (RuntimeException ex) {
-      exception = ex;
-    }
-    assertNotNull(exception);
+    assertThatThrownBy(() -> hasPermission(
+      ELVACO_SUPER_ADMIN_USER,
+      userWithRole(ELVACO_SUPER_ADMIN_USER, new Role("Dictator")),
+      ELVACO_ADMIN_USER,
+      UPDATE
+    )).isInstanceOf(RuntimeException.class);
   }
 
   @Test

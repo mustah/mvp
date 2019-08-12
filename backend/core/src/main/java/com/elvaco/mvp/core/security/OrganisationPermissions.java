@@ -63,8 +63,9 @@ public class OrganisationPermissions {
       return false;
     }
 
+    // admins can do anything on users of the same organisation
     if (authenticatedUser.isMvpAdmin()) {
-      return true; // admins can do anything on users of the same organisation
+      return true;
     }
 
     switch (permission) {
@@ -77,6 +78,52 @@ public class OrganisationPermissions {
       default:
         return false;
     }
+  }
+
+  public boolean isAllowedToRead(
+    AuthenticatedUser authenticatedUser,
+    Organisation target
+  ) {
+    return isAllowed(authenticatedUser, target, Permission.READ);
+  }
+
+  public boolean isAllowedToRead(
+    AuthenticatedUser authenticatedUser,
+    User target,
+    @Nullable User beforeUpdate
+  ) {
+    return isAllowed(authenticatedUser, target, beforeUpdate, Permission.READ);
+  }
+
+  public boolean isAllowedToDelete(
+    AuthenticatedUser authenticatedUser,
+    Organisation target
+  ) {
+    return isAllowed(authenticatedUser, target, Permission.DELETE);
+  }
+
+  public boolean isAllowedToDelete(
+    AuthenticatedUser authenticatedUser,
+    User target,
+    @Nullable User beforeUpdate
+  ) {
+    return isAllowed(authenticatedUser, target, beforeUpdate, Permission.DELETE);
+  }
+
+  public boolean isAllowedToCreate(
+    AuthenticatedUser authenticatedUser,
+    User target,
+    @Nullable User beforeUpdate
+  ) {
+    return isAllowed(authenticatedUser, target, beforeUpdate, Permission.CREATE);
+  }
+
+  public boolean isAllowedToUpdate(
+    AuthenticatedUser authenticatedUser,
+    User target,
+    @Nullable User beforeUpdate
+  ) {
+    return isAllowed(authenticatedUser, target, beforeUpdate, Permission.UPDATE);
   }
 
   private boolean isUserRoleSufficient(

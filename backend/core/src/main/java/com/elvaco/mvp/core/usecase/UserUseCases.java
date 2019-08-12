@@ -13,11 +13,6 @@ import com.elvaco.mvp.core.spi.security.TokenService;
 
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.Permission.CREATE;
-import static com.elvaco.mvp.core.security.Permission.DELETE;
-import static com.elvaco.mvp.core.security.Permission.READ;
-import static com.elvaco.mvp.core.security.Permission.UPDATE;
-
 @RequiredArgsConstructor
 public class UserUseCases {
 
@@ -37,7 +32,7 @@ public class UserUseCases {
 
   public Optional<User> findById(UUID id) {
     return users.findById(id)
-      .filter(user -> organisationPermissions.isAllowed(currentUser, user, user, READ));
+      .filter(user -> organisationPermissions.isAllowedToRead(currentUser, user, user));
   }
 
   public Optional<User> create(User user) {
@@ -46,13 +41,13 @@ public class UserUseCases {
       .orElseThrow();
 
     return Optional.of(userWithOrganisation)
-      .filter(u -> organisationPermissions.isAllowed(currentUser, u, null, CREATE))
+      .filter(u -> organisationPermissions.isAllowedToCreate(currentUser, u, null))
       .map(users::save);
   }
 
   public Optional<User> update(User user) {
     return users.findById(user.id)
-      .filter(u -> organisationPermissions.isAllowed(currentUser, user, u, UPDATE))
+      .filter(u -> organisationPermissions.isAllowedToUpdate(currentUser, user, u))
       .map(u -> user.withPassword(u.password))
       .map(users::update)
       .map(this::removeTokenForUser);
@@ -60,7 +55,7 @@ public class UserUseCases {
 
   public Optional<User> delete(UUID userId) {
     return findById(userId)
-      .filter(u -> organisationPermissions.isAllowed(currentUser, u, u, DELETE)).stream()
+      .filter(u -> organisationPermissions.isAllowedToDelete(currentUser, u, u)).stream()
       .peek(u -> users.deleteById(u.id))
       .peek(this::removeTokenForUser)
       .findAny();
@@ -68,7 +63,7 @@ public class UserUseCases {
 
   public Optional<User> changePassword(UUID userId, String password) {
     return findById(userId)
-      .filter(u -> organisationPermissions.isAllowed(currentUser, u, u, UPDATE))
+      .filter(u -> organisationPermissions.isAllowedToUpdate(currentUser, u, u))
       .map(u -> u.withPassword(password))
       .map(users::save)
       .map(this::removeTokenForUser);

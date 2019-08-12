@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Asset;
 import com.elvaco.mvp.core.domainmodels.AssetType;
@@ -24,8 +25,6 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.core.security.Permission.CREATE;
-import static com.elvaco.mvp.core.security.Permission.DELETE;
-import static com.elvaco.mvp.core.security.Permission.READ;
 import static com.elvaco.mvp.core.security.Permission.UPDATE;
 import static com.elvaco.mvp.core.spi.data.EmptyPage.emptyPage;
 import static java.util.Collections.emptyList;
@@ -91,7 +90,7 @@ public class OrganisationUseCases {
   }
 
   public void delete(Organisation organisation) {
-    if (organisationPermissions.isAllowed(currentUser, organisation, DELETE)) {
+    if (organisationPermissions.isAllowedToDelete(currentUser, organisation)) {
       organisations.deleteById(organisation.id);
     }
   }
@@ -118,23 +117,18 @@ public class OrganisationUseCases {
   public Optional<Asset> findAssetOrFallback(
     String slug,
     AssetType assetType,
-    Optional<String> matchChecksum
+    @Nullable String checksum
   ) {
     var organisation = organisations.findBySlug(slug);
 
     if (organisation.isEmpty()) {
       var defaultAsset = organisationAssets.getDefault(assetType);
-      if (matchChecksum.isPresent() && defaultAsset.checksum.equals(matchChecksum.get())) {
-        return Optional.empty();
-      }
-      return Optional.of(defaultAsset);
+      return defaultAsset.checksum.equals(checksum) ? Optional.empty() : Optional.of(defaultAsset);
     }
 
-    if (matchChecksum.isPresent()) {
-      String checksum = matchChecksum.get();
-
-      boolean cachedForOrganisation = organisationAssets
-        .existsByOrganisationIdAndAssetTypeAndChecksum(
+    if (checksum != null) {
+      boolean cachedForOrganisation =
+        organisationAssets.existsByOrganisationIdAndAssetTypeAndChecksum(
           organisation.get().id,
           assetType,
           checksum
@@ -203,7 +197,7 @@ public class OrganisationUseCases {
   }
 
   private boolean mayRead(Organisation organisation) {
-    return organisationPermissions.isAllowed(currentUser, organisation, READ);
+    return organisationPermissions.isAllowedToRead(currentUser, organisation);
   }
 
   private void sanityCheck(Theme theme) {
