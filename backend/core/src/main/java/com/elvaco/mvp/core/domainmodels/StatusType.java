@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.util.Map;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 public enum StatusType {
 
@@ -10,7 +11,7 @@ public enum StatusType {
   WARNING("warning"),
   UNKNOWN("unknown");
 
-  private static final Map<String, StatusType> STATUS_ALIASES = statusTypeAliasMap();
+  private static final Map<String, StatusType> STATUS_ALIASES = Map.of("ErrorReported", ERROR);
 
   public final String name;
 
@@ -18,14 +19,19 @@ public enum StatusType {
     this.name = name;
   }
 
-  public static StatusType from(String status) {
+  public static StatusType from(@Nullable String status) {
     return Stream.of(values())
       .filter(s -> s.name.equalsIgnoreCase(status) || s.hasAlias(status))
       .findFirst()
       .orElse(UNKNOWN);
   }
 
-  public boolean isReported() {
+  public static boolean isReported(String status) {
+    StatusType type = StatusType.from(status);
+    return type.isNotUnknown() && type.isNotOk();
+  }
+
+  public boolean isNotOk() {
     return this != OK;
   }
 
@@ -34,10 +40,6 @@ public enum StatusType {
   }
 
   private boolean hasAlias(String status) {
-    return equals(STATUS_ALIASES.get(status));
-  }
-
-  private static Map<String, StatusType> statusTypeAliasMap() {
-    return Map.of("ErrorReported", ERROR);
+    return this == STATUS_ALIASES.get(status);
   }
 }

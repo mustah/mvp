@@ -30,4 +30,28 @@ public class StatusTypeTest {
   public void mapsErrorReportedToError() {
     assertThat(StatusType.from("ErrorReported")).isEqualTo(StatusType.ERROR);
   }
+
+  @Test
+  public void canHandleNull() {
+    assertThat(StatusType.from(null)).isEqualTo(StatusType.UNKNOWN);
+  }
+
+  @Test
+  public void emptyStatus() {
+    assertThat(StatusType.from("")).isEqualTo(StatusType.UNKNOWN);
+  }
+
+  @Test
+  public void isReported() {
+    assertThat(StatusType.isReported("error")).isTrue();
+    assertThat(StatusType.isReported("ErrorReported")).isTrue();
+  }
+
+  @Test
+  public void isNotReported() {
+    assertThat(StatusType.isReported(null)).isFalse();
+    assertThat(StatusType.isReported("unknown")).isFalse();
+    assertThat(StatusType.isReported("xyz")).isFalse();
+    assertThat(StatusType.isReported("ok")).isFalse();
+  }
 }

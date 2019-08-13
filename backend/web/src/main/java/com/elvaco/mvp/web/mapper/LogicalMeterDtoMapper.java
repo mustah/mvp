@@ -60,10 +60,7 @@ public class LogicalMeterDtoMapper {
     meterDto.alarm = Optional.ofNullable(logicalMeter.activeAlarm)
       .map(alarm -> new AlarmDto(alarm.id, alarm.mask))
       .orElse(null);
-    meterDto.isReported = Optional.ofNullable(logicalMeter.activeStatus)
-      .filter(StatusType::isNotUnknown)
-      .map(StatusType::isReported)
-      .orElse(false);
+    meterDto.isReported = StatusType.isReported(logicalMeter.status);
 
     meterDto.readIntervalMinutes = logicalMeter.readIntervalMinutes;
     meterDto.collectionPercentage = Optional.ofNullable(logicalMeter.collectionPercentage)
@@ -88,8 +85,7 @@ public class LogicalMeterDtoMapper {
     meterDto.id = logicalMeter.id;
     meterDto.medium = logicalMeter.getMedium().name;
     meterDto.created = created;
-    meterDto.isReported = statusLog.map(entry -> entry.status.isReported())
-      .orElse(false);
+    meterDto.isReported = statusLog.map(entry -> entry.status.isNotOk()).orElse(false);
     meterDto.statusChanged = Dates.formatUtc(statusLog.map(status -> status.start)
       .orElse(logicalMeter.created));
     meterDto.manufacturer = logicalMeter.getManufacturer();
