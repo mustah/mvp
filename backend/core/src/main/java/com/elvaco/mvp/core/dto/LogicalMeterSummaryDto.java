@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.Pk;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -32,7 +31,7 @@ public class LogicalMeterSummaryDto {
   @Nullable
   public final AlarmLogEntry activeAlarm;
   @Nullable
-  public final StatusType activeStatus;
+  public final String status;
   @Nullable
   public final String manufacturer;
   @Nullable
@@ -49,8 +48,8 @@ public class LogicalMeterSummaryDto {
     OffsetDateTime created,
     String medium,
     String gatewaySerial,
-    Double collectionPercentage,
-    @Nullable String activeStatus,
+    @Nullable Double collectionPercentage,
+    @Nullable String status,
     @Nullable String manufacturer,
     @Nullable String address,
     @Nullable Long readIntervalMinutes,
@@ -74,7 +73,7 @@ public class LogicalMeterSummaryDto {
     this.created = created.toZonedDateTime();
     this.medium = medium;
     this.gatewaySerial = gatewaySerial;
-    this.activeStatus = StatusType.from(activeStatus);
+    this.status = status;
     this.collectionPercentage = collectionPercentage;
     this.manufacturer = manufacturer;
     this.address = address;
