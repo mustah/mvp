@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.web.util.Constants.ACCESS_IS_DENIED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class OrganisationControllerAssetTest extends IntegrationTest {
@@ -58,7 +59,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var organisation = given(organisation());
     var user = given(mvpUser().organisation(organisation));
 
-    assertCannotUpload(user, organisation, HttpStatus.NOT_FOUND);
+    assertCannotUpload(user, organisation);
   }
 
   @Test
@@ -66,7 +67,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var organisation = given(organisation());
     var user = given(mvpUser());
 
-    assertCannotUpload(user, organisation, HttpStatus.NOT_FOUND);
+    assertCannotUpload(user, organisation);
   }
 
   @Test
@@ -185,14 +186,15 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var organisation = given(organisation());
     var admin = given(mvpUser().organisation(organisation).asMvpAdmin());
 
-    assertCannotUpload(admin, organisation, HttpStatus.FORBIDDEN);
+    assertCannotUpload(admin, organisation);
   }
 
   @Test
   public void admin_OwnOrganisation_Delete() {
     var organisation = given(organisation());
     var admin = given(mvpUser().organisation(organisation).asMvpAdmin());
-    assertCannotDelete(admin, organisation, HttpStatus.FORBIDDEN);
+
+    assertCannotDelete(admin, organisation);
   }
 
   @Test
@@ -200,14 +202,16 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var parent = given(organisation().name("parent"));
     var admin = given(mvpUser().organisation(parent).asMvpAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
-    assertCannotDelete(admin, subOrganisation, HttpStatus.FORBIDDEN);
+
+    assertCannotDelete(admin, subOrganisation);
   }
 
   @Test
   public void admin_OtherOrganisation_Delete() {
     var organisation = given(organisation());
     var admin = given(mvpUser().asMvpAdmin());
-    assertCannotDelete(admin, organisation, HttpStatus.NOT_FOUND);
+
+    assertCannotDelete(admin, organisation);
   }
 
   @Test
@@ -220,14 +224,16 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var otherSubOrganisation = given(
       subOrganisation(parentOrg, otherOrganisationsAdmin).name("sub")
     );
-    assertCannotDelete(admin, otherSubOrganisation, HttpStatus.NOT_FOUND);
+
+    assertCannotDelete(admin, otherSubOrganisation);
   }
 
   @Test
   public void admin_OtherOrganisation_Put() {
     var organisation = given(organisation());
     var admin = given(mvpUser().asMvpAdmin());
-    assertCannotUpload(admin, organisation, HttpStatus.NOT_FOUND);
+
+    assertCannotUpload(admin, organisation);
   }
 
   @Test
@@ -236,7 +242,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var admin = given(mvpUser().organisation(parent).asMvpAdmin());
     var subOrganisation = given(subOrganisation(parent, admin).name("sub"));
 
-    assertCannotUpload(admin, subOrganisation, HttpStatus.FORBIDDEN);
+    assertCannotUpload(admin, subOrganisation);
   }
 
   @Test
@@ -356,7 +362,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     assertAssetMatches(response, assetFixtures.get(assetUnderTest()));
   }
 
-  private void assertCannotUpload(User user, Organisation organisation, HttpStatus expectedStatus) {
+  private void assertCannotUpload(User user, Organisation organisation) {
     var request = as(user)
       .putFile(
         assetPutUrl(organisation),
@@ -365,7 +371,9 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
         ErrorMessageDto.class
       );
 
-    assertThat(request.getStatusCode()).isEqualTo(expectedStatus);
+    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(request.getBody()).isNotNull();
+    assertThat(request.getBody().message).isEqualTo(ACCESS_IS_DENIED);
   }
 
   private void assertCanDelete(User user, Organisation organisation) {
@@ -390,8 +398,7 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
 
   private void assertCannotDelete(
     User user,
-    Organisation organisation,
-    HttpStatus expectedStatus
+    Organisation organisation
   ) {
     putCustomAsset(organisation);
 
@@ -406,7 +413,9 @@ public abstract class OrganisationControllerAssetTest extends IntegrationTest {
     var deleted = as(user)
       .delete(assetDeleteUrl(organisation).build(), ErrorMessageDto.class);
 
-    assertThat(deleted.getStatusCode()).isEqualTo(expectedStatus);
+    assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(deleted.getBody()).isNotNull();
+    assertThat(deleted.getBody().message).isEqualTo(ACCESS_IS_DENIED);
 
     var lookingAtFallback = asMvpUser()
       .get(assetGetUrl(organisation.slug), byte[].class);

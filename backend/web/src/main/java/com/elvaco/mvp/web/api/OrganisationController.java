@@ -29,6 +29,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -117,6 +118,7 @@ public class OrganisationController {
       .orElseThrow(() -> new OrganisationNotFound(id));
   }
 
+  @PreAuthorize("hasRole('SUPER_ADMIN')")
   @PutMapping("{id}/assets/{assetTypeOptional}")
   public void createAsset(
     @PathVariable UUID id,
@@ -138,6 +140,7 @@ public class OrganisationController {
     );
   }
 
+  @PreAuthorize("hasRole('SUPER_ADMIN')")
   @DeleteMapping("{id}/assets/{assetTypeOptional}")
   public void deleteAsset(
     @PathVariable UUID id,
@@ -194,6 +197,7 @@ public class OrganisationController {
       .orElse(emptyList());
   }
 
+  @PreAuthorize("hasRole('SUPER_ADMIN')")
   @PutMapping("{id}/theme")
   public List<PropertyDto> putTheme(
     @PathVariable UUID id,
@@ -212,6 +216,7 @@ public class OrganisationController {
       .collect(toList());
   }
 
+  @PreAuthorize("hasRole('SUPER_ADMIN')")
   @DeleteMapping("{id}/theme")
   public void deleteTheme(@PathVariable UUID id) {
     var organisation = organisationUseCases.findById(id)

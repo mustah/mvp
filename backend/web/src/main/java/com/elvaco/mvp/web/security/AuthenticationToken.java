@@ -13,7 +13,7 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
   private final Object principal;
 
   private AuthenticationToken(String token, Object details) {
-    super(null);
+    super(((MvpUserDetails) details).getAuthorities());
     this.token = requireNonNull(token, "Token cannot be null");
     this.principal = details;
     this.setDetails(details);

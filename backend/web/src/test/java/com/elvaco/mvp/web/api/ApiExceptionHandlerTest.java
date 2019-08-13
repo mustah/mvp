@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import static com.elvaco.mvp.web.util.Constants.ACCESS_IS_DENIED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -43,13 +44,11 @@ public class ApiExceptionHandlerTest {
 
   @Test
   public void accessDeniedException() {
-    String message = "Access is denied";
-
     ResponseEntity<ErrorMessageDto> response =
-      apiExceptionHandler.handle(new AccessDeniedException(message));
+      apiExceptionHandler.handle(new AccessDeniedException(ACCESS_IS_DENIED));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    assertThat(response.getBody().message).isEqualTo(message);
+    assertThat(response.getBody().message).isEqualTo(ACCESS_IS_DENIED);
   }
 
   @Test
