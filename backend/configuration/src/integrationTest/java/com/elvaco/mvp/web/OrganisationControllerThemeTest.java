@@ -20,7 +20,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.web.util.Constants.ACCESS_IS_DENIED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
@@ -214,13 +216,9 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
     User user = given(mvpUser().organisation(organisation).asMvpUser());
     List<PropertyDto> properties = List.of(new PropertyDto(KEY1, VALUE1));
 
-    var response = as(user).put(
-      idThemeUrl(organisation),
-      properties,
-      UnauthorizedDto.class
-    );
+    var response = as(user).put(idThemeUrl(organisation), properties, Unauthorized.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertAccessIsDenied(response);
     assertThat(organisationThemeJpaRepository.findAll()).isEmpty();
   }
 
@@ -265,7 +263,7 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
 
     var response = as(user).delete(idThemeUrl(organisation), Unauthorized.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertAccessIsDenied(response);
     assertThat(organisationThemeJpaRepository.findAll()).hasSize(1);
   }
 
@@ -286,5 +284,11 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
   private String idThemeUrl(Organisation organisation) {
     return Url.builder()
       .path("/organisations/" + organisation.id + "/theme").build().template();
+  }
+
+  private static void assertAccessIsDenied(ResponseEntity<Unauthorized> response) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().getMessage()).isEqualTo(ACCESS_IS_DENIED);
   }
 }

@@ -110,11 +110,10 @@ class UseCaseConfig {
 
   @Bean
   OrganisationThemeUseCases organisationThemeUseCases(
-    AuthenticatedUser currentUser,
     OrganisationAssets organisationAssets,
     OrganisationThemes organisationTheme
   ) {
-    return new OrganisationThemeUseCases(currentUser, organisationAssets, organisationTheme);
+    return new OrganisationThemeUseCases(organisationAssets, organisationTheme);
   }
 
   @Bean

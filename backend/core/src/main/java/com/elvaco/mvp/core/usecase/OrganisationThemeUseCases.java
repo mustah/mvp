@@ -9,8 +9,6 @@ import com.elvaco.mvp.core.domainmodels.AssetType;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Theme;
 import com.elvaco.mvp.core.exception.InvalidFormat;
-import com.elvaco.mvp.core.exception.Unauthorized;
-import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.OrganisationAssets;
 import com.elvaco.mvp.core.spi.repository.OrganisationThemes;
 
@@ -25,7 +23,6 @@ public class OrganisationThemeUseCases {
     "image/gif"
   );
 
-  private final AuthenticatedUser currentUser;
   private final OrganisationAssets organisationAssets;
   private final OrganisationThemes organisationTheme;
 
@@ -73,7 +70,6 @@ public class OrganisationThemeUseCases {
   }
 
   public void createAsset(Organisation organisation, Asset asset) {
-    ensureAllowedToModifyAsset();
     if (!ALLOWED_CONTENT_TYPES_FOR_IMAGES.contains(asset.contentType)) {
       throw InvalidFormat.image(ALLOWED_CONTENT_TYPES_FOR_IMAGES, asset.contentType);
     }
@@ -81,7 +77,6 @@ public class OrganisationThemeUseCases {
   }
 
   public void deleteAsset(Organisation organisation, AssetType assetType) {
-    ensureAllowedToModifyAsset();
     organisationAssets.delete(assetType, organisation.id);
   }
 
@@ -90,13 +85,11 @@ public class OrganisationThemeUseCases {
   }
 
   public void saveTheme(Theme theme) {
-    ensureAllowedToModifyAsset();
     sanityCheck(theme);
     organisationTheme.save(theme);
   }
 
   public void deleteTheme(Organisation organisation) {
-    ensureAllowedToModifyAsset();
     organisationTheme.deleteTheme(organisation);
   }
 
@@ -113,14 +106,5 @@ public class OrganisationThemeUseCases {
           || (p.getValue() != null && p.getValue().length() > len))) {
       throw new IllegalArgumentException("Theme property size exceeds " + len);
     }
-  }
-
-  private void ensureAllowedToModifyAsset() {
-    if (currentUser.isSuperAdmin()) {
-      return;
-    }
-
-    throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to modify "
-      + "this organisation");
   }
 }
