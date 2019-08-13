@@ -11,11 +11,9 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
 
-import static com.elvaco.mvp.core.security.Permission.CREATE;
-import static com.elvaco.mvp.core.security.Permission.DELETE;
-import static com.elvaco.mvp.core.security.Permission.READ;
-import static com.elvaco.mvp.core.security.Permission.UPDATE;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class UserUseCases {
 
   private final AuthenticatedUser currentUser;
@@ -23,20 +21,6 @@ public class UserUseCases {
   private final OrganisationPermissions organisationPermissions;
   private final TokenService tokenService;
   private final Organisations organisations;
-
-  public UserUseCases(
-    AuthenticatedUser currentUser,
-    Users users,
-    OrganisationPermissions organisationPermissions,
-    TokenService tokenService,
-    Organisations organisations
-  ) {
-    this.currentUser = currentUser;
-    this.users = users;
-    this.organisationPermissions = organisationPermissions;
-    this.tokenService = tokenService;
-    this.organisations = organisations;
-  }
 
   public List<User> findAll() {
     if (currentUser.isSuperAdmin()) {
@@ -48,49 +32,41 @@ public class UserUseCases {
 
   public Optional<User> findById(UUID id) {
     return users.findById(id)
-      .filter(user -> organisationPermissions.isAllowed(currentUser, user, user, READ));
+      .filter(user -> organisationPermissions.isAllowedToRead(currentUser, user, user));
   }
 
   public Optional<User> create(User user) {
-    user = user.withOrganisation(organisations.findById(user.organisation.id).orElseThrow());
+    var userWithOrganisation = organisations.findById(user.organisation.id)
+      .map(user::withOrganisation)
+      .orElseThrow();
 
-    if (organisationPermissions.isAllowed(currentUser, user, null, CREATE)) {
-      return Optional.of(users.save(user));
-    }
-    return Optional.empty();
+    return Optional.of(userWithOrganisation)
+      .filter(u -> organisationPermissions.isAllowedToCreate(currentUser, u, null))
+      .map(users::save);
   }
 
   public Optional<User> update(User user) {
-    Optional<User> userBeforeUpdate = users.findById(user.id);
-    if (userBeforeUpdate.isPresent()
-      && organisationPermissions.isAllowed(currentUser, user, userBeforeUpdate.get(), UPDATE)
-    ) {
-      return Optional.of(
-        removeTokenForUser(users.update(user.withPassword(userBeforeUpdate.get().password)))
-      );
-    }
-    return Optional.empty();
+    return users.findById(user.id)
+      .filter(u -> organisationPermissions.isAllowedToUpdate(currentUser, user, u))
+      .map(u -> user.withPassword(u.password))
+      .map(users::update)
+      .map(this::removeTokenForUser);
   }
 
   public Optional<User> delete(UUID userId) {
     return findById(userId)
-      .filter(u -> organisationPermissions.isAllowed(currentUser, u, u, DELETE))
-      .stream()
+      .filter(u -> organisationPermissions.isAllowedToDelete(currentUser, u, u)).stream()
       .peek(u -> users.deleteById(u.id))
-      .peek(u -> removeTokenForUser(u))
+      .peek(this::removeTokenForUser)
       .findAny();
   }
 
   public Optional<User> changePassword(UUID userId, String password) {
-    Optional<User> originalUser = this.findById(userId);
-    if (originalUser.isPresent()) {
-      User updatedUser = originalUser.get().withPassword(password);
-      if (organisationPermissions.isAllowed(currentUser, updatedUser, originalUser.get(), UPDATE)) {
-        return Optional.of(removeTokenForUser(users.save(updatedUser)));
-      }
-    }
-
-    return Optional.empty();
+    return findById(userId)
+      .filter(u -> organisationPermissions.isAllowedToUpdate(currentUser, u, u))
+      .map(u -> u.withPassword(password))
+      .map(users::save)
+      .map(this::removeTokenForUser);
   }
 
   private User removeTokenForUser(User user) {

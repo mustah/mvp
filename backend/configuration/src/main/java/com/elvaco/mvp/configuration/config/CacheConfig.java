@@ -18,7 +18,6 @@ import org.ehcache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.elvaco.mvp.cache.EhTokenServiceCache.TOKEN_SERVICE_CACHE_NAME;
 import static java.util.UUID.randomUUID;
 
 @Slf4j
@@ -34,7 +33,7 @@ class CacheConfig {
   @Bean
   TokenService tokenService() {
     return new EhTokenServiceCache(ehCacheManager.getCache(
-      TOKEN_SERVICE_CACHE_NAME,
+      TokenService.CACHE_NAME,
       String.class,
       AuthenticatedUser.class
     ));
@@ -67,6 +66,6 @@ class CacheConfig {
 
   @PreDestroy
   void removeCache() {
-    ehCacheManager.removeCache(TOKEN_SERVICE_CACHE_NAME);
+    ehCacheManager.removeCache(TokenService.CACHE_NAME);
   }
 }

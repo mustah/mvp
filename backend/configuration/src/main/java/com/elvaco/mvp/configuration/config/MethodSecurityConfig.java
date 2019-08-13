@@ -30,8 +30,7 @@ class MethodSecurityConfig {
   AuthenticatedUser currentUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication instanceof AuthenticationToken) {
-      return tokenService
-        .getToken(((AuthenticationToken) authentication).getToken())
+      return tokenService.getToken((String) authentication.getCredentials())
         .orElseThrow(() -> INSUFFICIENT_AUTHENTICATION_EXCEPTION);
     } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
       return (AuthenticatedUser) authentication.getPrincipal();

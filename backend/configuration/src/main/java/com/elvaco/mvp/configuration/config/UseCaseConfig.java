@@ -35,6 +35,7 @@ import com.elvaco.mvp.core.usecase.MapUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.MeterAlarmUseCases;
 import com.elvaco.mvp.core.usecase.MeterDefinitionUseCases;
+import com.elvaco.mvp.core.usecase.OrganisationThemeUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
@@ -99,18 +100,21 @@ class UseCaseConfig {
   }
 
   @Bean
-  OrganisationUseCases organisationUseCases(
+  OrganisationUseCases organisationUseCases(AuthenticatedUser currentUser) {
+    return new OrganisationUseCases(
+      currentUser,
+      organisations,
+      new OrganisationPermissions(users)
+    );
+  }
+
+  @Bean
+  OrganisationThemeUseCases organisationThemeUseCases(
     AuthenticatedUser currentUser,
     OrganisationAssets organisationAssets,
     OrganisationThemes organisationTheme
   ) {
-    return new OrganisationUseCases(
-      currentUser,
-      organisations,
-      new OrganisationPermissions(users),
-      organisationAssets,
-      organisationTheme
-    );
+    return new OrganisationThemeUseCases(currentUser, organisationAssets, organisationTheme);
   }
 
   @Bean

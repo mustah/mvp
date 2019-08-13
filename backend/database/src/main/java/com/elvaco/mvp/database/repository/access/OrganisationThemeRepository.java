@@ -43,7 +43,7 @@ public class OrganisationThemeRepository implements OrganisationThemes {
   }
 
   @Override
-  public Theme findByOrganisation(Organisation organisation) {
+  public Theme findBy(Organisation organisation) {
     var themeBuilder = Theme.builder().organisationId(organisation.id);
 
     if (organisation.parent != null) {
@@ -62,7 +62,7 @@ public class OrganisationThemeRepository implements OrganisationThemes {
 
   @Override
   @Transactional
-  public void deleteThemeForOrganisation(Organisation organisation) {
+  public void deleteTheme(Organisation organisation) {
     organisationThemeJpaRepository.deleteByOrganisationThemePkOrganisationId(organisation.id);
   }
 }

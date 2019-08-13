@@ -7,6 +7,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class UserTokenDtoMapper {
+
   public static UserTokenDto toUserTokenDto(MvpUserDetails mvpUserDetails) {
     return new UserTokenDto(
       UserDtoMapper.toDto(mvpUserDetails.getUser()),

@@ -16,8 +16,6 @@ import com.elvaco.mvp.producers.rabbitmq.dto.IdDto;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterAlarmLogs;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
-import com.elvaco.mvp.testing.repository.MockOrganisationAssets;
-import com.elvaco.mvp.testing.repository.MockOrganisationThemes;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
@@ -38,14 +36,12 @@ public class MeteringAlarmMessageConsumerTest {
   private PhysicalMeterUseCases physicalMeterUseCases;
   private AlarmMessageConsumer messageConsumer;
   private MockMeterAlarmLogs meterAlarmLogs;
-  private MockMeasurements mockMeasurements;
   private Organisation organisation;
 
   @Before
   public void setUp() {
     MockAuthenticatedUser authenticatedUser = MockAuthenticatedUser.superAdmin();
-    mockMeasurements = new MockMeasurements();
-    meterAlarmLogs = new MockMeterAlarmLogs(mockMeasurements);
+    meterAlarmLogs = new MockMeterAlarmLogs(new MockMeasurements());
     physicalMeterUseCases = new PhysicalMeterUseCases(
       authenticatedUser,
       new MockPhysicalMeters(),
@@ -57,9 +53,7 @@ public class MeteringAlarmMessageConsumerTest {
       new OrganisationUseCases(
         authenticatedUser,
         new MockOrganisations(singletonList(organisation)),
-        new OrganisationPermissions(new MockUsers(singletonList(authenticatedUser.getUser()))),
-        new MockOrganisationAssets(),
-        new MockOrganisationThemes()
+        new OrganisationPermissions(new MockUsers(singletonList(authenticatedUser.getUser())))
       ),
       meterAlarmLogs
     );

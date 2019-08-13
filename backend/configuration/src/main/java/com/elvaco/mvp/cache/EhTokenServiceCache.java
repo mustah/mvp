@@ -13,8 +13,6 @@ import org.ehcache.Cache.Entry;
 @RequiredArgsConstructor
 public class EhTokenServiceCache implements TokenService {
 
-  public static final String TOKEN_SERVICE_CACHE_NAME = "tokenServiceCache";
-
   private final Cache<String, AuthenticatedUser> cache;
 
   @Override
@@ -23,8 +21,8 @@ public class EhTokenServiceCache implements TokenService {
   }
 
   @Override
-  public void saveToken(String token, AuthenticatedUser authenticatedUser) {
-    cache.put(token, authenticatedUser);
+  public void saveToken(AuthenticatedUser authenticatedUser) {
+    cache.put(authenticatedUser.getToken(), authenticatedUser);
   }
 
   @Override

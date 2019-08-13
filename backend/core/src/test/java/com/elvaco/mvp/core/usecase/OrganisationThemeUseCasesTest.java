@@ -7,7 +7,6 @@ import com.elvaco.mvp.core.domainmodels.Theme;
 import com.elvaco.mvp.testing.fixture.DefaultTestFixture;
 import com.elvaco.mvp.testing.repository.MockOrganisationAssets;
 import com.elvaco.mvp.testing.repository.MockOrganisationThemes;
-import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Before;
@@ -17,17 +16,14 @@ import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_SUPER_ADMIN_USE
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class OrganisationUseCasesTest extends DefaultTestFixture {
+public class OrganisationThemeUseCasesTest extends DefaultTestFixture {
 
-  private OrganisationUseCases organisationUseCases;
+  private OrganisationThemeUseCases organisationThemeUseCases;
 
   @Before
   public void before() {
-    var currentUser = new MockAuthenticatedUser(ELVACO_SUPER_ADMIN_USER, "token123");
-    organisationUseCases = new OrganisationUseCases(
-      currentUser,
-      new MockOrganisations(),
-      null,
+    organisationThemeUseCases = new OrganisationThemeUseCases(
+      new MockAuthenticatedUser(ELVACO_SUPER_ADMIN_USER, "token123"),
       new MockOrganisationAssets(),
       new MockOrganisationThemes()
     );
@@ -41,7 +37,7 @@ public class OrganisationUseCasesTest extends DefaultTestFixture {
     for (int i = 0; i < 101; i++) {
       theme.property("Key" + i, "Value" + i);
     }
-    assertThatThrownBy(() -> organisationUseCases.saveTheme(theme.build()))
+    assertThatThrownBy(() -> organisationThemeUseCases.saveTheme(theme.build()))
       .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -55,7 +51,7 @@ public class OrganisationUseCasesTest extends DefaultTestFixture {
       "Value"
     );
 
-    assertThatThrownBy(() -> organisationUseCases.saveTheme(theme.build()))
+    assertThatThrownBy(() -> organisationThemeUseCases.saveTheme(theme.build()))
       .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -69,7 +65,7 @@ public class OrganisationUseCasesTest extends DefaultTestFixture {
       IntStream.range(0, 101).mapToObj(i -> "x").collect(Collectors.joining())
     );
 
-    assertThatThrownBy(() -> organisationUseCases.saveTheme(theme.build()))
+    assertThatThrownBy(() -> organisationThemeUseCases.saveTheme(theme.build()))
       .isInstanceOf(IllegalArgumentException.class);
   }
 }

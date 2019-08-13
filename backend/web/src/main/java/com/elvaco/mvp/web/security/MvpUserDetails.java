@@ -30,8 +30,7 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   public MvpUserDetails(User user, String token) {
     Objects.requireNonNull(user.password, "User must have a password.");
     this.authorities = user.roles.stream()
-      .map(r -> r.role)
-      .map(role -> new SimpleGrantedAuthority(SPRING_ROLE_PREFIX + role))
+      .map(r -> new SimpleGrantedAuthority(SPRING_ROLE_PREFIX + r.role))
       .collect(toList());
     this.user = user;
     this.token = token;

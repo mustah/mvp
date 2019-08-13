@@ -64,7 +64,6 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.orm.jpa.JpaSystemException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -176,10 +175,10 @@ public abstract class IntegrationTest implements ContextDsl {
   protected SystemMeterDefinitionProvider systemMeterDefinitionProvider;
 
   @Autowired
-  private TokenFactory tokenFactory;
+  protected TokenFactory tokenFactory;
 
   @Autowired
-  private TokenService tokenService;
+  protected TokenService tokenService;
 
   @Autowired
   private CacheManager ehCacheManager;
@@ -221,16 +220,10 @@ public abstract class IntegrationTest implements ContextDsl {
   protected void afterRemoveEntitiesHook() {}
 
   protected void authenticate(User user) {
-    AuthenticatedUser authenticatedUser = new MvpUserDetails(
-      user,
-      tokenFactory.newToken()
-    );
-    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
-    Authentication authentication = new AuthenticationToken(
-      authenticatedUser.getToken(),
-      authenticatedUser
-    );
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+    AuthenticatedUser authenticatedUser = new MvpUserDetails(user, tokenFactory.newToken());
+    tokenService.saveToken(authenticatedUser);
+    SecurityContextHolder.getContext()
+      .setAuthentication(AuthenticationToken.from(authenticatedUser));
   }
 
   protected RestClient restClient() {

@@ -115,8 +115,8 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
         tuple(KEY2, VALUE2)
       );
 
-    assertThat(organisationTheme.findByOrganisation(organisation).properties.entrySet())
-      .extracting(e -> e.getKey(), e -> e.getValue())
+    assertThat(organisationTheme.findBy(organisation).properties.entrySet())
+      .extracting(Map.Entry::getKey, Map.Entry::getValue)
       .containsExactlyInAnyOrder(
         tuple(KEY1, VALUE1),
         tuple(KEY2, VALUE2)
@@ -151,14 +151,14 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
         tuple(KEY3, VALUE3)
       );
 
-    assertThat(organisationTheme.findByOrganisation(organisation).properties.entrySet())
-      .extracting(e -> e.getKey(), e -> e.getValue())
+    assertThat(organisationTheme.findBy(organisation).properties.entrySet())
+      .extracting(Map.Entry::getKey, Map.Entry::getValue)
       .containsExactlyInAnyOrder(
         tuple(KEY3, VALUE3)
       );
 
-    assertThat(organisationTheme.findByOrganisation(subOrganisation).properties.entrySet())
-      .extracting(e -> e.getKey(), e -> e.getValue())
+    assertThat(organisationTheme.findBy(subOrganisation).properties.entrySet())
+      .extracting(Map.Entry::getKey, Map.Entry::getValue)
       .containsExactlyInAnyOrder(
         tuple(KEY1, VALUE1),
         tuple(KEY2, VALUE2),
@@ -187,8 +187,8 @@ public class OrganisationControllerThemeTest extends IntegrationTest {
       .extracting(p -> p.key, p -> p.value)
       .containsExactlyInAnyOrder(tuple(KEY2, VALUE2));
 
-    assertThat(organisationTheme.findByOrganisation(organisation).properties.entrySet())
-      .extracting(e -> e.getKey(), e -> e.getValue())
+    assertThat(organisationTheme.findBy(organisation).properties.entrySet())
+      .extracting(Map.Entry::getKey, Map.Entry::getValue)
       .containsExactlyInAnyOrder(tuple(KEY2, VALUE2));
   }
 

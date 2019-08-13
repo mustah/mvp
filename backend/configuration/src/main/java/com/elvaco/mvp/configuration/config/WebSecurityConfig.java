@@ -33,6 +33,12 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String API = API_V1 + "/**";
 
+  private static final String POLICY_DIRECTIVES = "default-src 'self';"
+    + "img-src 'self' https://*.openstreetmap.se https://*.basemaps.cartocdn.com;"
+    + "font-src 'self' data:;"
+    + "style-src 'self' 'unsafe-inline';"
+    + "object-src 'none'";
+
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
   private final TokenService tokenService;
@@ -59,17 +65,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.GET, API_V1 + "/organisations/*/theme").permitAll()
       .antMatchers(API_V1 + "/logout").permitAll();
 
-    String policyDirectives = "default-src 'self';"
-      + "img-src 'self' https://*.openstreetmap.se https://*.basemaps.cartocdn.com;"
-      + "font-src 'self' data:;"
-      + "style-src 'self' 'unsafe-inline';"
-      + "object-src 'none'";
-
     http.headers()
       .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN)
       .and()
       .frameOptions().deny()
-      .contentSecurityPolicy(policyDirectives)
+      .contentSecurityPolicy(POLICY_DIRECTIVES)
       .and()
       .httpStrictTransportSecurity();
 
@@ -82,16 +82,12 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
       .httpBasic().authenticationEntryPoint(new RestAuthenticationEntryPoint())
       .and()
-      .addFilterAfter(tokenAuthenticationFilter(), BasicAuthenticationFilter.class);
+      .addFilterAfter(new TokenAuthenticationFilter(tokenService), BasicAuthenticationFilter.class);
   }
 
   @Override
   public UserDetailsService userDetailsService() {
     return userDetailsService;
-  }
-
-  private TokenAuthenticationFilter tokenAuthenticationFilter() {
-    return new TokenAuthenticationFilter(tokenService);
   }
 
   private static class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {

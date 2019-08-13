@@ -27,25 +27,11 @@ public class DashboardUseCases {
     );
   }
 
-  public Optional<Dashboard> findDashboardByIdForCurrentUser(UUID dashboardId) {
-    return dashboards.findByIdAndOwnerUserIdAndOrganisationId(
-      dashboardId,
-      currentUser.getUserId(),
-      currentUser.getOrganisationId()
-    );
-  }
-
   public List<Widget> findWidgetsForCurrentUserAndDashboard(UUID dashboardId) {
     return widgets.findByDashboardIdAndOwnerUserIdAndOrganisationId(
       dashboardId,
       currentUser.getUserId(),
       currentUser.getOrganisationId()
-    );
-  }
-
-  public Optional<Widget> findWidgetForCurrentUser(UUID widgetId) {
-    return widgets.findByIdAndOwnerUserIdAndOrganisationId(
-      widgetId, currentUser.getUserId(), currentUser.getOrganisationId()
     );
   }
 
@@ -95,12 +81,25 @@ public class DashboardUseCases {
       });
   }
 
+  private Optional<Dashboard> findDashboardByIdForCurrentUser(UUID dashboardId) {
+    return dashboards.findByIdAndOwnerUserIdAndOrganisationId(
+      dashboardId,
+      currentUser.getUserId(),
+      currentUser.getOrganisationId()
+    );
+  }
+
+  private Optional<Widget> findWidgetForCurrentUser(UUID widgetId) {
+    return widgets.findByIdAndOwnerUserIdAndOrganisationId(
+      widgetId, currentUser.getUserId(), currentUser.getOrganisationId()
+    );
+  }
+
   private void validateWidgets(Dashboard dashboard) {
     if (dashboard.widgets.stream()
-      .filter(w -> !w.dashboardId.equals(dashboard.id)
+      .anyMatch(w -> !w.dashboardId.equals(dashboard.id)
         || !w.ownerUserId.equals(dashboard.ownerUserId)
-        || !w.organisationId.equals(dashboard.organisationId))
-      .findFirst().isPresent()) {
+        || !w.organisationId.equals(dashboard.organisationId))) {
       throw new Unauthorized("Invalid dashboard configuration " + dashboard);
     }
   }

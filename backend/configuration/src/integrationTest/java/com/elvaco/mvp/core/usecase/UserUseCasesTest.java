@@ -3,7 +3,6 @@ package com.elvaco.mvp.core.usecase;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
@@ -19,9 +18,6 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserUseCasesTest extends IntegrationTest {
-
-  @Autowired
-  private TokenService tokenService;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -94,8 +90,8 @@ public class UserUseCasesTest extends IntegrationTest {
   }
 
   private AuthenticatedUser saveUserToTokenService(User user) {
-    AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(user, randomUUID().toString());
-    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
+    AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(user, tokenFactory.newToken());
+    tokenService.saveToken(authenticatedUser);
     return authenticatedUser;
   }
 

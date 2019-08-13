@@ -16,7 +16,6 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.GatewaysMeters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -38,8 +37,6 @@ import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterDefinitions;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
-import com.elvaco.mvp.testing.repository.MockOrganisationAssets;
-import com.elvaco.mvp.testing.repository.MockOrganisationThemes;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockProperties;
@@ -111,7 +108,6 @@ public abstract class MessageConsumerTest {
   Organisations organisations;
   LogicalMeters logicalMeters;
   Gateways gateways;
-  GatewaysMeters gatewaysMeters;
   MeterDefinitions meterDefinitions;
   LogicalMeterUseCases logicalMeterUseCases;
   PhysicalMeterUseCases physicalMeterUseCases;
@@ -160,7 +156,6 @@ public abstract class MessageConsumerTest {
     organisations = new MockOrganisations();
     logicalMeters = new MockLogicalMetersWithCascading(physicalMeters);
     gateways = new MockGateways();
-    gatewaysMeters = new MockGatewaysMeters();
     geocodeService = new MockGeocodeService();
     propertiesUseCases = new PropertiesUseCases(authenticatedUser, new MockProperties());
     meterDefinitions = new MockMeterDefinitions();
@@ -186,11 +181,9 @@ public abstract class MessageConsumerTest {
           .organisationElvaco()
           .asSuperAdmin()
           .build()
-      ))),
-      new MockOrganisationAssets(),
-      new MockOrganisationThemes()
+      )))
     );
-    gatewayUseCases = new GatewayUseCases(gateways, gatewaysMeters, authenticatedUser);
+    gatewayUseCases = new GatewayUseCases(gateways, new MockGatewaysMeters(), authenticatedUser);
 
     meterDefinitionUseCases = new MeterDefinitionUseCases(
       authenticatedUser,

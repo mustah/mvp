@@ -22,7 +22,6 @@ import com.elvaco.mvp.web.security.MvpUserDetails;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import static com.elvaco.mvp.web.mapper.UserDtoMapper.toDomainModel;
-import static com.elvaco.mvp.web.mapper.UserDtoMapper.toDto;
 import static java.util.stream.Collectors.toList;
 
 @AllArgsConstructor
@@ -71,10 +69,10 @@ public class UserController {
       throw new InvalidParameter("password");
     }
 
-    User user = userUseCases.changePassword(userId, password.password)
+    return userUseCases.changePassword(userId, password.password)
+      .map(this::getMvpUserDetails)
+      .map(UserTokenDtoMapper::toUserTokenDto)
       .orElseThrow(() -> UserNotFound.withId(userId));
-
-    return getUserTokenDto(user);
   }
 
   @PutMapping
@@ -86,32 +84,24 @@ public class UserController {
 
   @DeleteMapping("{id}")
   public UserDto deleteUser(@PathVariable UUID id) {
-    return toDto(userUseCases.delete(id).orElseThrow(() -> UserNotFound.withId(id)));
+    return userUseCases.delete(id)
+      .map(UserDtoMapper::toDto)
+      .orElseThrow(() -> UserNotFound.withId(id));
   }
 
-  private UserTokenDto getUserTokenDto(User user) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    MvpUserDetails mvpUserDetails = ((MvpUserDetails) authentication.getPrincipal());
-
+  private MvpUserDetails getMvpUserDetails(User user) {
+    MvpUserDetails mvpUserDetails = (MvpUserDetails) SecurityContextHolder.getContext()
+      .getAuthentication()
+      .getPrincipal();
     if (mvpUserDetails.getUserId() == user.id) {
-      AuthenticatedUser authenticatedUser = new MvpUserDetails(
-        user,
-        tokenFactory.newToken()
-      );
+      AuthenticatedUser authenticatedUser = new MvpUserDetails(user, tokenFactory.newToken());
+      tokenService.saveToken(authenticatedUser);
+      SecurityContextHolder.getContext()
+        .setAuthentication(AuthenticationToken.from(authenticatedUser));
 
-      String token = authenticatedUser.getToken();
-      tokenService.saveToken(token, authenticatedUser);
-
-      SecurityContextHolder.getContext().setAuthentication(
-        new AuthenticationToken(
-          authenticatedUser.getToken(),
-          authenticatedUser
-        )
-      );
-
-      return UserTokenDtoMapper.toUserTokenDto(new MvpUserDetails(user, token));
+      return new MvpUserDetails(user, authenticatedUser.getToken());
     } else {
-      return UserTokenDtoMapper.toUserTokenDto(mvpUserDetails);
+      return mvpUserDetails;
     }
   }
 }

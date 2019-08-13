@@ -20,6 +20,7 @@ import static com.elvaco.mvp.web.util.RequestHelper.bearerTokenFrom;
 @AllArgsConstructor
 @RestApi
 public class AuthController {
+
   private final TokenService tokenService;
 
   @GetMapping("/authenticate")

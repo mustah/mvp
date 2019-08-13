@@ -1,11 +1,8 @@
 package com.elvaco.mvp.core.usecase;
 
-import java.util.Optional;
-
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testing.cache.MockTokenService;
@@ -14,6 +11,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
@@ -27,8 +25,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserUseCasesTest {
 
-  private UserUseCases useCases;
+  private UserUseCases userUseCases;
   private TokenService tokenService;
+
+  @Before
+  public void setUp() {
+    tokenService = new MockTokenService();
+  }
 
   @Test
   public void adminCanUpdateUserWithinSameOrganisation() {
@@ -39,15 +42,15 @@ public class UserUseCasesTest {
       .build();
 
     User userToUpdate = userBuilder().build();
-    usersOf(currentUser(user), user, userToUpdate);
+    userUseCasesOf(currentUser(user), user, userToUpdate);
 
     String token = randomUUID().toString();
-    tokenService.saveToken(token, new MockAuthenticatedUser(userToUpdate, token));
+    tokenService.saveToken(new MockAuthenticatedUser(userToUpdate, token));
 
-    Optional<User> update = useCases.update(userToUpdate);
+    User updatedUser = userUseCases.update(userToUpdate).get();
 
-    assertThat(update.get().getUsername()).isEqualTo("random@random.com");
-    assertThat(tokenService.getToken(token).isPresent()).isFalse();
+    assertThat(updatedUser.getUsername()).isEqualTo("random@random.com");
+    assertThat(tokenService.getToken(token)).isNotPresent();
   }
 
   @Test
@@ -60,9 +63,9 @@ public class UserUseCasesTest {
     User marvelUser = userBuilder()
       .organisation(MARVEL)
       .build();
-    usersOf(currentUser(marvelUser), dailyPlanetUser, marvelUser);
+    userUseCasesOf(currentUser(marvelUser), dailyPlanetUser, marvelUser);
 
-    assertThat(useCases.update(dailyPlanetUser).isPresent()).isFalse();
+    assertThat(userUseCases.update(dailyPlanetUser)).isNotPresent();
   }
 
   @Test
@@ -73,27 +76,25 @@ public class UserUseCasesTest {
       .roles(MVP_USER, SUPER_ADMIN)
       .build();
     User marvelUser = userBuilder().build();
-    usersOf(currentUser(superAdmin), superAdmin, marvelUser);
+    userUseCasesOf(currentUser(superAdmin), superAdmin, marvelUser);
 
     String token = randomUUID().toString();
-    tokenService.saveToken(token, new MockAuthenticatedUser(marvelUser, token));
+    tokenService.saveToken(new MockAuthenticatedUser(marvelUser, token));
 
-    useCases.delete(marvelUser.id);
+    userUseCases.delete(marvelUser.id);
 
-    assertThat(useCases.findById(marvelUser.id).isPresent()).isFalse();
-    assertThat(tokenService.getToken(token).isPresent()).isFalse();
+    assertThat(userUseCases.findById(marvelUser.id)).isNotPresent();
+    assertThat(tokenService.getToken(token)).isNotPresent();
   }
 
-  private void usersOf(AuthenticatedUser currentUser, User... users) {
-    tokenService = new MockTokenService();
+  private void userUseCasesOf(AuthenticatedUser currentUser, User... users) {
     Users usersRepository = new MockUsers(asList(users));
-    Organisations organisations = new MockOrganisations();
-    useCases = new UserUseCases(
+    userUseCases = new UserUseCases(
       currentUser,
       usersRepository,
       new OrganisationPermissions(usersRepository),
       tokenService,
-      organisations
+      new MockOrganisations()
     );
   }
 

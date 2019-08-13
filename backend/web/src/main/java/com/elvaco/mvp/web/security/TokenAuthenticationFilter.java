@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.exception.InvalidToken;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
@@ -21,13 +22,10 @@ import static com.elvaco.mvp.web.util.Constants.BEARER;
 import static com.elvaco.mvp.web.util.RequestHelper.bearerTokenFrom;
 
 @Slf4j
+@RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
   private final TokenService tokenService;
-
-  public TokenAuthenticationFilter(TokenService tokenService) {
-    this.tokenService = tokenService;
-  }
 
   @Override
   protected void doFilterInternal(
@@ -64,7 +62,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   private Authentication getAuthenticationTokenFrom(String requestHeader) {
     return bearerTokenFrom(requestHeader)
       .flatMap(tokenService::getToken)
-      .map(user -> new AuthenticationToken(user.getToken(), user))
+      .map(AuthenticationToken::from)
       .orElseThrow(InvalidToken::new);
   }
 }
