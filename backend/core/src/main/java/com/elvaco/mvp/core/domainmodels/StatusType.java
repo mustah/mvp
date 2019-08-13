@@ -1,22 +1,27 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.Map;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 public enum StatusType {
 
+  ERROR("error", "ErrorReported"),
   OK("ok"),
-  ERROR("error"),
   WARNING("warning"),
   UNKNOWN("unknown");
 
-  private static final Map<String, StatusType> STATUS_ALIASES = Map.of("ErrorReported", ERROR);
-
   public final String name;
 
-  StatusType(String name) {
+  @Nullable
+  private final String alias;
+
+  StatusType(String name, @Nullable String alias) {
     this.name = name;
+    this.alias = alias;
+  }
+
+  StatusType(String name) {
+    this(name, null);
   }
 
   public static StatusType from(@Nullable String status) {
@@ -40,6 +45,6 @@ public enum StatusType {
   }
 
   private boolean hasAlias(String status) {
-    return this == STATUS_ALIASES.get(status);
+    return alias != null && alias.equals(status);
   }
 }
