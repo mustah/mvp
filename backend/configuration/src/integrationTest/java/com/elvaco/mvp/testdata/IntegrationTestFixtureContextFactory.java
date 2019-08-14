@@ -57,14 +57,23 @@ class IntegrationTestFixtureContextFactory {
       .build();
     users.save(user);
 
-    User admin = new UserBuilder()
-      .name("integration-test-admin")
-      .email(contextId.toString() + "-admin@test.com")
+    User mvpAdmin = new UserBuilder()
+      .name("integration-test-mvpAdmin")
+      .email(contextId.toString() + "-mvpAdmin@test.com")
       .password("password")
       .organisation(organisation)
       .asMvpAdmin()
       .build();
-    users.save(admin);
+    users.save(mvpAdmin);
+
+    User otcAdmin = new UserBuilder()
+      .name("integration-test-otcAdmin")
+      .email(contextId.toString() + "-otcAdmin@test.com")
+      .password("password")
+      .organisation(organisation)
+      .asOtcAdmin()
+      .build();
+    users.save(otcAdmin);
 
     User superAdmin = new UserBuilder()
       .name("integration-test-super-admin")
@@ -78,7 +87,8 @@ class IntegrationTestFixtureContextFactory {
     return new IntegrationTestFixtureContext(
       organisation,
       user,
-      admin,
+      mvpAdmin,
+      otcAdmin,
       superAdmin,
       logicalMeters,
       gateways,

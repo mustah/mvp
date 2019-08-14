@@ -11,6 +11,7 @@ import lombok.experimental.UtilityClass;
 
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 @UtilityClass
 public class UserDtoMapper {
@@ -59,6 +60,6 @@ public class UserDtoMapper {
   private static List<Role> rolesFrom(List<String> roles) {
     return roles.stream()
       .map(Role::new)
-      .collect(toList());
+      .collect(toUnmodifiableList());
   }
 }

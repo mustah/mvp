@@ -25,8 +25,6 @@ import org.springframework.stereotype.Component;
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 @RequiredArgsConstructor
 @Order(2)
@@ -43,7 +41,7 @@ class UserDatabaseLoader implements CommandLineRunner {
     "elvis123",
     Language.en,
     WAYNE_INDUSTRIES,
-    singletonList(MVP_ADMIN)
+    List.of(MVP_ADMIN)
   );
 
   private static final User OTHER_USER = new User(
@@ -52,7 +50,7 @@ class UserDatabaseLoader implements CommandLineRunner {
     "erik123",
     Language.en,
     WAYNE_INDUSTRIES,
-    singletonList(MVP_USER)
+    List.of(MVP_USER)
   );
 
   private final TokenService tokenService;
@@ -80,7 +78,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "admin123",
         Language.en,
         rootOrganisation,
-        singletonList(SUPER_ADMIN)
+        List.of(SUPER_ADMIN)
       ),
       tokenFactory.newToken()
     );
@@ -89,14 +87,14 @@ class UserDatabaseLoader implements CommandLineRunner {
     SecurityContextHolder.getContext()
       .setAuthentication(AuthenticationToken.from(authenticatedUser));
 
-    List<User> users = asList(
+    List<User> users = List.of(
       new User(
         "Emil Tirén",
         "emitir@elvaco.se",
         "emil123",
         Language.sv,
         rootOrganisation,
-        asList(MVP_USER, MVP_ADMIN, SUPER_ADMIN)
+        List.of(MVP_USER, MVP_ADMIN, SUPER_ADMIN)
       ),
       new User(
         "Hanna Sjöstedt",
@@ -104,7 +102,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "hanna123",
         Language.en,
         rootOrganisation,
-        asList(MVP_USER, MVP_ADMIN)
+        List.of(MVP_USER, MVP_ADMIN)
       ),
       new User(
         "User Fake",
@@ -112,7 +110,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "user123",
         Language.sv,
         WAYNE_INDUSTRIES,
-        singletonList(MVP_USER)
+        List.of(MVP_USER)
       ),
 
       new User(
@@ -121,7 +119,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "anna123",
         Language.sv,
         WAYNE_INDUSTRIES,
-        singletonList(MVP_USER)
+        List.of(MVP_USER)
       ),
       new User(
         "Maria Svensson",
@@ -129,7 +127,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "maria123",
         Language.sv,
         WAYNE_INDUSTRIES,
-        singletonList(MVP_USER)
+        List.of(MVP_USER)
       ),
       OTHER_ADMIN_USER,
       OTHER_USER,
@@ -139,7 +137,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "stefan123",
         Language.en,
         rootOrganisation,
-        singletonList(MVP_USER)
+        List.of(MVP_USER)
       ),
       new User(
         "Eva Nilsson",
@@ -147,7 +145,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "eva123",
         Language.en,
         rootOrganisation,
-        singletonList(MVP_USER)
+        List.of(MVP_USER)
       ),
       new User(
         "Peter Eriksson",
@@ -155,7 +153,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "peter123",
         Language.en,
         rootOrganisation,
-        singletonList(MVP_ADMIN)
+        List.of(MVP_ADMIN)
       ),
       new User(
         "Super Admin",
@@ -163,7 +161,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "admin123",
         Language.en,
         rootOrganisation,
-        singletonList(SUPER_ADMIN)
+        List.of(SUPER_ADMIN)
       ),
       new User(
         "Developer",
@@ -171,7 +169,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "complicated_password",
         Language.en,
         rootOrganisation,
-        singletonList(SUPER_ADMIN)
+        List.of(SUPER_ADMIN)
       )
     );
 

@@ -10,7 +10,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ALL_MVP_ROLES;
+import static com.elvaco.mvp.core.domainmodels.Role.ALL_ROLES;
 
 @RequiredArgsConstructor
 public class ProductionData implements ProductionDataProvider {
@@ -21,7 +21,7 @@ public class ProductionData implements ProductionDataProvider {
 
   @Override
   public List<Role> roles() {
-    return ALL_MVP_ROLES;
+    return ALL_ROLES;
   }
 
   @Override

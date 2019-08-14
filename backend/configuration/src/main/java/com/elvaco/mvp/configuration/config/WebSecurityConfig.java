@@ -25,15 +25,16 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
-import static com.elvaco.mvp.web.util.Constants.API_V1;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
+import static com.elvaco.mvp.core.domainmodels.Role.OTC_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-  private static final String API = API_V1 + "/**";
 
   private static final String POLICY_DIRECTIVES = "default-src 'self';"
     + "img-src 'self' https://*.openstreetmap.se https://*.basemaps.cartocdn.com;"
@@ -61,11 +62,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
-      .antMatchers(HttpMethod.OPTIONS, API).permitAll()
-      .antMatchers(API_V1 + "/geocodes/**").permitAll()
-      .antMatchers(HttpMethod.GET, API_V1 + "/organisations/*/assets/*").permitAll()
-      .antMatchers(HttpMethod.GET, API_V1 + "/organisations/*/theme").permitAll()
-      .antMatchers(API_V1 + "/logout").permitAll();
+      .antMatchers(HttpMethod.OPTIONS, "/api/v1/**").permitAll()
+      .antMatchers(HttpMethod.GET, "/api/v1/organisations/*/assets/*").permitAll()
+      .antMatchers(HttpMethod.GET, "/api/v1/organisations/*/theme").permitAll()
+      .antMatchers("/api/v1/geocodes/**").permitAll()
+      .antMatchers("/api/v1/logout").permitAll();
 
     http.headers()
       .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN)
@@ -77,10 +78,26 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.csrf().disable();
 
-    http
-      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
-      .authorizeRequests().antMatchers(API).fullyAuthenticated()
+      .authorizeRequests()
+      .antMatchers(
+        "/api/v1/dashboard/**",
+        "/api/v1/gateways/**",
+        "/api/v1/map-markers/**",
+        "/api/v1/measurements/**",
+        "/api/v1/meter-definitions/**",
+        "/api/v1/meters/**",
+        "/api/v1/organisations/**",
+        "/api/v1/selections/**",
+        "/api/v1/summary/**",
+        "/api/v1/user/selections/**"
+      )
+      .hasAnyRole(SUPER_ADMIN.role, MVP_ADMIN.role, MVP_USER.role)
+      .antMatchers("/api/v1/users/**")
+      .hasAnyRole(SUPER_ADMIN.role, MVP_ADMIN.role, MVP_USER.role, OTC_ADMIN.role)
+      .and()
+      .authorizeRequests().antMatchers("/api/v1/**").authenticated()
       .and()
       .httpBasic().authenticationEntryPoint(new RestAuthenticationEntryPoint())
       .and()

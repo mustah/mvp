@@ -245,6 +245,10 @@ public abstract class IntegrationTest implements ContextDsl {
     return restClientWith(context().mvpAdmin);
   }
 
+  protected RestClient asOtcAdmin() {
+    return restClientWith(context().otcAdmin);
+  }
+
   protected RestClient asSuperAdmin() {
     return restClientWith(context().superAdmin);
   }

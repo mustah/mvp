@@ -1,5 +1,6 @@
 package com.elvaco.mvp.testing.security;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,8 +63,18 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   }
 
   @Override
+  public boolean isOtcAdmin() {
+    return user.isOtcAdmin;
+  }
+
+  @Override
   public boolean isWithinOrganisation(UUID organisationId) {
     return getOrganisationId().equals(organisationId);
+  }
+
+  @Override
+  public Collection<Role> getRoles() {
+    return user.roles;
   }
 
   @Override

@@ -1,5 +1,7 @@
 package com.elvaco.mvp.web;
 
+import java.util.List;
+
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.security.TokenService;
@@ -16,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +34,7 @@ public class AuthControllerTest extends IntegrationTest {
       "admin123",
       Language.en,
       context().defaultOrganisation(),
-      singletonList(SUPER_ADMIN)
+      List.of(SUPER_ADMIN)
     ));
 
     ResponseEntity<UserTokenDto> response = restClient()
@@ -85,7 +86,7 @@ public class AuthControllerTest extends IntegrationTest {
       "yes-random",
       Language.en,
       context().defaultOrganisation(),
-      singletonList(MVP_ADMIN)
+      List.of(MVP_ADMIN)
     ));
 
     ResponseEntity<UserTokenDto> response = restClient()

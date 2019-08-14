@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.SubOrganisationParameters;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -51,8 +52,18 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   }
 
   @Override
+  public boolean isOtcAdmin() {
+    return user.isOtcAdmin;
+  }
+
+  @Override
   public boolean isWithinOrganisation(UUID organisationId) {
     return getOrganisationId().equals(organisationId);
+  }
+
+  @Override
+  public Collection<Role> getRoles() {
+    return user.roles;
   }
 
   @Override

@@ -25,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import static com.elvaco.mvp.web.util.Constants.API_V1;
 import static com.elvaco.mvp.web.util.Constants.AUTHORIZATION;
 import static com.elvaco.mvp.web.util.Constants.BASIC;
 import static com.elvaco.mvp.web.util.Constants.BEARER;
@@ -37,7 +36,7 @@ public final class RestClient {
   private final String baseUrl;
 
   RestClient(int serverPort) {
-    this.baseUrl = "http://localhost:" + serverPort + API_V1;
+    this.baseUrl = "http://localhost:" + serverPort + "/api/v1";
     DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
     uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
     this.template = new TestRestTemplate(
@@ -46,7 +45,7 @@ public final class RestClient {
   }
 
   public static String apiPathOf(String url) {
-    return API_V1 + url;
+    return "/api/v1" + url;
   }
 
   public <T> ResponseEntity<T> get(Url.UrlBuilder builder, Class<T> clazz) {

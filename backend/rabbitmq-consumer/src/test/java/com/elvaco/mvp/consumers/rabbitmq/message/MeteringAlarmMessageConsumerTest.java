@@ -18,7 +18,6 @@ import com.elvaco.mvp.testing.repository.MockMeterAlarmLogs;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
-import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Before;
@@ -53,7 +52,7 @@ public class MeteringAlarmMessageConsumerTest {
       new OrganisationUseCases(
         authenticatedUser,
         new MockOrganisations(singletonList(organisation)),
-        new OrganisationPermissions(new MockUsers(singletonList(authenticatedUser.getUser())))
+        new OrganisationPermissions()
       ),
       meterAlarmLogs
     );

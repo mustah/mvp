@@ -9,7 +9,7 @@ import com.elvaco.mvp.web.exception.UserNotFound;
 import com.elvaco.mvp.web.mapper.UserTokenDtoMapper;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import static com.elvaco.mvp.web.util.RequestHelper.bearerTokenFrom;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestApi
 public class AuthController {
 
