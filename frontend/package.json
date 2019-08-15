@@ -116,7 +116,7 @@
     "@progress/kendo-theme-material": "^2.5.2",
     "axios": "^0.19.0",
     "classnames": "^2.2.6",
-    "connected-react-router": "6.4.0",
+    "connected-react-router": "6.5.2",
     "csstips": "^1.1.0",
     "csx": "^9.1.0",
     "es6-shim": "^0.35.5",
