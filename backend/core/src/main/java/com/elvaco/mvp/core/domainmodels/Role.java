@@ -13,9 +13,15 @@ import lombok.ToString;
 public class Role implements Identifiable<String>, Serializable {
 
   public static final Role SUPER_ADMIN = new Role("SUPER_ADMIN");
+
   public static final Role MVP_USER = new Role("MVP_USER");
   public static final Role MVP_ADMIN = new Role("MVP_ADMIN");
+
   public static final Role OTC_ADMIN = new Role("OTC_ADMIN");
+  public static final Role OTC_USER = new Role("OTC_USER");
+  public static final Role OTC_APP_ADMIN = new Role("OTC_APP_ADMIN");
+  public static final Role OTC_APP_SERVICE_TECH = new Role("OTC_APP_SERVICE_TECH");
+  public static final Role OTC_APP_INSTALLER = new Role("OTC_APP_INSTALLER");
 
   public static final List<Role> ALL_ROLES = List.of(
     SUPER_ADMIN,
