@@ -82,7 +82,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
       .authorizeRequests()
       .antMatchers(
-        "/api/v1/dashboard/**",
+        "/api/v1/dashboards/**",
         "/api/v1/gateways/**",
         "/api/v1/map-markers/**",
         "/api/v1/measurements/**",
