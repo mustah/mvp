@@ -1182,10 +1182,10 @@
   dependencies:
     tslib "^1.7.0"
 
-"@progress/kendo-theme-material@^2.5.2":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@progress/kendo-theme-material/-/kendo-theme-material-2.5.2.tgz#3d6ab650073abc9876fa9daaecc6b09c883a4c1f"
-  integrity sha512-GoSnPSzpQ+aDh+jIF0lvhKASdActC9WuvZMMPSZxJqhYzFI56xaSbbg8tj8RFcb2dlo8X1yfWLxegCZbxC/7hA==
+"@progress/kendo-theme-material@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@progress/kendo-theme-material/-/kendo-theme-material-3.1.0.tgz#7a8e579b4156ba0e6562c05f51ac4971c86fb7f6"
+  integrity sha512-gJrKKtRuK2H51QlaalORZrXQ5bxyR9bJDF00T61zzg+tqTgCBENDDGUDHDTiTsuKs10W1bgRHMuAANZ4pxOfXA==
 
 "@telerik/kendo-draggable@1.9.2":
   version "1.9.2"
