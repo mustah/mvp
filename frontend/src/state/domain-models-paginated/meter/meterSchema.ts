@@ -12,7 +12,7 @@ const toGateway = (gateway?: any): Gateway | undefined =>
     ? {...gateway, status: toIdNamed(gateway.status.toLowerCase())}
     : undefined;
 
-export const meterProcessStrategy = (entity: any): schema.StrategyFunction => ({
+export const meterProcessStrategy = (entity: any): schema.StrategyFunction<Meter> => ({
   ...entity,
   gateway: toGateway(entity.gateway),
 });

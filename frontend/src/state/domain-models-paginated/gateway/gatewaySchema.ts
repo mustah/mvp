@@ -3,7 +3,7 @@ import {DataFormatter} from '../../domain-models/domainModelsActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 import {Gateway} from './gatewayModels';
 
-const processStrategy = (entity): schema.StrategyFunction => {
+const processStrategy = (entity): schema.StrategyFunction<Gateway> => {
   if (entity.status) {
     const statusCode = entity.status.toLowerCase();
     const status = {id: statusCode, name: statusCode};
