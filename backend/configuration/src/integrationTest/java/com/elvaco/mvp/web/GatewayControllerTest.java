@@ -11,7 +11,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,13 +35,23 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanGetSingleGateway() {
-    UUID gatewayId = saveGateway(dailyPlanet.id).id;
+    UUID id = saveGateway(dailyPlanet.id).id;
 
-    ResponseEntity<GatewayDto> response = asSuperAdmin()
-      .get("/gateways/" + gatewayId, GatewayDto.class);
+    var response = asSuperAdmin().get("/gateways/" + id, GatewayDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().id).isEqualTo(gatewayId);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().id).isEqualTo(id);
+  }
+
+  @Test
+  public void otcAdmin_HasNoAccessToGateways() {
+    UUID id = saveGateway(context().otcAdmin.organisation.id).id;
+
+    var response = asOtcAdmin().get("/gateways/" + id, Object.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+
   }
 
   private Gateway saveGateway(UUID organisationId) {

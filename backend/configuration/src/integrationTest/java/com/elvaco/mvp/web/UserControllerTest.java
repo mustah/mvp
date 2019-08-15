@@ -27,12 +27,11 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
+import static com.elvaco.mvp.core.domainmodels.Role.OTC_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -286,6 +285,52 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     assertThat(savedUser.id).isNotNull();
     assertThat(savedUser.name).isEqualTo(user.name);
+  }
+
+  @Test
+  public void superAdmin_CanCreate_OtcAdmin() {
+    UserWithPasswordDto userDto = createUserDto("otc.admin@evo.se");
+    userDto.roles = List.of(OTC_ADMIN.role);
+
+    var response = asSuperAdmin().post("/users", userDto, UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().email).isEqualTo(userDto.email);
+    assertThat(response.getBody().roles).containsExactly(OTC_ADMIN.role);
+  }
+
+  @Test
+  public void otcAdmin_WithinSameOrganisation_CanCreate_OtcAdmin() {
+    UserWithPasswordDto userDto = createUserDto("otc.admin@evo.se");
+    userDto.roles = List.of(OTC_ADMIN.role);
+
+    var response = asOtcAdmin().post("/users", userDto, UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().email).isEqualTo(userDto.email);
+    assertThat(response.getBody().roles).containsExactly(OTC_ADMIN.role);
+  }
+
+  @Test
+  public void mvpAdmin_CannotCreate_OtcAdmin() {
+    UserWithPasswordDto userDto = createUserDto("otc.admin@evo.se");
+    userDto.roles = List.of(OTC_ADMIN.role);
+
+    var response = asMvpAdmin().post("/users", userDto, UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+  }
+
+  @Test
+  public void mvpUser_CannotCreate_OtcAdmin() {
+    UserWithPasswordDto userDto = createUserDto("otc.admin@evo.se");
+    userDto.roles = List.of(OTC_ADMIN.role);
+
+    var response = asMvpUser().post("/users", userDto, UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
   @Test
@@ -671,7 +716,7 @@ public class UserControllerTest extends IntegrationTest {
     user.password = "secret stuff";
     user.language = Language.en;
     user.organisation = OrganisationDtoMapper.toDto(context().defaultOrganisation());
-    user.roles = asList(MVP_USER.role, MVP_ADMIN.role, SUPER_ADMIN.role);
+    user.roles = List.of(MVP_USER.role, MVP_ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
 
@@ -682,7 +727,7 @@ public class UserControllerTest extends IntegrationTest {
     user.password = password;
     user.language = Language.en;
     user.organisation = OrganisationDtoMapper.toDto(context().defaultOrganisation());
-    user.roles = asList(MVP_USER.role, MVP_ADMIN.role);
+    user.roles = List.of(MVP_USER.role, MVP_ADMIN.role);
     return user;
   }
 
@@ -693,7 +738,7 @@ public class UserControllerTest extends IntegrationTest {
     user.password = "i am batman";
     user.language = Language.en;
     user.organisation = OrganisationDtoMapper.toDto(organisation);
-    user.roles = singletonList(MVP_USER.role);
+    user.roles = List.of(MVP_USER.role);
     return user;
   }
 }

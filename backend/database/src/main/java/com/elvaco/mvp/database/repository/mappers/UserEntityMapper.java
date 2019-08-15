@@ -11,6 +11,7 @@ import com.elvaco.mvp.database.entity.user.UserEntity;
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 @UtilityClass
 public class UserEntityMapper {
@@ -48,6 +49,6 @@ public class UserEntityMapper {
   private static List<Role> rolesFrom(Collection<RoleEntity> roles) {
     return roles.stream()
       .map(r -> new Role(r.role))
-      .collect(toList());
+      .collect(toUnmodifiableList());
   }
 }

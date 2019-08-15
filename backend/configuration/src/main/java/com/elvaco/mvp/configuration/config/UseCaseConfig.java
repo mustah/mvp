@@ -5,6 +5,7 @@ import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.security.UserPermissions;
 import com.elvaco.mvp.core.spi.repository.CollectionStats;
 import com.elvaco.mvp.core.spi.repository.Dashboards;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -83,7 +84,7 @@ class UseCaseConfig {
     return new UserUseCases(
       currentUser,
       users,
-      new OrganisationPermissions(users),
+      new UserPermissions(users),
       tokenService,
       organisations
     );
@@ -104,7 +105,7 @@ class UseCaseConfig {
     return new OrganisationUseCases(
       currentUser,
       organisations,
-      new OrganisationPermissions(users)
+      new OrganisationPermissions()
     );
   }
 

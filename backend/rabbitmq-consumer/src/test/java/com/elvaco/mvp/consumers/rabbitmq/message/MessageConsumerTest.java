@@ -40,7 +40,6 @@ import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockProperties;
-import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Before;
@@ -62,7 +61,6 @@ import static com.elvaco.mvp.core.domainmodels.Quantity.RETURN_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME_FLOW;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toMap;
 
@@ -173,15 +171,7 @@ public abstract class MessageConsumerTest {
     organisationUseCases = new OrganisationUseCases(
       authenticatedUser,
       organisations,
-      new OrganisationPermissions(new MockUsers(singletonList(
-        new UserBuilder()
-          .name("super-admin")
-          .email("super@admin.io")
-          .password("password")
-          .organisationElvaco()
-          .asSuperAdmin()
-          .build()
-      )))
+      new OrganisationPermissions()
     );
     gatewayUseCases = new GatewayUseCases(gateways, new MockGatewaysMeters(), authenticatedUser);
 

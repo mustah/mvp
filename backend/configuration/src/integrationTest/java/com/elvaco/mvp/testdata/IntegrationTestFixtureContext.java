@@ -51,6 +51,7 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   public final Organisation organisation;
   public final User mvpUser;
   public final User mvpAdmin;
+  public final User otcAdmin;
   public final User superAdmin;
 
   private final LogicalMeters logicalMeters;

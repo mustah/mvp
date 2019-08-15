@@ -27,10 +27,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_ADMIN_USER;
-import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_SUPER_ADMIN_USER;
-import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_USER;
-import static com.elvaco.mvp.testing.fixture.UserTestData.OTHER_ADMIN_USER;
+import static com.elvaco.mvp.testing.fixture.UserTestData.MVP_ADMIN;
+import static com.elvaco.mvp.testing.fixture.UserTestData.MVP_USER;
+import static com.elvaco.mvp.testing.fixture.UserTestData.OTHER_MVP_ADMIN;
+import static com.elvaco.mvp.testing.fixture.UserTestData.SUPER_ADMIN;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,10 +49,10 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void findAll_superAdminWillGetAll() {
-    meterDefinitions.save(meterDefinition(ELVACO_SUPER_ADMIN_USER.organisation));
+    meterDefinitions.save(meterDefinition(SUPER_ADMIN.organisation));
     meterDefinitions.save(meterDefinition(organisation().build()));
 
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
     assertThat(useCases.findAll()).hasSize(3);
   }
 
@@ -74,10 +74,9 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
   public void findAll_userWillGetAllForOrganisation() {
     Organisation organisation = organisation().build();
     meterDefinitions.save(meterDefinition(organisation));
-    MeterDefinition organisationMd =
-      meterDefinitions.save(meterDefinition(ELVACO_USER.organisation));
+    MeterDefinition organisationMd = meterDefinitions.save(meterDefinition(MVP_USER.organisation));
 
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_USER);
+    MeterDefinitionUseCases useCases = newUseCases(MVP_USER);
     assertThat(useCases.findAll())
       .extracting(md -> md.id)
       .containsExactlyInAnyOrder(organisationMd.id, systemMeterDefinition.id)
@@ -86,50 +85,50 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void savingPersistsMeterDefinition() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
-    MeterDefinition saved = useCases.save(meterDefinition(ELVACO_ADMIN_USER.organisation));
+    MeterDefinition saved = useCases.save(meterDefinition(MVP_ADMIN.organisation));
 
     assertThat(meterDefinitions.findById(saved.id).get()).isEqualTo(saved);
   }
 
   @Test
   public void superAdminCanSaveOrganisationMeterDefinition() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
-    MeterDefinition meterDefinition = meterDefinition(ELVACO_ADMIN_USER.organisation);
+    MeterDefinition meterDefinition = meterDefinition(MVP_ADMIN.organisation);
     assertThat(useCases.save(meterDefinition))
       .isEqualToIgnoringGivenFields(meterDefinition, "id");
   }
 
   @Test
   public void adminCanSaveOrganisationMeterDefinition() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(MVP_ADMIN);
 
-    MeterDefinition meterDefinition = meterDefinition(ELVACO_ADMIN_USER.organisation);
+    MeterDefinition meterDefinition = meterDefinition(MVP_ADMIN.organisation);
     assertThat(useCases.save(meterDefinition))
       .isEqualToIgnoringGivenFields(meterDefinition, "id");
   }
 
   @Test
   public void adminCanNotSaveOrganisationMeterDefinitionForOtherOrganisation() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(MVP_ADMIN);
 
-    assertThatThrownBy(() -> useCases.save(meterDefinition(OTHER_ADMIN_USER.organisation)))
+    assertThatThrownBy(() -> useCases.save(meterDefinition(OTHER_MVP_ADMIN.organisation)))
       .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to save");
   }
 
   @Test
   public void userCanNotSaveOrganisationMeterDefinition() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_USER);
+    MeterDefinitionUseCases useCases = newUseCases(MVP_USER);
 
-    assertThatThrownBy(() -> useCases.save(meterDefinition(ELVACO_USER.organisation)))
+    assertThatThrownBy(() -> useCases.save(meterDefinition(MVP_USER.organisation)))
       .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to save");
   }
 
   @Test
   public void adminCanNotSaveSystemMeterDefinitions() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(MVP_ADMIN);
 
     assertThatThrownBy(() -> useCases.save(systemMeterDefinition()))
       .isInstanceOf(Unauthorized.class)
@@ -138,7 +137,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void userCanNotSaveSystemMeterDefinitions() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_USER);
+    MeterDefinitionUseCases useCases = newUseCases(MVP_USER);
 
     assertThatThrownBy(() -> useCases.save(systemMeterDefinition()))
       .isInstanceOf(Unauthorized.class)
@@ -147,7 +146,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void superAdminCanNotSaveSystemMeterDefinitions() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
     assertThatThrownBy(() -> useCases.save(systemMeterDefinition()))
       .isInstanceOf(Unauthorized.class)
@@ -157,7 +156,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
   @Test
   @Ignore
   public void onlyOneSystemMeterDefinitionPerMedium() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
     assertThatThrownBy(() -> useCases.save(systemMeterDefinition()))
       .isInstanceOf(InvalidMeterDefinition.class)
@@ -168,7 +167,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
   public void uniqueNamePerOrganisationAtSave() {
     MeterDefinition md = meterDefinition(organisation().build());
     meterDefinitions.save(md);
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
     MeterDefinition mdWithSameName = md.toBuilder().id(random().nextLong()).build();
     assertThatThrownBy(() -> useCases.save(mdWithSameName))
@@ -183,7 +182,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
     meterDefinitions.save(existing1);
     MeterDefinition existing2 = meterDefinition(organisation);
     meterDefinitions.save(existing2);
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
     MeterDefinition updateToExisting1Name = existing2.toBuilder().name(existing1.name).build();
     assertThatThrownBy(() -> useCases.update(updateToExisting1Name))
@@ -201,7 +200,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
     meterDefinitions.save(md);
     MeterDefinition systemMeterDefinitionWithOtherMedium = systemMeterDefinition();
     meterDefinitions.save(systemMeterDefinitionWithOtherMedium);
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
     assertThatThrownBy(() -> useCases.save(
       meterDefinition()
@@ -232,13 +231,13 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
   @Test
   public void savingWithIncompatibleUnitsIsRejected() {
     MeterDefinitionUseCases useCases = newUseCases(
-      ELVACO_SUPER_ADMIN_USER,
+      SUPER_ADMIN,
       unitConverter(false),
       new MockLogicalMeters()
     );
     assertThatThrownBy(() -> useCases.save(
       meterDefinition()
-        .organisation(ELVACO_USER.organisation)
+        .organisation(MVP_USER.organisation)
         .quantities(Set.of(new DisplayQuantity(Quantity.POWER, DisplayMode.READOUT, Units.PERCENT)))
         .build()
       )
@@ -247,10 +246,10 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void savingWithDuplicatedQuantitesIsRejected() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
     assertThatThrownBy(() -> useCases.save(
       meterDefinition()
-        .organisation(ELVACO_USER.organisation)
+        .organisation(MVP_USER.organisation)
         .quantities(Set.of(
           new DisplayQuantity(Quantity.ENERGY, DisplayMode.READOUT, Units.KILOWATT_HOURS),
           new DisplayQuantity(Quantity.ENERGY, DisplayMode.READOUT, Units.MEGAWATT_HOURS)
@@ -262,10 +261,10 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void savingWithBothReadoutAndConsumptionForQuantity() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
     var meterDefinition = useCases.save(
       meterDefinition()
-        .organisation(ELVACO_USER.organisation)
+        .organisation(MVP_USER.organisation)
         .quantities(Set.of(
           new DisplayQuantity(Quantity.ENERGY, DisplayMode.READOUT, Units.KILOWATT_HOURS),
           new DisplayQuantity(Quantity.ENERGY, DisplayMode.CONSUMPTION, Units.KILOWATT_HOURS)
@@ -294,7 +293,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
       .build();
     LogicalMeters logicalMeters = new MockLogicalMeters(asList(meter1, meter2));
 
-    var useCases = newUseCases(ELVACO_SUPER_ADMIN_USER, logicalMeters);
+    var useCases = newUseCases(SUPER_ADMIN, logicalMeters);
     var organisationDefinition = useCases.save(
       meterDefinition()
         .organisation(organisation1)
@@ -312,7 +311,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
   public void update_userCannotUpdateMeterDefinition() {
     MeterDefinition md = meterDefinition(organisation().build());
     MeterDefinition saved = meterDefinitions.save(md);
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_USER);
+    MeterDefinitionUseCases useCases = newUseCases(MVP_USER);
 
     MeterDefinition updateMeterDefinition = saved.toBuilder()
       .name(UUID.randomUUID().toString())
@@ -323,9 +322,9 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void update_adminCanUpdateOrganisationMeterDefinition() {
-    MeterDefinition md = meterDefinition(ELVACO_ADMIN_USER.organisation);
+    MeterDefinition md = meterDefinition(MVP_ADMIN.organisation);
     MeterDefinition saved = meterDefinitions.save(md);
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(MVP_ADMIN);
 
     MeterDefinition updateMeterDefinition = saved.toBuilder().medium(medium().build()).build();
     useCases.update(updateMeterDefinition);
@@ -337,7 +336,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
   public void update_superAdminCanUpdateOrganisationMeterDefinition() {
     MeterDefinition md = meterDefinition(organisation().build());
     MeterDefinition saved = meterDefinitions.save(md);
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
     MeterDefinition updateMeterDefinition = saved.toBuilder().medium(medium().build()).build();
     useCases.update(updateMeterDefinition);
@@ -347,7 +346,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void update_superAdminCanUpdateSystemMeterDefinition() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    MeterDefinitionUseCases useCases = newUseCases(SUPER_ADMIN);
 
     DisplayQuantity displayQuantity = new DisplayQuantity(
       Quantity.HUMIDITY,
@@ -387,7 +386,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
       .build();
     LogicalMeters logicalMeters = new MockLogicalMeters(asList(meter1, meter2));
 
-    var updatedMeterDefinition = newUseCases(ELVACO_SUPER_ADMIN_USER, logicalMeters)
+    var updatedMeterDefinition = newUseCases(SUPER_ADMIN, logicalMeters)
       .update(meterDefintion1.toBuilder()
         .organisation(organisation2)
         .autoApply(true)
@@ -401,21 +400,21 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
 
   @Test
   public void superAdminCanNotDeleteSystemMeterDefinition() {
-    assertThatThrownBy(() -> newUseCases(ELVACO_SUPER_ADMIN_USER)
+    assertThatThrownBy(() -> newUseCases(SUPER_ADMIN)
       .deleteById(systemMeterDefinition.id))
       .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to delete");
   }
 
   @Test
   public void adminCanNotDeleteSystemMeterDefinition() {
-    assertThatThrownBy(() -> newUseCases(ELVACO_ADMIN_USER)
+    assertThatThrownBy(() -> newUseCases(MVP_ADMIN)
       .deleteById(systemMeterDefinition.id))
       .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to delete");
   }
 
   @Test
   public void userCanNotDeleteSystemMeterDefinition() {
-    assertThatThrownBy(() -> newUseCases(ELVACO_USER)
+    assertThatThrownBy(() -> newUseCases(MVP_USER)
       .deleteById(systemMeterDefinition.id))
       .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to delete");
   }
@@ -428,19 +427,19 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
       .build();
     meterDefinitions.save(md);
 
-    assertThat(newUseCases(ELVACO_SUPER_ADMIN_USER).deleteById(md.id)).isEqualTo(md);
+    assertThat(newUseCases(SUPER_ADMIN).deleteById(md.id)).isEqualTo(md);
     assertThat(meterDefinitions.findById(md.id)).isEmpty();
   }
 
   @Test
   public void adminCanDeleteOrganistaionMeterDefinition() {
     MeterDefinition md = meterDefinition()
-      .organisation(ELVACO_ADMIN_USER.organisation)
+      .organisation(MVP_ADMIN.organisation)
       .medium(systemMeterDefinition.medium)
       .build();
     meterDefinitions.save(md);
 
-    assertThat(newUseCases(ELVACO_ADMIN_USER).deleteById(md.id)).isEqualTo(md);
+    assertThat(newUseCases(MVP_ADMIN).deleteById(md.id)).isEqualTo(md);
     assertThat(meterDefinitions.findById(md.id)).isEmpty();
   }
 
@@ -449,16 +448,16 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
     MeterDefinition md = meterDefinition(organisation().build());
     meterDefinitions.save(md);
 
-    assertThatThrownBy(() -> newUseCases(ELVACO_ADMIN_USER).deleteById(md.id))
+    assertThatThrownBy(() -> newUseCases(MVP_ADMIN).deleteById(md.id))
       .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to delete");
   }
 
   @Test
   public void userCanNotDeleteMeterDefinition() {
-    MeterDefinition md = meterDefinition(ELVACO_USER.organisation);
+    MeterDefinition md = meterDefinition(MVP_USER.organisation);
     meterDefinitions.save(md);
 
-    assertThatThrownBy(() -> newUseCases(ELVACO_USER).deleteById(md.id))
+    assertThatThrownBy(() -> newUseCases(MVP_USER).deleteById(md.id))
       .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to delete");
   }
 
@@ -489,7 +488,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
       meterWithDefinition1,
       meterWithDefinition2
     ));
-    var useCases = newUseCases(ELVACO_SUPER_ADMIN_USER, mockLogicalMeters);
+    var useCases = newUseCases(SUPER_ADMIN, mockLogicalMeters);
 
     useCases.deleteById(md1.id);
 

@@ -2,7 +2,7 @@ package com.elvaco.mvp.core.usecase;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.security.UserPermissions;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testing.cache.MockTokenService;
@@ -92,7 +92,7 @@ public class UserUseCasesTest {
     userUseCases = new UserUseCases(
       currentUser,
       usersRepository,
-      new OrganisationPermissions(usersRepository),
+      new UserPermissions(usersRepository),
       tokenService,
       new MockOrganisations()
     );

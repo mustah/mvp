@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import lombok.ToString;
 
-import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
 @ToString
@@ -23,6 +22,7 @@ public class User implements Identifiable<UUID>, Usernamed {
   public final List<Role> roles;
   public final boolean isMvpAdmin;
   public final boolean isSuperAdmin;
+  public final boolean isOtcAdmin;
 
   public User(
     UUID id,
@@ -39,9 +39,10 @@ public class User implements Identifiable<UUID>, Usernamed {
     this.password = password;
     this.language = language;
     this.organisation = organisation;
-    this.roles = unmodifiableList(roles);
+    this.roles = roles;
     this.isSuperAdmin = roles.contains(Role.SUPER_ADMIN);
     this.isMvpAdmin = roles.contains(Role.MVP_ADMIN);
+    this.isOtcAdmin = roles.contains(Role.OTC_ADMIN);
   }
 
   public User(

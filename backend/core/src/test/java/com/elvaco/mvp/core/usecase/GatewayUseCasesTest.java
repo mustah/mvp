@@ -11,26 +11,26 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
-import static com.elvaco.mvp.testing.fixture.UserTestData.CLARK_KENT;
-import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_SUPER_ADMIN_USER;
+import static com.elvaco.mvp.testing.fixture.UserTestData.CLARK_KENT_MVP_ADMIN;
+import static com.elvaco.mvp.testing.fixture.UserTestData.SUPER_ADMIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class GatewayUseCasesTest {
 
-  public static final String SERIAL = "1A2b";
-  public static final String PRODUCT_MODEL = "t";
+  private static final String SERIAL = "1A2b";
+  private static final String PRODUCT_MODEL = "t";
 
   @Test
   public void saveGateway() {
-    GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT);
+    GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT_MVP_ADMIN);
 
     assertThat(useCases.save(gatewayBuilder().build()).id).isNotNull();
   }
 
   @Test
   public void canOnlySaveGatewaysForSameOrganisationWhenNotSuperAdmin() {
-    GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT);
+    GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT_MVP_ADMIN);
 
     assertThatThrownBy(() -> useCases.save(gatewayBuilder().organisationId(MARVEL.id).build()))
       .isInstanceOf(Unauthorized.class)
@@ -39,7 +39,7 @@ public class GatewayUseCasesTest {
 
   @Test
   public void superAdminCanSaveAllGateways() {
-    GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
+    GatewayUseCases useCases = useCasesWithCurrentUser(SUPER_ADMIN);
 
     assertThat(useCases.save(gatewayBuilder().organisationId(MARVEL.id).build()).id).isNotNull();
     assertThat(useCases.save(gatewayBuilder().build()).id).isNotNull();
@@ -47,14 +47,14 @@ public class GatewayUseCasesTest {
 
   @Test
   public void doesNotFindGatewayByOrganisationSerialAndProductModel() {
-    GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
+    GatewayUseCases useCases = useCasesWithCurrentUser(SUPER_ADMIN);
 
     assertThat(useCases.findBy(DAILY_PLANET.id, "test", "123")).isNotPresent();
   }
 
   @Test
   public void findGatewayByOrganisationSerialAndProductModel() {
-    GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
+    GatewayUseCases useCases = useCasesWithCurrentUser(SUPER_ADMIN);
 
     useCases.save(gatewayBuilder().build());
 
