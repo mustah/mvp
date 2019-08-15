@@ -1,5 +1,5 @@
 import {Grid, GridColumn} from '@progress/kendo-react-grid';
-import {toArray} from 'lodash';
+import {sortBy, toArray} from 'lodash';
 import * as React from 'react';
 import {makeGridClassName} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
@@ -9,6 +9,7 @@ import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
+import {User} from '../../../state/domain-models/user/userModels';
 import {DispatchToProps, StateToProps} from '../containers/UsersContainer';
 import {AddUserButton} from './AddUserButton';
 import {UserActions} from './UserActions';
@@ -41,7 +42,7 @@ export const UserList = ({
         <Grid
           className={makeGridClassName(cssStyles)}
           style={{borderTopWidth: 1}}
-          data={toArray(entities)}
+          data={sortBy(toArray(entities), (u: User) => u.name)}
           scrollable="none"
         >
           <GridColumn field="name" title={translate('name')} headerClassName="left-most" className="left-most"/>
