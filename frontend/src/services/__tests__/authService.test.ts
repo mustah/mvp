@@ -1,11 +1,53 @@
-import {makeToken} from '../authService';
+import {RootState} from '../../reducers/rootReducer';
+import {Role} from '../../state/domain-models/user/userModels';
+import {isAdminAuthenticated, isAuthenticatedMvpUserOnly, isAuthenticatedOtcUserOnly} from '../authService';
 
 describe('authService', () => {
 
-  describe('make new basic encoded authorization token', () => {
+  describe('is authenticated', () => {
 
-    it('can create new token from empty username and password', () => {
-      expect(makeToken('', '')).toEqual('Og==');
+    it('does not authenticate admin users that are not authorized', () => {
+      expect(isAdminAuthenticated(notAuthenticatedUser([Role.SUPER_ADMIN]) as RootState)).toBe(false);
+    });
+
+    it('does not authenticate non-admin users', () => {
+      expect(isAdminAuthenticated(authenticatedUser([Role.MVP_USER]) as RootState)).toBe(false);
+    });
+
+    it('authenticates admin users', () => {
+      expect(isAdminAuthenticated(authenticatedUser([Role.SUPER_ADMIN]) as RootState)).toBe(true);
+      expect(isAdminAuthenticated(authenticatedUser([Role.OTC_ADMIN]) as RootState)).toBe(true);
+      expect(isAdminAuthenticated(authenticatedUser([Role.MVP_ADMIN]) as RootState)).toBe(true);
+    });
+
+    it('does authenticates when user has other role than otc', () => {
+      expect(isAuthenticatedOtcUserOnly(authenticatedUser([Role.MVP_ADMIN]) as RootState)).toBe(false);
+      expect(isAuthenticatedOtcUserOnly(authenticatedUser([Role.MVP_ADMIN, Role.OTC_ADMIN]) as RootState)).toBe(false);
+    });
+
+    it('authenticates user with otc roles only', () => {
+      expect(isAuthenticatedOtcUserOnly(authenticatedUser([Role.OTC_ADMIN]) as RootState)).toBe(true);
+      expect(isAuthenticatedOtcUserOnly(authenticatedUser([Role.OTC_USER, Role.OTC_ADMIN]) as RootState)).toBe(true);
+    });
+
+    it('does authenticates when user has other role than mvp', () => {
+      expect(isAuthenticatedMvpUserOnly(authenticatedUser([Role.OTC_ADMIN]) as RootState)).toBe(false);
+      expect(isAuthenticatedMvpUserOnly(authenticatedUser([Role.OTC_ADMIN, Role.MVP_ADMIN]) as RootState)).toBe(false);
+      expect(isAuthenticatedMvpUserOnly(authenticatedUser([Role.OTC_USER, Role.SUPER_ADMIN]) as RootState)).toBe(false);
+    });
+
+    it('authenticates user with mvp roles only', () => {
+      expect(isAuthenticatedMvpUserOnly(authenticatedUser([Role.MVP_ADMIN]) as RootState)).toBe(true);
+      expect(isAuthenticatedMvpUserOnly(authenticatedUser([Role.SUPER_ADMIN]) as RootState)).toBe(true);
+      expect(isAuthenticatedMvpUserOnly(authenticatedUser([Role.MVP_USER, Role.MVP_ADMIN]) as RootState)).toBe(true);
+    });
+
+    const authenticatedUser = (roles: Role[]) => ({
+      auth: {isAuthenticated: true, user: {roles}}
+    });
+
+    const notAuthenticatedUser = (roles: Role[]) => ({
+      auth: {isAuthenticated: false, user: {roles}}
     });
   });
 });

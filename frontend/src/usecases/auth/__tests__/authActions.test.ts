@@ -19,7 +19,16 @@ import {getCurrentVersion} from '../../../state/ui/notifications/notificationsAc
 import {makeBody, requestTheme, successTheme} from '../../theme/themeActions';
 import {Colors} from '../../theme/themeModels';
 import {initialState as initialThemeState} from '../../theme/themeReducer';
-import {authSetUser, login, loginFailure, loginRequest, loginSuccess, logout, logoutUser} from '../authActions';
+import {
+  authSetUser,
+  login,
+  loginFailure,
+  loginRequest,
+  loginSuccess,
+  logout,
+  logoutUser,
+  makeToken
+} from '../authActions';
 import {Unauthorized} from '../authModels';
 
 const configureMockStore = configureStore([thunk]);
@@ -203,6 +212,13 @@ describe('authActions', () => {
       await store.dispatch(authSetUser(modifiedUser));
 
       expect(store.getActions()).toEqual([authSetUser(modifiedUser)]);
+    });
+  });
+
+  describe('make new basic encoded authorization token', () => {
+
+    it('can create new token from empty username and password', () => {
+      expect(makeToken('', '')).toEqual('Og==');
     });
   });
 });

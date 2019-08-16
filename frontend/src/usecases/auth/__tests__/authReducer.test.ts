@@ -1,7 +1,6 @@
 import {makeUser} from '../../../__tests__/testDataFactory';
-import {makeToken} from '../../../services/authService';
 import {User} from '../../../state/domain-models/user/userModels';
-import {authSetUser, loginFailure, loginRequest, loginSuccess, logoutUser} from '../authActions';
+import {authSetUser, loginFailure, loginRequest, loginSuccess, logoutUser, makeToken} from '../authActions';
 import {Authorized, AuthState, Unauthorized} from '../authModels';
 import {auth, initialAuthState} from '../authReducer';
 

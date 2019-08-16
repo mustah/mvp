@@ -45,6 +45,14 @@ public class OrganisationPermissionsTest {
   }
 
   @Test
+  public void otcAdmin_WithinOrganisation_Can_Read() {
+    assertThat(isAllowed(OTC_ADMIN, ELVACO, Permission.READ)).isTrue();
+    assertThat(isAllowed(OTC_ADMIN, ELVACO, Permission.CREATE)).isFalse();
+    assertThat(isAllowed(OTC_ADMIN, ELVACO, Permission.UPDATE)).isFalse();
+    assertThat(isAllowed(OTC_ADMIN, ELVACO, Permission.DELETE)).isFalse();
+  }
+
+  @Test
   public void mvpAdmin_HasNoAccessToOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_ORGANISATION, Permission.CREATE)).isFalse();
     assertThat(isAllowed(MVP_ADMIN, OTHER_ORGANISATION, Permission.READ)).isFalse();
@@ -65,11 +73,7 @@ public class OrganisationPermissionsTest {
   }
 
   @Test
-  public void otcAdmin_HasNoAccess() {
-    assertThat(isAllowed(OTC_ADMIN, ELVACO, Permission.CREATE)).isFalse();
-    assertThat(isAllowed(OTC_ADMIN, ELVACO, Permission.READ)).isFalse();
-    assertThat(isAllowed(OTC_ADMIN, ELVACO, Permission.UPDATE)).isFalse();
-    assertThat(isAllowed(OTC_ADMIN, ELVACO, Permission.DELETE)).isFalse();
+  public void otcAdmin_HasNoAccess_OutsideOfItsOrganisation() {
     assertThat(isAllowed(OTC_ADMIN, OTHER_ORGANISATION, Permission.CREATE)).isFalse();
     assertThat(isAllowed(OTC_ADMIN, OTHER_ORGANISATION, Permission.READ)).isFalse();
     assertThat(isAllowed(OTC_ADMIN, OTHER_ORGANISATION, Permission.UPDATE)).isFalse();

@@ -97,6 +97,14 @@ public class OrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void otcAdmin_FindsAll_ItsOrganisations() {
+    var response = asOtcAdmin().getList("/organisations", OrganisationDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(1);
+  }
+
+  @Test
   public void adminFindsOwnOrganisationAndSubOrganisation() throws IOException {
     createUserIfNotPresent(context().mvpAdmin);
 
@@ -126,16 +134,15 @@ public class OrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void regularUsersDoesNotFindOrganisations() {
-    ResponseEntity<List<OrganisationDto>> request = asMvpUser()
-      .getList("/organisations", OrganisationDto.class);
+  public void mvpUsers_DoesNot_FindOrganisations() {
+    var response = asMvpUser().getList("/organisations", OrganisationDto.class);
 
-    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(request.getBody()).hasSize(0);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(0);
   }
 
   @Test
-  public void superAdminCanCreateOrganisation() {
+  public void superAdmin_Can_CreateOrganisation() {
     OrganisationDto input = new OrganisationDto("Something borrowed");
     ResponseEntity<OrganisationDto> response = asSuperAdmin()
       .post("/organisations", input, OrganisationDto.class);
@@ -147,19 +154,28 @@ public class OrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void adminCannotCreateOrganisation() {
+  public void admin_Cannot_CreateOrganisation() {
     OrganisationDto input = new OrganisationDto("ich bin wieder hier");
-    ResponseEntity<OrganisationDto> created = asMvpAdmin()
-      .post("/organisations", input, OrganisationDto.class);
+
+    var created = asMvpAdmin().post("/organisations", input, OrganisationDto.class);
 
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
   @Test
-  public void regularUserCannotCreateOrganisation() {
+  public void mvpUser_Cannot_CreateOrganisation() {
     OrganisationDto input = new OrganisationDto("ich bin wieder hier");
-    ResponseEntity<OrganisationDto> created = asMvpUser()
-      .post("/organisations", input, OrganisationDto.class);
+
+    var created = asMvpUser().post("/organisations", input, OrganisationDto.class);
+
+    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+  }
+
+  @Test
+  public void otcAdmin_Cannot_CreateOrganisation() {
+    OrganisationDto input = new OrganisationDto("Organisation name");
+
+    var created = asOtcAdmin().post("/organisations", input, OrganisationDto.class);
 
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
@@ -318,21 +334,37 @@ public class OrganisationControllerTest extends IntegrationTest {
     given(subOrganisation());
     given(subOrganisation());
 
-    User adminOfOtherOrganisation = given(mvpUser().asMvpAdmin().organisation(theBeatles));
-    given(subOrganisation(theBeatles, adminOfOtherOrganisation));
+    User mvpAdmin = given(mvpUser().asMvpAdmin().organisation(theBeatles));
+    given(subOrganisation(theBeatles, mvpAdmin));
 
-    ResponseEntity<List<OrganisationDto>> request = asMvpAdmin()
-      .getList(
-        "/organisations/sub-organisations?organisation=" + context().mvpAdmin.organisation.id,
-        OrganisationDto.class
-      );
+    var response = asMvpAdmin().getList(
+      "/organisations/sub-organisations?organisation=" + context().mvpAdmin.organisation.id,
+      OrganisationDto.class
+    );
 
-    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(request.getBody().size()).isEqualTo(2);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(2);
   }
 
   @Test
-  public void userCanNotFindSubOrganisations() {
+  public void otcAdmin_FindsSubOrganisations_OfOwnOrganisation() {
+    given(subOrganisation());
+    given(subOrganisation());
+
+    User otcAdmin = given(mvpUser().asOtcAdmin().organisation(theBeatles));
+    given(subOrganisation(theBeatles, otcAdmin));
+
+    var response = asOtcAdmin().getList(
+      "/organisations/sub-organisations?organisation=" + context().mvpAdmin.organisation.id,
+      OrganisationDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(2);
+  }
+
+  @Test
+  public void mvpUser_Cannot_FindSubOrganisations() {
     given(subOrganisation());
     given(subOrganisation());
 

@@ -16,11 +16,11 @@ public class OrganisationPermissions {
       return true;
     }
 
-    if (authenticatedUser.isMvpAdmin() && authenticatedUser.isWithinOrganisation(target.id)) {
+    if (authenticatedUser.isAdmin() && authenticatedUser.isWithinOrganisation(target.id)) {
       return permission.equals(Permission.READ);
     }
 
-    return authenticatedUser.isMvpAdmin()
+    return authenticatedUser.isAdmin()
       && target.parent != null
       && authenticatedUser.isWithinOrganisation(target.parent.id);
   }

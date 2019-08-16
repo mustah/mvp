@@ -46,5 +46,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleShowHideSideMenu,
 }, dispatch);
 
-export const AdminAppContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(AdminApp);
+export const AdminAppContainer = connect(mapStateToProps, mapDispatchToProps)(AdminApp);

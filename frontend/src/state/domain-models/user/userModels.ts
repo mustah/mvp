@@ -19,6 +19,8 @@ export const enum Role {
   MVP_ADMIN = 'MVP_ADMIN',
   MVP_USER = 'MVP_USER',
   SUPER_ADMIN = 'SUPER_ADMIN',
+  OTC_ADMIN = 'OTC_ADMIN',
+  OTC_USER = 'OTC_USER',
 }
 
 export interface Password {
