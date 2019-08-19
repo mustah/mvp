@@ -16,6 +16,8 @@ public interface AuthenticatedUser extends Usernamed, Serializable {
 
   boolean isOtcAdmin();
 
+  boolean isAdmin();
+
   boolean isWithinOrganisation(UUID organisationId);
 
   Collection<Role> getRoles();

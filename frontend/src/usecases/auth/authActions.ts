@@ -5,7 +5,6 @@ import {config} from '../../config/config';
 import {translatedErrorMessage} from '../../helpers/translations';
 import {makeThemeUrlOf} from '../../helpers/urlFactory';
 import {GetState} from '../../reducers/rootReducer';
-import {makeToken} from '../../services/authService';
 import {EndPoints} from '../../services/endPoints';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {User} from '../../state/domain-models/user/userModels';
@@ -35,6 +34,9 @@ interface AuthApiResponse {
     user: User;
   };
 }
+
+export const makeToken = (username: string, password: string): string =>
+  btoa(`${username}:${password}`);
 
 export const login = (username: string, password: string) =>
   async (dispatch, getState: GetState) => {

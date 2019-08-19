@@ -3,22 +3,30 @@ import SocialDomain from 'material-ui/svg-icons/social/domain';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {routes} from '../../../app/routes';
+import {withMvpAdminOnly} from '../../../components/hoc/withRoles';
 import {IconMeter} from '../../../components/icons/IconMeter';
 import {Column} from '../../../components/layouts/column/Column';
 import {Link} from '../../../components/links/Link';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
-import {User} from '../../../state/domain-models/user/userModels';
-import {getUser} from '../../auth/authSelectors';
 import {mainMenuIconProps, MainMenuItem} from '../components/menu-items/MainMenuItem';
 
 interface StateToProps {
   pathname: string;
-  user: User;
 }
 
-const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
+const UsersLinkMenuItems = ({pathname}: StateToProps) => (
+  <Link to={routes.admin}>
+    <MainMenuItem
+      name={translate('users')}
+      isSelected={routes.admin === pathname || routes.adminUsers === pathname}
+      icon={<ActionSupervisorAccount {...mainMenuIconProps}/>}
+    />
+  </Link>
+);
+
+const OrganisationLinkMenuItem = withMvpAdminOnly(({pathname}: StateToProps) => (
   <Link to={routes.adminOrganisations}>
     <MainMenuItem
       name={translate('organisations')}
@@ -26,32 +34,28 @@ const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
       icon={<SocialDomain {...mainMenuIconProps}/>}
     />
   </Link>
-);
+));
 
-const AdminMainMenuItems = (props: StateToProps) => (
+const MeterDefinitionsLinkMenuItem = withMvpAdminOnly((props: StateToProps) => (
+  <Link to={routes.adminMeterDefinitions}>
+    <MainMenuItem
+      name={translate('meter definitions')}
+      isSelected={routes.adminMeterDefinitions === props.pathname}
+      icon={<IconMeter {...mainMenuIconProps}/>}
+    />
+  </Link>
+));
+
+const MainMenuItems = (props: StateToProps) => (
   <Column>
-    <Link to={routes.admin}>
-      <MainMenuItem
-        name={translate('users')}
-        isSelected={routes.admin === props.pathname || routes.adminUsers === props.pathname}
-        icon={<ActionSupervisorAccount {...mainMenuIconProps}/>}
-      />
-    </Link>
-    <AdminOrganisationLinkMenuItem {...props}/>
-    <Link to={routes.adminMeterDefinitions}>
-      <MainMenuItem
-        name={translate('meter definitions')}
-        isSelected={routes.adminMeterDefinitions === props.pathname}
-        icon={<IconMeter {...mainMenuIconProps}/>}
-      />
-    </Link>
+    <UsersLinkMenuItems {...props} />
+    <OrganisationLinkMenuItem {...props}/>
+    <MeterDefinitionsLinkMenuItem {...props}/>
   </Column>
 );
 
-const mapStateToProps = ({router, auth}: RootState): StateToProps => ({
+const mapStateToProps = ({router}: RootState): StateToProps => ({
   pathname: getPathname(router),
-  user: getUser(auth),
 });
 
-export const AdminMainMenuItemsContainer =
-  connect<StateToProps>(mapStateToProps)(AdminMainMenuItems);
+export const AdminMainMenuItemsContainer = connect(mapStateToProps)(MainMenuItems);

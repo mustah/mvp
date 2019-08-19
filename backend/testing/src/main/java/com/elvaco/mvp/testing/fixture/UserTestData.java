@@ -76,12 +76,28 @@ public class UserTestData {
     .asOtcAdmin()
     .build();
 
+  public static final User OTC_USER = new UserBuilder()
+    .name("Jimmy Olsen Otc")
+    .email("jimmy-otc@evo.se")
+    .password("jimols")
+    .organisation(ELVACO)
+    .asOtcUser()
+    .build();
+
   public static final User ANOTHER_OTC_ADMIN = new UserBuilder()
     .name("Simone Heart")
     .email("other.jimmy@evo.se")
     .password("jimmy")
     .organisation(ELVACO)
     .asOtcAdmin()
+    .build();
+
+  public static final User ANOTHER_OTC_USER = new UserBuilder()
+    .name("Simone Heart")
+    .email("other.otc-user.jimmy@evo.se")
+    .password("jimmy")
+    .organisation(ELVACO)
+    .asOtcUser()
     .build();
 
   public static UserBuilder userBuilder() {

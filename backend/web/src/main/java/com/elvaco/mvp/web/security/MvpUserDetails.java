@@ -57,6 +57,11 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   }
 
   @Override
+  public boolean isAdmin() {
+    return isMvpAdmin() || isOtcAdmin();
+  }
+
+  @Override
   public boolean isWithinOrganisation(UUID organisationId) {
     return getOrganisationId().equals(organisationId);
   }

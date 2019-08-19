@@ -3,39 +3,43 @@ import {connectedRouterRedirect} from 'redux-auth-wrapper/history4/redirect';
 import {routes} from '../app/routes';
 import {RootState} from '../reducers/rootReducer';
 import {Role} from '../state/domain-models/user/userModels';
+import {isAdmin, isOnlyMvpUser, isOnlyOtcUser} from '../state/domain-models/user/userSelectors';
 
 const isAuthenticatedSelector = (state: RootState): boolean => state.auth.isAuthenticated;
 const isNotAuthenticatedSelector = (state: RootState): boolean => !state.auth.isAuthenticated;
+const getUserRoles = (state: RootState): Role[] => state.auth.user!.roles;
 
-const isMvpAdminSelector = (state: RootState): boolean =>
-  state.auth.user!.roles.includes(Role.MVP_ADMIN) || isSuperAdminSelector(state);
+export const isAdminAuthenticated = (state: RootState): boolean =>
+  isAuthenticatedSelector(state) && isAdmin(getUserRoles(state));
 
-const isSuperAdminSelector = ({auth: {user}}: RootState): boolean =>
-  user!.roles.includes(Role.SUPER_ADMIN);
+export const isAuthenticatedOtcUserOnly = (state: RootState): boolean =>
+  isAuthenticatedSelector(state) && isOnlyOtcUser(getUserRoles(state));
 
-const isMvpAdminAuthenticatedSelector = (state: RootState): boolean =>
-  isAuthenticatedSelector(state) && isMvpAdminSelector(state);
+export const isAuthenticatedMvpUserOnly = (state: RootState): boolean =>
+  isAuthenticatedSelector(state) && isOnlyMvpUser(getUserRoles(state));
 
-export const userIsAuthenticated = connectedRouterRedirect({
-  redirectPath: routes.login,
-  authenticatedSelector: isAuthenticatedSelector,
+const locationHelper = locationHelperBuilder({});
+
+export const isAuthenticated = connectedRouterRedirect({
+  redirectPath: (state, ownProps) =>
+    isAuthenticatedOtcUserOnly(state)
+      ? routes.admin
+      : locationHelper.getRedirectQueryParam(ownProps) || routes.login,
+  authenticatedSelector: isAuthenticatedMvpUserOnly,
   allowRedirectBack: false,
 });
 
-export const mvpAdminIsAuthenticated = connectedRouterRedirect({
-  redirectPath: routes.home,
-  authenticatedSelector: isMvpAdminAuthenticatedSelector,
+export const adminIsAuthenticated = connectedRouterRedirect({
+  redirectPath: state => isAuthenticatedOtcUserOnly(state) ? routes.admin : routes.home,
+  authenticatedSelector: isAdminAuthenticated,
   allowRedirectBack: false,
 });
 
-export const userIsNotAuthenticated = connectedRouterRedirect({
-  redirectPath: (
-    _,
-    ownProps,
-  ) => locationHelperBuilder({}).getRedirectQueryParam(ownProps) || routes.home,
+export const isNotAuthenticated = connectedRouterRedirect({
+  redirectPath: (state, ownProps) =>
+    isAuthenticatedOtcUserOnly(state)
+      ? routes.admin
+      : locationHelper.getRedirectQueryParam(ownProps) || routes.home,
   authenticatedSelector: isNotAuthenticatedSelector,
   allowRedirectBack: false,
 });
-
-export const makeToken = (username: string, password: string): string =>
-  btoa(`${username}:${password}`);

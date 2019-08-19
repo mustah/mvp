@@ -46,7 +46,7 @@ public class UserPermissions {
     }
 
     // admins can do anything on users of the same organisation
-    if (authenticatedUser.isMvpAdmin() || authenticatedUser.isOtcAdmin()) {
+    if (authenticatedUser.isAdmin()) {
       return true;
     }
 

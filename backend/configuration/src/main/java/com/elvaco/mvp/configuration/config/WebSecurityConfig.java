@@ -88,13 +88,12 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         "/api/v1/measurements/**",
         "/api/v1/meter-definitions/**",
         "/api/v1/meters/**",
-        "/api/v1/organisations/**",
         "/api/v1/selections/**",
         "/api/v1/summary/**",
         "/api/v1/user/selections/**"
       )
       .hasAnyRole(SUPER_ADMIN.role, MVP_ADMIN.role, MVP_USER.role)
-      .antMatchers("/api/v1/users/**")
+      .antMatchers("/api/v1/users/**", "/api/v1/organisations/**")
       .hasAnyRole(SUPER_ADMIN.role, MVP_ADMIN.role, MVP_USER.role, OTC_ADMIN.role)
       .and()
       .authorizeRequests().antMatchers("/api/v1/**").authenticated()

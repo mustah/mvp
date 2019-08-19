@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.MVP_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.OTC_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.OTC_USER;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static java.util.Collections.emptyList;
@@ -89,6 +90,10 @@ public final class UserBuilder {
 
   public UserBuilder asOtcAdmin() {
     return roles(OTC_ADMIN);
+  }
+
+  public UserBuilder asOtcUser() {
+    return roles(OTC_USER);
   }
 
   public UserBuilder roles(List<Role> roles) {

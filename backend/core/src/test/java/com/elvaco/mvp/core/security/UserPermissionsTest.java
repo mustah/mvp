@@ -17,9 +17,11 @@ import static com.elvaco.mvp.core.security.Permission.READ;
 import static com.elvaco.mvp.core.security.Permission.UPDATE;
 import static com.elvaco.mvp.testing.fixture.UserTestData.ANOTHER_MVP_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.ANOTHER_OTC_ADMIN;
+import static com.elvaco.mvp.testing.fixture.UserTestData.ANOTHER_OTC_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.MVP_ADMIN;
 import static com.elvaco.mvp.testing.fixture.UserTestData.MVP_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.OTC_ADMIN;
+import static com.elvaco.mvp.testing.fixture.UserTestData.OTC_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.OTHER_MVP_ADMIN;
 import static com.elvaco.mvp.testing.fixture.UserTestData.OTHER_MVP_USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.SUPER_ADMIN;
@@ -51,18 +53,8 @@ public class UserPermissionsTest {
   }
 
   @Test
-  public void mvpAdmin_CannotCreate_SuperAdmin() {
-    assertThat(isAllowed(MVP_ADMIN, SUPER_ADMIN, CREATE)).isFalse();
-  }
-
-  @Test
   public void superAdmin_CanCreate_OtcAdmin() {
     assertThat(isAllowed(SUPER_ADMIN, OTC_ADMIN, CREATE)).isTrue();
-  }
-
-  @Test
-  public void mvpUser_WithinSameOrganisation_CannotCreate_OtcAdmin() {
-    assertThat(isAllowed(MVP_USER, OTC_ADMIN, CREATE)).isFalse();
   }
 
   @Test
@@ -71,13 +63,13 @@ public class UserPermissionsTest {
   }
 
   @Test
-  public void mvpAdmin_WithinSameOrganisation_CannotCreate_OtcAdmin() {
-    assertThat(isAllowed(MVP_ADMIN, OTC_ADMIN, CREATE)).isFalse();
+  public void otcAdmin_WithinSameOrganisation_CannotCreate_MvpAdmin() {
+    assertThat(isAllowed(OTC_ADMIN, MVP_ADMIN, CREATE)).isFalse();
   }
 
   @Test
-  public void otcAdmin_WithinSameOrganisation_CannotCreate_MvpAdmin() {
-    assertThat(isAllowed(OTC_ADMIN, MVP_ADMIN, CREATE)).isFalse();
+  public void otcAdmin_CanCreate_OtcUser_WithinSameOrganisation() {
+    assertThat(isAllowed(OTC_ADMIN, OTC_USER, CREATE)).isTrue();
   }
 
   @Test
@@ -91,138 +83,75 @@ public class UserPermissionsTest {
   }
 
   @Test
-  public void adminCanReadUserInSameOrganisation() {
-    assertThat(isAllowed(MVP_ADMIN, MVP_USER, READ)).isTrue();
+  public void mvpAdmin_CannotCreate() {
+    assertThat(isAllowed(MVP_ADMIN, OTC_USER, CREATE)).isFalse();
+    assertThat(isAllowed(MVP_ADMIN, OTC_ADMIN, CREATE)).isFalse();
+    assertThat(isAllowed(MVP_ADMIN, SUPER_ADMIN, CREATE)).isFalse();
   }
 
   @Test
-  public void adminCanCreateUserInSameOrganisation() {
+  public void otcUser_CannotCreate_OtcUser_WithinSameOrganisation() {
+    assertThat(isAllowed(OTC_USER, ANOTHER_OTC_USER, CREATE)).isFalse();
+  }
+
+  @Test
+  public void mvpAdmin_HasPermissions_ToUserInSameOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, MVP_USER, CREATE)).isTrue();
-  }
-
-  @Test
-  public void adminCanUpdateUserInSameOrganisation() {
+    assertThat(isAllowed(MVP_ADMIN, MVP_USER, READ)).isTrue();
     assertThat(isAllowed(MVP_ADMIN, MVP_USER, UPDATE)).isTrue();
-  }
-
-  @Test
-  public void adminCanDeleteUserInSameOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, MVP_USER, DELETE)).isTrue();
   }
 
   @Test
-  public void regularUserCanReadUsersInSameOrganisation() {
-    assertThat(isAllowed(MVP_USER, ANOTHER_MVP_USER, READ)).isTrue();
-  }
-
-  @Test
-  public void regularUserCannotCreateUserInSameOrganisation() {
-    assertThat(isAllowed(MVP_USER, ANOTHER_MVP_USER, CREATE)).isFalse();
-  }
-
-  @Test
-  public void regularUserCannotUpdateUserInSameOrganisation() {
-    assertThat(isAllowed(MVP_USER, ANOTHER_MVP_USER, UPDATE)).isFalse();
-  }
-
-  @Test
-  public void regularUserCannotDeleteUserInSameOrganisation() {
-    assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_USER, DELETE)).isFalse();
-  }
-
-  @Test
-  public void adminCannotCreateUserInOtherOrganisation() {
+  public void mvpAdmin_HasNotPermissions_ToUserInOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_USER, CREATE)).isFalse();
-  }
-
-  @Test
-  public void adminCannotReadUserInOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_USER, READ)).isFalse();
-  }
-
-  @Test
-  public void adminCannotUpdateUserInOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_USER, UPDATE)).isFalse();
-  }
-
-  @Test
-  public void adminCannotDeleteUserInOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_USER, DELETE)).isFalse();
   }
 
   @Test
-  public void adminCannotCreateAdminInOtherOrganisation() {
+  public void mvpAdmin_HasNoAccess_ToAdminInOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_ADMIN, CREATE)).isFalse();
-  }
-
-  @Test
-  public void adminCannotReadAdminInOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_ADMIN, READ)).isFalse();
-  }
-
-  @Test
-  public void adminCannotUpdateAdminInOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_ADMIN, UPDATE)).isFalse();
-  }
-
-  @Test
-  public void adminCannotDeleteAdminInOtherOrganisation() {
     assertThat(isAllowed(MVP_ADMIN, OTHER_MVP_ADMIN, DELETE)).isFalse();
   }
 
   @Test
-  public void regularUserCannotCreateUserInOtherOrganisation() {
+  public void mvpUser_WithinSameOrganisation_CannotCreate_OtcAdmin() {
+    assertThat(isAllowed(MVP_USER, OTC_ADMIN, CREATE)).isFalse();
+  }
+
+  @Test
+  public void mvpUser_HasNoPermission_ToMvpUserInSameOrganisation() {
+    assertThat(isAllowed(MVP_USER, ANOTHER_MVP_USER, READ)).isTrue();
+    assertThat(isAllowed(MVP_USER, ANOTHER_MVP_USER, CREATE)).isFalse();
+    assertThat(isAllowed(MVP_USER, ANOTHER_MVP_USER, UPDATE)).isFalse();
+  }
+
+  @Test
+  public void mvpUser_HasNoPermission_ToMvpUserInOtherOrganisation() {
     assertThat(isAllowed(MVP_USER, OTHER_MVP_USER, CREATE)).isFalse();
-  }
-
-  @Test
-  public void regularUserCannotReadUserInOtherOrganisation() {
     assertThat(isAllowed(MVP_USER, OTHER_MVP_USER, READ)).isFalse();
-  }
-
-  @Test
-  public void regularUserCannotUpdateUserInOtherOrganisation() {
     assertThat(isAllowed(MVP_USER, OTHER_MVP_USER, UPDATE)).isFalse();
-  }
-
-  @Test
-  public void regularUserCannotDeleteUserInOtherOrganisation() {
     assertThat(isAllowed(MVP_USER, OTHER_MVP_USER, DELETE)).isFalse();
   }
 
   @Test
-  public void regularUserCannotCreateAdminInOtherOrganisation() {
+  public void mvpUser_HasNoAccess_ToAdminInOtherOrganisation() {
     assertThat(isAllowed(MVP_USER, OTHER_MVP_ADMIN, CREATE)).isFalse();
-  }
-
-  @Test
-  public void regularUserCannotReadAdminInOtherOrganisation() {
     assertThat(isAllowed(MVP_USER, OTHER_MVP_ADMIN, READ)).isFalse();
-  }
-
-  @Test
-  public void regularUserCannotUpdateAdminInOtherOrganisation() {
     assertThat(isAllowed(MVP_USER, OTHER_MVP_ADMIN, UPDATE)).isFalse();
-  }
-
-  @Test
-  public void regularUserCannotDeleteAdminInOtherOrganisation() {
     assertThat(isAllowed(MVP_USER, OTHER_MVP_ADMIN, DELETE)).isFalse();
   }
 
   @Test
-  public void userCannotCreateSelf() {
+  public void mvpUser_Permissions_OnSelf() {
     assertThat(isAllowed(MVP_USER, MVP_USER, CREATE)).isFalse();
-  }
-
-  @Test
-  public void userCanReadSelf() {
-    assertTrue(isAllowed(MVP_USER, MVP_USER, READ));
-  }
-
-  @Test
-  public void userCanUpdateSelf() {
-    assertTrue(isAllowed(MVP_USER, MVP_USER, UPDATE));
+    assertThat(isAllowed(MVP_USER, MVP_USER, READ)).isTrue();
+    assertThat(isAllowed(MVP_USER, MVP_USER, UPDATE)).isTrue();
+    assertThat(isAllowed(MVP_USER, MVP_USER, DELETE)).isFalse();
   }
 
   @Test
@@ -319,11 +248,6 @@ public class UserPermissionsTest {
       MVP_ADMIN,
       UPDATE
     )).isInstanceOf(RuntimeException.class);
-  }
-
-  @Test
-  public void userCannotDeleteSelf() {
-    assertThat(isAllowed(MVP_USER, MVP_USER, DELETE)).isFalse();
   }
 
   private boolean isAllowed(User currentUser, User targetUser, Permission permission) {
