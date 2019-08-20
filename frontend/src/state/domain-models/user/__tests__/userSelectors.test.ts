@@ -1,5 +1,5 @@
 import {Role, User} from '../userModels';
-import {getRoles, isAdmin, isOnlyOtcUser} from '../userSelectors';
+import {getRoles, isAdmin, isOtcUserOnly} from '../userSelectors';
 
 describe('userSelectors', () => {
 
@@ -72,14 +72,14 @@ describe('userSelectors', () => {
     });
 
     it('is not just otc user', () => {
-      expect(isOnlyOtcUser([Role.MVP_USER])).toBe(false);
-      expect(isOnlyOtcUser([Role.OTC_ADMIN, Role.MVP_ADMIN])).toBe(false);
-      expect(isOnlyOtcUser([Role.OTC_ADMIN, Role.OTC_USER, Role.MVP_ADMIN])).toBe(false);
+      expect(isOtcUserOnly([Role.MVP_USER])).toBe(false);
+      expect(isOtcUserOnly([Role.OTC_ADMIN, Role.MVP_ADMIN])).toBe(false);
+      expect(isOtcUserOnly([Role.OTC_ADMIN, Role.OTC_USER, Role.MVP_ADMIN])).toBe(false);
     });
 
     it('is just otc user', () => {
-      expect(isOnlyOtcUser([Role.OTC_ADMIN])).toBe(true);
-      expect(isOnlyOtcUser([Role.OTC_ADMIN, Role.OTC_USER])).toBe(true);
+      expect(isOtcUserOnly([Role.OTC_ADMIN])).toBe(true);
+      expect(isOtcUserOnly([Role.OTC_ADMIN, Role.OTC_USER])).toBe(true);
     });
 
   });

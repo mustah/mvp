@@ -2,7 +2,7 @@ import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {paperStyle} from '../../../app/themes';
+import {mainContentPaperStyle} from '../../../app/themes';
 import {PasswordEditForm} from '../../../components/forms/PasswordEditForm';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
@@ -67,8 +67,8 @@ class EditProfile extends React.Component<Props> {
             {translate('profile')}
           </MainTitle>
         </Row>
-        <Paper style={paperStyle}>
-          <Row>
+        <Paper style={{...mainContentPaperStyle, paddingBottom: 16}}>
+          <Row style={{paddingLeft: 16}}>
             <Column style={userEditStyle}>
               <UserEditForm
                 onSubmit={modifyProfile}
@@ -105,5 +105,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchOrganisations,
 }, dispatch);
 
-export const EditProfileContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(EditProfile);
+export const EditProfileContainer = connect(mapStateToProps, mapDispatchToProps)(EditProfile);

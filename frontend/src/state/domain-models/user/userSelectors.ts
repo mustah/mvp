@@ -21,8 +21,8 @@ const isMvpPredicate = (role: Role) =>
   role === Role.SUPER_ADMIN;
 
 export const isAdmin = (roles: Role[]) => some(roles, isAdminPredicate);
-export const isOnlyOtcUser = (roles: Role[]) => every(roles, isOtcPredicate);
-export const isOnlyMvpUser = (roles: Role[]) => every(roles, isMvpPredicate);
+export const isMvpUser = (roles: Role[]) => some(roles, isMvpPredicate);
+export const isOtcUserOnly = (roles: Role[]) => every(roles, isOtcPredicate);
 
 const roleList: { [key in Role]: Role[] } = {
   [Role.MVP_USER]: [Role.MVP_USER],
