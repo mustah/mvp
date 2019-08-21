@@ -3,7 +3,6 @@ package com.elvaco.mvp.database.repository.access;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
@@ -105,7 +104,7 @@ public class OrganisationRepository implements Organisations {
   @Override
   @Cacheable(
     cacheNames = "organisation.slug",
-    sync = true
+    unless = "#result==null"
   )
   public Optional<Organisation> findBySlug(String slug) {
     return organisationJpaRepository.findBySlug(slug)
@@ -115,7 +114,7 @@ public class OrganisationRepository implements Organisations {
   @Override
   @Cacheable(
     cacheNames = "organisation.externalId",
-    sync = true
+    unless = "#result==null"
   )
   public Optional<Organisation> findByExternalId(String externalId) {
     return organisationJpaRepository.findByExternalId(externalId)

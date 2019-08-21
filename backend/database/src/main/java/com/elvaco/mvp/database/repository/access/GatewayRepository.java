@@ -66,7 +66,7 @@ public class GatewayRepository implements Gateways {
   @Cacheable(
     cacheNames = "gateway.organisationIdSerial",
     key = "#organisationId + #serial",
-    sync = true
+    unless = "#result==null"
   )
   public Optional<Gateway> findBy(UUID organisationId, String serial) {
     return gatewayJpaRepository.findByOrganisationIdAndSerial(organisationId, serial)

@@ -111,7 +111,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   @Cacheable(
     cacheNames = "physicalMeter.organisationIdExternalIdAddress.withStatuses",
     key = "#organisationId + #externalId + #address",
-    sync = true
+    unless = "#result==null"
   )
   public Optional<PhysicalMeter> findByWithStatuses(
     UUID organisationId,
@@ -137,7 +137,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   @Cacheable(
     cacheNames = "physicalMeter.organisationIdExternalIdAddress",
     key = "#organisationId + #externalId + #address",
-    sync = true
+    unless = "#result==null"
   )
   public Optional<PhysicalMeter> findBy(UUID organisationId, String externalId, String address) {
     return physicalMeterJpaRepository.findByOrganisationIdAndExternalIdAndAddress(
