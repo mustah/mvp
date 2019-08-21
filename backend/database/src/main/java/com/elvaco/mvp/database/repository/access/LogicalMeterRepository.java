@@ -54,7 +54,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Cacheable(
     cacheNames = "logicalMeter.organisationIdExternalId",
     key = "#organisationId + #externalId",
-    sync = true
+    unless = "#result==null"
   )
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
     UUID organisationId,

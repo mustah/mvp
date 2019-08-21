@@ -45,4 +45,24 @@ public class OrganisationRepositoryTest extends IntegrationTest {
 
     assertThat(userJpaRepository.findByEmail("user@org.com").isPresent()).isFalse();
   }
+
+  @Test
+  public void emptyOptionalIsNotCached() {
+    String externalId = randomUUID().toString();
+    assertThat(organisations.findByExternalId(externalId)).isEmpty();
+
+    // Direct save without cache evict
+    organisationJpaRepository.save(
+      OrganisationEntity.builder()
+        .id(randomUUID())
+        .name(externalId)
+        .slug(externalId)
+        .externalId(externalId)
+        .build());
+
+    assertThat(organisations.findByExternalId(externalId))
+      .isPresent().get()
+      .extracting(o -> o.externalId)
+      .isEqualTo(externalId);
+  }
 }
