@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "otc"
+msgstr "OTC"
+
 msgid "{{count}} meters are not shown in the graph. Choose which meters you want to see with"
 msgstr "{{count}} meter is not shown in the graph. Choose which meters you want to see with"
 

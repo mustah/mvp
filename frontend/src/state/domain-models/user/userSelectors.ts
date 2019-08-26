@@ -2,23 +2,31 @@ import {every, some} from 'lodash';
 import {createSelector} from 'reselect';
 import {Role, User} from './userModels';
 
-export const isSuperAdmin = (user: User): boolean => user.roles.includes(Role.SUPER_ADMIN);
-
-export const isMvpAdmin = (user: User): boolean => user.roles.includes(Role.MVP_ADMIN) || isSuperAdmin(user);
-
-const isAdminPredicate = (role: Role) =>
+const isAdminPredicate = (role: Role): boolean =>
   role === Role.MVP_ADMIN ||
   role === Role.OTC_ADMIN ||
   role === Role.SUPER_ADMIN;
 
-const isOtcPredicate = (role: Role) =>
+const isOtcPredicate = (role: Role): boolean =>
   role === Role.OTC_ADMIN ||
   role === Role.OTC_USER;
 
-const isMvpPredicate = (role: Role) =>
+const isMvpPredicate = (role: Role): boolean =>
   role === Role.MVP_ADMIN ||
   role === Role.MVP_USER ||
   role === Role.SUPER_ADMIN;
+
+export const isSuperAdmin = (user: User): boolean =>
+  some(user.roles, role => role === Role.SUPER_ADMIN);
+
+export const isMvpAdmin = (user: User): boolean =>
+  some(user.roles, role => role === Role.MVP_ADMIN || role === Role.SUPER_ADMIN);
+
+export const isMvpUserRole = (user: User): boolean =>
+  some(user.roles, isMvpPredicate);
+
+export const isOtcUserRole = (user: User): boolean =>
+  some(user.roles, role => isOtcPredicate(role) || role === Role.SUPER_ADMIN);
 
 export const isAdmin = (roles: Role[]) => some(roles, isAdminPredicate);
 export const isMvpUser = (roles: Role[]) => some(roles, isMvpPredicate);
