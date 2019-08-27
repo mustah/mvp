@@ -1,7 +1,5 @@
-import com.github.spotbugs.SpotBugsTask
-
 plugins {
-  id "com.github.spotbugs" version "1.6.4"
+  id "com.github.spotbugs" version "2.0.0"
   id "com.github.ben-manes.versions" version "0.20.0"
 }
 
@@ -34,6 +32,10 @@ allprojects {
     }
     mavenCentral()
   }
+}
+
+spotbugs {
+  toolVersion = "3.1.12"
 }
 
 subprojects {subproject ->
@@ -76,10 +78,11 @@ subprojects {subproject ->
       toolVersion = '8.5'
     }
 
-    tasks.withType(SpotBugsTask) {
+    tasks.withType(com.github.spotbugs.SpotBugsTask) {
       excludeFilter = file("$rootDir/backend/config/spotbugs/excludeFilter.xml")
       reports {
         xml.enabled false
+        html.enabled true
       }
     }
   }
