@@ -511,7 +511,6 @@ public class MeasurementRepositoryTest extends IntegrationTest {
         25.0 // second day's first hourly value (d2 00:00:00 +01:00 / 23:00:00Z)
       );
 
-
     assertThat(result.get(getKey(logicalMeterPlus2, Quantity.POWER)))
       .extracting(l -> l.value)
       .containsExactly(
