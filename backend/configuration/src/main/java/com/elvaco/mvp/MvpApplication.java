@@ -1,7 +1,6 @@
 package com.elvaco.mvp;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -25,7 +25,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.CacheControl;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -37,15 +36,13 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
-import static java.util.Collections.singletonList;
-
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableScheduling
+@EnableZuulProxy
 @SpringBootApplication(
   scanBasePackages = "com.elvaco.mvp",
   exclude = RepositoryRestMvcAutoConfiguration.class
 )
-@EnableScheduling
 public class MvpApplication implements WebMvcConfigurer {
 
   private final AuthenticatedUser currentUser;
@@ -128,7 +125,7 @@ public class MvpApplication implements WebMvcConfigurer {
   private static class PushStateResourceResolver implements ResourceResolver {
 
     private final Resource index = new ClassPathResource("/static/index.html");
-    private final List<String> handledExtensions = Arrays.asList(
+    private final List<String> handledExtensions = List.of(
       "html",
       "js",
       "json",
@@ -145,19 +142,22 @@ public class MvpApplication implements WebMvcConfigurer {
       "gif",
       "ico"
     );
-    private final List<String> ignoredPaths = singletonList("api");
+    private final List<String> ignoredPaths = List.of("api");
 
     @Override
     public Resource resolveResource(
-      HttpServletRequest request, String requestPath, List<?
-      extends Resource> locations, ResourceResolverChain chain
+      HttpServletRequest request,
+      String requestPath,
+      List<? extends Resource> locations,
+      ResourceResolverChain chain
     ) {
       return resolve(requestPath, locations);
     }
 
     @Override
     public String resolveUrlPath(
-      String resourcePath, List<? extends Resource> locations,
+      String resourcePath,
+      List<? extends Resource> locations,
       ResourceResolverChain chain
     ) {
       Resource resolvedResource = resolve(resourcePath, locations);

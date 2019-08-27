@@ -10,7 +10,6 @@ import com.elvaco.mvp.web.security.TokenAuthenticationProvider;
 import com.elvaco.mvp.web.security.UserDetailAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -33,7 +32,6 @@ import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Configuration
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String POLICY_DIRECTIVES = "default-src 'self';"
