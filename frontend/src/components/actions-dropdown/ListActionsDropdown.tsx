@@ -73,7 +73,7 @@ export const ListActionsDropdown = ({item, deleteMeter, addToReport, syncWithMet
     return ([
       (
         <StoreProvider key={`sync-${id}`}>
-          <SyncWithMeteringMenuItem{...syncMenuItemProps}/>
+          <SyncWithMeteringMenuItem {...syncMenuItemProps}/>
         </StoreProvider>
       ),
       (

@@ -3,10 +3,11 @@ import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
 import {topMenuInnerDivStyle, topMenuItemDivStyle} from '../../../app/themes';
 import {Link, LinkProps} from '../../../components/links/Link';
-import {Clickable, WithChildren} from '../../../types/Types';
+import {OnClick, WithChildren} from '../../../types/Types';
 
-interface Props extends Clickable, WithChildren, LinkProps {
+interface Props extends WithChildren, LinkProps {
   leftIcon?: React.ReactElement<any>;
+  onClick?: OnClick;
 }
 
 export const TopMenuLinkItem = ({children, className, leftIcon, to, target, onClick}: Props) => (
