@@ -63,6 +63,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.OPTIONS, "/api/v1/**").permitAll()
       .antMatchers(HttpMethod.GET, "/api/v1/organisations/*/assets/*").permitAll()
       .antMatchers(HttpMethod.GET, "/api/v1/organisations/*/theme").permitAll()
+      .antMatchers("/api/v1/batches/**").permitAll()
+      .antMatchers("/api/v1/devices/**").permitAll()
       .antMatchers("/api/v1/geocodes/**").permitAll()
       .antMatchers("/api/v1/logout").permitAll();
 

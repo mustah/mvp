@@ -105,6 +105,7 @@ jooq:
 #        type: trace
 
 zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
   routes:
     batches:
       path: /api/v1/batches/**
