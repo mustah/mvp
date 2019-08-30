@@ -23,3 +23,11 @@ spring.liquibase.password=crA4JNdA8Z^N35&5u@!
 spring.liquibase.parameters.application_user="mvpdb-app"
 spring.liquibase.parameters.application_password=mvp-password
 spring.liquibase.parameters.application_database=mvpdb
+
+zuul.sensitiveHeaders=Cookie,Set-Cookie
+
+zuul.routes.batches.path=/api/v1/batches/**
+zuul.routes.batches.url=http://localhost:8085/api/v1/batches/
+
+zuul.routes.devices.path=/api/v1/devices/**
+zuul.routes.devices.url=http://localhost:8085/api/v1/devices/
