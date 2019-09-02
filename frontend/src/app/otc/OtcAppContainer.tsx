@@ -9,11 +9,11 @@ import {RootState} from '../../reducers/rootReducer';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menu-items/MainMenuToggleIcon';
-import {AdminMainMenuItemsContainer} from '../../usecases/main-menu/containers/AdminMainMenuItemsContainer';
+import {OtcMainMenuItemsContainer} from '../../usecases/main-menu/containers/OtcMainMenuItemsContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
 import {Colors} from '../../usecases/theme/themeModels';
-import {AdminPages} from './AdminPages';
+import {OtcPages} from './OtcPages';
 
 interface StateToProps {
   color: Colors;
@@ -26,13 +26,13 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-const AdminApp = ({color: {primary, secondary}, isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
-  <Row key={`admin-app-${primary}-${secondary}`}>
+const App = ({color: {primary, secondary}, isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
+  <Row key={`otc-app-${primary}-${secondary}`}>
     <SideMenuContainer className={classNames({isSideMenuOpen})}>
-      <AdminMainMenuItemsContainer/>
+      <OtcMainMenuItemsContainer/>
     </SideMenuContainer>
     <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
-    <AdminPages/>
+    <OtcPages/>
     <MessageContainer/>
   </Row>
 );
@@ -46,4 +46,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleShowHideSideMenu,
 }, dispatch);
 
-export const AdminAppContainer = connect(mapStateToProps, mapDispatchToProps)(AdminApp);
+export const OtcAppContainer = connect(mapStateToProps, mapDispatchToProps)(App);

@@ -8,7 +8,7 @@ import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {clearUserError, deleteUser, fetchUsers} from '../../../state/domain-models/user/userApiActions';
 import {User} from '../../../state/domain-models/user/userModels';
 import {ClearError, ErrorResponse, Fetch, OnClickWithId} from '../../../types/Types';
-import {UserList} from '../components/UserList';
+import {OwnProps, UserList} from '../components/UserList';
 
 export interface StateToProps {
   users: DomainModel<User>;
@@ -35,4 +35,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const UsersContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(withCssStyles(UserList));
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(withCssStyles(UserList));

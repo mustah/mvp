@@ -14,6 +14,21 @@ msgstr ""
 msgid "otc"
 msgstr "OTC"
 
+msgid "my devices"
+msgstr "mina enheter"
+
+msgid "my keys"
+msgstr "mina nycklar"
+
+msgid "batch references"
+msgstr "batch-referenser"
+
+msgid "create batch reference"
+msgstr "skapa batch-referens"
+
+msgid "add device"
+msgstr "lägg till enhet"
+
 msgid "{{count}} meters are not shown in the graph. Choose which meters you want to see with"
 msgstr "{{count}} mätare visas inte i grafen. Välj vilka mätare du vill se med"
 

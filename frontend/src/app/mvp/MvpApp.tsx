@@ -29,7 +29,7 @@ interface DispatchToProps {
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 const MvpApp = ({color: {primary, secondary}, isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
-  <Row key={`app-${primary}-${secondary}`}>
+  <Row key={`mvp-app-${primary}-${secondary}`}>
     <SideMenuContainer className={classNames({isSideMenuOpen})}>
       <MvpMainMenuItemsContainer/>
     </SideMenuContainer>
