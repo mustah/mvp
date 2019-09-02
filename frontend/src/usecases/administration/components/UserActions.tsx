@@ -8,14 +8,16 @@ import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuIte
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {Link} from '../../../components/links/Link';
 import {translate} from '../../../services/translationService';
-import {OnClick, OnClickWithId, RenderFunction, uuid} from '../../../types/Types';
+import {OnClick, OnClickWithId, RenderFunction, UseCases, uuid} from '../../../types/Types';
 
 interface Props {
   id: uuid;
   confirmDelete: OnClickWithId;
+  useCase: UseCases;
 }
 
-export const UserActions = ({id, confirmDelete}: Props) => {
+export const UserActions = ({id, confirmDelete, useCase}: Props) => {
+  const modifyUserUrl = `${useCase === UseCases.otc ? routes.otcUsersModify : routes.adminUsersModify}/${id}`;
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onClickDelete = () => {
@@ -24,7 +26,7 @@ export const UserActions = ({id, confirmDelete}: Props) => {
     };
     return [
       (
-        <Link to={`${routes.adminUsersModify}/${id}`} key={`edit-${id}`}>
+        <Link to={modifyUserUrl} key={`edit-${id}`}>
           <ActionMenuItem
             leftIcon={<ImageEdit style={actionMenuItemIconStyle}/>}
             name={translate('edit user')}
@@ -44,5 +46,5 @@ export const UserActions = ({id, confirmDelete}: Props) => {
     ];
   };
 
-  return (<ActionsDropdown renderPopoverContent={renderPopoverContent}/>);
+  return <ActionsDropdown renderPopoverContent={renderPopoverContent}/>;
 };

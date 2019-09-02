@@ -1,6 +1,7 @@
 import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import {sortBy, toArray} from 'lodash';
 import * as React from 'react';
+import {routes} from '../../../app/routes';
 import {makeGridClassName} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
@@ -10,11 +11,16 @@ import {Row} from '../../../components/layouts/row/Row';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
 import {User} from '../../../state/domain-models/user/userModels';
+import {UseCases} from '../../../types/Types';
 import {DispatchToProps, StateToProps} from '../containers/UsersContainer';
 import {AddUserButton} from './AddUserButton';
 import {UserActions} from './UserActions';
 
-type Props = StateToProps & DispatchToProps & ThemeContext;
+export interface OwnProps {
+  useCase: UseCases;
+}
+
+type Props = StateToProps & DispatchToProps & OwnProps & ThemeContext;
 
 export const UserList = ({
   cssStyles,
@@ -23,6 +29,7 @@ export const UserList = ({
   error,
   fetchUsers,
   isFetching,
+  useCase,
   users: {entities},
 }: Props) => {
   React.useEffect(() => {
@@ -31,13 +38,13 @@ export const UserList = ({
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(deleteUser);
 
   const roles = ({dataItem: {roles}}) => <td>{roles.join(', ')}</td>;
-  const actions = ({dataItem: {id}}) => <td><UserActions confirmDelete={openConfirm} id={id}/></td>;
+  const actions = ({dataItem: {id}}) => <td><UserActions confirmDelete={openConfirm} id={id} useCase={useCase}/></td>;
 
   return (
     <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
       <Column>
         <Row>
-          <AddUserButton/>
+          <AddUserButton linkTo={useCase === UseCases.otc ? routes.otcUsersAdd : routes.adminUsersAdd}/>
         </Row>
         <Grid
           className={makeGridClassName(cssStyles)}

@@ -25,6 +25,14 @@ export const routes = {
   adminMeterDefinitions: '/admin/meter-definitions',
   adminMeterDefinitionsAdd: '/admin/meter-definitions/add',
   adminMeterDefinitionsModify: '/admin/meter-definitions/modify',
+  otc: '/otc',
+  otcUsersAdd: '/otc/users/add',
+  otcUsersModify: '/otc/users/modify',
+  otcDevices: '/otc/devices',
+  otcDevicesAdd: '/otc/devices/add',
+  otcBatchReferences: '/otc/batch-references',
+  otcBatchReferencesCreate: '/otc/batch-references/create',
+  otcKeys: '/otc/keys',
 };
 
 export const linkToReleaseNotes = 'https://support.elvaco.com/hc/sv/articles/360001339938-Release-notes-EVO';

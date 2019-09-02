@@ -41,7 +41,7 @@ const AdminTopMenuLinkItem = withMvpAdminOnly<OnClick>(() => (
 
 const OtcTopMenuLinkItem = withOtcWebUser<OnClick>(() => (
   <TopMenuLinkItem
-    to={routes.admin}
+    to={routes.otc}
     leftIcon={<ActionImportantDevices style={topMenuItemIconStyle}/>}
   >
     {translate('otc')}

@@ -133,11 +133,13 @@ export const enum Status {
 }
 
 export const enum UseCases {
+  admin = 'admin',
   collection = 'collection',
   dashboard = 'dashboard',
   report = 'report',
   selection = 'selection',
   validation = 'validation',
+  otc = 'otc'
 }
 
 const status = {
