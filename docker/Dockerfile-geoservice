@@ -5,7 +5,7 @@ RUN apk add --update \
 	&& rm -rf /var/cache/apk/*
 
 ARG GEOSERVICE_APPVER
-ARG APM_VERSION=1.4.0
+ARG APM_VERSION=1.9.0
 ARG APM_SERVER=localhost
 RUN addgroup -g 4000 -S mvp && \
 	adduser -S -u 4000 -g mvp mvp
