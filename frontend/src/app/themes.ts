@@ -255,5 +255,13 @@ export const gridStyle: React.CSSProperties = {
   borderBottomRightRadius: borderRadius,
 };
 
+export const labelStyle: React.CSSProperties = {
+  textOverflow: 'ellipsis',
+  maxWidth: 170,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  paddingLeft: 14,
+};
+
 export const dividerBorder = `1px solid ${colors.dividerColor}`;
 export const border = `1px solid ${colors.borderColor}`;

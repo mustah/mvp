@@ -12,8 +12,16 @@ import {
 import {useResizeWindow} from '../../hooks/resizeWindowHook';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {fillWithNull} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {Pagination} from '../../state/ui/pagination/paginationModels';
-import {CallbackWith, Predicate, uuid} from '../../types/Types';
+import {EntityTyped, OnChangePage, Pagination, SortOption} from '../../state/ui/pagination/paginationModels';
+import {
+  CallbackWith,
+  EncodedUriParameters,
+  Fetching,
+  FetchPaginated,
+  HasContent,
+  Predicate,
+  uuid
+} from '../../types/Types';
 import {OwnProps} from '../../usecases/meter/meterModels';
 import {nearestPageNumber} from './infiniteListHelper';
 
@@ -25,6 +33,19 @@ interface PageState {
 interface TableScrollProps {
   scrollToIndex?: number;
   scrollToAlignment?: Alignment;
+}
+
+export interface StateToProps<T> extends EntityTyped, Fetching, HasContent {
+  items: T[];
+  parameters: EncodedUriParameters;
+  pagination: Pagination;
+  sort?: SortOption[];
+}
+
+export interface DispatchToProps {
+  changePage: OnChangePage;
+  fetchPaginated: FetchPaginated;
+  sortTable: CallbackWith<SortOption[]>;
 }
 
 export interface ContentProps extends InfiniteLoaderChildProps {

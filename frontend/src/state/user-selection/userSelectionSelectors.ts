@@ -194,6 +194,18 @@ export const getPaginatedApiParameters = getPaginatedParameters(makeApiParameter
 
 export const getApiParameters = getParameters(makeApiParameters);
 
+export const getBatchReferencesParameters = createSelector<RootState, RootState, EncodedUriParameters>(
+  identity,
+  ({
+    paginatedDomainModels: {batchReferences: {sort}},
+    ui: {pagination: {batchReferences: pagination}},
+  }: RootState) =>
+    encodedUriParametersFrom([
+      ...toPaginationApiParameters(pagination),
+      ...toSortParameters(sort),
+    ])
+);
+
 export const getCollectionStatsParameters = createSelector<RootState, RootState, EncodedUriParameters>(
   identity,
   ({

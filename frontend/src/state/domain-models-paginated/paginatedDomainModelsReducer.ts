@@ -10,6 +10,7 @@ import {CollectionStat} from '../domain-models/collection-stat/collectionStatMod
 import {ObjectsById} from '../domain-models/domainModels';
 import {search} from '../search/searchActions';
 import {SortOption} from '../ui/pagination/paginationModels';
+import {BatchReference} from './batch-references/batchReferenceModels';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
 import {
@@ -24,6 +25,7 @@ import {
   domainModelsPaginatedFailure,
   domainModelsPaginatedGetSuccess,
   domainModelsPaginatedRequest,
+  sortBatchReferences,
   sortCollectionStats,
   sortMeterCollectionStats,
   sortMeters,
@@ -146,7 +148,8 @@ const entityFailure = <T extends Identifiable>(
   nonExistingSingles: {...state.nonExistingSingles, [payload.id]: payload},
 });
 
-type SortActionTypes = ActionType<typeof sortMeters
+type SortActionTypes = ActionType<typeof sortBatchReferences
+  | typeof sortMeters
   | typeof sortCollectionStats
   | typeof sortMeterCollectionStats>;
 
@@ -181,7 +184,7 @@ const sortTable = <T extends Identifiable = Identifiable>(
   return newState;
 };
 
-const actionCreators = [sortCollectionStats, sortMeterCollectionStats, sortMeters];
+const actionCreators = [sortBatchReferences, sortCollectionStats, sortMeterCollectionStats, sortMeters];
 
 const makeSortableReducer = <T extends Identifiable>() => (
   state: NormalizedPaginatedState<T>,
@@ -248,9 +251,16 @@ export const meterCollectionStatFacilities = reducerFor<CollectionStat>(
   makeSortableReducer(),
 );
 
+export const batchReferences = reducerFor<BatchReference>(
+  'batchReferences',
+  Sectors.batchReferences,
+  makeSortableReducer(),
+);
+
 export const paginatedDomainModels = combineReducers<PaginatedDomainModelsState>({
-  meters,
-  gateways,
+  batchReferences,
   collectionStatFacilities,
+  gateways,
+  meters,
   meterCollectionStatFacilities,
 });

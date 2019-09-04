@@ -2,10 +2,12 @@ import {Dictionary, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {CollectionStatFacilityState} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById, RequestsHttp} from '../domain-models/domainModels';
 import {ApiResultSortingOptions, SortOption} from '../ui/pagination/paginationModels';
+import {BatchReferencesState} from './batch-references/batchReferenceModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
 
 export interface PaginatedDomainModelsState {
+  batchReferences: BatchReferencesState;
   meters: MetersState;
   gateways: GatewaysState;
   collectionStatFacilities: CollectionStatFacilityState;

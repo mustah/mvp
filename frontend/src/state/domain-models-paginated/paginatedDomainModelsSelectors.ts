@@ -7,6 +7,7 @@ import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {CollectionStat, CollectionStatFacilityState} from '../domain-models/collection-stat/collectionStatModels';
 import {Pagination, PaginationState} from '../ui/pagination/paginationModels';
 import {paginationPageSize} from '../ui/pagination/paginationReducer';
+import {BatchReference, BatchReferencesState} from './batch-references/batchReferenceModels';
 import {Meter, MetersState} from './meter/meterModels';
 import {NormalizedPaginatedState} from './paginatedDomainModels';
 
@@ -79,6 +80,12 @@ export const getAllMeters = createSelector<MetersState, MetersState, Meter[]>(
 
 export const getCollectionStats =
   createSelector<CollectionStatFacilityState, CollectionStatFacilityState, CollectionStat[]>(
+    identity,
+    itemsCombiner
+  );
+
+export const getBatchReferences =
+  createSelector<BatchReferencesState, BatchReferencesState, BatchReference[]>(
     identity,
     itemsCombiner
   );

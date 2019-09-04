@@ -23,8 +23,26 @@ msgstr "mina nycklar"
 msgid "batch references"
 msgstr "batch-referenser"
 
+msgid "no batch references"
+msgstr "inga batch-referenser"
+
 msgid "create batch reference"
 msgstr "skapa batch-referens"
+
+msgid "show devices"
+msgstr "visa enheter"
+
+msgid "devices"
+msgstr "enheter"
+
+msgid "batch reference"
+msgstr "batch-referens"
+
+msgid "created"
+msgstr "skapad"
+
+msgid "confirmation status"
+msgstr "confirmation status"
 
 msgid "add device"
 msgstr "lägg till enhet"
