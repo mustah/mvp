@@ -289,7 +289,7 @@ test:system:
     name: "${CI_COMMIT_REF_NAME}-system"
     when: on_failure
     paths:
-      - backend/configuration/build/reports/tests/systemTestCI/*
+      - backend/configuration/build/reports/tests/systemTest/*
     expire_in: 2 days
 
 test:jira_script:

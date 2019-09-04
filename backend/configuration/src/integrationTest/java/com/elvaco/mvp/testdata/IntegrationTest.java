@@ -322,8 +322,8 @@ public abstract class IntegrationTest implements ContextDsl {
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
-    gatewayJpaRepository.deleteAll();
     gatewaysMetersJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     dashboardJpaRepository.deleteAll();
     widgetJpaRepository.deleteAll();

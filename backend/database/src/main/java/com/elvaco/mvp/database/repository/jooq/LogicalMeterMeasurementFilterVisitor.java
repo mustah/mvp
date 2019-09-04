@@ -23,6 +23,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.asterisk;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.lateral;
 import static org.jooq.impl.DSL.noCondition;
 import static org.jooq.impl.DSL.rowNumber;
 import static org.jooq.impl.DSL.select;
@@ -87,13 +88,14 @@ class LogicalMeterMeasurementFilterVisitor extends CommonFilterVisitor {
             .and(physicalMeterPeriodCondition())
         )
 
-        .leftJoin(
+        .leftJoin((lateral(
           select(asterisk())
             .from(
               select(gatewaysMetersFields)
-                .from(GATEWAYS_METERS)
+                .from(GATEWAYS_METERS).where(GATEWAYS_METERS.LOGICAL_METER_ID
+                .eq(PHYSICAL_METER.LOGICAL_METER_ID))
             ).where(rowNumber.eq(1)).asTable(ACTIVE_GATEWAY_METERS)
-        )
+        )))
         .on(ACTIVE_GATEWAYS_METERS_ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
           .and(ACTIVE_GATEWAYS_METERS_LOGICAL_METER_ID.equal(LOGICAL_METER.ID)))
 
