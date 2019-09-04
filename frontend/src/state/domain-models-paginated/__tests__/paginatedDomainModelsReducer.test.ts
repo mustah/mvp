@@ -4,12 +4,10 @@ import {RequestParameter} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
-import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
 import {locationChange} from '../../location/locationActions';
 import {search} from '../../search/searchActions';
 import {SortOption} from '../../ui/pagination/paginationModels';
 import {resetSelection} from '../../user-selection/userSelectionActions';
-import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
 import {
@@ -296,9 +294,10 @@ describe('paginatedDomainModelsReducer', () => {
     it('clears a cached data', () => {
       const expectedState: PaginatedDomainModelsState = {
         meters: initialState,
-        gateways: makeInitialState<Gateway>(),
-        collectionStatFacilities: makeInitialState<CollectionStat>(),
-        meterCollectionStatFacilities: makeInitialState<CollectionStat>(),
+        batchReferences: makeInitialState(),
+        gateways: makeInitialState(),
+        collectionStatFacilities: makeInitialState(),
+        meterCollectionStatFacilities: makeInitialState(),
       };
 
       const state: PaginatedDomainModelsState = paginatedDomainModels(
@@ -307,9 +306,10 @@ describe('paginatedDomainModelsReducer', () => {
             ...initialState,
             entities: {1: {...makeMeter(1, 'stockholm', 'king street')}},
           },
-          gateways: makeInitialState<Gateway>(),
-          collectionStatFacilities: makeInitialState<CollectionStat>(),
-          meterCollectionStatFacilities: makeInitialState<CollectionStat>()
+          batchReferences: makeInitialState(),
+          gateways: makeInitialState(),
+          collectionStatFacilities: makeInitialState(),
+          meterCollectionStatFacilities: makeInitialState()
         },
         resetSelection()
       );
@@ -440,16 +440,18 @@ describe('paginatedDomainModelsReducer', () => {
     it('resets state to initial state', () => {
       const prevState: PaginatedDomainModelsState = {
         meters: {...initialState, isFetchingSingle: true},
-        gateways: {...makeInitialState<Gateway>(), isFetchingSingle: true},
-        collectionStatFacilities: {...makeInitialState<CollectionStat>(), isFetchingSingle: true},
-        meterCollectionStatFacilities: {...makeInitialState<CollectionStat>(), isFetchingSingle: true},
+        batchReferences: {...makeInitialState(), isFetchingSingle: true},
+        gateways: {...makeInitialState(), isFetchingSingle: true},
+        collectionStatFacilities: {...makeInitialState(), isFetchingSingle: true},
+        meterCollectionStatFacilities: {...makeInitialState(), isFetchingSingle: true},
       };
 
       const expected: PaginatedDomainModelsState = {
         meters: initialState,
-        gateways: makeInitialState<Gateway>(),
-        collectionStatFacilities: makeInitialState<CollectionStat>(),
-        meterCollectionStatFacilities: makeInitialState<CollectionStat>(),
+        batchReferences: makeInitialState(),
+        gateways: makeInitialState(),
+        collectionStatFacilities: makeInitialState(),
+        meterCollectionStatFacilities: makeInitialState(),
       };
 
       const state = paginatedDomainModels(prevState, logoutUser(undefined));

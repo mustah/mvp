@@ -4,6 +4,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {resetReducer} from '../../../reducers/resetReducer';
 import {UseCases} from '../../../types/Types';
 import {
+  sortBatchReferences,
   sortCollectionStats,
   sortMeterCollectionStats,
   sortMeters
@@ -30,6 +31,7 @@ export const initialPagination: Pagination = {
 };
 
 export const initialState: PaginationState = {
+  batchReferences: {...initialPagination},
   meters: {...initialPagination},
   gateways: {...initialPagination},
   collectionStatFacilities: {...initialPagination},
@@ -57,12 +59,18 @@ const updateMetaData = (
   [entityType]: {...state[entityType], size: paginationPageSize, totalElements, totalPages},
 });
 
-const entityTypes: EntityTypes[] = ['meters', 'collectionStatFacilities', 'meterCollectionStatFacilities'];
+const entityTypes: EntityTypes[] = [
+  'batchReferences',
+  'meters',
+  'collectionStatFacilities',
+  'meterCollectionStatFacilities'
+];
 
 type ActionTypes = ActionType<typeof changePage
   | typeof updatePageMetaData
   | typeof search
   | typeof resetSelection
+  | typeof sortBatchReferences
   | typeof sortMeters
   | typeof sortCollectionStats
   | typeof sortMeterCollectionStats>;
@@ -79,6 +87,8 @@ export const pagination = (state: PaginationState = initialState, action: Action
         .filter(isDefined)
         .map(_ => resetStateForAll(state, entityTypes))
         .orElse(state);
+    case getType(sortBatchReferences):
+      return resetStateForEntityType(state, {entityType: 'batchReferences'});
     case getType(sortMeters):
       return resetStateForEntityType(state, {entityType: 'meters'});
     case getType(sortCollectionStats):

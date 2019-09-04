@@ -35,12 +35,20 @@ describe('meterApiActions', () => {
   let store;
   let mockRestClient;
 
+  const emptyState = {
+    isFetchingSingle: false,
+    nonExistingSingles: {},
+    entities: {},
+    result: {},
+  };
+
   const initialRootState: Partial<RootState> = {
     paginatedDomainModels: {
-      meters: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
-      gateways: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
-      collectionStatFacilities: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
-      meterCollectionStatFacilities: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
+      batchReferences: emptyState,
+      meters: emptyState,
+      gateways: emptyState,
+      collectionStatFacilities: emptyState,
+      meterCollectionStatFacilities: emptyState,
     },
   };
 
@@ -132,24 +140,10 @@ describe('meterApiActions', () => {
             entities: {},
             result: {[existingPage]: {isFetching: false, isSuccessfullyFetched: true, result: []}},
           },
-          gateways: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
-          collectionStatFacilities: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
-          meterCollectionStatFacilities: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
+          batchReferences: emptyState,
+          gateways: emptyState,
+          collectionStatFacilities: emptyState,
+          meterCollectionStatFacilities: emptyState,
         },
       };
       store = configureMockStore(initialState);
@@ -169,24 +163,10 @@ describe('meterApiActions', () => {
             entities: {},
             result: {[existingPage]: {isFetching: true, isSuccessfullyFetched: false, result: []}},
           },
-          gateways: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
-          collectionStatFacilities: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
-          meterCollectionStatFacilities: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
+          batchReferences: emptyState,
+          gateways: emptyState,
+          collectionStatFacilities: emptyState,
+          meterCollectionStatFacilities: emptyState,
         },
       };
       store = configureMockStore(initialState);
@@ -213,24 +193,10 @@ describe('meterApiActions', () => {
               },
             },
           },
-          gateways: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
-          collectionStatFacilities: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
-          meterCollectionStatFacilities: {
-            isFetchingSingle: false,
-            nonExistingSingles: {},
-            entities: {},
-            result: {},
-          },
+          batchReferences: emptyState,
+          gateways: emptyState,
+          collectionStatFacilities: emptyState,
+          meterCollectionStatFacilities: emptyState,
         },
       };
       store = configureMockStore(initialState);

@@ -23,11 +23,29 @@ msgstr "mina keys"
 msgid "batch references"
 msgstr "batch references"
 
+msgid "no batch references"
+msgstr "no batch references"
+
 msgid "create batch reference"
 msgstr "create batch reference"
 
 msgid "add device"
 msgstr "add device"
+
+msgid "show devices"
+msgstr "show devices"
+
+msgid "devices"
+msgstr "devices"
+
+msgid "batch reference"
+msgstr "batch reference"
+
+msgid "created"
+msgstr "created"
+
+msgid "confirmation status"
+msgstr "confirmation status"
 
 msgid "{{count}} meters are not shown in the graph. Choose which meters you want to see with"
 msgstr "{{count}} meter is not shown in the graph. Choose which meters you want to see with"

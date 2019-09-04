@@ -13,31 +13,19 @@ import {initialState, pagination, paginationPageSize} from '../paginationReducer
 
 describe('paginationReducer', () => {
 
+  const initialPagination = {
+    page: 0,
+    size: paginationPageSize,
+    totalPages: 10,
+    totalElements: 100,
+  };
+
   const paginatedState: Readonly<PaginationState> = {
-    meters: {
-      page: 0,
-      size: paginationPageSize,
-      totalPages: 10,
-      totalElements: 100,
-    },
-    gateways: {
-      page: 0,
-      size: paginationPageSize,
-      totalPages: 10,
-      totalElements: 100,
-    },
-    collectionStatFacilities: {
-      page: 0,
-      size: paginationPageSize,
-      totalPages: 10,
-      totalElements: 100,
-    },
-    meterCollectionStatFacilities: {
-      page: 0,
-      size: paginationPageSize,
-      totalPages: 10,
-      totalElements: 100,
-    },
+    batchReferences: initialPagination,
+    meters: initialPagination,
+    gateways: initialPagination,
+    collectionStatFacilities: initialPagination,
+    meterCollectionStatFacilities: initialPagination,
   };
 
   describe('pagination meta data', () => {

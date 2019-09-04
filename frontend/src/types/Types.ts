@@ -155,12 +155,13 @@ export const statusFor = (statusCode: uuid): Status =>
 export const toIdNamed = (id: string): IdNamed => ({id, name: id});
 
 export const enum Sectors {
+  batchReferences = 'batchReferences',
   collection = 'collection',
-  meterCollection = 'meterCollection',
   collectionStatFacilities = 'collectionStatFacilities',
+  meterCollection = 'meterCollection',
   meterCollectionStatFacilities = 'meterCollectionStatFacilities',
-  summary = 'summary',
   organisationSummary = 'organisationSummary',
+  summary = 'summary',
   subOrganisations = 'subOrganisations',
   theme = 'theme',
 }

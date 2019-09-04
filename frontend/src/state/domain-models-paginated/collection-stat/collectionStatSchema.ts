@@ -3,7 +3,8 @@ import {CollectionStat} from '../../domain-models/collection-stat/collectionStat
 import {DataFormatter} from '../../domain-models/domainModelsActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 
-const collectionStatSchemaEntity = new schema.Entity('collectionStatFacilities', {});
-const collectionStatSchema: Schema = {content: [collectionStatSchemaEntity]};
+const content = [new schema.Entity('collectionStatFacilities', {})];
+const collectionStatSchema: Schema = {content};
+
 export const collectionStatDataFormatter: DataFormatter<NormalizedPaginated<CollectionStat>> =
   (response) => normalize(response, collectionStatSchema) as NormalizedPaginated<CollectionStat>;

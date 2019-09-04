@@ -71,6 +71,7 @@ backend/.idea/**/dataSources.local.xml
 backend/.idea/**/sqlDataSources.xml
 backend/.idea/**/dynamic.xml
 backend/.idea/**/uiDesigner.xml
+backend/.idea/checkstyle-idea.xml
 backend/.idea/codeStyleSettings.xml
 backend/.idea/compiler.xml
 backend/.idea/modules.xml

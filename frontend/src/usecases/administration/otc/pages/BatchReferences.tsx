@@ -4,14 +4,14 @@ import {paperStyle} from '../../../../app/themes';
 import {AdminPageLayout} from '../../../../components/layouts/layout/PageLayout';
 import {MainTitle} from '../../../../components/texts/Titles';
 import {translate} from '../../../../services/translationService';
-import {BatchReferenceList} from '../components/BatchReferenceList';
+import {BatchReferenceContent} from '../components/BatchReferenceContent';
 
 export const BatchReferences = () => (
   <AdminPageLayout>
     <MainTitle>{translate('batch references')}</MainTitle>
 
     <Paper style={paperStyle}>
-      <BatchReferenceList/>
+      <BatchReferenceContent/>
     </Paper>
   </AdminPageLayout>
 );
