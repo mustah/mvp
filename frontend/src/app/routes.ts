@@ -30,6 +30,7 @@ export const routes = {
   otcUsersModify: '/otc/users/modify',
   otcDevices: '/otc/devices',
   otcDevicesAdd: '/otc/devices/add',
+  otcDevicesModify: '/otc/devices/modify',
   otcBatchReferences: '/otc/batch-references',
   otcBatchReferencesModify: '/otc/batch-references/modify',
   otcBatchReferencesCreate: '/otc/batch-references/create',

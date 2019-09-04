@@ -47,6 +47,15 @@ msgstr "created"
 msgid "confirmation status"
 msgstr "confirmation status"
 
+msgid "device eui"
+msgstr "device eui"
+
+msgid "claim status"
+msgstr "claim status"
+
+msgid "no devices"
+msgstr "no devices"
+
 msgid "{{count}} meters are not shown in the graph. Choose which meters you want to see with"
 msgstr "{{count}} meter is not shown in the graph. Choose which meters you want to see with"
 

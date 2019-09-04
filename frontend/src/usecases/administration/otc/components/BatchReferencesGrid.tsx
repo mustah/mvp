@@ -123,7 +123,7 @@ const Grid = ({
 
 const GridWrapper = compose<GridProps, Props>(withCssStyles, withEmptyContent)(Grid);
 
-export const BatchReferenceGrid = (props: Props) => {
+export const BatchReferencesGrid = (props: Props) => {
   const {
     fetchPaginated,
     pagination: {page},

@@ -283,6 +283,27 @@ export const migrations = {
       }
     };
   },
+  15: (state) => {
+    const paginationState = {
+      page: 0,
+      size: 50,
+      totalElements: -1,
+      totalPages: -1,
+    };
+
+    const {ui} = state;
+
+    return {
+      ...state,
+      ui: {
+        ...ui,
+        pagination: {
+          ...ui.pagination,
+          devices: {...paginationState},
+        }
+      }
+    };
+  },
 };
 
-export const currentVersion: number = 14;
+export const currentVersion: number = 15;

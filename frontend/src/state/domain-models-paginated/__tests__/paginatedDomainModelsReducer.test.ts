@@ -293,8 +293,9 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('clears a cached data', () => {
       const expectedState: PaginatedDomainModelsState = {
-        meters: initialState,
         batchReferences: makeInitialState(),
+        devices: makeInitialState(),
+        meters: initialState,
         gateways: makeInitialState(),
         collectionStatFacilities: makeInitialState(),
         meterCollectionStatFacilities: makeInitialState(),
@@ -307,6 +308,7 @@ describe('paginatedDomainModelsReducer', () => {
             entities: {1: {...makeMeter(1, 'stockholm', 'king street')}},
           },
           batchReferences: makeInitialState(),
+          devices: makeInitialState(),
           gateways: makeInitialState(),
           collectionStatFacilities: makeInitialState(),
           meterCollectionStatFacilities: makeInitialState()
@@ -441,6 +443,7 @@ describe('paginatedDomainModelsReducer', () => {
       const prevState: PaginatedDomainModelsState = {
         meters: {...initialState, isFetchingSingle: true},
         batchReferences: {...makeInitialState(), isFetchingSingle: true},
+        devices: {...makeInitialState(), isFetchingSingle: true},
         gateways: {...makeInitialState(), isFetchingSingle: true},
         collectionStatFacilities: {...makeInitialState(), isFetchingSingle: true},
         meterCollectionStatFacilities: {...makeInitialState(), isFetchingSingle: true},
@@ -449,6 +452,7 @@ describe('paginatedDomainModelsReducer', () => {
       const expected: PaginatedDomainModelsState = {
         meters: initialState,
         batchReferences: makeInitialState(),
+        devices: makeInitialState(),
         gateways: makeInitialState(),
         collectionStatFacilities: makeInitialState(),
         meterCollectionStatFacilities: makeInitialState(),

@@ -22,6 +22,7 @@ describe('paginationReducer', () => {
 
   const paginatedState: Readonly<PaginationState> = {
     batchReferences: initialPagination,
+    devices: initialPagination,
     meters: initialPagination,
     gateways: initialPagination,
     collectionStatFacilities: initialPagination,

@@ -3,11 +3,13 @@ import {CollectionStatFacilityState} from '../domain-models/collection-stat/coll
 import {ObjectsById, RequestsHttp} from '../domain-models/domainModels';
 import {ApiResultSortingOptions, SortOption} from '../ui/pagination/paginationModels';
 import {BatchReferencesState} from './batch-references/batchReferenceModels';
+import {DevicesState} from './devices/deviceModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
 
 export interface PaginatedDomainModelsState {
   batchReferences: BatchReferencesState;
+  devices: DevicesState;
   meters: MetersState;
   gateways: GatewaysState;
   collectionStatFacilities: CollectionStatFacilityState;

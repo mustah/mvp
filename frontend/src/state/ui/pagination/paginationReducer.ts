@@ -6,6 +6,7 @@ import {UseCases} from '../../../types/Types';
 import {
   sortBatchReferences,
   sortCollectionStats,
+  sortDevices,
   sortMeterCollectionStats,
   sortMeters
 } from '../../domain-models-paginated/paginatedDomainModelsActions';
@@ -32,6 +33,7 @@ export const initialPagination: Pagination = {
 
 export const initialState: PaginationState = {
   batchReferences: {...initialPagination},
+  devices: {...initialPagination},
   meters: {...initialPagination},
   gateways: {...initialPagination},
   collectionStatFacilities: {...initialPagination},
@@ -61,6 +63,7 @@ const updateMetaData = (
 
 const entityTypes: EntityTypes[] = [
   'batchReferences',
+  'devices',
   'meters',
   'collectionStatFacilities',
   'meterCollectionStatFacilities'
@@ -71,6 +74,7 @@ type ActionTypes = ActionType<typeof changePage
   | typeof search
   | typeof resetSelection
   | typeof sortBatchReferences
+  | typeof sortDevices
   | typeof sortMeters
   | typeof sortCollectionStats
   | typeof sortMeterCollectionStats>;
@@ -89,6 +93,8 @@ export const pagination = (state: PaginationState = initialState, action: Action
         .orElse(state);
     case getType(sortBatchReferences):
       return resetStateForEntityType(state, {entityType: 'batchReferences'});
+    case getType(sortDevices):
+      return resetStateForEntityType(state, {entityType: 'devices'});
     case getType(sortMeters):
       return resetStateForEntityType(state, {entityType: 'meters'});
     case getType(sortCollectionStats):

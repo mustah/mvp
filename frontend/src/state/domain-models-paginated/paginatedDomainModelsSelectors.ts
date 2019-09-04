@@ -8,6 +8,7 @@ import {CollectionStat, CollectionStatFacilityState} from '../domain-models/coll
 import {Pagination, PaginationState} from '../ui/pagination/paginationModels';
 import {paginationPageSize} from '../ui/pagination/paginationReducer';
 import {BatchReference, BatchReferencesState} from './batch-references/batchReferenceModels';
+import {Device, DevicesState} from './devices/deviceModels';
 import {Meter, MetersState} from './meter/meterModels';
 import {NormalizedPaginatedState} from './paginatedDomainModels';
 
@@ -86,6 +87,12 @@ export const getCollectionStats =
 
 export const getBatchReferences =
   createSelector<BatchReferencesState, BatchReferencesState, BatchReference[]>(
+    identity,
+    itemsCombiner
+  );
+
+export const getDevices =
+  createSelector<DevicesState, DevicesState, Device[]>(
     identity,
     itemsCombiner
   );
