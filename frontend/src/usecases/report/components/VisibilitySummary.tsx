@@ -1,6 +1,7 @@
 import {difference} from 'lodash';
 import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
 import * as React from 'react';
+import {withContent} from '../../../components/hoc/withContent';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {translate} from '../../../services/translationService';
@@ -11,16 +12,22 @@ export interface VisibilitySummaryProps {
   checkedMeters: uuid[];
 }
 
-export const VisibilitySummary = withCssStyles(
-  ({checkedMeters, allMeters, cssStyles: {primary: {fg}}}: VisibilitySummaryProps & ThemeContext) => {
+interface ContentProps {
+  fg: string;
+  count: number;
+}
+
+type Props = VisibilitySummaryProps & ThemeContext;
+
+const ContentComponent = withContent(({fg, count}: ContentProps) => (
+  <RowCenter style={{color: fg, margin: '16px 16px 0 16px'}}>
+    {translate('{{count}} meters are not shown in the graph. Choose which meters you want to see with', {count})}
+    <ContentFilterList color={fg} style={{marginLeft: 8}}/>
+  </RowCenter>
+));
+
+export const VisibilitySummary = withCssStyles(({checkedMeters, allMeters, cssStyles: {primary: {fg}}}: Props) => {
     const count = difference(allMeters, checkedMeters).length;
-    return count > 0
-      ? (
-        <RowCenter style={{color: fg, margin: '16px 16px 0 16px'}}>
-          {translate('{{count}} meters are not shown in the graph. Choose which meters you want to see with', {count})}
-          <ContentFilterList color={fg} style={{marginLeft: 8}}/>
-        </RowCenter>
-      )
-      : null;
+    return <ContentComponent hasContent={count > 0} count={count} fg={fg}/>;
   }
 );
