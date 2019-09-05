@@ -206,6 +206,18 @@ export const getBatchReferencesParameters = createSelector<RootState, RootState,
     ])
 );
 
+export const getDevicesParameters = createSelector<RootState, RootState, EncodedUriParameters>(
+  identity,
+  ({
+    paginatedDomainModels: {devices: {sort}},
+    ui: {pagination: {devices: pagination}},
+  }: RootState) =>
+    encodedUriParametersFrom([
+      ...toPaginationApiParameters(pagination),
+      ...toSortParameters(sort),
+    ])
+);
+
 export const getCollectionStatsParameters = createSelector<RootState, RootState, EncodedUriParameters>(
   identity,
   ({

@@ -158,6 +158,7 @@ export const enum Sectors {
   batchReferences = 'batchReferences',
   collection = 'collection',
   collectionStatFacilities = 'collectionStatFacilities',
+  devices = 'devices',
   meterCollection = 'meterCollection',
   meterCollectionStatFacilities = 'meterCollectionStatFacilities',
   organisationSummary = 'organisationSummary',

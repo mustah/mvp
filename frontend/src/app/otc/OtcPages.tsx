@@ -18,6 +18,7 @@ export const OtcPages = () => (
 
     <Route exact={true} path={routes.otcDevices} component={Devices}/>
     <Route exact={true} path={routes.otcDevicesAdd} component={DevicesAdd}/>
+    <Route exact={true} path={`${routes.otcDevicesModify}/:id`} component={DevicesAdd}/>
 
     <Route exact={true} path={routes.otcBatchReferences} component={BatchReferences}/>
     <Route exact={true} path={routes.otcBatchReferencesCreate} component={BatchReferencesCreate}/>

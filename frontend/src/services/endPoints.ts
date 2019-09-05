@@ -35,5 +35,6 @@ export const enum EndPoints {
   quantities = '/meter-definitions/quantities',
   widgets = '/dashboards/widgets',
 
-  batches = '/batches'
+  batches = '/batches',
+  devices = '/devices',
 }

@@ -47,6 +47,15 @@ msgstr "confirmation status"
 msgid "add device"
 msgstr "lägg till enhet"
 
+msgid "device eui"
+msgstr "device eui"
+
+msgid "claim status"
+msgstr "claim-status"
+
+msgid "no devices"
+msgstr "inga enheter"
+
 msgid "{{count}} meters are not shown in the graph. Choose which meters you want to see with"
 msgstr "{{count}} mätare visas inte i grafen. Välj vilka mätare du vill se med"
 

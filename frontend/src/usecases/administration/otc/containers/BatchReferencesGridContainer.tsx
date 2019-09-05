@@ -12,7 +12,7 @@ import {
 import {changePage} from '../../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../../state/ui/pagination/paginationModels';
 import {getBatchReferencesParameters} from '../../../../state/user-selection/userSelectionSelectors';
-import {BatchReferenceGrid} from '../components/BatchReferenceGrid';
+import {BatchReferencesGrid} from '../components/BatchReferencesGrid';
 
 const mapStateToProps = (rootState: RootState): StateToProps<BatchReference> => {
   const {
@@ -42,4 +42,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   sortTable: sortBatchReferences,
 }, dispatch);
 
-export const BatchReferenceGridContainer = connect(mapStateToProps, mapDispatchToProps)(BatchReferenceGrid);
+export const BatchReferencesGridContainer = connect(mapStateToProps, mapDispatchToProps)(BatchReferencesGrid);

@@ -45,6 +45,7 @@ describe('meterApiActions', () => {
   const initialRootState: Partial<RootState> = {
     paginatedDomainModels: {
       batchReferences: emptyState,
+      devices: emptyState,
       meters: emptyState,
       gateways: emptyState,
       collectionStatFacilities: emptyState,
@@ -141,6 +142,7 @@ describe('meterApiActions', () => {
             result: {[existingPage]: {isFetching: false, isSuccessfullyFetched: true, result: []}},
           },
           batchReferences: emptyState,
+          devices: emptyState,
           gateways: emptyState,
           collectionStatFacilities: emptyState,
           meterCollectionStatFacilities: emptyState,
@@ -164,6 +166,7 @@ describe('meterApiActions', () => {
             result: {[existingPage]: {isFetching: true, isSuccessfullyFetched: false, result: []}},
           },
           batchReferences: emptyState,
+          devices: emptyState,
           gateways: emptyState,
           collectionStatFacilities: emptyState,
           meterCollectionStatFacilities: emptyState,
@@ -194,6 +197,7 @@ describe('meterApiActions', () => {
             },
           },
           batchReferences: emptyState,
+          devices: emptyState,
           gateways: emptyState,
           collectionStatFacilities: emptyState,
           meterCollectionStatFacilities: emptyState,
