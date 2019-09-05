@@ -3,6 +3,7 @@ import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {
+  clearReport,
   selectResolution,
   setReportTimePeriod,
   toggleComparePeriod,
@@ -30,8 +31,9 @@ interface StateToProps extends ToolbarViewSettingsProps, ResolutionAware {
 
 interface DispatchToProps {
   changeToolbarView: OnChangeToolbarView;
-  selectResolution: CallbackWith<TemporalResolution>;
+  clearReport: Callback;
   exportToExcel: Callback;
+  selectResolution: CallbackWith<TemporalResolution>;
   setReportTimePeriod: CallbackWith<SelectionInterval>;
   toggleComparePeriod: Callback;
   toggleShowAverage: Callback;
@@ -63,6 +65,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView: changeToolbarView(ReportSector.selectionReport),
+  clearReport,
   exportToExcel: exportSelectionReportToExcel,
   selectResolution: selectResolution(ReportSector.selectionReport),
   setReportTimePeriod: setReportTimePeriod(ReportSector.selectionReport),

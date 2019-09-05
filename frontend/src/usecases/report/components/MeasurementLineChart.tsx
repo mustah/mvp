@@ -4,7 +4,7 @@ import '../../../components/timestamp-info-message/TimestampInfoMessage.scss';
 import {GraphContents} from '../../../state/report/reportModels';
 import {useFetchMeasurements} from '../../../state/ui/graph/measurement/measurementHook';
 import {useGraphContents} from '../../../state/ui/graph/measurement/measurementSelectors';
-import {DispatchToProps, StateToProps} from '../containers/MeasurementsContainer';
+import {DispatchToProps, StateToProps} from '../containers/ReportMeasurementsContainer';
 import {LineChartComponent} from './line-chart/LineChartComponent';
 import {VisibilitySummary} from './VisibilitySummary';
 

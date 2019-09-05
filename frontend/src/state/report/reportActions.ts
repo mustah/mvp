@@ -59,6 +59,8 @@ export const removeAllByType = (sector: ReportSector) =>
 export const setReportTimePeriod = (sector: ReportSector) =>
   createStandardAction(`SET_REPORT_TIME_PERIOD_${sector}`)<SelectionInterval>();
 
+export const clearReport = createAction(`CLEAR_REPORT`);
+
 export const limit = 500;
 export const numPreselected = 10;
 

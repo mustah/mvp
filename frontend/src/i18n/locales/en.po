@@ -766,6 +766,9 @@ msgstr "search result: {{query}}"
 msgid "reset selection"
 msgstr "reset selection"
 
+msgid "clear report"
+msgstr "clear report"
+
 msgid "save as"
 msgstr "save as"
 

@@ -12,6 +12,7 @@ import {UserSelection} from '../../user-selection/userSelectionModels';
 import {initialState as initialUserSelection} from '../../user-selection/userSelectionReducer';
 import {
   addLegendItems,
+  clearReport,
   removeAllByType,
   showHideAllByType,
   showHideLegendRows,
@@ -394,6 +395,17 @@ describe('reportReducer', () => {
         );
 
         expect(getLegendItems(nextState)).toEqual(items);
+      });
+    });
+
+    describe('clear report', () => {
+
+      it('resets state when clean report action is called', () => {
+        const state: SavedReportsState = savedReportsWith([gasMeter, {...gasMeter, id: 8}]);
+
+        const nextState: SavedReportsState = reportReducer(state, clearReport());
+
+        expect(nextState).toEqual(initialSavedReportState);
       });
     });
 

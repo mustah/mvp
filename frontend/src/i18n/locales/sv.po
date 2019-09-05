@@ -838,6 +838,9 @@ msgstr "sökresultat: {{query}}"
 msgid "reset selection"
 msgstr "rensa urval"
 
+msgid "clear report"
+msgstr "rensa rapport"
+
 msgid "save as"
 msgstr "spara som"
 

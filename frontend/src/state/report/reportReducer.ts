@@ -8,6 +8,7 @@ import {logoutUser} from '../../usecases/auth/authActions';
 import {Medium} from '../ui/graph/measurement/measurementModels';
 import {
   addLegendItems,
+  clearReport,
   removeAllByType,
   showHideAllByType,
   showHideLegendRows,
@@ -146,8 +147,8 @@ const showHideAll = (state: SavedReportsState, legendType: LegendType): SavedRep
 
 const identity = (state, _, __) => state;
 
-const logoutReducer = <S>(state: S, {type}: EmptyAction<string>, initialState: S): S =>
-  type === getType(logoutUser) ? initialState : state;
+const resetReportReducer = <S>(state: S, {type}: EmptyAction<string>, initialState: S): S =>
+  type === getType(logoutUser) || type === getType(clearReport) ? initialState : state;
 
 const reducerFor = (sector: ReportSector, resetState = identity) =>
   (state: SavedReportsState = initialSavedReportState, action: ActionTypes): SavedReportsState => {
@@ -173,7 +174,7 @@ const reducerFor = (sector: ReportSector, resetState = identity) =>
     }
   };
 
-export const reportReducer = reducerFor(ReportSector.report, logoutReducer);
+export const reportReducer = reducerFor(ReportSector.report, resetReportReducer);
 export const selectionReportReducer = reducerFor(ReportSector.selectionReport, resetReducer);
 
 export const report = combineReducers<ReportState>({

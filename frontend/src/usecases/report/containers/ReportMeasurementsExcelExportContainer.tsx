@@ -12,12 +12,12 @@ import {
 } from '../../../state/ui/graph/measurement/measurementHook';
 import {fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {MeasurementsExportExcelContainer} from './MeasurementsExportExcelContainer';
+import {ReportMeasurementsExportExcelContainer} from './ReportMeasurementsExportExcelContainer';
 
 const ReportMeasurementsExcelExport = (props: FetchMeasurementProps) => {
   useFetchMeasurements(props);
 
-  return <MeasurementsExportExcelContainer/>;
+  return <ReportMeasurementsExportExcelContainer/>;
 };
 
 const mapStateToProps = (rootState: RootState): StateToProps => {

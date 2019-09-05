@@ -14,7 +14,7 @@ import {SelectionInterval} from '../../../../state/user-selection/userSelectionM
 import {getUserSelectionId} from '../../../../state/user-selection/userSelectionSelectors';
 import {uuid} from '../../../../types/Types';
 import {Measurements} from '../../../report/components/Measurements';
-import {DispatchToProps, StateToProps} from '../../../report/containers/MeasurementsContainer';
+import {DispatchToProps, StateToProps} from '../../../report/containers/ReportMeasurementsContainer';
 import {meterDetailExportToExcelSuccess as exportToExcelSuccess} from '../meterDetailMeasurementActions';
 import {getMeasurementParameters, getMeterResolution, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
 

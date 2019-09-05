@@ -3,17 +3,17 @@ import {Column} from '../../../components/layouts/column/Column';
 import {useToggleVisibility} from '../../../hooks/toogleVisibilityHook';
 import {ToolbarView, ToolbarViewSettingsProps} from '../../../state/ui/toolbar/toolbarModels';
 import {LegendContainer} from '../containers/LegendContainer';
-import {GraphContainer, MeasurementsContainer} from '../containers/MeasurementsContainer';
+import {GraphContainer, MeasurementsContainer} from '../containers/ReportMeasurementsContainer';
 import {ReportMeasurementsExcelExportContainer} from '../containers/ReportMeasurementsExcelExportContainer';
-import {ToolbarContainer} from '../containers/ToolbarContainer';
+import {ReportToolbarContainer} from '../containers/ReportToolbarContainer';
 
 const display = (show: boolean): string => show ? 'flex' : 'none';
 
-export const MeasurementContent = ({view}: ToolbarViewSettingsProps) => {
+export const MeasurementsContent = ({view}: ToolbarViewSettingsProps) => {
   const {isVisible, showHide} = useToggleVisibility(false);
   return (
     <Column>
-      <ToolbarContainer showHideLegend={showHide}/>
+      <ReportToolbarContainer showHideLegend={showHide}/>
 
       <ReportMeasurementsExcelExportContainer/>
 
