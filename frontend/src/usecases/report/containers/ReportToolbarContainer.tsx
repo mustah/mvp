@@ -3,6 +3,7 @@ import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {
+  clearReport,
   selectResolution,
   setReportTimePeriod,
   toggleComparePeriod,
@@ -18,6 +19,7 @@ import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {ReportToolbar} from '../components/ReportToolbar';
 
 interface StateToProps extends ResolutionAware, ToolbarViewSettingsProps {
+  canClearReport?: boolean;
   canShowAverage: boolean;
   hasLegendItems: boolean;
   hasMeasurements: boolean;
@@ -30,8 +32,9 @@ interface StateToProps extends ResolutionAware, ToolbarViewSettingsProps {
 
 interface DispatchToProps {
   changeToolbarView: OnChangeToolbarView;
-  selectResolution: CallbackWith<TemporalResolution>;
+  clearReport: Callback;
   exportToExcel: Callback;
+  selectResolution: CallbackWith<TemporalResolution>;
   setReportTimePeriod: CallbackWith<SelectionInterval>;
   toggleComparePeriod: Callback;
   toggleShowAverage: Callback;
@@ -49,6 +52,7 @@ const mapStateToProps = ({
   ui: {toolbar: {measurement: {view}}}
 }: RootState): StateToProps =>
   ({
+    canClearReport: true,
     canShowAverage: getMeterLegendItems(savedReports).length > 1,
     hasLegendItems: hasLegendItems(savedReports),
     hasMeasurements: measurements.length > 0 || compare.length > 0,
@@ -63,6 +67,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView: changeToolbarView(ReportSector.report),
+  clearReport,
   exportToExcel: exportReportToExcel,
   selectResolution: selectResolution(ReportSector.report),
   setReportTimePeriod: setReportTimePeriod(ReportSector.report),

@@ -10,7 +10,7 @@ import {changeToolbarView} from '../../toolbar/toolbarActions';
 import * as actions from './measurementActions';
 import {MeasurementResponse, MeasurementState} from './measurementModels';
 
-type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search>
+type ActionTypes = ActionType<typeof actions | typeof reportActions | typeof search | typeof reportActions.clearReport>
   | Action<Maybe<ErrorResponse> | MeasurementResponse | string | SelectionInterval>;
 
 export const initialState: MeasurementState = {
@@ -61,6 +61,7 @@ const measurementReducerFor =
         case getType(reportActions.removeAllByType(sector)):
         case getType(reportActions.toggleQuantityByType(sector)):
         case getType(reportActions.toggleQuantityById(sector)):
+        case getType(reportActions.clearReport):
         case getType(changeToolbarView(ReportSector.report)):
         case getType(changeToolbarView(ReportSector.selectionReport)):
           return initialState;

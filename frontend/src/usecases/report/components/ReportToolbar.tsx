@@ -6,17 +6,19 @@ import Toggle from 'material-ui/Toggle';
 import * as React from 'react';
 import {colors} from '../../../app/colors';
 import {iconSizeMedium} from '../../../app/themes';
+import {ButtonLink} from '../../../components/buttons/ButtonLink';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
+import {withContent} from '../../../components/hoc/withContent';
 import {ThemeContext, withCssStyles} from '../../../components/hoc/withThemeProvider';
 import {Row, RowMiddle} from '../../../components/layouts/row/Row';
 import {Toolbar, ToolbarLeftPane, ToolbarRightPane, ToolbarViewSettings} from '../../../components/toolbar/Toolbar';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
-import {Clickable} from '../../../types/Types';
+import {Callback, Clickable} from '../../../types/Types';
 import {Props} from '../containers/ReportToolbarContainer';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
 import SvgIconProps = __MaterialUI.SvgIconProps;
@@ -32,10 +34,24 @@ const LegendActionButton = ({color, onClick, disabled}: Clickable & FlatButtonPr
   </ToolbarIconButton>
 );
 
+interface ClearReportButtonProps {
+  clearReport: Callback;
+}
+
+const ClearReportButton = withContent(({clearReport}: ClearReportButtonProps) => (
+  <Row style={{marginLeft: 8, padding: 16}}>
+    <ButtonLink onClick={clearReport}>
+      {firstUpperTranslated('clear report')}
+    </ButtonLink>
+  </Row>
+));
+
 export const ReportToolbar = withCssStyles(({
+  canClearReport,
   canShowAverage,
   cssStyles: {primary: {fg, fgHover}},
   changeToolbarView,
+  clearReport,
   hasLegendItems,
   hasMeasurements,
   resolution,
@@ -94,6 +110,8 @@ export const ReportToolbar = withCssStyles(({
           >
             <CloudDownload color={fg} hoverColor={fgHover}/>
           </ToolbarIconButton>
+
+          <ClearReportButton clearReport={clearReport} hasContent={!!canClearReport && hasLegendItems}/>
         </RowMiddle>
       </ToolbarLeftPane>
 
