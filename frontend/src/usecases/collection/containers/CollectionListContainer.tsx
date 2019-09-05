@@ -16,9 +16,13 @@ import {
   getCollectionStatsParameters
 } from '../../../state/user-selection/userSelectionSelectors';
 import {collectionStatsExportToExcelSuccess as exportToExcelSuccess} from '../collectionActions';
-import {CollectionListContent, DispatchToProps, StateToProps} from '../components/CollectionListContent';
+import {
+  CollectionListContent,
+  CollectionStatsDispatchToProps,
+  CollectionStatsStateToProps
+} from '../components/CollectionListContent';
 
-const mapStateToProps = (rootState: RootState): StateToProps => {
+const mapStateToProps = (rootState: RootState): CollectionStatsStateToProps => {
   const {
     collection: {isExportingToExcel},
     domainModels: {allCollectionStats},
@@ -48,13 +52,16 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
   });
 };
 
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch): CollectionStatsDispatchToProps => bindActionCreators({
   changePage,
   exportToExcelSuccess,
   fetchAllCollectionStats,
-  fetchCollectionStatsFacilityPaged,
+  fetchPaginated: fetchCollectionStatsFacilityPaged,
   sortTable,
 }, dispatch);
 
 export const CollectionListContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionListContent);
+  connect<CollectionStatsStateToProps, CollectionStatsDispatchToProps>(
+    mapStateToProps,
+    mapDispatchToProps
+  )(CollectionListContent);

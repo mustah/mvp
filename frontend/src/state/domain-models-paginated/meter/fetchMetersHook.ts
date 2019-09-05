@@ -3,14 +3,14 @@ import {EncodedUriParameters, FetchPaginated} from '../../../types/Types';
 import {SortOption} from '../../ui/pagination/paginationModels';
 
 interface FetchMetersProps {
-  fetchMeters: FetchPaginated;
+  fetchPaginated: FetchPaginated;
   page: number;
   parameters: EncodedUriParameters;
   sort?: SortOption[];
 }
 
-export const useFetchMeters = ({fetchMeters, page, parameters, sort}: FetchMetersProps) => {
+export const useFetchMeters = ({fetchPaginated, page, parameters, sort}: FetchMetersProps) => {
   React.useEffect(() => {
-    fetchMeters(page, parameters, sort);
+    fetchPaginated(page, parameters, sort);
   }, [page, parameters, sort]);
 };

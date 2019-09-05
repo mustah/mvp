@@ -20,8 +20,8 @@ import {EncodedUriParameters, uuid} from '../../../../types/Types';
 import {meterCollectionStatsExportToExcelSuccess as exportToExcelSuccess} from '../../../collection/collectionActions';
 import {
   CollectionListContent,
-  DispatchToProps,
-  StateToProps
+  CollectionStatsDispatchToProps,
+  CollectionStatsStateToProps
 } from '../../../collection/components/CollectionListContent';
 
 interface OwnProps {
@@ -39,7 +39,7 @@ const mapStateToProps = (
     userSelection: {userSelection}
   }: RootState,
   {meterId}: OwnProps,
-): StateToProps => {
+): CollectionStatsStateToProps => {
   const pagination: Pagination = paginationState.meterCollectionStatFacilities;
   const {page, totalElements} = pagination;
   const {sort} = meterCollectionStatFacilities;
@@ -71,13 +71,16 @@ const mapStateToProps = (
   });
 };
 
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch): CollectionStatsDispatchToProps => bindActionCreators({
   changePage,
   exportToExcelSuccess,
   fetchAllCollectionStats: noop,
-  fetchCollectionStatsFacilityPaged,
+  fetchPaginated: fetchCollectionStatsFacilityPaged,
   sortTable,
 }, dispatch);
 
 export const CollectionListContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(CollectionListContent);
+  connect<CollectionStatsStateToProps, CollectionStatsDispatchToProps, OwnProps>(
+    mapStateToProps,
+    mapDispatchToProps
+  )(CollectionListContent);
