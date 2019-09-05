@@ -70,5 +70,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleShowAverage: toggleShowAverage(ReportSector.report),
 }, dispatch);
 
-export const ToolbarContainer =
+export const ReportToolbarContainer =
   connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(ReportToolbar);

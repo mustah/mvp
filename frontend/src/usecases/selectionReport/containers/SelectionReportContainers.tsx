@@ -24,7 +24,7 @@ import {
 } from '../../../state/user-selection/userSelectionSelectors';
 import {MeasurementLineChart} from '../../report/components/MeasurementLineChart';
 import {Measurements} from '../../report/components/Measurements';
-import {DispatchToProps, StateToProps} from '../../report/containers/MeasurementsContainer';
+import {DispatchToProps, StateToProps} from '../../report/containers/ReportMeasurementsContainer';
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
   const {

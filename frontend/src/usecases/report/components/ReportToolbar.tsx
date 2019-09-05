@@ -17,7 +17,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {Clickable} from '../../../types/Types';
-import {Props} from '../containers/ToolbarContainer';
+import {Props} from '../containers/ReportToolbarContainer';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
 import SvgIconProps = __MaterialUI.SvgIconProps;
 

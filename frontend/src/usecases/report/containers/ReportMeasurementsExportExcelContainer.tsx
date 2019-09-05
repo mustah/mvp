@@ -18,4 +18,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   exportToExcelSuccess: exportToExcelSuccess(ReportSector.report),
 }, dispatch);
 
-export const MeasurementsExportExcelContainer = connect(mapStateToProps, mapDispatchToProps)(MeasurementsExcelExport);
+export const ReportMeasurementsExportExcelContainer =
+  connect(mapStateToProps, mapDispatchToProps)(MeasurementsExcelExport);
