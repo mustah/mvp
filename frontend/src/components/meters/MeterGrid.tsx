@@ -26,7 +26,7 @@ export interface StateToProps extends Fetching, HasContent {
   items: Meter[];
   pagination: Pagination;
   parameters: EncodedUriParameters;
-  sortOptions?: SortOption[];
+  sort?: SortOption[];
   selectedItemId?: uuid;
 }
 
@@ -36,7 +36,7 @@ export interface DispatchToProps {
   deleteMeter: OnDeleteMeter;
   fetchLegendItems: Fetch;
   fetchMeters: FetchPaginated;
-  sortMeters: CallbackWith<SortOption[]>;
+  sortTable: CallbackWith<SortOption[]>;
   syncWithMetering: OnClickWithId;
 }
 
@@ -53,9 +53,9 @@ export const MeterGrid = (props: Props) => {
     fetchLegendItems,
     pagination: {page},
     parameters,
-    sortOptions,
+    sort,
   } = props;
-  useFetchMeters({fetchMeters, parameters, sortOptions, page});
+  useFetchMeters({fetchMeters, parameters, sort, page});
 
   React.useEffect(() => {
     fetchLegendItems(parameters);

@@ -32,7 +32,7 @@ const mapStateToProps = ({
     pagination,
     parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),
     selectedItemId: selectedMeterId,
-    sortOptions: sort,
+    sort,
   });
 };
 
@@ -42,7 +42,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteMeter,
   fetchLegendItems,
   fetchMeters,
-  sortMeters,
+  sortTable: sortMeters,
   syncWithMetering,
 }, dispatch);
 

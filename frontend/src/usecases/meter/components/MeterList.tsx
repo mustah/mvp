@@ -1,4 +1,3 @@
-import {first} from 'lodash';
 import * as React from 'react';
 import {Column, Size, Table, TableCellProps} from 'react-virtualized';
 import {makeVirtualizedGridClassName} from '../../../app/themes';
@@ -7,18 +6,16 @@ import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {ContentProps, InfiniteList, InfiniteListProps} from '../../../components/infinite-list/InfiniteList';
-import {renderText, rowClassName} from '../../../components/infinite-list/infiniteListHelper';
+import {makeSortingProps, renderText, rowClassName} from '../../../components/infinite-list/infiniteListHelper';
 import {RowRight} from '../../../components/layouts/row/Row';
 import {renderLoadingOr} from '../../../components/loading/Loading';
 import {DispatchToProps, StateToProps} from '../../../components/meters/MeterGrid';
 import {MeterLink} from '../../../components/meters/MeterLink';
 import {AlarmStatus} from '../../../components/status/MeterAlarms';
-import {Maybe} from '../../../helpers/Maybe';
 import {orUnknown} from '../../../helpers/translations';
-import {RequestParameter} from '../../../helpers/urlFactory';
 import {firstUpper, firstUpperTranslated, translate} from '../../../services/translationService';
 import {uuid} from '../../../types/Types';
-import {defaultSortProps, OwnProps, SortProps, SortTableProps} from '../meterModels';
+import {facilitySortOptions, OwnProps} from '../meterModels';
 
 const renderMeterListItem = ({rowData: {facility, id}}: TableCellProps) => <MeterLink facility={facility} id={id}/>;
 const renderAlarm = ({rowData}: TableCellProps) => <AlarmStatus hasAlarm={rowData.alarm!}/>;
@@ -37,8 +34,8 @@ export const MeterList = ({
   pagination,
   paddingBottom,
   selectedItemId,
-  sortOptions,
-  sortMeters,
+  sort,
+  sortTable,
   syncWithMetering,
 }: Props & ThemeContext) => {
   const {page} = pagination;
@@ -64,15 +61,6 @@ export const MeterList = ({
     );
   };
 
-  const sortProps: SortProps = Maybe.maybe(first(sortOptions))
-    .map(({field: sortBy, dir}): SortProps => ({sortBy, sortDirection: dir || 'ASC'}))
-    .orElse(defaultSortProps);
-
-  const sortTableProps: SortTableProps = {
-    sort: ({sortDirection: dir, sortBy: field}) => sortMeters([{dir, field: field as RequestParameter}]),
-    ...sortProps,
-  };
-
   const renderContent = ({hasItem, rowHeight, scrollProps, ...props}: ContentProps) =>
     (size: Size) => (
       <Table
@@ -83,7 +71,7 @@ export const MeterList = ({
         {...size}
         {...props}
         {...scrollProps}
-        {...sortTableProps}
+        {...makeSortingProps({sort, sortTable, sortOptions: facilitySortOptions})}
       >
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderMeterListItem)}

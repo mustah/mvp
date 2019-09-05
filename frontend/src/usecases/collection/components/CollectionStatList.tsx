@@ -1,19 +1,16 @@
 import {ExcelExport, ExcelExportColumn} from '@progress/kendo-react-excel-export';
-import {first} from 'lodash';
 import * as React from 'react';
 import {Column, Size, Table, TableCellProps} from 'react-virtualized';
 import {makeVirtualizedGridClassName} from '../../../app/themes';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {ContentProps, InfiniteList, InfiniteListProps} from '../../../components/infinite-list/InfiniteList';
-import {rowClassName} from '../../../components/infinite-list/infiniteListHelper';
+import {makeSortingProps, rowClassName} from '../../../components/infinite-list/infiniteListHelper';
 import {renderLoadingOr} from '../../../components/loading/Loading';
 import {MeterLink} from '../../../components/meters/MeterLink';
 import {formatCollectionPercentage, formatReadInterval} from '../../../helpers/formatters';
-import {Maybe} from '../../../helpers/Maybe';
-import {RequestParameter} from '../../../helpers/urlFactory';
 import {useExportToExcel} from '../../../hooks/exportToExcelHook';
 import {translate} from '../../../services/translationService';
-import {defaultSortProps, SortProps, SortTableProps} from '../../meter/meterModels';
+import {facilitySortOptions} from '../../meter/meterModels';
 import {Props} from './CollectionListContent';
 
 const renderMeterListItem = ({rowData: {facility, id}}: TableCellProps) =>
@@ -47,15 +44,6 @@ export const CollectionStatList = ({
     save
   });
 
-  const sortProps: SortProps = Maybe.maybe(first(sort))
-    .map(({field: sortBy, dir}): SortProps => ({sortBy, sortDirection: dir || 'ASC'}))
-    .orElse(defaultSortProps);
-
-  const sortTableProps: SortTableProps = {
-    sort: ({sortDirection: dir, sortBy: field}) => sortTable([{dir, field: field as RequestParameter}]),
-    ...sortProps,
-  };
-
   const renderContent = ({hasItem, scrollProps, rowHeight, ...props}: ContentProps) =>
     (size: Size) => (
       <Table
@@ -66,7 +54,7 @@ export const CollectionStatList = ({
         {...size}
         {...props}
         {...scrollProps}
-        {...sortTableProps}
+        {...makeSortingProps({sort, sortTable, sortOptions: facilitySortOptions})}
       >
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderMeterListItem)}

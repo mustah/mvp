@@ -6,11 +6,11 @@ interface FetchMetersProps {
   fetchMeters: FetchPaginated;
   page: number;
   parameters: EncodedUriParameters;
-  sortOptions?: SortOption[];
+  sort?: SortOption[];
 }
 
-export const useFetchMeters = ({fetchMeters, page, parameters, sortOptions}: FetchMetersProps) => {
+export const useFetchMeters = ({fetchMeters, page, parameters, sort}: FetchMetersProps) => {
   React.useEffect(() => {
-    fetchMeters(page, parameters, sortOptions);
-  }, [page, parameters, sortOptions]);
+    fetchMeters(page, parameters, sort);
+  }, [page, parameters, sort]);
 };
