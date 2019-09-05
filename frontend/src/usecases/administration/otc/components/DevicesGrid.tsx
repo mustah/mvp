@@ -1,4 +1,3 @@
-import {first} from 'lodash';
 import * as React from 'react';
 import {Column, Size, Table, TableCellProps} from 'react-virtualized';
 import {compose} from 'recompose';
@@ -14,14 +13,11 @@ import {
   InfiniteListProps,
   StateToProps
 } from '../../../../components/infinite-list/InfiniteList';
-import {rowClassName} from '../../../../components/infinite-list/infiniteListHelper';
+import {makeSortingProps, rowClassName} from '../../../../components/infinite-list/infiniteListHelper';
 import {renderLoadingOr} from '../../../../components/loading/Loading';
 import {Separator} from '../../../../components/separators/Separator';
-import {Maybe} from '../../../../helpers/Maybe';
-import {RequestParameter} from '../../../../helpers/urlFactory';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {Device} from '../../../../state/domain-models-paginated/devices/deviceModels';
-import {defaultSortProps, SortProps, SortTableProps} from '../../../meter/meterModels';
 import {LinkTo} from './LinkTo';
 
 type Props = StateToProps<Device> & DispatchToProps;
@@ -47,14 +43,6 @@ const Grid = ({
   sort,
   sortTable,
 }: GridProps) => {
-  const sortProps: SortProps = Maybe.maybe(first(sort))
-    .map(({field: sortBy, dir}): SortProps => ({sortBy, sortDirection: dir || 'ASC'}))
-    .orElse(defaultSortProps);
-
-  const sortTableProps: SortTableProps = {
-    sort: ({sortDirection: dir, sortBy: field}) => sortTable([{dir, field: field as RequestParameter}]),
-    ...sortProps,
-  };
 
   const renderContent = ({hasItem, scrollProps, rowHeight, ...props}: ContentProps) =>
     (size: Size) => (
@@ -66,7 +54,7 @@ const Grid = ({
         {...size}
         {...props}
         {...scrollProps}
-        {...sortTableProps}
+        {...makeSortingProps({sort, sortTable})}
       >
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderId)}

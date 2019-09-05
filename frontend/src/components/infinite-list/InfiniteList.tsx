@@ -37,8 +37,9 @@ interface TableScrollProps {
 
 export interface StateToProps<T> extends EntityTyped, Fetching, HasContent {
   items: T[];
-  parameters: EncodedUriParameters;
   pagination: Pagination;
+  parameters: EncodedUriParameters;
+  selectedItemId?: uuid;
   sort?: SortOption[];
 }
 

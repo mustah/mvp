@@ -1,25 +1,25 @@
 import Checkbox from 'material-ui/Checkbox';
 import React from 'react';
 import {ValidatorForm} from 'react-material-ui-form-validator';
-import {firstUpperTranslated} from '../../services/translationService';
+import {ButtonSave} from '../../../../components/buttons/ButtonSave';
+import {withCssStyles} from '../../../../components/hoc/withThemeProvider';
+import {ValidatedFieldInput} from '../../../../components/inputs/ValidatedFieldInput';
+import {ValidatedInputSelectable} from '../../../../components/inputs/ValidatedInputSelectable';
+import {Column} from '../../../../components/layouts/column/Column';
+import {firstUpperTranslated} from '../../../../services/translationService';
 import {
   Medium,
   MeterDefinition,
   MeterDefinitionMaybeId,
   Quantity,
-} from '../../state/domain-models/meter-definitions/meterDefinitionModels';
+} from '../../../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {
   noOrganisation,
   noOrganisationId,
   Organisation
-} from '../../state/domain-models/organisation/organisationModels';
-import {CallbackWith, uuid} from '../../types/Types';
-import {QuantityList} from '../../usecases/administration/components/QuantityList';
-import {ButtonSave} from '../buttons/ButtonSave';
-import {withCssStyles} from '../hoc/withThemeProvider';
-import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
-import {ValidatedInputSelectable} from '../inputs/ValidatedInputSelectable';
-import {Column} from '../layouts/column/Column';
+} from '../../../../state/domain-models/organisation/organisationModels';
+import {CallbackWith, uuid} from '../../../../types/Types';
+import {QuantityList} from '../../components/QuantityList';
 
 const mediumById = (mediumId: number, mediums: Medium[]): Medium =>
   mediums.find(({id}) => id === mediumId)!;

@@ -1,8 +1,10 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {DispatchToProps, MeterGrid, StateToProps} from '../components/meters/MeterGrid';
+import {StateToProps} from '../components/infinite-list/InfiniteList';
+import {MeterDispatchToProps, MeterGrid} from '../components/meters/MeterGrid';
 import {RootState} from '../reducers/rootReducer';
 import {deleteMeter, fetchMeters} from '../state/domain-models-paginated/meter/meterApiActions';
+import {Meter} from '../state/domain-models-paginated/meter/meterModels';
 import {sortMeters} from '../state/domain-models-paginated/paginatedDomainModelsActions';
 import {getAllMeters, getPageIsFetching} from '../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {addToReport, fetchLegendItems} from '../state/report/reportActions';
@@ -19,32 +21,33 @@ const mapStateToProps = ({
   summary: {payload: {numMeters}},
   ui: {pagination: paginationState},
   userSelection: {userSelection}
-}: RootState): StateToProps => {
+}: RootState): StateToProps<Meter> => {
   const pagination: Pagination = paginationState.meters;
   const {page, totalElements} = pagination;
   const {sort} = meters;
   const isFetching = getPageIsFetching(meters, page);
 
   return ({
+    entityType: 'meters',
     isFetching,
     hasContent: isFetching || totalElements > 0 || numMeters > 0,
     items: getAllMeters(meters),
     pagination,
     parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),
     selectedItemId: selectedMeterId,
-    sortOptions: sort,
+    sort,
   });
 };
 
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch): MeterDispatchToProps => bindActionCreators({
   addToReport,
   changePage,
   deleteMeter,
   fetchLegendItems,
-  fetchMeters,
-  sortMeters,
+  fetchPaginated: fetchMeters,
+  sortTable: sortMeters,
   syncWithMetering,
 }, dispatch);
 
 export const MeterGridContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeterGrid);
+  connect<StateToProps<Meter>, MeterDispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeterGrid);

@@ -80,10 +80,7 @@ class EditProfile extends React.Component<Props> {
               />
             </Column>
             <Column style={passwordChangeStyle}>
-              <PasswordEditForm
-                onSubmit={changePassword}
-                user={user}
-              />
+              <PasswordEditForm onSubmit={changePassword} user={user}/>
             </Column>
           </Row>
         </Paper>

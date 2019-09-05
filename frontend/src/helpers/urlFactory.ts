@@ -36,6 +36,7 @@ export enum RequestParameter {
   facility = 'facility',
   gatewayId = 'gatewayId',
   gatewaySerial = 'gatewaySerial',
+  id = 'id',
   label = 'label',
   logicalMeterId = 'logicalMeterId',
   manufacturer = 'manufacturer',

@@ -101,10 +101,7 @@ class UserEdit extends React.Component<Props, {}> {
               </Column>
 
               <Column style={passwordChangeStyle}>
-                <PasswordEditForm
-                  onSubmit={changePassword}
-                  user={users[userId]}
-                />
+                <PasswordEditForm onSubmit={changePassword} user={users[userId]}/>
               </Column>
             </Row>
           </RetryLoader>

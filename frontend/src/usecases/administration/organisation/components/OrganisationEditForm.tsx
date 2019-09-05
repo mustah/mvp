@@ -1,23 +1,23 @@
 import {omit} from 'lodash';
 import * as React from 'react';
 import {Overwrite} from 'utility-types';
-import {routes} from '../../app/routes';
-import {absoluteUrlFromPath, slugOfHostname} from '../../helpers/urlFactory';
-import {firstUpperTranslated} from '../../services/translationService';
+import {routes} from '../../../../app/routes';
+import {ButtonSave} from '../../../../components/buttons/ButtonSave';
+import {ThemeContext, withCssStyles} from '../../../../components/hoc/withThemeProvider';
+import {SelectFieldInput} from '../../../../components/inputs/InputSelectable';
+import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
+import {Column} from '../../../../components/layouts/column/Column';
+import {Row} from '../../../../components/layouts/row/Row';
+import {Link, LinkProps} from '../../../../components/links/Link';
+import {absoluteUrlFromPath, slugOfHostname} from '../../../../helpers/urlFactory';
+import {firstUpperTranslated} from '../../../../services/translationService';
 import {
   noOrganisation,
   noOrganisationId,
   Organisation
-} from '../../state/domain-models/organisation/organisationModels';
-import {UserSelection} from '../../state/user-selection/userSelectionModels';
-import {CallbackAny, IdNamed, uuid} from '../../types/Types';
-import {ButtonSave} from '../buttons/ButtonSave';
-import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
-import {SelectFieldInput} from '../inputs/InputSelectable';
-import {TextFieldInput} from '../inputs/TextFieldInput';
-import {Column} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
-import {Link, LinkProps} from '../links/Link';
+} from '../../../../state/domain-models/organisation/organisationModels';
+import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
+import {CallbackAny, IdNamed, uuid} from '../../../../types/Types';
 
 const organisationById = (organisationId: uuid, organisations: Organisation[]): Organisation =>
   organisationId === noOrganisationId
