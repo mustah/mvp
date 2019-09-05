@@ -4,7 +4,7 @@ import * as React from 'react';
 import {RouteComponentProps} from 'react-router';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {paperStyle} from '../../../../app/themes';
-import {MeterDefinitionEditForm} from '../../../../components/forms/MeterDefinitionEditForm';
+import {MeterDefinitionEditForm} from './MeterDefinitionEditForm';
 import {AdminPageLayout} from '../../../../components/layouts/layout/PageLayout';
 import {Loader} from '../../../../components/loading/Loader';
 import {MainTitle} from '../../../../components/texts/Titles';

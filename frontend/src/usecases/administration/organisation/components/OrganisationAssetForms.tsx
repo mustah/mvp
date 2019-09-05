@@ -1,19 +1,19 @@
 import * as React from 'react';
-import {config} from '../../config/config';
-import {firstUpperTranslated} from '../../services/translationService';
-import {Organisation} from '../../state/domain-models/organisation/organisationModels';
+import {ButtonLinkRed} from '../../../../components/buttons/ButtonLink';
+import {ButtonSave} from '../../../../components/buttons/ButtonSave';
+import {ThemeContext} from '../../../../components/hoc/withThemeProvider';
+import {Column} from '../../../../components/layouts/column/Column';
+import {Row} from '../../../../components/layouts/row/Row';
+import {config} from '../../../../config/config';
+import {firstUpperTranslated} from '../../../../services/translationService';
+import {Organisation} from '../../../../state/domain-models/organisation/organisationModels';
 import {
   AssetTyped,
   AssetTypeForOrganisation,
   OrganisationAssetType
-} from '../../state/domain-models/organisation/organisationsApiActions';
-import '../../usecases/administration/components/OrganisationForm.scss';
-import {ColorPickersContainer} from '../../usecases/administration/organisation/containers/ColorPickersContainer';
-import {ButtonLinkRed} from '../buttons/ButtonLink';
-import {ButtonSave} from '../buttons/ButtonSave';
-import {ThemeContext} from '../hoc/withThemeProvider';
-import {Column} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
+} from '../../../../state/domain-models/organisation/organisationsApiActions';
+import '../../components/OrganisationForm.scss';
+import {ColorPickersContainer} from '../containers/ColorPickersContainer';
 
 export interface AssetFormProps {
   organisation: Organisation;
