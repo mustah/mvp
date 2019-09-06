@@ -7,7 +7,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {useExportToExcel} from '../../../hooks/exportToExcelHook';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
-import {Callback, EncodedUriParameters, HasContent} from '../../../types/Types';
+import {Callback, HasContent} from '../../../types/Types';
 import {renderColumns} from '../helpers/measurementGridHelper';
 import WorkbookSheet = kendo.ooxml.WorkbookSheet;
 import WorkbookSheetRow = kendo.ooxml.WorkbookSheetRow;
@@ -52,7 +52,6 @@ const save = (exporter: React.RefObject<ExcelExport>): void => {
 
 export interface StateToProps extends HasContent {
   measurement: MeasurementState;
-  parameters: EncodedUriParameters;
 }
 
 export interface DispatchToProps {

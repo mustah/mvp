@@ -15,10 +15,9 @@ import {getUserSelectionId} from '../../../../state/user-selection/userSelection
 import {uuid} from '../../../../types/Types';
 import {Measurements} from '../../../report/components/Measurements';
 import {DispatchToProps, StateToProps} from '../../../report/containers/ReportMeasurementsContainer';
-import {meterDetailExportToExcelSuccess as exportToExcelSuccess} from '../meterDetailMeasurementActions';
 import {getMeasurementParameters, getMeterResolution, hasMeasurementValues} from '../meterDetailMeasurementsSelectors';
 
-export interface OwnProps {
+interface OwnProps {
   meter: MeterDetails;
   useCollectionPeriod?: boolean;
 }
@@ -26,13 +25,16 @@ export interface OwnProps {
 const hiddenLines: uuid[] = [];
 const selectedQuantities: Quantity[] = [];
 
-const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps => {
-  const {
+const mapStateToProps = (
+  {
     domainModels: {userSelections, meterDetailMeasurement},
     meterDetail,
     collection,
     ui,
-  } = rootState;
+    userSelection
+  }: RootState,
+  ownProps: OwnProps
+): StateToProps => {
   const {useCollectionPeriod, meter} = ownProps;
   const timePeriod: SelectionInterval = useCollectionPeriod && !meterDetail.isDirty
     ? collection.timePeriod
@@ -54,13 +56,12 @@ const mapStateToProps = (rootState: RootState, ownProps: OwnProps): StateToProps
     },
     selectedQuantities,
     shouldFetchMeasurements: userSelections.isSuccessfullyFetched,
-    userSelectionId: getUserSelectionId(rootState.userSelection),
+    userSelectionId: getUserSelectionId(userSelection),
   };
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError(ReportSector.meterDetailsReport),
-  exportToExcelSuccess,
   fetchMeasurements,
   fetchUserSelections,
 }, dispatch);
