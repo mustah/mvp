@@ -14,10 +14,7 @@ export const meterDetailMeasurement = (
 ): MeasurementState => {
   switch (action.type) {
     case getType(actions.meterDetailMeasurementRequest):
-      return {
-        ...state,
-        isFetching: true,
-      };
+      return {...state, isFetching: true};
     case getType(actions.meterDetailMeasurementSuccess):
       return {
         ...state,
