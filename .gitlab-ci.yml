@@ -370,7 +370,8 @@ post-staging:acceptance:
     MVP_SERVER: "https://evo-staging.elvaco.se"
     MVP_WEB_PORT: 443
     MVP_API_PORT: 443
-    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
+    MVP_ADMIN_USERNAME: cloudteam@elvaco.se
+    MVP_ADMIN_PASSWORD: uFUPTzLMwWd72WmkxbCgtn96gT
 
 post-staging:performance:
   image: frolvlad/alpine-python3
@@ -430,7 +431,8 @@ post-prod:acceptance:
     MVP_SERVER: "https://evo.elvaco.se"
     MVP_WEB_PORT: 443
     MVP_API_PORT: 443
-    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
+    MVP_ADMIN_USERNAME: cloudteam@elvaco.se
+    MVP_ADMIN_PASSWORD: Zp7bet4mvieLsJxCvSGrPszheYP
 
 finalize:tag-production-mvp-docker:
   extends: .no_cache
