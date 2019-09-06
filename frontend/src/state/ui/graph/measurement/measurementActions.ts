@@ -283,8 +283,8 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
 });
 
 const shouldFetchMeasurementsSelectionReport: FetchIfNeeded = (getState: GetState): boolean => {
-  const {isExportingToExcel, isFetching, isSuccessfullyFetched, error} = getState().selectionMeasurement;
-  return isExportingToExcel || !isSuccessfullyFetched && !isFetching && error.isNothing();
+  const {isFetching, isSuccessfullyFetched, error} = getState().selectionMeasurement;
+  return !isSuccessfullyFetched && !isFetching && error.isNothing();
 };
 
 const shouldFetchMeasurementsReport: FetchIfNeeded = (getState: GetState): boolean => {
