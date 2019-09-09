@@ -1,3 +1,4 @@
+import {identityType} from '../../../helpers/commonHelpers';
 import {makeUrl} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {restClient} from '../../../services/restClient';
@@ -24,8 +25,6 @@ interface AddressResponse {
   city: string;
   country: string;
 }
-
-const identity = <T>(id: T): T => id;
 
 const asUnselected = (item: IdNamed): SelectionListItem => ({...item, selected: false});
 
@@ -110,14 +109,14 @@ export const fetchAddresses = async (page: number, query?: string): Promise<Page
 export const fetchFacilities = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.facilities,
-    identity,
+    identityType,
     requestParameters(page, 'externalId', query),
   );
 
 export const fetchOrganisationsToSelect = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.organisationsToSelect,
-    identity,
+    identityType,
     requestParameters(page, 'name', query),
   );
 
@@ -125,14 +124,14 @@ export const fetchSecondaryAddresses =
   async (page: number, query?: string): Promise<PagedResponse> =>
     fetchItems<IdNamed, IdNamed>(
       EndPoints.secondaryAddresses,
-      identity,
+      identityType,
       requestParameters(page, 'secondaryAddress', query),
     );
 
 export const fetchGatewaySerials = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.gatewaySerials,
-    identity,
+    identityType,
     requestParameters(page, 'serial', query),
   );
 
@@ -147,4 +146,4 @@ export const fetchAlarms = (): Promise<PagedResponse> =>
   loadStaticItems(yesNoAlarms.map(translateIdNamed).map(asUnselected));
 
 export const fetchMedia = async (): Promise<PagedResponse> =>
-  fetchItems<IdNamed, IdNamed>(EndPoints.media, identity);
+  fetchItems<IdNamed, IdNamed>(EndPoints.media, identityType);
