@@ -17,6 +17,7 @@ public class Role implements Identifiable<String>, Serializable {
   public static final Role MVP_USER = new Role("MVP_USER");
   public static final Role MVP_ADMIN = new Role("MVP_ADMIN");
 
+  public static final Role OTC_OTD_ADMIN = new Role("OTC_OTD_ADMIN");
   public static final Role OTC_ADMIN = new Role("OTC_ADMIN");
   public static final Role OTC_USER = new Role("OTC_USER");
   public static final Role OTC_APP_ADMIN = new Role("OTC_APP_ADMIN");
@@ -32,7 +33,7 @@ public class Role implements Identifiable<String>, Serializable {
   );
 
   public static final List<Role> MVP_ROLES = List.of(MVP_ADMIN, MVP_USER);
-  public static final List<Role> OTC_ROLES = List.of(OTC_ADMIN, OTC_USER);
+  public static final List<Role> OTC_ROLES = List.of(OTC_OTD_ADMIN, OTC_ADMIN, OTC_USER);
 
   private static final long serialVersionUID = -7414389623391879883L;
 

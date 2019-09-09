@@ -8,6 +8,7 @@ const isAdminPredicate = (role: Role): boolean =>
   role === Role.SUPER_ADMIN;
 
 const isOtcPredicate = (role: Role): boolean =>
+  role === Role.OTC_OTD_ADMIN ||
   role === Role.OTC_ADMIN ||
   role === Role.OTC_USER;
 
@@ -35,7 +36,15 @@ export const isOtcUserOnly = (roles: Role[]) => every(roles, isOtcPredicate);
 const roleList: { [key in Role]: Role[] } = {
   [Role.MVP_USER]: [Role.MVP_USER],
   [Role.MVP_ADMIN]: [Role.MVP_USER, Role.MVP_ADMIN],
-  [Role.SUPER_ADMIN]: [Role.MVP_USER, Role.MVP_ADMIN, Role.SUPER_ADMIN, Role.OTC_ADMIN, Role.OTC_USER],
+  [Role.SUPER_ADMIN]: [
+    Role.MVP_USER,
+    Role.MVP_ADMIN,
+    Role.SUPER_ADMIN,
+    Role.OTC_OTD_ADMIN,
+    Role.OTC_ADMIN,
+    Role.OTC_USER
+  ],
+  [Role.OTC_OTD_ADMIN]: [Role.OTC_OTD_ADMIN],
   [Role.OTC_ADMIN]: [Role.OTC_ADMIN, Role.OTC_USER],
   [Role.OTC_USER]: [Role.OTC_USER],
 };
