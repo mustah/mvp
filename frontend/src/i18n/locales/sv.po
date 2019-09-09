@@ -32,6 +32,18 @@ msgstr "inga batch-referenser"
 msgid "create batch reference"
 msgstr "skapa batch-referens"
 
+msgid "edit batch reference"
+msgstr "ändra batch-referens"
+
+msgid "successfully created batch reference"
+msgstr "batch-referensen har skapats"
+
+msgid "failed to create batch reference: {{error}}"
+msgstr "gick inte att skapa batch-referensen"
+
+msgid "ownership request needs confirmation"
+msgstr "ägandeskapsförfrågan måste godkännas"
+
 msgid "show devices"
 msgstr "visa enheter"
 
