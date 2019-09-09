@@ -24,6 +24,7 @@ describe('userSelectors', () => {
         Role.MVP_USER,
         Role.MVP_ADMIN,
         Role.SUPER_ADMIN,
+        Role.OTC_OTD_ADMIN,
         Role.OTC_ADMIN,
         Role.OTC_USER,
       ]);
@@ -38,6 +39,7 @@ describe('userSelectors', () => {
         Role.MVP_USER,
         Role.MVP_ADMIN,
         Role.SUPER_ADMIN,
+        Role.OTC_OTD_ADMIN,
         Role.OTC_ADMIN,
         Role.OTC_USER,
       ]);
@@ -80,6 +82,7 @@ describe('userSelectors', () => {
     it('is just otc user', () => {
       expect(isOtcUserOnly([Role.OTC_ADMIN])).toBe(true);
       expect(isOtcUserOnly([Role.OTC_ADMIN, Role.OTC_USER])).toBe(true);
+      expect(isOtcUserOnly([Role.OTC_OTD_ADMIN, Role.OTC_ADMIN, Role.OTC_USER])).toBe(true);
     });
 
   });
