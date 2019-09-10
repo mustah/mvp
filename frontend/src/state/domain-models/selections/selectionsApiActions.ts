@@ -1,30 +1,12 @@
-import {identityType} from '../../../helpers/commonHelpers';
+import {identity} from '../../../helpers/commonHelpers';
 import {makeUrl} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {restClient} from '../../../services/restClient';
 import {translate} from '../../../services/translationService';
 import {EncodedUriParameters, IdNamed, Status, toIdNamed, uuid} from '../../../types/Types';
-import {Query} from '../../search/searchModels';
 import {SelectionListItem} from '../../user-selection/userSelectionModels';
 import {Address, City} from '../location/locationModels';
-
-export interface PagedResponse extends Query {
-  items: SelectionListItem[];
-  totalElements: number;
-}
-
-export type FetchByPage = (page: number, query?: string) => Promise<PagedResponse>;
-
-interface CityResponse {
-  name: string;
-  country: string;
-}
-
-interface AddressResponse {
-  street: string;
-  city: string;
-  country: string;
-}
+import {AddressResponse, CityResponse, PagedResponse} from './selectionsModels';
 
 const asUnselected = (item: IdNamed): SelectionListItem => ({...item, selected: false});
 
@@ -66,8 +48,8 @@ export const mapSelectedIdToAddress = (id: uuid): Address => {
 
 const fetchItems = async <T, R>(
   endpoint: EndPoints,
-  contentMapper: (value: T) => R,
-  parameters?: EncodedUriParameters,
+  parameters: EncodedUriParameters = '',
+  contentMapper: (value: T) => R = identity,
 ): Promise<PagedResponse> => {
   const {data: {content, totalElements}} = await restClient.get(makeUrl(endpoint, parameters));
   return {items: content.map(contentMapper), totalElements};
@@ -77,7 +59,7 @@ const loadStaticItems = (items: SelectionListItem[]): Promise<PagedResponse> =>
   new Promise<PagedResponse>((resolve) => resolve({items, totalElements: items.length}));
 
 const makeRequestParameters = (...parameters: string[]): string => parameters
-  .filter((param) => param.length > 0).join('&');
+  .filter(param => param.length > 0).join('&');
 
 const queryParameter = (query?: string): string => query ? `q=${query}` : ``;
 
@@ -95,55 +77,49 @@ const requestParameters = (page: number, sort: string, query?: string): string =
 export const fetchCities = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<CityResponse, City>(
     EndPoints.cities,
-    toCity,
     requestParameters(page, 'city', query),
+    toCity,
   );
 
 export const fetchAddresses = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<AddressResponse, Address>(
     EndPoints.addresses,
-    toAddress,
     requestParameters(page, 'streetAddress', query),
+    toAddress,
   );
 
 export const fetchFacilities = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.facilities,
-    identityType,
     requestParameters(page, 'externalId', query),
   );
 
 export const fetchOrganisationsToSelect = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.organisationsToSelect,
-    identityType,
     requestParameters(page, 'name', query),
   );
 
-export const fetchSecondaryAddresses =
-  async (page: number, query?: string): Promise<PagedResponse> =>
-    fetchItems<IdNamed, IdNamed>(
-      EndPoints.secondaryAddresses,
-      identityType,
-      requestParameters(page, 'secondaryAddress', query),
-    );
+export const fetchSecondaryAddresses = async (page: number, query?: string): Promise<PagedResponse> =>
+  fetchItems<IdNamed, IdNamed>(
+    EndPoints.secondaryAddresses,
+    requestParameters(page, 'secondaryAddress', query),
+  );
 
 export const fetchGatewaySerials = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.gatewaySerials,
-    identityType,
     requestParameters(page, 'serial', query),
   );
 
 const yesNoReported: IdNamed[] = [{id: Status.error, name: 'yes'}, {id: Status.ok, name: 'no'}];
+const yesNoAlarms: IdNamed[] = [toIdNamed('yes'), toIdNamed('no')];
 
 export const fetchReported = async (): Promise<PagedResponse> =>
   loadStaticItems(yesNoReported.map(translateIdNamed).map(asUnselected));
-
-const yesNoAlarms: IdNamed[] = [toIdNamed('yes'), toIdNamed('no')];
 
 export const fetchAlarms = (): Promise<PagedResponse> =>
   loadStaticItems(yesNoAlarms.map(translateIdNamed).map(asUnselected));
 
 export const fetchMedia = async (): Promise<PagedResponse> =>
-  fetchItems<IdNamed, IdNamed>(EndPoints.media, identityType);
+  fetchItems<IdNamed, IdNamed>(EndPoints.media);
