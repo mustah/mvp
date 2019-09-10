@@ -32,9 +32,6 @@ msgstr "inga batch-referenser"
 msgid "create batch reference"
 msgstr "skapa batch-referens"
 
-msgid "edit batch reference"
-msgstr "ändra batch-referens"
-
 msgid "successfully created batch reference"
 msgstr "batch-referensen har skapats"
 

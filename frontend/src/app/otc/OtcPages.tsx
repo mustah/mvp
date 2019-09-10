@@ -2,11 +2,7 @@ import * as React from 'react';
 import {Redirect, Route, Switch} from 'react-router';
 import {UserAddContainer} from '../../usecases/administration/containers/UserAddContainer';
 import {UserEditContainer} from '../../usecases/administration/containers/UserEditContainer';
-import {
-    BatchReferences,
-    BatchReferencesCreate,
-    BatchReferencesModify
-} from '../../usecases/administration/otc/pages/BatchReferencePages';
+import {BatchReferences, BatchReferencesCreate} from '../../usecases/administration/otc/pages/BatchReferencePages';
 import {Devices} from '../../usecases/administration/otc/pages/Devices';
 import {DevicesAdd} from '../../usecases/administration/otc/pages/DevicesAdd';
 import {Keys} from '../../usecases/administration/otc/pages/Keys';
@@ -25,7 +21,6 @@ export const OtcPages = () => (
 
     <Route exact={true} path={routes.otcBatchReferences} component={BatchReferences}/>
     <Route exact={true} path={routes.otcBatchReferencesCreate} component={BatchReferencesCreate}/>
-    <Route exact={true} path={`${routes.otcBatchReferencesModify}/:id`} component={BatchReferencesModify}/>
 
     <Route exact={true} path={routes.otcKeys} component={Keys}/>
 
