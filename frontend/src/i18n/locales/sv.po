@@ -62,6 +62,9 @@ msgstr "lägg till enhet"
 msgid "device eui"
 msgstr "device eui"
 
+msgid "comma separated device euis"
+msgstr "Kommaseparerade device-euis"
+
 msgid "claim status"
 msgstr "claim-status"
 

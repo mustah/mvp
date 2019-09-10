@@ -3,7 +3,7 @@ import {createSelector} from 'reselect';
 import {identity, isDefined} from '../../helpers/commonHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
-import {ErrorResponse, Identifiable, IdNamed, toIdNamed, uuid} from '../../types/Types';
+import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {CollectionStat, CollectionStatFacilityState} from '../domain-models/collection-stat/collectionStatModels';
 import {Pagination, PaginationState} from '../ui/pagination/paginationModels';
 import {paginationPageSize} from '../ui/pagination/paginationReducer';
@@ -95,10 +95,4 @@ export const getDevices =
   createSelector<DevicesState, DevicesState, Device[]>(
     identity,
     itemsCombiner
-  );
-
-export const getSelectableDevices =
-  createSelector<DevicesState, DevicesState, IdNamed[]>(
-    identity,
-    state => itemsCombiner(state).map(it => toIdNamed(it.id as string))
   );

@@ -3,46 +3,36 @@ import * as React from 'react';
 import {ValidatorForm} from 'react-material-ui-form-validator';
 import {ButtonSave} from '../../../../../components/buttons/ButtonSave';
 import {ValidatedFieldInput} from '../../../../../components/inputs/ValidatedFieldInput';
-import {ValidatedInputSelectable} from '../../../../../components/inputs/ValidatedInputSelectable';
 import {Column} from '../../../../../components/layouts/column/Column';
+import {fromCommaSeparated} from '../../../../../helpers/commonHelpers';
 import {firstUpperTranslated} from '../../../../../services/translationService';
 import {BatchRequestState} from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
-import {CallbackWith, FetchPaginated, IdNamed, uuid} from '../../../../../types/Types';
-import {changeBatchReference, changeRequireApproval, selectDeviceEuis} from '../batchReferenceActions';
+import {CallbackWith, Omit, uuid} from '../../../../../types/Types';
+import {changeBatchReference, changeDeviceEuis, changeRequireApproval} from '../batchReferenceActions';
 import {batchReferenceReducer, initialState} from '../batchReferenceReducer';
 
 export interface StateToProps {
-  devices: IdNamed[];
-  isFetchingDevices: boolean;
   organisationId: uuid;
 }
 
 export interface DispatchToProps {
-  fetchDevices: FetchPaginated;
-  saveBatchReference: CallbackWith<BatchRequestState>;
+  saveBatchReference: CallbackWith<Omit<BatchRequestState, 'deviceEuisText'>>;
 }
 
 type Props = StateToProps & DispatchToProps;
 
-export const BatchReferenceForm = ({
-  devices,
-  fetchDevices,
-  isFetchingDevices,
-  organisationId,
-  saveBatchReference
-}: Props) => {
+export const BatchReferenceForm = ({organisationId, saveBatchReference}: Props) => {
   const [state, dispatch] = React.useReducer(batchReferenceReducer, {...initialState, organisationId});
-  React.useEffect(() => {
-    fetchDevices(0);
-  }, [isFetchingDevices]);
 
-  const onChangeBatchReference = ev => dispatch(changeBatchReference(ev.target.value));
+  const onChangeBatchReference = (_, newValue) => dispatch(changeBatchReference(newValue));
+  const onChangeDeviceEuis = (_, newValue) => dispatch(changeDeviceEuis(newValue));
   const onChangeRequireApproval = ev => dispatch(changeRequireApproval(ev.target.checked));
-  const onSelectDeviceEuis = (_, __, ids) => dispatch(selectDeviceEuis(ids));
 
   const onSubmit = (ev) => {
     ev.preventDefault();
-    return saveBatchReference(state);
+    const requestModel = {...state, deviceEuis: fromCommaSeparated(state.deviceEuisText)};
+    delete requestModel.deviceEuisText;
+    return saveBatchReference(requestModel);
   };
 
   return (
@@ -56,14 +46,13 @@ export const BatchReferenceForm = ({
           value={state.batchId}
         />
 
-        <ValidatedInputSelectable
-          disabled={devices.length === 0}
+        <ValidatedFieldInput
+          autoComplete="off"
           id="deviceEuis"
-          labelText={firstUpperTranslated('device eui')}
-          multiple={true}
-          options={devices}
-          onChange={onSelectDeviceEuis}
-          value={state.deviceEuis}
+          labelText={firstUpperTranslated('comma separated device euis')}
+          multiLine={true}
+          onChange={onChangeDeviceEuis}
+          value={state.deviceEuisText}
         />
 
         <Checkbox

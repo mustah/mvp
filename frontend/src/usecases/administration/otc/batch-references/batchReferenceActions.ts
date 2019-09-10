@@ -4,4 +4,4 @@ export const changeBatchReference = createStandardAction('CREATE_BATCH_REFERENCE
 
 export const changeRequireApproval = createStandardAction('CHANGE_REQUIRE_APPROVAL')<boolean>();
 
-export const selectDeviceEuis = createStandardAction('SELECT_DEVICE_EUIS')<string[]>();
+export const changeDeviceEuis = createStandardAction('CHANGE_DEVICE_EUIS')<string>();
