@@ -32,6 +32,18 @@ msgstr "no batch references"
 msgid "create batch reference"
 msgstr "create batch reference"
 
+msgid "edit batch reference"
+msgstr "edit batch reference"
+
+msgid "successfully created batch reference"
+msgstr "successfully created batch reference"
+
+msgid "failed to create batch reference: {{error}}"
+msgstr "failed to create batch reference: {{error}}"
+
+msgid "ownership request needs confirmation"
+msgstr "ownership request needs confirmation"
+
 msgid "add device"
 msgstr "add device"
 

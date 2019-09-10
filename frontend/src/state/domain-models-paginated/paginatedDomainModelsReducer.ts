@@ -8,6 +8,7 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, Sectors, uuid} from '../../types/Types';
 import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
+import {domainModelsPostSuccess} from '../domain-models/domainModelsActions';
 import {search} from '../search/searchActions';
 import {SortOption} from '../ui/pagination/paginationModels';
 import {BatchReference} from './batch-references/batchReferenceModels';
@@ -231,6 +232,7 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityFailure(actionKey):
       case domainModelsPaginatedDeleteFailure(actionKey):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
+      case domainModelsPostSuccess(EndPoints.batches):
       case getType(search):
         return makeInitialState();
       default:

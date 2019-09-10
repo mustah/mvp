@@ -1,10 +1,11 @@
 import * as React from 'react';
+import {Children} from '../../types/Types';
 import {Row} from '../layouts/row/Row';
 import {Medium, Small, Xlarge} from './Texts';
 import './Titles.scss';
 
 interface TitleProps {
-  children: string;
+  children: Children;
   className?: string;
   subtitle?: string;
 }
@@ -24,6 +25,6 @@ export const Subtitle = ({children}: TitleProps) => (
 
 export const WidgetTitle = ({children}: TitleProps) => (
   <Row className="Subtitle">
-    <Medium className="Subtitle-text ellipsis Bold first-uppercase" title={children}>{children}</Medium>
+    <Medium className="Subtitle-text ellipsis Bold first-uppercase">{children}</Medium>
   </Row>
 );

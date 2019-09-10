@@ -12,7 +12,7 @@ import {
 import {changePage} from '../../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../../state/ui/pagination/paginationModels';
 import {getBatchReferencesParameters} from '../../../../state/user-selection/userSelectionSelectors';
-import {BatchReferencesGrid} from '../components/BatchReferencesGrid';
+import {BatchReferencesGrid} from '../batch-references/components/BatchReferencesGrid';
 
 const mapStateToProps = (rootState: RootState): StateToProps<BatchReference> => {
   const {

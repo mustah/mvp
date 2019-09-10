@@ -1,26 +1,26 @@
 import * as React from 'react';
 import {Column, Size, Table, TableCellProps} from 'react-virtualized';
 import {compose} from 'recompose';
-import {colors} from '../../../../app/colors';
-import {routes} from '../../../../app/routes';
-import {makeVirtualizedGridClassName} from '../../../../app/themes';
-import {ButtonSecondary} from '../../../../components/buttons/ButtonSecondary';
-import {EmptyContentProps} from '../../../../components/error-message/EmptyContent';
-import {withEmptyContent} from '../../../../components/hoc/withEmptyContent';
-import {ThemeContext, withCssStyles} from '../../../../components/hoc/withThemeProvider';
+import {colors} from '../../../../../app/colors';
+import {routes} from '../../../../../app/routes';
+import {makeVirtualizedGridClassName} from '../../../../../app/themes';
+import {ButtonSecondary} from '../../../../../components/buttons/ButtonSecondary';
+import {EmptyContentProps} from '../../../../../components/error-message/EmptyContent';
+import {withEmptyContent} from '../../../../../components/hoc/withEmptyContent';
+import {ThemeContext, withCssStyles} from '../../../../../components/hoc/withThemeProvider';
 import {
   ContentProps,
   DispatchToProps,
   InfiniteList,
   InfiniteListProps,
   StateToProps
-} from '../../../../components/infinite-list/InfiniteList';
-import {makeSortingProps, rowClassName} from '../../../../components/infinite-list/infiniteListHelper';
-import {renderLoadingOr} from '../../../../components/loading/Loading';
-import {displayDate} from '../../../../helpers/dateHelpers';
-import {firstUpperTranslated, translate} from '../../../../services/translationService';
-import {BatchReference} from '../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
-import {LinkTo} from './LinkTo';
+} from '../../../../../components/infinite-list/InfiniteList';
+import {makeSortingProps, rowClassName} from '../../../../../components/infinite-list/infiniteListHelper';
+import {renderLoadingOr} from '../../../../../components/loading/Loading';
+import {displayDate} from '../../../../../helpers/dateHelpers';
+import {firstUpperTranslated, translate} from '../../../../../services/translationService';
+import {BatchReference} from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
+import {LinkTo} from '../../components/LinkTo';
 
 type Props = StateToProps<BatchReference> & DispatchToProps;
 type GridProps = Props & ThemeContext;
