@@ -13,12 +13,12 @@ export const renderMenuItem = ({id, name}: IdNamed) =>
 export type MultipleOrSingle = {multiple: false; value: uuid} | {multiple: true; value: uuid[]};
 
 export interface SelectFieldInputProps extends ClassNamed {
-  id: string;
-  options: IdNamed[];
-  floatingLabelText: string;
-  hintText: string;
-  onChange: OnChange;
   disabled?: boolean;
+  floatingLabelText?: string;
+  hintText?: string;
+  id: string;
+  onChange: OnChange;
+  options: IdNamed[];
 }
 
 type Props = SelectFieldInputProps & MultipleOrSingle & ThemeContext;
@@ -29,6 +29,7 @@ type Props = SelectFieldInputProps & MultipleOrSingle & ThemeContext;
  */
 export interface WrappedSelectFieldProps extends SelectFieldProps, WithChildren {
   floatingLabelFocusStyle?: React.CSSProperties;
+  labelText?: string;
 }
 
 const WrappedSelectField = (props: WrappedSelectFieldProps) => <SelectField {...props} />;

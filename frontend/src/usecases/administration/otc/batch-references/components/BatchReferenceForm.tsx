@@ -22,8 +22,6 @@ export interface DispatchToProps {
   saveBatchReference: CallbackWith<BatchRequestState>;
 }
 
-const requiredValidator: string[] = ['required'];
-
 type Props = StateToProps & DispatchToProps;
 
 export const BatchReferenceForm = ({
@@ -42,10 +40,6 @@ export const BatchReferenceForm = ({
   const onChangeRequireApproval = ev => dispatch(changeRequireApproval(ev.target.checked));
   const onSelectDeviceEuis = (_, __, ids) => dispatch(selectDeviceEuis(ids));
 
-  const requiredMessage: string[] = [firstUpperTranslated('required field')];
-  const batchReferenceText = firstUpperTranslated('batch reference');
-  const deviceEuiText = firstUpperTranslated('device eui');
-
   const onSubmit = (ev) => {
     ev.preventDefault();
     return saveBatchReference(state);
@@ -56,25 +50,19 @@ export const BatchReferenceForm = ({
       <Column style={{margin: '16px 16px 0 16px'}}>
         <ValidatedFieldInput
           autoComplete="off"
-          errorMessages={requiredMessage}
-          floatingLabelText={batchReferenceText}
-          hintText={batchReferenceText}
           id="batchId"
+          labelText={firstUpperTranslated('batch reference')}
           onChange={onChangeBatchReference}
           value={state.batchId}
-          validators={requiredValidator}
         />
 
         <ValidatedInputSelectable
           disabled={devices.length === 0}
-          errorMessages={requiredMessage}
-          floatingLabelText={deviceEuiText}
-          hintText={deviceEuiText}
           id="deviceEuis"
+          labelText={firstUpperTranslated('device eui')}
           multiple={true}
           options={devices}
           onChange={onSelectDeviceEuis}
-          validators={requiredValidator}
           value={state.deviceEuis}
         />
 

@@ -23,8 +23,6 @@ interface PasswordEditFormState {
   userId: uuid;
 }
 
-const requiredValidator: string[] = ['required'];
-
 type State = PasswordEditFormState;
 
 export class PasswordEditForm extends React.Component<PasswordFormProps, State> {
@@ -43,32 +41,21 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
   render() {
     const {password, passwordConfirm, error} = this.state;
 
-    const newPasswordLabel = firstUpperTranslated('new password');
-    const confirmPasswordLabel = firstUpperTranslated('confirm new password');
-
-    const requiredMessage = [firstUpperTranslated('required field')];
-
     return (
       <ValidatorForm onSubmit={this.wrappedSubmit}>
         <Column>
           <ValidatedFieldInput
             id="password"
-            floatingLabelText={newPasswordLabel}
-            hintText={newPasswordLabel}
+            labelText={firstUpperTranslated('new password')}
             type="password"
             value={password}
-            validators={requiredValidator}
-            errorMessages={requiredMessage}
             onChange={this.onChangePassword}
           />
           <ValidatedFieldInput
             id="passwordConfirm"
-            floatingLabelText={confirmPasswordLabel}
-            hintText={confirmPasswordLabel}
+            labelText={firstUpperTranslated('confirm new password')}
             type="password"
             value={passwordConfirm}
-            validators={requiredValidator}
-            errorMessages={requiredMessage}
             onChange={this.onChangePasswordConfirm}
           />
           <Row style={{height: 30}}>
