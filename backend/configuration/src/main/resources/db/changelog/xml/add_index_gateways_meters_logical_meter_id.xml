@@ -1,0 +1,15 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Add index for logical_meter_id on gateways_meters table" author="erimel">
+    <createIndex
+      indexName="gateways_meters_logical_meter_id_idx"
+      tableName="gateways_meters"
+      schemaName="public">
+      <column name="logical_meter_id"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>
