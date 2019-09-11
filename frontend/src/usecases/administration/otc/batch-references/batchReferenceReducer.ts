@@ -6,6 +6,7 @@ import * as actions from './batchReferenceActions';
 export const initialState: BatchRequestState = {
   batchId: '',
   deviceEuis: [],
+  deviceEuisText: '',
   organisationId: '',
   requireApproval: false,
 };
@@ -18,8 +19,8 @@ export const batchReferenceReducer = (state: BatchRequestState, action: ActionTy
       return {...state, batchId: action.payload};
     case getType(actions.changeRequireApproval):
       return {...state, requireApproval: action.payload};
-    case getType(actions.selectDeviceEuis):
-      return {...state, deviceEuis: action.payload};
+    case getType(actions.changeDeviceEuis):
+      return {...state, deviceEuisText: action.payload};
     default:
       return state;
   }

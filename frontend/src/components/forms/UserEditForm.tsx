@@ -22,9 +22,6 @@ interface UserFormProps {
 
 export type State = Overwrite<User, {id?: uuid; password: string}>;
 
-const requiredValidator: string[] = ['required'];
-const requiredEmailValidator: string[] = ['required', 'isEmail'];
-
 export class UserEditForm extends React.Component<UserFormProps, State> {
 
   constructor(props: UserFormProps) {
@@ -61,31 +58,19 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const {organisations, possibleRoles, languages, isEditSelf, user} = this.props;
     const {name, email, organisation, roles, password, language} = this.state;
 
-    const nameLabel = firstUpperTranslated('name');
-    const emailLabel = firstUpperTranslated('email');
-    const organisationLabel = firstUpperTranslated('organisation');
-    const rolesLabel = firstUpperTranslated('user roles');
-    const languageLabel = firstUpperTranslated('user language');
-    const newPasswordLabel = isEditSelf ?
-      firstUpperTranslated('new password') : firstUpperTranslated('password');
-    const requiredLabel = firstUpperTranslated('required field');
-    const requiredEmailLabel = firstUpperTranslated('email not valid');
-
+    const newPasswordLabel = isEditSelf ? firstUpperTranslated('new password') : firstUpperTranslated('password');
     const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
     const languageOptions: IdNamed[] = languages.map(({code, name}) => ({id: code, name}));
 
-    const requiredMessage = [requiredLabel];
-    const requiredEmailMessage = [requiredLabel, requiredEmailLabel];
+    const requiredEmailValidator: string[] = ['required', 'isEmail'];
+    const requiredEmailMessage = [(firstUpperTranslated('required field')), firstUpperTranslated('email not valid')];
 
     const passwordElement = user ? null : (
       <ValidatedFieldInput
         id="password"
-        floatingLabelText={newPasswordLabel}
-        hintText={newPasswordLabel}
+        labelText={newPasswordLabel}
         type="password"
         value={password}
-        validators={requiredValidator}
-        errorMessages={requiredMessage}
         autoComplete="new-password"
         onChange={this.onChangePassword}
       />
@@ -95,60 +80,49 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
       <ValidatorForm onSubmit={this.wrappedSubmit}>
         <Column>
           <ValidatedFieldInput
-            floatingLabelText={nameLabel}
-            hintText={nameLabel}
-            id="name"
-            value={name}
-            validators={requiredValidator}
-            errorMessages={requiredMessage}
             autoComplete="new-password"
+            id="name"
+            labelText={firstUpperTranslated('name')}
             onChange={this.onChangeName}
+            value={name}
           />
+
           <ValidatedFieldInput
-            floatingLabelText={emailLabel}
-            hintText={emailLabel}
+            autoComplete="new-password"
             id="email"
+            labelText={firstUpperTranslated('email')}
+            onChange={this.onChangeEmail}
             value={email}
             validators={requiredEmailValidator}
             errorMessages={requiredEmailMessage}
-            autoComplete="new-password"
-            onChange={this.onChangeEmail}
           />
 
           <ValidatedInputSelectable
-            options={organisations}
-            floatingLabelText={organisationLabel}
-            hintText={organisationLabel}
-            id="organisation"
-            multiple={false}
-            onChange={this.changeOrganisation}
-            validators={requiredValidator}
-            errorMessages={requiredMessage}
-            value={organisation.id}
             disabled={isEditSelf}
+            id="organisation"
+            labelText={firstUpperTranslated('organisation')}
+            multiple={false}
+            options={organisations}
+            onChange={this.changeOrganisation}
+            value={organisation.id}
           />
+
           <ValidatedInputSelectable
-            options={roleOptions}
-            floatingLabelText={rolesLabel}
-            hintText={rolesLabel}
+            disabled={isEditSelf}
             id="roles"
+            labelText={firstUpperTranslated('user roles')}
             multiple={true}
             onChange={this.changeRoles}
-            validators={requiredValidator}
-            errorMessages={requiredMessage}
+            options={roleOptions}
             value={roles}
-            disabled={isEditSelf}
           />
 
           <ValidatedInputSelectable
-            options={languageOptions}
-            floatingLabelText={languageLabel}
-            hintText={languageLabel}
             id="language"
+            labelText={firstUpperTranslated('user language')}
             multiple={false}
             onChange={this.changeLanguage}
-            validators={requiredValidator}
-            errorMessages={requiredMessage}
+            options={languageOptions}
             value={language}
           />
 

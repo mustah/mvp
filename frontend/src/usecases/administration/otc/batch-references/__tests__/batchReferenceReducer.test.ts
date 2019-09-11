@@ -1,6 +1,7 @@
+import {fromCommaSeparated} from '../../../../../helpers/commonHelpers';
 import {BatchRequestState} from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
 import {logoutUser} from '../../../../auth/authActions';
-import {changeRequireApproval, changeBatchReference, selectDeviceEuis} from '../batchReferenceActions';
+import {changeBatchReference, changeDeviceEuis, changeRequireApproval} from '../batchReferenceActions';
 import {batchReferenceReducer, initialState} from '../batchReferenceReducer';
 
 describe('batch reference reducer', () => {
@@ -62,29 +63,43 @@ describe('batch reference reducer', () => {
 
   describe('select device euis', () => {
 
-    it('can add single device id', () => {
-      const state = batchReferenceReducer(initialState, selectDeviceEuis(['a']));
-
-      const expected: BatchRequestState = {...initialState, deviceEuis: ['a']};
-      expect(state).toEqual(expected);
-    });
-
     it('can add several device ids', () => {
-      const state = batchReferenceReducer(initialState, selectDeviceEuis(['a', 'b', '1']));
+      const state = batchReferenceReducer(initialState, changeDeviceEuis('a, b, 1'));
 
-      const expected: BatchRequestState = {...initialState, deviceEuis: ['a', 'b', '1']};
+      const expected: BatchRequestState = {...initialState, deviceEuisText: 'a, b, 1'};
       expect(state).toEqual(expected);
     });
 
     it('clear all device ids', () => {
-      const state: BatchRequestState = {...initialState, deviceEuis: ['a', 'b', '1']};
+      const state = batchReferenceReducer({...initialState, deviceEuisText: 'ab, 123'}, changeDeviceEuis(''));
 
-      const nextState = batchReferenceReducer(state, selectDeviceEuis([]));
-
-      const expected: BatchRequestState = {...initialState, deviceEuis: []};
-      expect(nextState).toEqual(expected);
+      expect(state).toEqual(initialState);
     });
 
+  });
+
+  describe('comma separated device ids', () => {
+
+    it('handles empty string', () => {
+      expect(fromCommaSeparated('')).toEqual([]);
+    });
+
+    it('can add several device ids', () => {
+      expect(fromCommaSeparated('a, b, 1')).toEqual(['a', 'b', '1']);
+      expect(fromCommaSeparated('a,b,c')).toEqual(['a', 'b', 'c']);
+      expect(fromCommaSeparated('   1,2,')).toEqual(['1', '2']);
+    });
+
+    it('handles newline in the ids', () => {
+      expect(fromCommaSeparated('a, b, 1,  \n2')).toEqual(['a', 'b', '1', '2']);
+      expect(fromCommaSeparated('\n\n\n')).toEqual([]);
+      expect(fromCommaSeparated('\n\n\n1')).toEqual(['1']);
+      expect(fromCommaSeparated('\n\n\n      1, 2')).toEqual(['1', '2']);
+    });
+
+    it('removes duplicates', () => {
+      expect(fromCommaSeparated('a, b, 1, 1, a')).toEqual(['a', 'b', '1']);
+    });
   });
 
 });

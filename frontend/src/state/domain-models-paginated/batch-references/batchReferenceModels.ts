@@ -13,8 +13,9 @@ export interface BatchReference extends Identifiable {
 
 export interface BatchRequestState {
   batchId: string;
-  organisationId: uuid;
   deviceEuis: string[];
+  deviceEuisText: string;
+  organisationId: uuid;
   requireApproval: boolean;
 }
 

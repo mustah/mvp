@@ -56,10 +56,6 @@ export const MeterDefinitionEditForm = (
   );
 
   const {name, medium, organisation, autoApply, quantities} = meterDefinition;
-  const nameLabel = firstUpperTranslated('name');
-  const organisationLabel = firstUpperTranslated('organisation');
-  const mediumLabel = firstUpperTranslated('medium');
-
   const setName = (event) => setMeterDefinition({...meterDefinition, name: event.target.value});
   const setAutoApply = (event) => setMeterDefinition({...meterDefinition, autoApply: event.target.checked});
   const setQuantities = (q) => setMeterDefinition({...meterDefinition, quantities: q});
@@ -85,45 +81,34 @@ export const MeterDefinitionEditForm = (
   const organisationId: uuid = organisation ? organisation.id : noOrganisationId;
   const isDefault: boolean = organisationId === noOrganisationId;
 
-  const requiredValidator: string[] = ['required'];
-  const requiredMessage: string[] = [firstUpperTranslated('required field')];
   return (
     <ValidatorForm style={{flex: 1}} onSubmit={wrappedSubmit}>
       <Column>
         <ValidatedFieldInput
           autoComplete="off"
-          floatingLabelText={nameLabel}
-          hintText={nameLabel}
+          labelText={firstUpperTranslated('name')}
           id="name"
           value={name}
           disabled={isDefault}
           onChange={setName}
-          validators={requiredValidator}
-          errorMessages={requiredMessage}
         />
         <ValidatedInputSelectable
           options={mediums}
-          floatingLabelText={mediumLabel}
-          hintText={mediumLabel}
+          labelText={firstUpperTranslated('medium')}
           id="medium"
           disabled={isDefault}
           multiple={false}
           onChange={setMedium}
           value={medium.id !== '' ? Number(medium.id) : ''}
-          validators={requiredValidator}
-          errorMessages={requiredMessage}
         />
         <ValidatedInputSelectable
           options={organisations}
-          floatingLabelText={organisationLabel}
-          hintText={organisationLabel}
+          labelText={firstUpperTranslated('organisation')}
           id="organisation"
           disabled={isDefault}
           multiple={false}
           onChange={setOrganisation}
           value={organisationId}
-          validators={requiredValidator}
-          errorMessages={requiredMessage}
         />
         <Checkbox
           label={firstUpperTranslated('default')}

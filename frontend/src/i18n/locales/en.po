@@ -62,6 +62,9 @@ msgstr "confirmation status"
 msgid "device eui"
 msgstr "device eui"
 
+msgid "comma separated device euis"
+msgstr "comma separated device euis"
+
 msgid "claim status"
 msgstr "claim status"
 
