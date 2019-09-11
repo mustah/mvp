@@ -1,39 +1,42 @@
-import {default as classNames} from 'classnames';
 import Popover from 'material-ui/Popover/Popover';
 import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';
-import {Index, InfiniteLoader, List, ListRowProps} from 'react-virtualized';
+import {Index, List, ListRowProps} from 'react-virtualized';
 import {style as typestyle} from 'typestyle';
-import {colors} from '../../app/colors';
 import {dropdownStyle} from '../../app/themes';
 import {getId} from '../../helpers/collections';
 import {selectedFirstThenUnknownByNameAsc} from '../../helpers/comparators';
 import {orUnknown} from '../../helpers/translations';
 import {firstUpper} from '../../services/translationService';
 import {Address, City} from '../../state/domain-models/location/locationModels';
-import {FetchByPage, PagedResponse} from '../../state/domain-models/selections/selectionsApiActions';
+import {FetchByPage, PagedResponse} from '../../state/domain-models/selections/selectionsModels';
 import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
-import {Children, IdNamed, uuid} from '../../types/Types';
+import {Children, Fetching, IdNamed, uuid} from '../../types/Types';
 import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
-import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
-import {Row, RowMiddle} from '../layouts/row/Row';
-import {SearchBoxProps, SearchBox} from '../search-box/SearchBox';
+import {RowLeft} from '../layouts/row/Row';
+import {SearchBox, SearchBoxProps} from '../search-box/SearchBox';
 import {LabelWithSubtitle} from '../texts/Labels';
 import {FirstUpper} from '../texts/Texts';
 import {Checkbox} from './Checkbox';
 import {replaceWhereId, searchOverviewText, throttledSearch, ThrottledSearch, unknownItems} from './dropdownHelper';
-import './DropdownSelector.scss';
+import {DropdownList} from './DropdownList';
+import {DropDownSelectorButton} from './DropdownSelectorButton';
 import origin = __MaterialUI.propTypes.origin;
 
 type OptionalProps = Partial<{
   renderLabel: (index: number, items: SelectionListItem[]) => Children;
   rowHeight: number;
+  overviewText: (list: SelectionListItem[], totalElements: number) => string;
   visibleItems: number;
 }>;
 
-interface SelectableProps {
+interface Props {
+  innerDivStyle?: React.CSSProperties;
+  innerDivClassName?: string;
   fetchItems: FetchByPage;
+  isReadOnlyList?: boolean;
+  shouldFetchItemsOnMount?: boolean;
   select: (props: SelectionListItem) => void;
   selectedItems: SelectionListItem[];
   selectionText: string;
@@ -49,7 +52,7 @@ interface Cache {
   totalElements: number;
 }
 
-interface State extends PagedResponse {
+interface State extends Fetching, PagedResponse {
   anchorElement?: React.ReactInstance;
   cache: Cache;
   isOpen: boolean;
@@ -59,9 +62,10 @@ interface State extends PagedResponse {
 
 const anchorOrigin: origin = {horizontal: 'left', vertical: 'bottom'};
 const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
+const listWidth = 240;
 
-export type SearchableProps = QueryProps & SelectableProps & OptionalProps;
-export type DropdownComponentProps = QueryProps & SelectableProps & Required<OptionalProps> & ThemeContext;
+export type SearchableProps = QueryProps & Props & OptionalProps;
+export type DropdownComponentProps = QueryProps & Props & Required<OptionalProps> & ThemeContext;
 
 const listItems = (
   selectedItems: SelectionListItem[],
@@ -92,6 +96,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
       cache: {items, totalElements: 0},
       isOpen: false,
       isSearching: false,
+      isFetching: false,
       items,
       page: 0,
       totalElements: 0,
@@ -99,7 +104,11 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
   }
 
   async componentDidMount() {
-    await this.loadMoreRows();
+    if (this.props.shouldFetchItemsOnMount) {
+      await this.loadMoreRows();
+    } else {
+      this.setState({isFetching: true});
+    }
   }
 
   componentWillReceiveProps({selectedItems}: DropdownComponentProps) {
@@ -112,11 +121,18 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
   }
 
   render() {
-    const {anchorElement, cache, isOpen, isSearching, items, totalElements, query} = this.state;
-    const {cssStyles, fetchItemsByQuery, selectionText, selectedItems} = this.props;
-    const {primary, secondary} = cssStyles;
+    const {anchorElement, cache, isFetching, isOpen, isSearching, items, totalElements, query} = this.state;
+    const {
+      cssStyles,
+      innerDivClassName,
+      innerDivStyle,
+      fetchItemsByQuery,
+      overviewText,
+      selectionText,
+      selectedItems
+    } = this.props;
 
-    const selectedOverview: string = searchOverviewText(selectedItems, cache.totalElements);
+    const selectedOverview: string = overviewText(selectedItems, cache.totalElements);
 
     const numSelectedItems: number = selectedItems.length;
     const numItems: number = items.length;
@@ -126,6 +142,17 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
       ? numItems + offset
       : totalElements;
 
+    const popoverContentClassName = typestyle({
+      margin: '8px 8px',
+      width: listWidth,
+      $nest: {
+        '.DropdownSelector-content': {
+          maxHeight: 420,
+          overflowY: 'scroll',
+        },
+      }
+    });
+
     const searchBoxProps: SearchBoxProps = {
       cssStyles,
       clear: !isOpen,
@@ -133,31 +160,17 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
       onClear: this.onClear
     };
 
-    const renderSearchBox = fetchItemsByQuery && <SearchBox {...searchBoxProps}/>;
-
-    const dropdownTextClassName = typestyle({
-      color: colors.black,
-      backgroundColor: secondary.bg,
-      $nest: {
-        '&:hover': {backgroundColor: primary.bgHover},
-        '&.isOpen': {
-          border: `2px solid ${primary.bg}`,
-          backgroundColor: primary.bgHover,
-        },
-      }
-    });
+    const searchBox = fetchItemsByQuery && <SearchBox {...searchBoxProps}/>;
 
     return (
-      <Row className="DropdownSelector">
-        <div
+      <>
+        <DropDownSelectorButton
+          className={innerDivClassName}
+          isOpen={isOpen}
           onClick={this.openMenu}
-          className={classNames('DropdownSelector-Text clickable', {isOpen}, dropdownTextClassName)}
-        >
-          <RowMiddle>
-            <FirstUpper>{selectionText}{selectedOverview}</FirstUpper>
-            <IconDropDown/>
-          </RowMiddle>
-        </div>
+          style={innerDivStyle}
+          text={selectionText + selectedOverview}
+        />
 
         <Popover
           style={dropdownStyle.popoverStyle}
@@ -168,21 +181,20 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
           onRequestClose={this.closeMenu}
           animation={PopoverAnimationVertical}
         >
-          <Column className="DropdownSelector-menu">
-            {renderSearchBox}
-            <Row>
-              <InfiniteLoader
-                key={query}
-                isRowLoaded={this.isRowLoaded}
-                loadMoreRows={this.loadMoreRows}
-                rowCount={rowCount}
-              >
-                {this.renderList}
-              </InfiniteLoader>
-            </Row>
+          <Column className={popoverContentClassName}>
+            {searchBox}
+            <DropdownList
+              isFetching={isFetching}
+              isRowLoaded={this.isRowLoaded}
+              key={query}
+              loadMoreRows={this.loadMoreRows}
+              rowCount={rowCount}
+            >
+              {this.renderList}
+            </DropdownList>
           </Column>
         </Popover>
-      </Row>
+      </>
     );
   }
 
@@ -194,6 +206,13 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
       anchorElement: event.currentTarget,
       items: listItems(selectedItems, this.state.cache.items).sort(selectedFirstThenUnknownByNameAsc),
     });
+    this.shouldFetchItems();
+  }
+
+  async shouldFetchItems(): Promise<void> {
+    if (this.state.isFetching) {
+      await this.loadMoreRows();
+    }
   }
 
   closeMenu = (): void => this.setState({
@@ -241,24 +260,24 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
 
   rowRenderer = ({index, style}: ListRowProps) => {
     const {items} = this.state;
-    const {cssStyles: {primary}} = this.props;
-    const className = typestyle({$nest: {'&.Checkbox:hover': {backgroundColor: primary.bgHover}}});
+    const {cssStyles: {primary}, isReadOnlyList} = this.props;
     const selectedItem = items[index];
     const {id, selected} = selectedItem;
     const onClick = () => this.onSelect(selectedItem, id);
     const label = this.props.renderLabel(index, items)!;
-    return (
-      <Checkbox
-        id={id}
-        label={label}
-        labelClassName="first-uppercase"
-        onClick={onClick}
-        key={`${index}-${id}`}
-        style={style}
-        className={className}
-        checked={selected}
-      />
-    );
+    const listItemProps = {
+      className: typestyle({$nest: {'&.Checkbox:hover': {backgroundColor: primary.bgHover}}}),
+      id,
+      key: `${index}-${id}`,
+      label,
+      labelClassName: 'first-uppercae',
+      style,
+    };
+    if (isReadOnlyList) {
+      return <RowLeft {...listItemProps}>{label}</RowLeft>;
+    } else {
+      return <Checkbox onClick={onClick} checked={selected} {...listItemProps}/>;
+    }
   }
 
   renderList = ({onRowsRendered, registerChild}) => {
@@ -273,7 +292,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
         rowCount={numItems}
         rowRenderer={this.rowRenderer}
         style={dropdownStyle.listStyle}
-        width={240}
+        width={listWidth}
       />
     );
   }
@@ -287,6 +306,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
       this.setState(({items: prevItems, page}: State) => {
         const items = withNewItems(prevItems, responseItems);
         return ({
+          isFetching: false,
           items,
           cache: {items, totalElements},
           totalElements,
@@ -323,8 +343,11 @@ export const renderAddressLabel = (index: number, filteredList: SelectionListIte
 
 const DropdownSelector = withCssStyles((props: SearchableProps & ThemeContext) => (
   <DropdownComponent
+    isReadOnlyList={false}
+    overviewText={searchOverviewText}
     renderLabel={renderLabelAtIndex}
     rowHeight={40}
+    shouldFetchItemsOnMount={true}
     visibleItems={10}
     {...props}
   />
@@ -337,6 +360,6 @@ export const SearchableDropdownSelector = (props: SearchableProps) => (
   />
 );
 
-export const ListingDropdownSelector = (props: SelectableProps & OptionalProps) => (
+export const ListingDropdownSelector = (props: Props & OptionalProps) => (
   <DropdownSelector {...props}/>
 );

@@ -1,9 +1,6 @@
 import {throttle} from 'lodash';
 import {firstUpperTranslated} from '../../services/translationService';
-import {
-  FetchByPage,
-  PagedResponse,
-} from '../../state/domain-models/selections/selectionsApiActions';
+import {FetchByPage, PagedResponse} from '../../state/domain-models/selections/selectionsModels';
 import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
 import {CallbackWith, uuid} from '../../types/Types';
 import {DropdownComponentProps} from './DropdownSelector';
