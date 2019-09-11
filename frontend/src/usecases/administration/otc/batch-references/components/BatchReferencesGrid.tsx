@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Column, Size, Table, TableCellProps} from 'react-virtualized';
 import {compose} from 'recompose';
-import {routes} from '../../../../../app/routes';
 import {makeVirtualizedGridClassName} from '../../../../../app/themes';
 import {EmptyContentProps} from '../../../../../components/error-message/EmptyContent';
 import {withEmptyContent} from '../../../../../components/hoc/withEmptyContent';
@@ -14,18 +13,17 @@ import {
   StateToProps
 } from '../../../../../components/infinite-list/InfiniteList';
 import {makeSortingProps, rowClassName} from '../../../../../components/infinite-list/infiniteListHelper';
+import {RowLeft} from '../../../../../components/layouts/row/Row';
 import {renderLoadingOr} from '../../../../../components/loading/Loading';
 import {displayDate} from '../../../../../helpers/dateHelpers';
 import {firstUpperTranslated, translate} from '../../../../../services/translationService';
 import {BatchReference} from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
-import {LinkTo} from '../../components/LinkTo';
 import {BatchReferenceDevices} from './BatchReferenceDevices';
 
 type Props = StateToProps<BatchReference> & DispatchToProps;
 type GridProps = Props & ThemeContext;
 
-const renderBatchId = ({rowData: {id}}: TableCellProps) =>
-  <LinkTo href={`${routes.otcBatchReferencesModify}/${id}`}>{id.toString()}</LinkTo>;
+const renderBatchId = ({rowData: {id}}: TableCellProps) => <RowLeft style={{paddingLeft: 8}}>{id}</RowLeft>;
 
 const renderCreated = ({rowData: {created}}: TableCellProps) => displayDate(created);
 

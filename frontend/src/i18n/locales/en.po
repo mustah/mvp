@@ -32,9 +32,6 @@ msgstr "no batch references"
 msgid "create batch reference"
 msgstr "create batch reference"
 
-msgid "edit batch reference"
-msgstr "edit batch reference"
-
 msgid "successfully created batch reference"
 msgstr "successfully created batch reference"
 
