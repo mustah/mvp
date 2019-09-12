@@ -354,6 +354,9 @@ msgstr "månad"
 msgid "are you sure you want to delete this item"
 msgstr "är du säker på att du vill ta bort detta objekt"
 
+msgid "last readout"
+msgstr "senaste avläsning"
+
 msgid "all"
 msgstr "alla"
 

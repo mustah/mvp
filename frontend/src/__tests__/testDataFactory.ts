@@ -117,6 +117,7 @@ export const makeCollectionStat = (id: uuid, facility: string): CollectionStat =
   id,
   collectionPercentage: 0.1,
   date: 123123,
+  lastData: 123123,
   facility,
   isExportingToExcel: false,
   latency: '',

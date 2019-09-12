@@ -321,6 +321,9 @@ msgstr "month"
 msgid "are you sure you want to delete this item"
 msgstr "are you sure you want to delete this item"
 
+msgid "last readout"
+msgstr "last readout"
+
 msgid "all"
 msgstr "all"
 

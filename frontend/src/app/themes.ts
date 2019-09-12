@@ -125,6 +125,8 @@ export const makeGridClassName = ({primary}: CssStyles): string =>
 export const makeVirtualizedGridClassName = ({primary}: CssStyles): string =>
   style({
     $nest: {
+      '.ReactVirtualized__Table__row': {paddingRight: important(0)},
+      '.ReactVirtualized__Table__headerRow': {paddingRight: important(0)},
       '.ReactVirtualized__Table__row.odd': {backgroundColor: important(colors.alternate)},
       '.ReactVirtualized__Table__row:hover': {backgroundColor: important(primary.bgHover)},
     },

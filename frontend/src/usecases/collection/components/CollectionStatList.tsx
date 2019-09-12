@@ -7,6 +7,8 @@ import {ContentProps, InfiniteList, InfiniteListProps} from '../../../components
 import {makeSortingProps, rowClassName} from '../../../components/infinite-list/infiniteListHelper';
 import {renderLoadingOr} from '../../../components/loading/Loading';
 import {MeterLink} from '../../../components/meters/MeterLink';
+import {Separator} from '../../../components/separators/Separator';
+import {displayDate} from '../../../helpers/dateHelpers';
 import {formatCollectionPercentage, formatReadInterval} from '../../../helpers/formatters';
 import {useExportToExcel} from '../../../hooks/exportToExcelHook';
 import {translate} from '../../../services/translationService';
@@ -19,8 +21,13 @@ const renderMeterListItem = ({rowData: {facility, id}}: TableCellProps) =>
 const renderReadInterval = ({rowData: {readInterval}}: TableCellProps) =>
   formatReadInterval(readInterval);
 
-const renderCollectionPercentage = ({rowData: {collectionPercentage, readInterval}}: TableCellProps) =>
-  formatCollectionPercentage(collectionPercentage, readInterval);
+const renderCollectionPercentage = ({rowData: {collectionPercentage, readInterval}}: TableCellProps) => {
+  const displayString = formatCollectionPercentage(collectionPercentage, readInterval);
+  return displayString === '-' ? <Separator/> : displayString;
+};
+
+const renderLastData = ({rowData: {lastData}}: TableCellProps) =>
+  lastData ? displayDate(lastData * 1000) : <Separator/>;
 
 const save = (exporter: React.RefObject<ExcelExport>) => exporter.current!.save();
 
@@ -75,6 +82,13 @@ export const CollectionStatList = ({
           cellRenderer={renderLoadingOr(hasItem, renderCollectionPercentage)}
           dataKey="collectionPercentage"
           label={translate('collection percentage')}
+          minWidth={200}
+          width={1000}
+        />
+        <Column
+          cellRenderer={renderLoadingOr(hasItem, renderLastData)}
+          dataKey="lastData"
+          label={translate('last readout')}
           minWidth={200}
           width={1000}
         />
