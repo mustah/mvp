@@ -101,6 +101,7 @@
   <include file="xml/add_otc_roles.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_otc_otd_admin_role.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_index_gateways_meters_logical_meter_id.xml" relativeToChangelogFile="true"/>
+  <include file="xml/add_physical_meter_gist_index.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

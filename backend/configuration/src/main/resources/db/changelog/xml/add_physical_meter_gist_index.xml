@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="add index organisation_id logical_meter active_period to physical_meter" author="erimel">
+    <sql>
+      CREATE INDEX physical_meter_org_logical_meter_id_active_period_idx ON physical_meter USING gist
+      (organisation_id, logical_meter_id, active_period);
+    </sql>
+  </changeSet>
+  <changeSet id="add index logical_meter active_period to physical_meter" author="erimel">
+    <sql>
+      CREATE INDEX physical_meter_logical_meter_id_active_period_idx ON physical_meter USING gist
+      (logical_meter_id, active_period);
+    </sql>
+  </changeSet>
+</databaseChangeLog>
