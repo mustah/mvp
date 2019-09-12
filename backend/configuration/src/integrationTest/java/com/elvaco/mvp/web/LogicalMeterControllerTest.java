@@ -525,7 +525,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findAllMetersPaged_WithOrganisationAsSuperAdmin() {
+  public void findJustMetersPaged_WithOrganisationAsSuperAdmin() {
     given(logicalMeter());
 
     UUID otherOrganisation = given(organisation()).getId();
@@ -533,7 +533,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     var allMeters = asSuperAdmin().getPage("/meters", PagedLogicalMeterDto.class);
 
-    assertThat(allMeters.getContent()).hasSize(2);
+    assertThat(allMeters.getContent()).hasSize(1);
 
     var oneOrganisation = asSuperAdmin()
       .getPage(

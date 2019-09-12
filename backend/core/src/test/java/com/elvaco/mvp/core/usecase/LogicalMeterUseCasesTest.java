@@ -46,7 +46,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
   }
 
   @Test
-  public void superAdminShouldFindAllMeters() {
+  public void superAdminShouldFindAllMeters_WithinItsOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(List.of(Role.SUPER_ADMIN)),
       asList(
@@ -56,7 +56,7 @@ public class LogicalMeterUseCasesTest extends DefaultTestFixture {
       )
     );
 
-    assertThat(useCases.findAllBy(new MockRequestParameters())).hasSize(3);
+    assertThat(useCases.findAllBy(new MockRequestParameters())).hasSize(2);
   }
 
   @Test

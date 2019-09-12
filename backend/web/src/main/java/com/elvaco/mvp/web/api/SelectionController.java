@@ -49,7 +49,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_CITY
     );
@@ -66,7 +66,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_ADDRESS
     );
@@ -83,7 +83,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_FACILITY
     );
@@ -100,7 +100,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_SECONDARY_ADDRESS
     );
@@ -117,7 +117,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_SERIAL
     );
@@ -134,7 +134,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_ORGANISATION
     );

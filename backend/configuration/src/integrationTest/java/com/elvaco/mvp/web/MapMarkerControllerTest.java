@@ -413,12 +413,11 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void mapMarkersIncludesGatewaysWithCityAndAddressLocation() {
-    UUID organisationId = given(organisation()).getId();
-    Gateway gateway = saveGatewayWith(organisationId, StatusType.UNKNOWN);
+    Gateway gateway = saveGatewayWith(context().organisationId(), StatusType.UNKNOWN);
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-1234")
-      .organisationId(organisationId)
+      .organisationId(context().organisationId())
       .created(NOW)
       .gateway(gateway)
       .location(kungsbacka().address("super 1").build())
@@ -464,12 +463,11 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void doIncludeGatewayMapMarkerWithLowConfidence() {
-    UUID organisationId = given(organisation()).getId();
-    Gateway gateway = saveGatewayWith(organisationId, StatusType.OK);
+    Gateway gateway = saveGatewayWith(context().organisationId(), StatusType.OK);
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-1234")
-      .organisationId(organisationId)
+      .organisationId(context().organisationId())
       .created(NOW)
       .gateway(gateway)
       .location(kungsbacka()
@@ -477,7 +475,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
         .build())
       .build());
 
-    ResponseEntity<MapMarkersDto> response = asSuperAdmin()
+    ResponseEntity<MapMarkersDto> response = asMvpUser()
       .get("/map-markers/gateways", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

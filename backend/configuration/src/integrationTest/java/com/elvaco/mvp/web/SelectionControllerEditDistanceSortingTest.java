@@ -149,8 +149,7 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
       .page(0)
       .build();
 
-    Page<IdNamedDto> response = asSuperAdmin() //For super admin eyes only
-      .getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asSuperAdmin().getPage(url, IdNamedDto.class);
 
     var organisationNames = response.getContent().stream().map(organisation -> organisation.name);
 

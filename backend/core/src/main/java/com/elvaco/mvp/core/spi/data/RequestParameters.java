@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.FilterPeriod;
@@ -23,6 +24,8 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
 
 public interface RequestParameters {
+
+  Predicate<RequestParameters> HAS_ORGANISATION_PARAMETER = p -> p.hasParam(ORGANISATION);
 
   int DEFAULT_LIMIT = 2_000;
 
@@ -100,8 +103,11 @@ public interface RequestParameters {
     }
   }
 
-  default void ensureOrganisation(AuthenticatedUser currentUser) {
-    if (!currentUser.isSuperAdmin()) {
+  default void ensureOrganisation(
+    AuthenticatedUser currentUser,
+    Predicate<RequestParameters> predicate
+  ) {
+    if (!currentUser.isSuperAdmin() || !predicate.test(this)) {
       replace(
         ORGANISATION,
         currentUser.subOrganisationParameters().getEffectiveOrganisationId().toString()
