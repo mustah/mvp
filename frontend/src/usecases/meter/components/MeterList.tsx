@@ -20,7 +20,7 @@ import {AlarmStatus} from '../../../components/status/MeterAlarms';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpper, firstUpperTranslated, translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
-import {uuid} from '../../../types/Types';
+import {EncodedUriParameters, uuid} from '../../../types/Types';
 import {facilitySortOptions, OwnProps} from '../meterModels';
 
 const renderMeterListItem = ({rowData: {facility, id}}: TableCellProps) => <MeterLink facility={facility} id={id}/>;
@@ -28,7 +28,11 @@ const renderAlarm = ({rowData}: TableCellProps) => <AlarmStatus hasAlarm={rowDat
 const renderCity = ({rowData}: TableCellProps) => firstUpper(orUnknown(rowData.location.city));
 const renderAddress = ({rowData}: TableCellProps) => firstUpper(orUnknown(rowData.location.address));
 
-export type Props = StateToProps<Meter> & MeterDispatchToProps & OwnProps;
+export interface MeterListProps extends StateToProps<Meter> {
+  legendItemsParameters: EncodedUriParameters;
+}
+
+export type Props = MeterListProps & MeterDispatchToProps & OwnProps ;
 
 export const MeterList = ({
   addToReport,

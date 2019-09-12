@@ -162,14 +162,15 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
   );
 
 const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
-  createSelector<UriLookupState, string, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
-    ({query}) => query!,
+  createSelector<UriLookupState, Parameters, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
+    ({limit, query}) => ({query: query!, limit: limit!}),
     getSelectionParameters,
     getCurrentPeriod,
-    (query, {dateRange, threshold, ...rest}, currentPeriod) => {
+    ({limit, query}, {dateRange, threshold, ...rest}, currentPeriod) => {
       const thresholdParameter = toThresholdParameter(threshold);
       const parametersToEncode = [
         ...toPeriodApiParameters(determineActivePeriod(query !== undefined, currentPeriod, threshold)),
+        ...toLimitParameter(limit),
       ];
       return query
         ? encodedUriParametersFrom([

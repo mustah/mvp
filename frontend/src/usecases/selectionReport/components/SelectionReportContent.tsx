@@ -15,12 +15,12 @@ export const SelectionReportContent = ({
   fetchLegendItems,
   isSuccessfullyFetched,
   legendItems,
-  parameters,
+  legendItemsParameters,
   view
 }: Props) => {
   React.useEffect(() => {
-    fetchLegendItems(parameters);
-  }, [parameters]);
+    fetchLegendItems(legendItemsParameters);
+  }, [legendItemsParameters]);
 
   React.useEffect(() => {
     if (isSuccessfullyFetched && legendItems.length) {

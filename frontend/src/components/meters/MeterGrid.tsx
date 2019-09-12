@@ -30,14 +30,15 @@ export const MeterGrid = (props: Props) => {
     fetchPaginated,
     fetchLegendItems,
     pagination: {page},
+    legendItemsParameters,
     parameters,
     sort,
   } = props;
   useFetchMeters({fetchPaginated, parameters, sort, page});
 
   React.useEffect(() => {
-    fetchLegendItems(parameters);
-  }, [parameters]);
+    fetchLegendItems(legendItemsParameters);
+  }, [legendItemsParameters]);
 
   const wrapperProps: Props & EmptyContentProps = {
     ...props,
