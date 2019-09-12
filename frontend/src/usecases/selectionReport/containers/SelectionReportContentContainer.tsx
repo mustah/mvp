@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {addAllToSelectionReport, fetchLegendItems} from '../../../state/report/reportActions';
+import {addAllToSelectionReport, fetchLegendItems, limit} from '../../../state/report/reportActions';
 import {LegendItem} from '../../../state/report/reportModels';
 import {getLegendItemsWithLimit} from '../../../state/report/reportSelectors';
 import {ToolbarViewSettingsProps} from '../../../state/ui/toolbar/toolbarModels';
@@ -13,6 +13,7 @@ interface StateToProps extends ToolbarViewSettingsProps {
   isSuccessfullyFetched: boolean;
   legendItems: LegendItem[];
   parameters: EncodedUriParameters;
+  legendItemsParameters: EncodedUriParameters;
 }
 
 interface DispatchToProps {
@@ -31,6 +32,7 @@ const mapStateToProps = ({
     isSuccessfullyFetched: legendItems.isSuccessfullyFetched,
     legendItems: getLegendItemsWithLimit(legendItems),
     parameters: getMeterParameters(userSelection),
+    legendItemsParameters: getMeterParameters({limit, ...userSelection}),
     view,
   });
 

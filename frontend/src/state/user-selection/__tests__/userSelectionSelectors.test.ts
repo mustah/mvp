@@ -397,6 +397,23 @@ describe('userSelectionSelectors', () => {
       expect(urlFromParameters(uriParameters).searchParams.get('alarm')).toEqual('yes');
     });
 
+    it('has limit parameter', () => {
+      const payload: SelectionParameter = {
+        item: {...toIdNamed('yes')},
+        parameter: ParameterName.alarms,
+      };
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getMeterParameters({userSelection: state.userSelection, limit: 42});
+
+      const url = urlFromParameters(uriParameters);
+
+      expect(url.searchParams.get('limit')).toEqual('42');
+    });
+
     it('search meters with no alarms', () => {
       const payload: SelectionParameter = {
         item: {...toIdNamed('no')},
