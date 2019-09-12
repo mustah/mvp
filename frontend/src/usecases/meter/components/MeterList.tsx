@@ -12,7 +12,7 @@ import {
   StateToProps
 } from '../../../components/infinite-list/InfiniteList';
 import {makeSortingProps, renderText, rowClassName} from '../../../components/infinite-list/infiniteListHelper';
-import {RowRight} from '../../../components/layouts/row/Row';
+import {RowLeft} from '../../../components/layouts/row/Row';
 import {renderLoadingOr} from '../../../components/loading/Loading';
 import {MeterDispatchToProps} from '../../../components/meters/MeterGrid';
 import {MeterLink} from '../../../components/meters/MeterLink';
@@ -55,7 +55,7 @@ export const MeterList = ({
   const renderActionsCell = ({rowData}: TableCellProps) => {
     const {facility, id: meterId} = rowData;
     return (
-      <RowRight className="ActionsDropdown-list">
+      <RowLeft>
         <ListActionsDropdown
           item={rowData}
           deleteMeter={openConfirm}
@@ -68,7 +68,7 @@ export const MeterList = ({
           confirm={confirm}
           text={firstUpperTranslated('are you sure you want to delete the meter {{facility}}', {facility})}
         />
-      </RowRight>
+      </RowLeft>
     );
   };
 
@@ -147,8 +147,8 @@ export const MeterList = ({
           cellRenderer={renderLoadingOr(hasItem, renderActionsCell)}
           className="ListItemActionButtons"
           dataKey="listItemActionButtons"
-          minWidth={24}
-          width={24}
+          minWidth={38}
+          width={38}
         />
       </Table>
     );

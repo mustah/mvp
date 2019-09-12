@@ -15,7 +15,7 @@ const className = style({
     '.SelectionResultActionDropdown': {
       position: 'absolute',
       top: -32,
-      right: 8,
+      right: 18,
     },
   },
 });
