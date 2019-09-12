@@ -5,6 +5,7 @@ import {SelectedParameters} from '../../user-selection/userSelectionModels';
 export interface CollectionStat extends Identifiable {
   collectionPercentage: number;
   date: number;
+  lastData: number;
   facility: string;
   isExportingToExcel: boolean;
   latency: string;
