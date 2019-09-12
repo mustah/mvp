@@ -89,14 +89,14 @@ export const MeterList = ({
           headerClassName="left-most"
           dataKey="facility"
           label={translate('facility')}
-          minWidth={168}
+          minWidth={148}
           width={400}
         />
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderText)}
           dataKey="address"
           label={translate('meter id')}
-          minWidth={168}
+          minWidth={128}
           width={200}
         />
         <Column
@@ -104,14 +104,14 @@ export const MeterList = ({
           className="first-uppercase"
           dataKey="city"
           label={translate('city')}
-          minWidth={168}
+          minWidth={128}
           width={300}
         />
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderAddress)}
           dataKey="streetAddress"
           label={translate('address')}
-          minWidth={168}
+          minWidth={138}
           width={600}
         />
         <Column
@@ -119,29 +119,29 @@ export const MeterList = ({
           className="first-uppercase"
           dataKey="manufacturer"
           label={translate('manufacturer')}
-          minWidth={112}
+          minWidth={100}
           width={200}
         />
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderText)}
           dataKey="medium"
           label={translate('medium')}
-          minWidth={124}
+          minWidth={100}
           width={200}
         />
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderAlarm)}
           dataKey="alarm"
           label={translate('alarm')}
-          minWidth={112}
-          width={112}
+          minWidth={80}
+          width={100}
         />
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderText)}
           dataKey="gatewaySerial"
           label={translate('gateway')}
-          minWidth={112}
-          width={112}
+          minWidth={80}
+          width={124}
         />
         <Column
           cellRenderer={renderLoadingOr(hasItem, renderActionsCell)}
