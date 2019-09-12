@@ -143,7 +143,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void superAdminCanSeeAllMeasurements() {
+  public void superAdminCannotSeeAllMeasurements() {
     ZonedDateTime date = context().now();
 
     UUID organisationId = given(organisation()).getId();
@@ -170,7 +170,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         + "&reportAfter=" + date
         + "&reportBefore=" + date.plusHours(1)
       )
-    ).hasSize(2);
+    ).hasSize(1);
   }
 
   @Test

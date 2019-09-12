@@ -121,7 +121,7 @@ public class MockRequestParameters implements RequestParameters {
 
   @Override
   public RequestParameters ensureOrganisationFilters(AuthenticatedUser currentUser) {
-    ensureOrganisation(currentUser);
+    ensureOrganisation(currentUser, HAS_ORGANISATION_PARAMETER);
     return this;
   }
 }

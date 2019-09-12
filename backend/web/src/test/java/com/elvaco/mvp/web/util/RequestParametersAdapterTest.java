@@ -9,7 +9,6 @@ import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import com.google.common.collect.ImmutableMultimap;
 import org.junit.Test;
@@ -21,6 +20,8 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
+import static com.elvaco.mvp.testing.security.MockAuthenticatedUser.mvpUser;
+import static com.elvaco.mvp.testing.security.MockAuthenticatedUser.superAdmin;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -206,11 +207,10 @@ public class RequestParametersAdapterTest {
 
   @Test
   public void replace_ensureOrganisationIsSameAsUserOrganisationWhenNotSuperAdminUser() {
-    String organisationId = randomUUID().toString();
-    AuthenticatedUser currentUser = MockAuthenticatedUser.mvpUser();
+    AuthenticatedUser currentUser = mvpUser();
 
     RequestParameters parameters = new RequestParametersAdapter()
-      .add(ORGANISATION, organisationId)
+      .add(ORGANISATION, randomUUID().toString())
       .ensureOrganisationFilters(currentUser);
 
     assertThat(parameters.getFirst(ORGANISATION))
@@ -219,7 +219,7 @@ public class RequestParametersAdapterTest {
 
   @Test
   public void add_ensureOrganisationIsSameAsUserOrganisationWhenNotSuperAdminUser() {
-    AuthenticatedUser currentUser = MockAuthenticatedUser.mvpUser();
+    AuthenticatedUser currentUser = mvpUser();
     RequestParameters parameters = new RequestParametersAdapter()
       .ensureOrganisationFilters(currentUser);
 
@@ -230,9 +230,9 @@ public class RequestParametersAdapterTest {
   @Test
   public void doNotReplaceOrganisationId_ForSuperAdmin_WhenEnsuringOrganisation() {
     String organisationId = randomUUID().toString();
-    AuthenticatedUser currentUser = MockAuthenticatedUser.superAdmin();
+    AuthenticatedUser currentUser = superAdmin();
 
-    RequestParameters parameters = new RequestParametersAdapter()
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(Map.of())
       .add(ORGANISATION, organisationId)
       .ensureOrganisationFilters(currentUser);
 
@@ -241,12 +241,35 @@ public class RequestParametersAdapterTest {
 
   @Test
   public void doNotTouchParameters_ForSuperAdmin_WhenEnsuringOrganisation() {
-    AuthenticatedUser currentUser = MockAuthenticatedUser.superAdmin();
+    AuthenticatedUser currentUser = superAdmin();
+
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(Map.of())
+      .ensureOrganisationFilters(currentUser);
+
+    assertThat(parameters.getFirst(ORGANISATION)).isNull();
+  }
+
+  @Test
+  public void willOverrideAndEnforceUsersOrganisations_WhenCreatingParametersForSuperAdmin() {
+    AuthenticatedUser currentUser = mvpUser();
+
+    RequestParameters parameters = RequestParametersAdapter.forSuperAdmin(Map.of())
+      .add(ORGANISATION, randomUUID().toString())
+      .ensureOrganisationFilters(currentUser);
+
+    assertThat(parameters.getFirst(ORGANISATION))
+      .isEqualTo(currentUser.getOrganisationId().toString());
+  }
+
+  @Test
+  public void ensureOrganisationId_Even_For_SuperAdmin() {
+    AuthenticatedUser currentUser = superAdmin();
 
     RequestParameters parameters = new RequestParametersAdapter()
       .ensureOrganisationFilters(currentUser);
 
-    assertThat(parameters.getFirst(ORGANISATION)).isNull();
+    assertThat(parameters.getFirst(ORGANISATION))
+      .isEqualTo(currentUser.getOrganisationId().toString());
   }
 
   @Test
