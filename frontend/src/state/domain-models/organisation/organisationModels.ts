@@ -5,6 +5,7 @@ export interface Organisation extends IdNamed {
   slug: string;
   parent?: Organisation;
   selectionId?: uuid;
+  shortPrefix?: string;
 }
 
 export type OrganisationWithoutId = Omit<Organisation, 'id'>;

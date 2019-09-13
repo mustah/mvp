@@ -878,3 +878,6 @@ msgstr "{{count}} meters are not shown in the graph. Choose which meters you wan
 
 msgid "object type"
 msgstr "type"
+
+msgid "short prefix"
+msgstr "short prefix"

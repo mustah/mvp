@@ -22,6 +22,8 @@ public class Organisation implements Identifiable<UUID> {
   public final String slug;
   public final String externalId;
   @Nullable
+  public final String shortPrefix;
+  @Nullable
   public final Organisation parent;
   @Nullable
   public final UserSelection selection;
@@ -31,6 +33,7 @@ public class Organisation implements Identifiable<UUID> {
     String name,
     String slug,
     String externalId,
+    String shortPrefix,
     @Nullable Organisation parent,
     @Nullable UserSelection selection
   ) {
@@ -39,6 +42,7 @@ public class Organisation implements Identifiable<UUID> {
     this.name = name;
     this.slug = slug;
     this.externalId = externalId;
+    this.shortPrefix = shortPrefix;
     this.parent = parent;
     this.selection = selection;
   }
@@ -57,6 +61,13 @@ public class Organisation implements Identifiable<UUID> {
   public static Organisation of(String name, @Nullable UUID id) {
     return Organisation.builderFrom(name)
       .id(id != null ? id : randomUUID())
+      .build();
+  }
+
+  public static Organisation of(String name, @Nullable UUID id, @Nullable String shortPrefix) {
+    return Organisation.builderFrom(name)
+      .id(id != null ? id : randomUUID())
+      .shortPrefix(shortPrefix)
       .build();
   }
 

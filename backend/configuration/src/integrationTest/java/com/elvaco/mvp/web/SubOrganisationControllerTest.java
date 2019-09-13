@@ -1,3 +1,4 @@
+
 package com.elvaco.mvp.web;
 
 import java.util.Optional;
@@ -122,7 +123,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
       context().defaultOrganisation().name
     );
     assertThat(dto).isEqualToIgnoringGivenFields(
-      new OrganisationDto(null, "sub slug", "sub-slug", expectedParent, userSelection.id),
+      new OrganisationDto(null, "sub slug", "sub-slug", null, expectedParent, userSelection.id),
       "id"
     );
   }

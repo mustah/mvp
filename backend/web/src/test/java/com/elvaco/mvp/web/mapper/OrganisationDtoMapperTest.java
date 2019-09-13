@@ -80,6 +80,7 @@ public class OrganisationDtoMapperTest {
         id,
         "sub slug",
         "sub-slug",
+        null,
         new OrganisationDto(parentId, "parent slug"),
         selection.id
       )

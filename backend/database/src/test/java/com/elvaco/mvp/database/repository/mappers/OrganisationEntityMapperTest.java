@@ -29,6 +29,61 @@ public class OrganisationEntityMapperTest {
         .id(id)
         .name("organisation slug")
         .slug("organisation-slug")
+        .shortPrefix(null)
+        .externalId("organisation slug")
+        .build()
+    );
+  }
+
+  @Test
+  public void toEntity_noParent_shortPrefixBlank() {
+    UUID id = randomUUID();
+    assertThat(toEntity(Organisation.of(
+      "organisation slug",
+      id,
+      ""
+    ))).isEqualToComparingFieldByField(
+      OrganisationEntity.builder()
+        .id(id)
+        .name("organisation slug")
+        .slug("organisation-slug")
+        .shortPrefix(null)
+        .externalId("organisation slug")
+        .build()
+    );
+  }
+
+  @Test
+  public void toEntity_noParent_shortPrefix() {
+    UUID id = randomUUID();
+    assertThat(toEntity(Organisation.of(
+      "organisation slug",
+      id,
+      "prefix"
+    ))).isEqualToComparingFieldByField(
+      OrganisationEntity.builder()
+        .id(id)
+        .name("organisation slug")
+        .slug("organisation-slug")
+        .shortPrefix("prefix")
+        .externalId("organisation slug")
+        .build()
+    );
+  }
+
+  @Test
+  public void toEntity_noParent_shortPrefixOnlySpaces() {
+    UUID id = randomUUID();
+    assertThat(toEntity(Organisation.of(
+      "organisation slug",
+      id,
+      "    "
+    ))).isEqualToComparingFieldByField(
+      OrganisationEntity.builder()
+        .id(id)
+        .name("organisation slug")
+        .slug("organisation-slug")
+        .shortPrefix(null)
         .externalId("organisation slug")
         .build()
     );

@@ -8,6 +8,7 @@ import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.util.StringUtils;
 
 @UtilityClass
 public class OrganisationEntityMapper {
@@ -18,6 +19,7 @@ public class OrganisationEntityMapper {
       entity.name,
       entity.slug,
       entity.externalId,
+      entity.shortPrefix,
       entity.parent != null ? toDomainModel(entity.parent) : null,
       entity.selection != null
         ? UserSelectionEntityMapper.toDomainModel(entity.selection)
@@ -31,6 +33,9 @@ public class OrganisationEntityMapper {
       .name(domainModel.name)
       .slug(domainModel.slug)
       .externalId(domainModel.externalId)
+      .shortPrefix(StringUtils.hasText(domainModel.shortPrefix)
+        ? domainModel.shortPrefix.trim()
+        : null)
       .parent(domainModel.parent != null ? toEntity(domainModel.parent) : null)
       .selection(toUserSelectionEntity(domainModel.selection))
       .build();

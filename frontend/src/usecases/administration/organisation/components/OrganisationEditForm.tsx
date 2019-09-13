@@ -45,7 +45,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {name: '', selectionId: undefined, ...props.organisation};
+    this.state = {name: '', selectionId: undefined, shortPrefix: '', ...props.organisation};
   }
 
   componentWillReceiveProps({organisation}: Props) {
@@ -55,12 +55,13 @@ export class OrganisationEditForm extends React.Component<Props, State> {
   }
 
   render() {
-    const {parent, name, selectionId, slug, id} = this.state;
+    const {parent, name, selectionId, slug, id, shortPrefix} = this.state;
     const {organisations, selections} = this.props;
 
     const nameLabel = firstUpperTranslated('organisation name');
     const parentLabel = firstUpperTranslated('parent organisation');
     const selectionLabel = firstUpperTranslated('selection');
+    const shortPrefixLabel = firstUpperTranslated('short prefix');
 
     const parentId: uuid = parent ? parent.id : noOrganisationId;
 
@@ -132,6 +133,21 @@ export class OrganisationEditForm extends React.Component<Props, State> {
           </Row>
           <Row className="configuration-section">
             <Column className="one-third">
+              <h2>{firstUpperTranslated('short prefix')}</h2>
+            </Column>
+            <Column className="two-thirds">
+              <TextFieldInput
+                autoComplete="off"
+                floatingLabelText={shortPrefixLabel}
+                hintText={shortPrefixLabel}
+                id="shortPrefix"
+                value={shortPrefix}
+                onChange={this.onChangeShortPrefix}
+              />
+            </Column>
+          </Row>
+          <Row className="configuration-section">
+            <Column className="one-third">
               <h2>{firstUpperTranslated('parent organisation')}</h2>
             </Column>
             <Column className="two-thirds">
@@ -161,16 +177,17 @@ export class OrganisationEditForm extends React.Component<Props, State> {
 
   onChangeName = (event) => this.setState({name: event.target.value});
 
+  onChangeShortPrefix = (_, newVale) => this.setState({shortPrefix: newVale});
+
   wrappedSubmit = (event) => {
     event.preventDefault();
-
     const {addOrganisation, addSubOrganisation, updateOrganisation} = this.props;
-    const {id, name, parent, selectionId} = this.state;
+    const {id, name, parent, selectionId, shortPrefix} = this.state;
     const slug = name;
-    const organisationWithoutParent = {...omit(this.state, 'parent'), slug};
+    const organisationWithoutParent = {...omit(this.state, 'parent'), slug, shortPrefix};
 
     if (id) {
-      updateOrganisation(parent ? {...this.state, slug} : organisationWithoutParent);
+      updateOrganisation(parent ? {...this.state, slug, shortPrefix} : organisationWithoutParent);
     } else {
       const parentId: uuid | undefined = parent ? parent.id : undefined;
       if (parentId && parentId !== noOrganisationId) {
