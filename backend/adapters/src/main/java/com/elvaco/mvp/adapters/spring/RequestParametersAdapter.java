@@ -43,7 +43,7 @@ public class RequestParametersAdapter implements RequestParameters {
   }
 
   public RequestParametersAdapter() {
-    this(new LinkedMultiValueMap<>(), null, HAS_ORGANISATION_PARAMETER);
+    this(new LinkedMultiValueMap<>(), null, HAS_ORGANISATIONS);
   }
 
   public static RequestParameters forSuperAdmin(@Nullable Map<String, List<String>> multiValueMap) {
@@ -62,7 +62,7 @@ public class RequestParametersAdapter implements RequestParameters {
     @Nullable Map<String, List<String>> multiValueMap,
     @Nullable RequestParameter idParameter
   ) {
-    return of(multiValueMap, idParameter, HAS_ORGANISATION_PARAMETER);
+    return of(multiValueMap, idParameter, HAS_ORGANISATIONS);
   }
 
   public static RequestParameters of(

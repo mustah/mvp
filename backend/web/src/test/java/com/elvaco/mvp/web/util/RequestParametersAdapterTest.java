@@ -178,6 +178,36 @@ public class RequestParametersAdapterTest {
   }
 
   @Test
+  public void hasNoValues() {
+    RequestParameters parameters = RequestParametersAdapter.of();
+
+    assertThat(parameters.hasValues(ORGANISATION)).isFalse();
+  }
+
+  @Test
+  public void hasNoValuesWhenEmpty() {
+    RequestParameters parameters = RequestParametersAdapter.of()
+      .setAll(ORGANISATION, List.of());
+
+    assertThat(parameters.hasValues(ORGANISATION)).isFalse();
+  }
+
+  @Test
+  public void hasValues() {
+    RequestParameters parameters = RequestParametersAdapter.of()
+      .setAll(ORGANISATION, List.of("1"));
+
+    assertThat(parameters.hasValues(ORGANISATION)).isTrue();
+  }
+
+  @Test
+  public void canSetNullList() {
+    RequestParameters parameters = RequestParametersAdapter.of().setAll(ORGANISATION, null);
+
+    assertThat(parameters.getValues(ORGANISATION)).isEqualTo(List.of());
+  }
+
+  @Test
   public void getNonExistingValuesShouldReturnEmptyList() {
     assertThat(new RequestParametersAdapter().getValues(LOGICAL_METER_ID)).isEmpty();
   }
@@ -186,9 +216,6 @@ public class RequestParametersAdapterTest {
   public void entrySetShouldBeEmptyWhenThereAreNoParameters() {
     assertThat(new RequestParametersAdapter().entrySet()).isEmpty();
     assertThat(RequestParametersAdapter.of(null).entrySet()).isEmpty();
-
-    Map<String, List<String>> multiValueMap = null;
-    assertThat(RequestParametersAdapter.of(multiValueMap).entrySet()).isEmpty();
   }
 
   @Test

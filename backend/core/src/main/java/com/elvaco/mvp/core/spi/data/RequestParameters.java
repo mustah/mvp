@@ -25,7 +25,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD_BEFORE;
 
 public interface RequestParameters {
 
-  Predicate<RequestParameters> HAS_ORGANISATION_PARAMETER = p -> p.hasParam(ORGANISATION);
+  Predicate<RequestParameters> HAS_ORGANISATIONS = p -> p.hasValues(ORGANISATION);
 
   int DEFAULT_LIMIT = 2_000;
 
@@ -91,6 +91,11 @@ public interface RequestParameters {
 
   default Optional<RequestParameters> has(RequestParameter param) {
     return hasParam(param) ? Optional.of(this) : Optional.empty();
+  }
+
+  default boolean hasValues(RequestParameter param) {
+    var values = getValues(param);
+    return values != null && !values.isEmpty();
   }
 
   default int getLimit() {
