@@ -159,7 +159,7 @@ export const SelectionContent = ({
         />
       </Foldable>
 
-      <MeterListContentContainer paddingBottom={416}/>
+      <MeterListContentContainer paddingBottom={465}/>
     </Column>
   );
 };

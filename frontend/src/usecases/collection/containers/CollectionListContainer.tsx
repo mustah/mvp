@@ -28,7 +28,6 @@ const mapStateToProps = (rootState: RootState): CollectionStatsStateToProps => {
     domainModels: {allCollectionStats},
     meterDetail: {selectedMeterId: selectedItemId},
     paginatedDomainModels: {collectionStatFacilities},
-    summary: {payload: {numMeters}},
     ui: {pagination: paginationState},
   }: RootState = rootState;
 
@@ -40,7 +39,7 @@ const mapStateToProps = (rootState: RootState): CollectionStatsStateToProps => {
   return ({
     entityType: 'collectionStatFacilities',
     excelExportParameters: getCollectionStatsExcelExportParameters(rootState),
-    hasContent: isFetching || totalElements > 0 || numMeters > 0,
+    hasContent: isFetching || totalElements > 0,
     isExportingToExcel,
     isFetching,
     items: getCollectionStats(collectionStatFacilities),

@@ -71,7 +71,7 @@ export const InfiniteList = ({
   changePageTo,
   isFetching,
   items,
-  paddingBottom = 276,
+  paddingBottom = 325,
   pagination: {page, size, totalPages},
   renderContent,
   rowHeight,

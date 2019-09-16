@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "total meters"
+msgstr "total meters"
+
 msgid "measurements are not displayed. Use the excel export above for complete list."
 msgstr "measurements are not displayed. Use the excel export above for complete list."
 

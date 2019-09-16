@@ -17,7 +17,6 @@ export const enum EndPoints {
   syncMetersOrganisation = '/meters/sync/organisation',
   meterMapMarkers = '/map-markers/meters',
   gatewayMapMarkers = '/map-markers/gateways',
-  summary = '/summary',
   summaryMeters = '/summary/meters',
   gateways = '/gateways',
   authenticate = '/authenticate',

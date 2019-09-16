@@ -16,7 +16,7 @@ export const getBounds =
     ({entities}: DomainModel<MapMarker>) => boundsFromMarkers(entities),
   );
 
-const getTotalMeters = (state: RootState): number => state.summary.payload.numMeters;
+const getTotalMeters = ({ui: {pagination: {meters: {totalElements}}}}: RootState): number => totalElements;
 const getMeterMapMarkers = (state: RootState) => state.domainModels.meterMapMarkers;
 const getGatewayMapMarkers = (state: RootState) => state.domainModels.gatewayMapMarkers;
 const getValidationQuery = (state: RootState): string | undefined => state.search.validation.query;

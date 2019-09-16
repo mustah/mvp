@@ -29,6 +29,7 @@ export const colors = {
   alternate: '#f9f9f9',
   ok: '#41c300',
   error: '#e84d6f',
+  info: '#7b7b7b',
   notification: '#e10050',
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',

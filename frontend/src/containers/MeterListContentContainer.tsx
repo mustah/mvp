@@ -12,12 +12,12 @@ import {OwnProps} from '../usecases/meter/meterModels';
 
 const mapStateToProps = ({
   paginatedDomainModels: {meters},
-  summary: {payload: {numMeters}},
   ui: {pagination: {meters: {totalElements}}}
 }: RootState): StateToProps =>
   ({
     error: getFirstPageError(meters),
-    hasContent: numMeters > 0 || totalElements > 0,
+    hasContent: totalElements > 0,
+    totalElements,
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

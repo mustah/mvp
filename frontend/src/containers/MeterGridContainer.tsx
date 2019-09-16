@@ -17,7 +17,6 @@ const mapStateToProps = ({
   meterDetail: {selectedMeterId},
   paginatedDomainModels: {meters},
   search: {validation: {query}},
-  summary: {payload: {numMeters}},
   ui: {pagination: paginationState},
   userSelection: {userSelection}
 }: RootState): MeterListProps => {
@@ -29,7 +28,7 @@ const mapStateToProps = ({
   return ({
     entityType: 'meters',
     isFetching,
-    hasContent: isFetching || totalElements > 0 || numMeters > 0,
+    hasContent: isFetching || totalElements > 0,
     items: getAllMeters(meters),
     pagination,
     parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),

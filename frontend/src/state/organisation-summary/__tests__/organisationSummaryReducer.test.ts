@@ -13,23 +13,22 @@ import {
   resetSelection,
   selectSavedSelectionAction,
 } from '../../user-selection/userSelectionActions';
-import {SelectionSummary, SummaryState} from '../summaryModels';
-import {initialState, summary} from '../summaryReducer';
+import {SummaryState} from '../organisationSummaryModels';
+import {initialState, organisationSummary} from '../organisationSummaryReducer';
 
-describe('summaryReducer', () => {
+describe('organisation summary reducer', () => {
 
-  const actions: RequestHandler<SelectionSummary> =
-    makeActionsOf<SelectionSummary>(Sectors.summary);
+  const actions: RequestHandler<number> = makeActionsOf<number>(Sectors.organisationSummary);
 
   describe('unknown action type', () => {
 
     it('has initial state for unknown action', () => {
-      expect(summary(undefined, {type: 'unknown', payload: 'nothing'})).toEqual(initialState);
+      expect(organisationSummary(undefined, {type: 'unknown', payload: 'nothing'})).toEqual(initialState);
     });
 
     it('returns the previous state', () => {
       const prevState: SummaryState = {...initialState, isFetching: true};
-      expect(summary(prevState, {type: 'unknown', payload: 'nothing'})).toEqual(
+      expect(organisationSummary(prevState, {type: 'unknown', payload: 'nothing'})).toEqual(
         {
           ...initialState,
           isFetching: true,
@@ -40,19 +39,19 @@ describe('summaryReducer', () => {
   describe('request action type', () => {
 
     it('returns summary result for request action ', () => {
-      expect(summary(initialState, actions.request())).toEqual(
+      expect(organisationSummary(initialState, actions.request())).toEqual(
         {
           isFetching: true,
           isSuccessfullyFetched: false,
-          payload: initialState.payload,
+          numMeters: 0,
         });
     });
 
     it('return summary result with empty request parameters', () => {
-      expect(summary(initialState, actions.request())).toEqual({
+      expect(organisationSummary(initialState, actions.request())).toEqual({
         isFetching: true,
         isSuccessfullyFetched: false,
-        payload: initialState.payload,
+        numMeters: 0,
       });
     });
   });
@@ -60,13 +59,11 @@ describe('summaryReducer', () => {
   describe('success action type', () => {
 
     it('has payload', () => {
-      const payload: SelectionSummary = {numCities: 1, numAddresses: 2, numMeters: 2};
-
-      expect(summary(initialState, actions.success(payload))).toEqual(
+      expect(organisationSummary(initialState, actions.success(2))).toEqual(
         {
           isFetching: false,
           isSuccessfullyFetched: true,
-          payload,
+          numMeters: 2,
         });
     });
   });
@@ -74,18 +71,17 @@ describe('summaryReducer', () => {
   describe('failure action type', () => {
 
     it('is not successfully fetched on failure', () => {
-      const payload: SelectionSummary = {numCities: 1, numAddresses: 2, numMeters: 2};
       const state = {
         isFetching: false,
         isSuccessfullyFetched: false,
-        payload,
+        numMeters: 2,
       };
 
-      expect(summary(state, actions.failure({message: 'failed'}))).toEqual(
+      expect(organisationSummary(state, actions.failure({message: 'failed'}))).toEqual(
         {
           isFetching: false,
           isSuccessfullyFetched: false,
-          payload,
+          numMeters: 2,
           error: {message: 'failed'},
         },
       );
@@ -95,11 +91,10 @@ describe('summaryReducer', () => {
   describe('selection changed', () => {
 
     it('resets to initial state', () => {
-      const payload: SelectionSummary = {numCities: 1, numAddresses: 2, numMeters: 2};
-      const state = {
+      const state: SummaryState = {
         isFetching: false,
         isSuccessfullyFetched: true,
-        payload,
+        numMeters: 2
       };
 
       [
@@ -108,7 +103,7 @@ describe('summaryReducer', () => {
         getType(deselectSelection),
         getType(resetSelection),
       ].forEach((actionThatResets: string) => {
-        expect(summary(state, {type: actionThatResets})).toEqual(initialState);
+        expect(organisationSummary(state, {type: actionThatResets})).toEqual(initialState);
       });
     });
   });
@@ -116,45 +111,41 @@ describe('summaryReducer', () => {
   describe('integration', () => {
 
     it('reduces normal fetch successfully action', () => {
-      const payload: SelectionSummary = {numCities: 1, numAddresses: 2, numMeters: 2};
+      const prevState: SummaryState = organisationSummary(initialState, actions.request());
 
-      let state: SummaryState = summary(initialState, actions.request());
-      state = summary(state, actions.success(payload));
+      const state = organisationSummary(prevState, actions.success(2));
 
-      expect(state).toEqual(
-        {
-          isFetching: false,
-          isSuccessfullyFetched: true,
-          payload,
-        });
+      expect(state).toEqual({
+        isFetching: false,
+        isSuccessfullyFetched: true,
+        numMeters: 2,
+      });
     });
 
     it('reduces from success to failure', () => {
-      const payload: SelectionSummary = {numCities: 1, numAddresses: 2, numMeters: 2};
       const error = {message: 'failed for some reason'};
 
-      let state: SummaryState = summary(initialState, actions.request());
-      state = summary(state, actions.success(payload));
-      state = summary(state, actions.failure(error));
+      let state: SummaryState = organisationSummary(initialState, actions.request());
+      state = organisationSummary(state, actions.success(2));
+      state = organisationSummary(state, actions.failure(error));
 
-      expect(state).toEqual(
-        {
-          isFetching: false,
-          isSuccessfullyFetched: false,
-          payload,
-          error,
-        });
+      expect(state).toEqual({
+        isFetching: false,
+        isSuccessfullyFetched: false,
+        numMeters: 2,
+        error,
+      });
     });
   });
 
   describe('logout user', () => {
 
     it('resets state to initial state', () => {
-      let state: SummaryState = summary(initialState, actions.request());
-      state = summary(state, actions.success({numCities: 1, numAddresses: 2, numMeters: 2}));
-      state = summary(state, actions.failure({message: 'failed for some reason'}));
+      let state: SummaryState = organisationSummary(initialState, actions.request());
+      state = organisationSummary(state, actions.success(23));
+      state = organisationSummary(state, actions.failure({message: 'failed for some reason'}));
 
-      state = summary(state, logoutUser(undefined));
+      state = organisationSummary(state, logoutUser(undefined));
 
       expect(state).toEqual({...initialState});
     });
@@ -166,7 +157,7 @@ describe('summaryReducer', () => {
     it('should show loading animation when delete meter request is dispatched', () => {
       const someState: SummaryState = {...initialState};
 
-      const state: SummaryState = summary(someState, deleteRequestActions.request());
+      const state: SummaryState = organisationSummary(someState, deleteRequestActions.request());
 
       const expected: SummaryState = {...initialState, isFetching: true};
       expect(state).toEqual(expected);
@@ -176,18 +167,18 @@ describe('summaryReducer', () => {
       const someState: SummaryState = {
         ...initialState,
         isFetching: true,
-        payload: {...initialState.payload, numMeters: 2}
+        numMeters: 2,
       };
 
       const meter = {id: 1};
 
-      const state: SummaryState = summary(someState, deleteRequestActions.success(meter as Meter));
+      const state: SummaryState = organisationSummary(someState, deleteRequestActions.success(meter as Meter));
 
       const expected: SummaryState = {
         ...initialState,
         isFetching: false,
         isSuccessfullyFetched: true,
-        payload: {...initialState.payload, numMeters: 1},
+        numMeters: 1,
       };
       expect(state).toEqual(expected);
     });
@@ -196,15 +187,15 @@ describe('summaryReducer', () => {
       const someState: SummaryState = {
         ...initialState,
         isFetching: true,
-        payload: {...initialState.payload, numMeters: 2}
+        numMeters: 2,
       };
 
-      const state: SummaryState = summary(someState, deleteRequestActions.failure({id: 1, message: 'not ok'}));
+      const state: SummaryState = organisationSummary(
+        someState,
+        deleteRequestActions.failure({id: 1, message: 'not ok'})
+      );
 
-      const expected: SummaryState = {
-        ...initialState,
-        payload: {...initialState.payload, numMeters: 2},
-      };
+      const expected: SummaryState = {...initialState, numMeters: 2};
       expect(state).toEqual(expected);
     });
   });
@@ -212,12 +203,9 @@ describe('summaryReducer', () => {
   describe('search query', () => {
 
     it('should reset summary to initial state when global search is performed', () => {
-      const someState: SummaryState = {
-        ...initialState,
-        payload: {...initialState.payload, numMeters: 2}
-      };
+      const someState: SummaryState = {...initialState, numMeters: 2};
 
-      const state: SummaryState = summary(someState, search(makeMeterQuery('123')));
+      const state: SummaryState = organisationSummary(someState, search(makeMeterQuery('123')));
 
       expect(state).toEqual(initialState);
     });

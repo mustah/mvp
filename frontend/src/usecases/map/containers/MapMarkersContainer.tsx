@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
-import '../../../components/summary/Summary.scss';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';

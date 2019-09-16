@@ -3,7 +3,8 @@ import {RootState} from '../../../reducers/rootReducer';
 import {DomainModelsState} from '../../../state/domain-models/domainModels';
 import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {initialState as initialSearchState} from '../../../state/search/searchReducer';
-import {initialState} from '../../../state/summary/summaryReducer';
+import {PaginationState} from '../../../state/ui/pagination/paginationModels';
+import {initialPagination} from '../../../state/ui/pagination/paginationReducer';
 import {MapMarker, MapZoomSettings} from '../mapModels';
 import {MapState} from '../mapReducer';
 import {getGatewayLowConfidenceTextInfo, getMapZoomSettings, getMeterLowConfidenceTextInfo} from '../mapSelectors';
@@ -17,6 +18,15 @@ describe('mapSelectors', () => {
     },
   });
 
+  type MeterPaginationState = Pick<PaginationState, 'meters'>;
+
+  const pagination: MeterPaginationState = {
+    meters: initialPagination,
+  };
+
+  const paginationWithNumMeters = (totalElements: number): MeterPaginationState =>
+    ({meters: {...initialPagination, totalElements}});
+
   describe('getTotalMeterMapMarkers', () => {
 
     it('shows no low confidence info text', () => {
@@ -25,9 +35,9 @@ describe('mapSelectors', () => {
       };
 
       const state = {
-        summary: initialState,
         domainModels,
         search: initialSearchState,
+        ui: {pagination},
       };
 
       expect(getMeterLowConfidenceTextInfo(state as RootState)).toBeUndefined();
@@ -39,9 +49,9 @@ describe('mapSelectors', () => {
       };
 
       const state = {
-        summary: {...initialState, payload: {...initialState.payload, numMeters: 12}},
         domainModels,
         search: initialSearchState,
+        ui: {pagination: paginationWithNumMeters(12)},
       };
 
       const text = getMeterLowConfidenceTextInfo(state as RootState);
@@ -55,9 +65,9 @@ describe('mapSelectors', () => {
       };
 
       const state = {
-        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
         domainModels,
         search: {...initialSearchState, validation: {query: 'bro'}},
+        ui: {pagination},
       };
 
       expect(getMeterLowConfidenceTextInfo(state as RootState)).toBeUndefined();
@@ -69,9 +79,9 @@ describe('mapSelectors', () => {
       };
 
       const state = {
-        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
         domainModels,
         search: initialSearchState,
+        ui: {pagination: paginationWithNumMeters(10)},
       };
 
       expect(getMeterLowConfidenceTextInfo(state as RootState))
@@ -89,8 +99,8 @@ describe('mapSelectors', () => {
 
       const state = {
         domainModels,
-        summary: initialState,
         search: initialSearchState,
+        ui: {pagination},
       };
 
       expect(getGatewayLowConfidenceTextInfo(state as RootState)).toBeUndefined();
@@ -103,8 +113,8 @@ describe('mapSelectors', () => {
 
       const state = {
         domainModels,
-        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
         search: initialSearchState,
+        ui: {pagination},
       };
 
       expect(getGatewayLowConfidenceTextInfo(state as RootState)).toBeUndefined();
@@ -117,8 +127,8 @@ describe('mapSelectors', () => {
 
       const state = {
         domainModels,
-        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
         search: initialSearchState,
+        ui: {pagination: paginationWithNumMeters(10)},
       };
 
       expect(getGatewayLowConfidenceTextInfo(state as RootState))
