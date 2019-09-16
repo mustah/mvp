@@ -16,6 +16,7 @@ public class OrganisationDtoMapper {
       organisation.id,
       organisation.name,
       organisation.slug,
+      organisation.shortPrefix,
       organisation.parent != null ? toDto(organisation.parent) : null,
       organisation.selection != null ? organisation.selection.id : null
     );
@@ -26,7 +27,7 @@ public class OrganisationDtoMapper {
   }
 
   public static Organisation toDomainModel(OrganisationDto organisationDto) {
-    return Organisation.of(organisationDto.name, organisationDto.id);
+    return Organisation.of(organisationDto.name, organisationDto.id, organisationDto.shortPrefix);
   }
 
   public static Organisation toDomainModel(

@@ -29,6 +29,9 @@ public class OrganisationDto {
   public String slug;
 
   @Nullable
+  public String shortPrefix;
+
+  @Nullable
   @Valid
   public OrganisationDto parent;
 
@@ -40,6 +43,6 @@ public class OrganisationDto {
   }
 
   public OrganisationDto(UUID id, String name) {
-    this(id, name, slugify(name), null, null);
+    this(id, name, slugify(name), null, null, null);
   }
 }

@@ -958,3 +958,6 @@ msgstr "{{count}} mätare visas inte i grafen. Välj vilka mätare du vill se me
 
 msgid "object type"
 msgstr "typ"
+
+msgid "short prefix"
+msgstr "kort prefix"

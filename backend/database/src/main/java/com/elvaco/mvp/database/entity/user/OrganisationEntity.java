@@ -40,6 +40,7 @@ public class OrganisationEntity extends IdentifiableType<UUID> {
   public String name;
   public String slug;
   public String externalId;
+  public String shortPrefix;
 
   @OneToOne
   @JoinColumn(name = "parent_id")
