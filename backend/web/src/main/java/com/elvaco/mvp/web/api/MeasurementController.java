@@ -47,7 +47,7 @@ public class MeasurementController {
     @JsonProperty @RequestBody MeasurementRequestDto requestBody
   ) {
     return measurements(
-      toLogicalMeterIdParameters(requestBody.logicalMeterId),
+      toRequestParameters(requestBody),
       toQuantityParameters(requestBody.quantity),
       requestBody.reportAfter,
       requestBody.reportBefore,
@@ -60,7 +60,7 @@ public class MeasurementController {
     @JsonProperty @RequestBody MeasurementRequestDto requestBody
   ) {
     return average(
-      toLogicalMeterIdParameters(requestBody.logicalMeterId),
+      toRequestParameters(requestBody),
       toQuantityParameters(requestBody.quantity),
       requestBody.reportAfter,
       requestBody.reportBefore,
@@ -197,8 +197,8 @@ public class MeasurementController {
     }
   }
 
-  private static RequestParameters toLogicalMeterIdParameters(List<String> logicalMeterId) {
-    return RequestParametersAdapter.of().setAll(LOGICAL_METER_ID, logicalMeterId);
+  private static RequestParameters toRequestParameters(MeasurementRequestDto requestBody) {
+    return RequestParametersAdapter.of().setAllIds(LOGICAL_METER_ID, requestBody.logicalMeterId);
   }
 
   private static Set<QuantityParameter> toQuantityParameters(Set<String> quantities) {

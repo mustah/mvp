@@ -170,7 +170,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         + "&reportAfter=" + date
         + "&reportBefore=" + date.plusHours(1)
       )
-    ).hasSize(1);
+    ).hasSize(2);
   }
 
   @Test
@@ -199,8 +199,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterInPeriod() {
     ZonedDateTime date = context().now();
 
-    LogicalMeter heatMeter = given(logicalMeter()
-      .meterDefinition(DEFAULT_DISTRICT_HEATING));
+    LogicalMeter heatMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
     given(
       heatMeter,
       measurement(heatMeter).readoutTime(date)
@@ -243,8 +242,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityInPeriodWithNonDefaultUnit() {
     ZonedDateTime date = context().now();
 
-    LogicalMeter heatMeter = given(logicalMeter()
-      .meterDefinition(DEFAULT_DISTRICT_HEATING));
+    LogicalMeter heatMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
     given(
       heatMeter,
       measurement(heatMeter).readoutTime(date.minusHours(1))
@@ -1173,16 +1171,13 @@ public class MeasurementControllerTest extends IntegrationTest {
         .value(ENERGY_VALUE)
     );
 
-    MeasurementRequestDto measurementRequestDto = new MeasurementRequestDto(
-      List.of(heatMeter.id.toString()),
-      date,
-      date.plusHours(1),
-      Set.of(DIFFERENCE_TEMPERATURE.name),
-      TemporalResolution.hour,
-      null
-    );
-
-    List<MeasurementSeriesDto> contents = requestFunction.apply(measurementRequestDto);
+    List<MeasurementSeriesDto> contents = requestFunction.apply(MeasurementRequestDto.builder()
+      .logicalMeterId(List.of(heatMeter.id))
+      .reportAfter(date)
+      .reportBefore(date.plusHours(1))
+      .quantity(Set.of(DIFFERENCE_TEMPERATURE.name))
+      .resolution(TemporalResolution.hour)
+      .build());
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);

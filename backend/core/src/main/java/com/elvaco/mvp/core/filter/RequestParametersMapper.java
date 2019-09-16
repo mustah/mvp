@@ -134,6 +134,7 @@ public final class RequestParametersMapper {
       );
     visitableFilters.addAll(
       requestParameters.entrySet().stream()
+        .filter(param -> param.getValue() != null)
         .filter(param -> !param.getValue().isEmpty() && !isIgnored(param.getKey()))
         .map(param -> parameterToFilter(param.getKey(), param.getValue()))
         .collect(toList())
