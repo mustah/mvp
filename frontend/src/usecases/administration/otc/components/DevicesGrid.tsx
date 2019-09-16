@@ -92,10 +92,8 @@ const Grid = ({
     changePageTo: (page: number) => changePage({entityType, page}),
     isFetching,
     items,
-    paddingBottom: 320,
     pagination,
     renderContent,
-    rowHeight: 48,
   };
 
   return <InfiniteList {...infiniteListProps}/>;
