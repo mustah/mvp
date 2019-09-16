@@ -34,7 +34,6 @@ const mapStateToProps = (
     meterCollection: {isExportingToExcel, timePeriod},
     paginatedDomainModels: {meterCollectionStatFacilities},
     search: {validation: {query}},
-    summary: {payload: {numMeters}},
     ui: {pagination: paginationState},
     userSelection: {userSelection}
   }: RootState,
@@ -59,7 +58,7 @@ const mapStateToProps = (
   return ({
     entityType: 'meterCollectionStatFacilities',
     excelExportParameters: '',
-    hasContent: isFetching || totalElements > 0 || numMeters > 0,
+    hasContent: isFetching || totalElements > 0,
     isExportingToExcel,
     isFetching,
     items: getCollectionStats(meterCollectionStatFacilities),

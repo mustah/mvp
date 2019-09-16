@@ -7,8 +7,11 @@ import {
   clearSubOrganisations,
   fetchSubOrganisations
 } from '../../../state/domain-models/organisation/organisationsApiActions';
-import {clearOrganisationSummary, fetchOrganisationSummary} from '../../../state/summary/summaryApiActions';
-import {Callback, Fetch, IdNamed, OnClick, OnFetch, uuid} from '../../../types/Types';
+import {
+  clearOrganisationSummary,
+  fetchOrganisationSummary
+} from '../../../state/organisation-summary/organisationSummaryApiActions';
+import {Callback, Fetch, Identifiable, IdNamed, OnClick, OnFetch} from '../../../types/Types';
 import {OrganisationConfirmContent} from '../components/OrganisationConfirmContent';
 
 export interface OwnProps {
@@ -18,15 +21,13 @@ export interface OwnProps {
   idName: IdNamed;
 }
 
-export interface StateToProps {
+export interface StateToProps extends Identifiable {
   isOpen: boolean;
   confirm: OnClick;
   close: OnClick;
   text: string;
   headline: string;
-  id: uuid;
   isSuccessfullyFetched: boolean;
-
 }
 
 export interface DispatchToProps {
@@ -38,7 +39,7 @@ export interface DispatchToProps {
 
 const mapStateToProps = (
   {
-    organisationSummary: {payload: {numMeters}, isSuccessfullyFetched: isSummarySuccessfullyFetched},
+    organisationSummary: {numMeters, isSuccessfullyFetched: isSummarySuccessfullyFetched},
     domainModels: {subOrganisations: {total, isSuccessfullyFetched}}
   }: RootState,
   {isOpen, confirm, close, idName: {id, name}}: OwnProps

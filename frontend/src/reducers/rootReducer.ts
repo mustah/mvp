@@ -13,8 +13,8 @@ import {previousSession, PreviousSessionState} from '../state/previous-session/p
 import {ReportState} from '../state/report/reportModels';
 import {report, selectionReport} from '../state/report/reportReducer';
 import {search, SearchState} from '../state/search/searchReducer';
-import {SummaryState} from '../state/summary/summaryModels';
-import {organisationSummary, summary} from '../state/summary/summaryReducer';
+import {SummaryState} from '../state/organisation-summary/organisationSummaryModels';
+import {organisationSummary} from '../state/organisation-summary/organisationSummaryReducer';
 import {MeasurementState} from '../state/ui/graph/measurement/measurementModels';
 import {measurement, selectionMeasurement} from '../state/ui/graph/measurement/measurementReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
@@ -49,7 +49,6 @@ export interface RootState {
   selectionReport: ReportState;
   selectionMeasurement: MeasurementState;
   search: SearchState;
-  summary: SummaryState;
   theme: ThemeState;
   ui: UiState;
   userSelection: UserSelectionState;
@@ -93,7 +92,6 @@ export const rootReducer = (history: History) =>
     selectionMeasurement,
     language,
     userSelection,
-    summary,
     organisationSummary,
     ui,
     map,

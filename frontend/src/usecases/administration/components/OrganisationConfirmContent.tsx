@@ -23,7 +23,7 @@ export const OrganisationConfirmContent = ({
   React.useEffect(() => {
     if (id && isOpen) {
       fetchSubOrganisations(`${RequestParameter.organisation}=${id}`);
-      fetchOrganisationSummary(EndPoints.organisations, `${RequestParameter.organisation}=${id}`);
+      fetchOrganisationSummary(EndPoints.summaryMeters, `${RequestParameter.organisation}=${id}`);
     }
   }, [id, isOpen]);
 

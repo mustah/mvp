@@ -162,7 +162,6 @@ export const enum Sectors {
   meterCollection = 'meterCollection',
   meterCollectionStatFacilities = 'meterCollectionStatFacilities',
   organisationSummary = 'organisationSummary',
-  summary = 'summary',
   subOrganisations = 'subOrganisations',
   theme = 'theme',
 }
