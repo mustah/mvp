@@ -63,7 +63,7 @@ export interface InfiniteListProps extends OwnProps {
   items: any[];
   pagination: Pagination;
   renderContent: (props: ContentProps) => (props: Size) => React.ReactNode;
-  rowHeight: number;
+  rowHeight?: number;
   selectedItemId?: uuid;
 }
 
@@ -71,10 +71,10 @@ export const InfiniteList = ({
   changePageTo,
   isFetching,
   items,
-  paddingBottom = 325,
+  paddingBottom = 247,
   pagination: {page, size, totalPages},
   renderContent,
-  rowHeight,
+  rowHeight = 48,
   selectedItemId,
 }: InfiniteListProps) => {
   const scrollToIndex = items.findIndex(it => it && it.id === selectedItemId) + 1;

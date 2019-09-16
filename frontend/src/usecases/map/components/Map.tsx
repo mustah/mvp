@@ -87,7 +87,7 @@ const Map = ({
   );
 };
 
-const minHeight = 504;
+const minHeight = 499;
 
 export const ResponsiveMap = (props: Props) => {
   const {height: innerHeight} = useResizeWindow();
@@ -103,7 +103,7 @@ export const MapMarkerCluster = ({mapMarkerClusters, ...mapProps}: Props & MapMa
 );
 
 export const ResponsiveMapMarkerClusters = ({mapMarkerClusters, ...mapProps}: MapProps) => (
-  <ResponsiveMap {...mapProps} paddingBottom={270}>
+  <ResponsiveMap {...mapProps} paddingBottom={197}>
     <MarkerCluster mapMarkerClusters={mapMarkerClusters}/>
   </ResponsiveMap>
 );

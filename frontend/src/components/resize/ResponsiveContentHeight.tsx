@@ -8,7 +8,7 @@ interface Props extends ClassNamed, WithChildren {
   paddingBottom?: number;
 }
 
-export const ResponsiveContentHeight = ({children, className, key, paddingBottom = 276}: Props) => {
+export const ResponsiveContentHeight = ({children, className, key, paddingBottom = 250}: Props) => {
   const {height: innerHeight, resized} = useResizeWindow();
   const height = innerHeight - paddingBottom;
   return (
