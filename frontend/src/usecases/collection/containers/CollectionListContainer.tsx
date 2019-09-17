@@ -22,6 +22,10 @@ import {
   CollectionStatsStateToProps
 } from '../components/CollectionListContent';
 
+interface OwnProps {
+  paddingBottom?: number;
+}
+
 const mapStateToProps = (rootState: RootState): CollectionStatsStateToProps => {
   const {
     collection: {isExportingToExcel},
@@ -60,7 +64,7 @@ const mapDispatchToProps = (dispatch): CollectionStatsDispatchToProps => bindAct
 }, dispatch);
 
 export const CollectionListContainer =
-  connect<CollectionStatsStateToProps, CollectionStatsDispatchToProps>(
+  connect<CollectionStatsStateToProps, CollectionStatsDispatchToProps, OwnProps>(
     mapStateToProps,
     mapDispatchToProps
   )(CollectionListContent);

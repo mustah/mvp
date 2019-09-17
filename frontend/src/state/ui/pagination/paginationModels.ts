@@ -3,12 +3,12 @@ import {
   NormalizedPaginatedResult,
   PageNumbered,
   PaginatedDomainModelsState,
+  TotalElements,
 } from '../../domain-models-paginated/paginatedDomainModels';
 import {DomainModelsState} from '../../domain-models/domainModels';
 
-interface PaginationMetaData {
+interface PaginationMetaData extends TotalElements {
   size: number;
-  totalElements: number;
   totalPages: number;
 }
 

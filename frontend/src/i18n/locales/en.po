@@ -14,6 +14,9 @@ msgstr ""
 msgid "total meters"
 msgstr "total meters"
 
+msgid "total facilities"
+msgstr "total facilities"
+
 msgid "measurements are not displayed. Use the excel export above for complete list."
 msgstr "measurements are not displayed. Use the excel export above for complete list."
 

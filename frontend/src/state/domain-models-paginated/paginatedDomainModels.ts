@@ -16,7 +16,11 @@ export interface PaginatedDomainModelsState {
   meterCollectionStatFacilities: CollectionStatFacilityState;
 }
 
-export interface NormalizedPaginatedResult {
+export interface TotalElements {
+  totalElements: number;
+}
+
+export interface NormalizedPaginatedResult extends TotalElements {
   content: uuid[];
   first?: boolean;
   last?: boolean;
@@ -24,7 +28,6 @@ export interface NormalizedPaginatedResult {
   numberOfElements?: number;
   size?: number;
   sort?: ApiResultSortingOptions[] | null;
-  totalElements: number;
   totalPages: number;
 }
 
