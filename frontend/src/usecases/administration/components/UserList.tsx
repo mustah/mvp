@@ -8,6 +8,7 @@ import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {ThemeContext} from '../../../components/hoc/withThemeProvider';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
+import {StyledLink} from '../../../components/links/Link';
 import {RetryLoader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
 import {User} from '../../../state/domain-models/user/userModels';
@@ -37,8 +38,22 @@ export const UserList = ({
   });
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(deleteUser);
 
-  const roles = ({dataItem: {roles}}) => <td>{roles.join(', ')}</td>;
-  const actions = ({dataItem: {id}}) => <td><UserActions confirmDelete={openConfirm} id={id} useCase={useCase}/></td>;
+  const renderRoles = ({dataItem: {roles}}) => <td>{roles.join(', ')}</td>;
+  const renderActions = ({dataItem: {id}}) => (
+    <td>
+      <UserActions confirmDelete={openConfirm} id={id} useCase={useCase}/>
+    </td>
+  );
+
+  const url = `${useCase === UseCases.otc ? routes.otcUsersModify : routes.adminUsersModify}`;
+
+  const renderLinkTo = ({dataItem: {id, name}}) => (
+    <td style={{paddingLeft: 16}}>
+      <StyledLink to={`${url}/${id}`}>
+        {name}
+      </StyledLink>
+    </td>
+  );
 
   return (
     <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
@@ -52,11 +67,11 @@ export const UserList = ({
           data={sortBy(toArray(entities), (u: User) => u.name)}
           scrollable="none"
         >
-          <GridColumn field="name" title={translate('name')} headerClassName="left-most" className="left-most"/>
+          <GridColumn cell={renderLinkTo} title={translate('name')} headerClassName="left-most"/>
           <GridColumn field="email" title={translate('email')}/>
           <GridColumn field="organisation.name" title={translate('organisation')}/>
-          <GridColumn cell={roles} title={translate('roles')}/>
-          <GridColumn cell={actions} width={40}/>
+          <GridColumn cell={renderRoles} title={translate('roles')}/>
+          <GridColumn cell={renderActions} width={40}/>
         </Grid>
         <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={confirm}/>
       </Column>
