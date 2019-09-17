@@ -1,9 +1,9 @@
+import {TotalElements} from '../../domain-models-paginated/paginatedDomainModels';
 import {Query} from '../../search/searchModels';
 import {SelectionListItem} from '../../user-selection/userSelectionModels';
 
-export interface PagedResponse extends Query {
+export interface PagedResponse extends Query, TotalElements {
   items: SelectionListItem[];
-  totalElements: number;
 }
 
 export type FetchByPage = (page: number, query?: string) => Promise<PagedResponse>;

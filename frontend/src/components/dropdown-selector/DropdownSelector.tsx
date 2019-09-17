@@ -8,6 +8,7 @@ import {getId} from '../../helpers/collections';
 import {selectedFirstThenUnknownByNameAsc} from '../../helpers/comparators';
 import {orUnknown} from '../../helpers/translations';
 import {firstUpper} from '../../services/translationService';
+import {TotalElements} from '../../state/domain-models-paginated/paginatedDomainModels';
 import {Address, City} from '../../state/domain-models/location/locationModels';
 import {FetchByPage, PagedResponse} from '../../state/domain-models/selections/selectionsModels';
 import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
@@ -47,9 +48,8 @@ type QueryProps = Partial<{
   unknownItem: SelectionListItem;
 }>;
 
-interface Cache {
+interface Cache extends TotalElements {
   items: SelectionListItem[];
-  totalElements: number;
 }
 
 interface State extends Fetching, PagedResponse {

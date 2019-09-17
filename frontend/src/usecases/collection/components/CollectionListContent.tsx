@@ -13,6 +13,7 @@ export interface CollectionStatsStateToProps extends StateToProps<CollectionStat
   excelExportParameters: EncodedUriParameters;
   isExportingToExcel: boolean;
   itemsToExport: CollectionStat[];
+  paddingBottom?: number;
 }
 
 export interface CollectionStatsDispatchToProps extends DispatchToProps {

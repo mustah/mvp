@@ -1,8 +1,12 @@
 import {connect} from 'react-redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {ToolbarViewSettingsProps} from '../../../state/ui/toolbar/toolbarModels';
-import {CollectionContent} from '../components/CollectionContent';
+import {CollectionContent, Props} from '../components/CollectionContent';
 
-const mapStateToProps = ({ui: {toolbar: {collection: {view}}}}: RootState): ToolbarViewSettingsProps => ({view});
+const mapStateToProps = ({
+  ui: {
+    pagination: {collectionStatFacilities: {totalElements}},
+    toolbar: {collection: {view}},
+  },
+}: RootState): Props => ({hasContent: totalElements > 0, totalElements, view});
 
 export const CollectionContentContainer = connect(mapStateToProps)(CollectionContent);
