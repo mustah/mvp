@@ -1,6 +1,7 @@
 import {createStandardAction} from 'typesafe-actions';
+import {BatchReferencePayload} from '../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
 
-export const changeBatchReference = createStandardAction('CREATE_BATCH_REFERENCE')<string>();
+export const changeBatchReference = createStandardAction('CREATE_BATCH_REFERENCE')<BatchReferencePayload>();
 
 export const changeRequireApproval = createStandardAction('CHANGE_REQUIRE_APPROVAL')<boolean>();
 
