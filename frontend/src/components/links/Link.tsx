@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {classes} from 'typestyle';
 import {ClassNamed, Styled, WithChildren} from '../../types/Types';
+import {ThemeContext, withCssStyles} from '../hoc/withThemeProvider';
 
 type FrameName = string;
 
@@ -19,3 +20,6 @@ export const Link = ({children, className, style, target, to}: LinkProps) => (
     {children}
   </a>
 );
+
+export const StyledLink = withCssStyles(({cssStyles: {primary}, ...linkProps}: LinkProps & ThemeContext) =>
+  <Link {...linkProps} style={{color: primary.bg}}/>);

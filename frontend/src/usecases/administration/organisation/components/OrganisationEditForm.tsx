@@ -3,12 +3,11 @@ import * as React from 'react';
 import {Overwrite} from 'utility-types';
 import {routes} from '../../../../app/routes';
 import {ButtonSave} from '../../../../components/buttons/ButtonSave';
-import {ThemeContext, withCssStyles} from '../../../../components/hoc/withThemeProvider';
 import {SelectFieldInput} from '../../../../components/inputs/InputSelectable';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
 import {Column} from '../../../../components/layouts/column/Column';
 import {Row} from '../../../../components/layouts/row/Row';
-import {Link, LinkProps} from '../../../../components/links/Link';
+import {StyledLink} from '../../../../components/links/Link';
 import {absoluteUrlFromPath, slugOfHostname} from '../../../../helpers/urlFactory';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {
@@ -37,9 +36,6 @@ interface Props {
 }
 
 type State = Overwrite<Organisation, {id?: uuid, slug?: string}>;
-
-const StyledLink = withCssStyles(({cssStyles: {primary}, ...linkProps}: LinkProps & ThemeContext) =>
-  <Link {...linkProps} style={{color: primary.bg}}/>);
 
 export class OrganisationEditForm extends React.Component<Props, State> {
 
