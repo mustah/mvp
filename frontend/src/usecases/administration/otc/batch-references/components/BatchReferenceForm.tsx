@@ -5,6 +5,7 @@ import {ButtonSave} from '../../../../../components/buttons/ButtonSave';
 import {ValidatedFieldInput} from '../../../../../components/inputs/ValidatedFieldInput';
 import {Column} from '../../../../../components/layouts/column/Column';
 import {fromCommaSeparated} from '../../../../../helpers/commonHelpers';
+import {Maybe} from '../../../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../../../services/translationService';
 import {BatchRequestState} from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
 import {CallbackWith, Omit, uuid} from '../../../../../types/Types';
@@ -14,6 +15,7 @@ import {DeviceIdsFileUploader} from './DeviceIdsFileUploader';
 
 export interface StateToProps {
   organisationId: uuid;
+  organisationShortPrefix: Maybe<string>;
 }
 
 export interface DispatchToProps {
@@ -22,12 +24,16 @@ export interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
-export const BatchReferenceForm = ({organisationId, saveBatchReference}: Props) => {
+export const BatchReferenceForm = ({
+  organisationId,
+  organisationShortPrefix: shortPrefix,
+  saveBatchReference
+}: Props) => {
   const [state, dispatch] = React.useReducer(batchReferenceReducer, {...initialState, organisationId});
 
-  const setDeviceEuis = (result: string) => dispatch(changeDeviceEuis(result));
-  const onChangeBatchReference = (_, newValue) => dispatch(changeBatchReference(newValue));
-  const onChangeDeviceEuis = (_, newValue) => setDeviceEuis(newValue);
+  const setDeviceEuis = (value: string) => dispatch(changeDeviceEuis(value));
+  const onChangeBatchReference = (_, value) => dispatch(changeBatchReference({shortPrefix, value}));
+  const onChangeDeviceEuis = (_, value) => setDeviceEuis(value);
   const onChangeRequireApproval = ev => dispatch(changeRequireApproval(ev.target.checked));
 
   const onSubmit = (ev) => {
@@ -42,6 +48,8 @@ export const BatchReferenceForm = ({organisationId, saveBatchReference}: Props) 
       <Column style={{margin: '16px 16px 0 16px'}}>
         <ValidatedFieldInput
           autoComplete="off"
+          autoFocus={true}
+          hintText={shortPrefix.orElse('')}
           id="batchId"
           labelText={firstUpperTranslated('batch reference')}
           onChange={onChangeBatchReference}

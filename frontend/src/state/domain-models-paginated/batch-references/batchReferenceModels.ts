@@ -1,3 +1,4 @@
+import {Maybe} from '../../../helpers/Maybe';
 import {Identifiable, uuid} from '../../../types/Types';
 import {NormalizedPaginatedState} from '../paginatedDomainModels';
 
@@ -17,6 +18,11 @@ export interface BatchRequestState {
   deviceEuisText: string;
   organisationId: uuid;
   requireApproval: boolean;
+}
+
+export interface BatchReferencePayload {
+  shortPrefix: Maybe<string>;
+  value: string;
 }
 
 export type BatchReferencesState = NormalizedPaginatedState<BatchReference>;

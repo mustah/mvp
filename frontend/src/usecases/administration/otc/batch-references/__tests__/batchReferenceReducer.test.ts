@@ -1,4 +1,5 @@
 import {fromCommaSeparated} from '../../../../../helpers/commonHelpers';
+import {Maybe} from '../../../../../helpers/Maybe';
 import {BatchRequestState} from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
 import {logoutUser} from '../../../../auth/authActions';
 import {changeBatchReference, changeDeviceEuis, changeRequireApproval} from '../batchReferenceActions';
@@ -12,31 +13,77 @@ describe('batch reference reducer', () => {
 
   describe('batch id', () => {
 
-    it('can be added', () => {
-      const state = batchReferenceReducer(initialState, changeBatchReference('1'));
+    describe('without short prefix', () => {
 
-      const expected: BatchRequestState = {...initialState, batchId: '1'};
+      const shortPrefix = Maybe.nothing<string>();
 
-      expect(state).toEqual(expected);
+      it('can be added', () => {
+        const state = batchReferenceReducer(initialState, changeBatchReference({shortPrefix, value: '1'}));
+
+        const expected: BatchRequestState = {...initialState, batchId: '1'};
+
+        expect(state).toEqual(expected);
+      });
+
+      it('can be replaces', () => {
+        const state: BatchRequestState = {...initialState, batchId: '123'};
+
+        const nextState = batchReferenceReducer(state, changeBatchReference({shortPrefix, value: 'abc'}));
+
+        const expected: BatchRequestState = {...initialState, batchId: 'abc'};
+
+        expect(nextState).toEqual(expected);
+      });
+
+      it('can clear with empty string', () => {
+        const state: BatchRequestState = {...initialState, batchId: '123'};
+
+        const nextState = batchReferenceReducer(state, changeBatchReference({shortPrefix, value: ''}));
+
+        expect(nextState).toEqual(initialState);
+        expect(nextState).not.toBe(initialState);
+      });
     });
 
-    it('can be replaces', () => {
-      const state: BatchRequestState = {...initialState, batchId: '123'};
+    describe('with short prefix', () => {
 
-      const nextState = batchReferenceReducer(state, changeBatchReference('abc'));
+      const shortPrefix = Maybe.maybe<string>('evo');
 
-      const expected: BatchRequestState = {...initialState, batchId: 'abc'};
+      it('can be added', () => {
+        const state = batchReferenceReducer(initialState, changeBatchReference({shortPrefix, value: '1'}));
 
-      expect(nextState).toEqual(expected);
-    });
+        const expected: BatchRequestState = {...initialState, batchId: 'evo_1'};
 
-    it('can clear with empty string', () => {
-      const state: BatchRequestState = {...initialState, batchId: '123'};
+        expect(state).toEqual(expected);
+      });
 
-      const nextState = batchReferenceReducer(state, changeBatchReference(''));
+      it('can be clear to just short prefix', () => {
+        const state: BatchRequestState = {...initialState, batchId: 'evo_1'};
 
-      expect(nextState).toEqual(initialState);
-      expect(nextState).not.toBe(initialState);
+        const nextState = batchReferenceReducer(state, changeBatchReference({shortPrefix, value: 'evo_12'}));
+
+        const expected: BatchRequestState = {...initialState, batchId: 'evo_12'};
+
+        expect(nextState).toEqual(expected);
+      });
+
+      it('can clear the batch id', () => {
+        const state: BatchRequestState = {...initialState, batchId: 'evo_1'};
+
+        const nextState = batchReferenceReducer(state, changeBatchReference({shortPrefix, value: 'evo'}));
+
+        const expected: BatchRequestState = {...initialState, batchId: ''};
+
+        expect(nextState).toEqual(expected);
+      });
+
+      it('can add short prefix as the value', () => {
+        const nextState = batchReferenceReducer(initialState, changeBatchReference({shortPrefix, value: 'evo_evo'}));
+
+        const expected: BatchRequestState = {...initialState, batchId: 'evo_evo'};
+
+        expect(nextState).toEqual(expected);
+      });
     });
 
   });
