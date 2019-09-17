@@ -5,7 +5,7 @@ import {
   BatchRequestState
 } from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
 import {logoutUser} from '../../../../auth/authActions';
-import {changeBatchReference, changeDeviceEuis, changeRequireApproval} from '../batchReferenceActions';
+import {addDeviceEuis, changeBatchReference, changeDeviceEuis, changeRequireApproval} from '../batchReferenceActions';
 import {batchReferenceReducer, initialState} from '../batchReferenceReducer';
 
 describe('batch reference reducer', () => {
@@ -179,6 +179,55 @@ describe('batch reference reducer', () => {
 
       expect(state).toEqual({...initialState, batchId: 'test', deviceEuisText: 'a,b', canSubmitForm: true});
     });
+  });
+
+  describe('add device eui', () => {
+
+    it('adds to the empty list', () => {
+      const state = batchReferenceReducer(initialState, addDeviceEuis(['1']));
+
+      const expected: BatchRequestState = {...initialState, deviceEuis: ['1']};
+      expect(state).toEqual(expected);
+    });
+
+    it('adds first to the list', () => {
+      const prevState: BatchRequestState = {...initialState, deviceEuis: ['2']};
+
+      const state = batchReferenceReducer(prevState, addDeviceEuis(['1']));
+
+      const expected: BatchRequestState = {...initialState, deviceEuis: ['1', '2']};
+      expect(state).toEqual(expected);
+    });
+
+    it('clears device euis text field', () => {
+      const prevState: BatchRequestState = {...initialState, deviceEuisText: '2', deviceEuis: ['2']};
+
+      const state = batchReferenceReducer(prevState, addDeviceEuis(['1']));
+
+      const expected: BatchRequestState = {...initialState, deviceEuis: ['1', '2']};
+      expect(state).toEqual(expected);
+    });
+
+    it('adds first to the list and removes duplicates', () => {
+      const prevState: BatchRequestState = {...initialState, deviceEuis: ['2', '1', '3']};
+
+      const state = batchReferenceReducer(prevState, addDeviceEuis(['1']));
+
+      const expected: BatchRequestState = {...initialState, deviceEuis: ['1', '2', '3']};
+      expect(state).toEqual(expected);
+    });
+
+    it('adds first to the list and removes duplicates - several times', () => {
+      let prevState: BatchRequestState = {...initialState, deviceEuis: ['2', '1', '3']};
+
+      prevState = batchReferenceReducer(prevState, addDeviceEuis(['1']));
+      prevState = batchReferenceReducer(prevState, addDeviceEuis(['1']));
+      const state = batchReferenceReducer(prevState, addDeviceEuis(['1']));
+
+      const expected: BatchRequestState = {...initialState, deviceEuis: ['1', '2', '3']};
+      expect(state).toEqual(expected);
+    });
+
   });
 
 });

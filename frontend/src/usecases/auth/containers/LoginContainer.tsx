@@ -12,6 +12,7 @@ import {TextFieldInput} from '../../../components/inputs/TextFieldInput';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
+import {isEnter} from '../../../helpers/commonHelpers';
 import {slugOfHostname} from '../../../helpers/urlFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
@@ -45,7 +46,7 @@ const LoginContainerComponent = ({auth: {error}, match: {params: {organisation}}
   const onChangePassword = (event: any): void => setState({...state, password: event.target.value});
 
   const onKeyPress = (event: any): void => {
-    if (event.key === 'Enter') {
+    if (isEnter(event)) {
       event.preventDefault();
       login(state.email, state.password);
     }

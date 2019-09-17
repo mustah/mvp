@@ -6,6 +6,7 @@ import {
 } from '../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
 import {logoutUser} from '../../../auth/authActions';
 import * as actions from './batchReferenceActions';
+import {addDeviceEuis} from './batchReferenceActions';
 
 export const initialState: BatchRequestState = {
   batchId: '',
@@ -28,12 +29,18 @@ export const batchReferenceReducer = (state: BatchRequestState, action: ActionTy
   switch (action.type) {
     case getType(actions.changeBatchReference):
       const batchId = makeBatchId(action.payload);
-      return {...state, batchId, canSubmitForm: batchId !== '' && state.deviceEuisText.length > 0};
+      return {...state, batchId, canSubmitForm: batchId !== '' && state.deviceEuis.length > 0};
     case getType(actions.changeRequireApproval):
       return {...state, requireApproval: action.payload};
     case getType(actions.changeDeviceEuis):
       const deviceEuisText = action.payload;
       return {...state, deviceEuisText, canSubmitForm: deviceEuisText !== '' && state.batchId.length > 0};
+    case getType(addDeviceEuis):
+      return {
+        ...state,
+        deviceEuis: [...action.payload, ...state.deviceEuis.filter(it => !action.payload.includes(it))],
+        deviceEuisText: ''
+      };
     default:
       return state;
   }

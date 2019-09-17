@@ -14,3 +14,5 @@ export const fromCommaSeparated = (payload: string): string[] =>
     .map(it => trimEnd(it.trim(), '\n'))
     .filter(it => it.length > 0)
   );
+
+export const isEnter = ev => ev.key === 'Enter';

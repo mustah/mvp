@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {history, routes} from '../../app/routes';
+import {isEnter} from '../../helpers/commonHelpers';
 import {OnChange, OnClick, OnKeyPress} from '../../types/Types';
 import {Props} from './GlobalSearch';
 
@@ -15,7 +16,7 @@ export const useGlobalSearch = ({onSearch, onClear, query = ''}: Props): GlobalS
 
   const onEnter = (event) => {
     const value = event.target.value;
-    if (event.key === 'Enter') {
+    if (isEnter(event)) {
       event.preventDefault();
       setValue(value);
       onSearch(value);
