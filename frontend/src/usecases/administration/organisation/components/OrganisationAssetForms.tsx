@@ -53,7 +53,7 @@ const SingleAssetFrom =
     const uploadSubmit = selectedFile && (
       <Row style={{paddingTop: 32}}>
         <form onSubmit={onSubmit}>
-          <ButtonSave className="flex-align-self-start" type="submit"/>
+          <ButtonSave type="submit"/>
         </form>
       </Row>
     );

@@ -128,7 +128,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
 
           {passwordElement}
 
-          <ButtonSave className="flex-align-self-start" type="submit"/>
+          <ButtonSave type="submit"/>
         </Column>
       </ValidatorForm>
     );

@@ -18,6 +18,7 @@ export interface BatchRequestState {
   deviceEuisText: string;
   organisationId: uuid;
   requireApproval: boolean;
+  canSubmitForm?: boolean;
 }
 
 export interface BatchReferencePayload {

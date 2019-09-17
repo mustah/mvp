@@ -1,6 +1,9 @@
 import {fromCommaSeparated} from '../../../../../helpers/commonHelpers';
 import {Maybe} from '../../../../../helpers/Maybe';
-import {BatchRequestState} from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
+import {
+  BatchReferencePayload,
+  BatchRequestState
+} from '../../../../../state/domain-models-paginated/batch-references/batchReferenceModels';
 import {logoutUser} from '../../../../auth/authActions';
 import {changeBatchReference, changeDeviceEuis, changeRequireApproval} from '../batchReferenceActions';
 import {batchReferenceReducer, initialState} from '../batchReferenceReducer';
@@ -146,6 +149,35 @@ describe('batch reference reducer', () => {
 
     it('removes duplicates', () => {
       expect(fromCommaSeparated('a, b, 1, 1, a')).toEqual(['a', 'b', '1']);
+    });
+  });
+
+  describe('submit form', () => {
+
+    it('does not submit when there no device euids', () => {
+      const state = batchReferenceReducer({...initialState, batchId: 'test'}, changeDeviceEuis(''));
+
+      expect(state).toEqual({...initialState, batchId: 'test'});
+    });
+
+    it('does not submit when there device euids but no batch id set', () => {
+      const state = batchReferenceReducer(initialState, changeDeviceEuis('a,b'));
+
+      expect(state).toEqual({...initialState, deviceEuisText: 'a,b'});
+    });
+
+    it('submits the form if batch id when changing device euis are set', () => {
+      const state = batchReferenceReducer({...initialState, batchId: 'test'}, changeDeviceEuis('a,b'));
+
+      expect(state).toEqual({...initialState, batchId: 'test', deviceEuisText: 'a,b', canSubmitForm: true});
+    });
+
+    it('submits the form if device euis are set when changing batch id', () => {
+      const payload: BatchReferencePayload = {shortPrefix: Maybe.nothing(), value: 'test'};
+
+      const state = batchReferenceReducer({...initialState, deviceEuisText: 'a,b'}, changeBatchReference(payload));
+
+      expect(state).toEqual({...initialState, batchId: 'test', deviceEuisText: 'a,b', canSubmitForm: true});
     });
   });
 

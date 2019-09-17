@@ -60,9 +60,10 @@ export const BatchReferenceForm = ({
           autoComplete="off"
           id="deviceEuis"
           labelText={firstUpperTranslated('comma separated device euis')}
+          hintText={''}
           maxLength="100000"
           rowsMax={20}
-          multiLine={true}
+          multiLine={false}
           onChange={onChangeDeviceEuis}
           value={state.deviceEuisText}
         />
@@ -75,7 +76,7 @@ export const BatchReferenceForm = ({
           onClick={onChangeRequireApproval}
         />
 
-        <ButtonSave className="flex-align-self-start" style={{marginTop: 24}} type="submit"/>
+        <ButtonSave disabled={!state.canSubmitForm} style={{marginTop: 24}} type="submit"/>
       </Column>
 
     </ValidatorForm>

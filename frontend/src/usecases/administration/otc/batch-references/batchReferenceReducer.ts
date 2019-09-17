@@ -13,6 +13,7 @@ export const initialState: BatchRequestState = {
   deviceEuisText: '',
   organisationId: '',
   requireApproval: false,
+  canSubmitForm: false,
 };
 
 type ActionTypes = ActionType<typeof actions | typeof logoutUser>;
@@ -26,11 +27,13 @@ const makeBatchId = ({shortPrefix, value}: BatchReferencePayload): string =>
 export const batchReferenceReducer = (state: BatchRequestState, action: ActionTypes): BatchRequestState => {
   switch (action.type) {
     case getType(actions.changeBatchReference):
-      return {...state, batchId: makeBatchId(action.payload)};
+      const batchId = makeBatchId(action.payload);
+      return {...state, batchId, canSubmitForm: batchId !== '' && state.deviceEuisText.length > 0};
     case getType(actions.changeRequireApproval):
       return {...state, requireApproval: action.payload};
     case getType(actions.changeDeviceEuis):
-      return {...state, deviceEuisText: action.payload};
+      const deviceEuisText = action.payload;
+      return {...state, deviceEuisText, canSubmitForm: deviceEuisText !== '' && state.batchId.length > 0};
     default:
       return state;
   }

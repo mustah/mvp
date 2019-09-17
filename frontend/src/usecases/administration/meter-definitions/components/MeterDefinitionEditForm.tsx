@@ -126,7 +126,7 @@ export const MeterDefinitionEditForm = (
           editable={!isDefault}
         />
 
-        <ButtonSave disabled={isDefault} className="flex-align-self-start" type="submit"/>
+        <ButtonSave disabled={isDefault} type="submit"/>
       </Column>
 
     </ValidatorForm>
