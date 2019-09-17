@@ -68,6 +68,12 @@ msgstr "device eui"
 msgid "comma separated device euis"
 msgstr "Kommaseparerade device-euis"
 
+msgid "comma separated device euis from file"
+msgstr "Kommaseparerade device-euis från fil"
+
+msgid "choose file"
+msgstr "välj fil"
+
 msgid "claim status"
 msgstr "claim-status"
 

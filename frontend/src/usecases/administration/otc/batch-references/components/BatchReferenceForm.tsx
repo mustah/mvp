@@ -10,6 +10,7 @@ import {BatchRequestState} from '../../../../../state/domain-models-paginated/ba
 import {CallbackWith, Omit, uuid} from '../../../../../types/Types';
 import {changeBatchReference, changeDeviceEuis, changeRequireApproval} from '../batchReferenceActions';
 import {batchReferenceReducer, initialState} from '../batchReferenceReducer';
+import {DeviceIdsFileUploader} from './DeviceIdsFileUploader';
 
 export interface StateToProps {
   organisationId: uuid;
@@ -24,8 +25,9 @@ type Props = StateToProps & DispatchToProps;
 export const BatchReferenceForm = ({organisationId, saveBatchReference}: Props) => {
   const [state, dispatch] = React.useReducer(batchReferenceReducer, {...initialState, organisationId});
 
+  const setDeviceEuis = (result: string) => dispatch(changeDeviceEuis(result));
   const onChangeBatchReference = (_, newValue) => dispatch(changeBatchReference(newValue));
-  const onChangeDeviceEuis = (_, newValue) => dispatch(changeDeviceEuis(newValue));
+  const onChangeDeviceEuis = (_, newValue) => setDeviceEuis(newValue);
   const onChangeRequireApproval = ev => dispatch(changeRequireApproval(ev.target.checked));
 
   const onSubmit = (ev) => {
@@ -50,10 +52,14 @@ export const BatchReferenceForm = ({organisationId, saveBatchReference}: Props) 
           autoComplete="off"
           id="deviceEuis"
           labelText={firstUpperTranslated('comma separated device euis')}
+          maxLength="100000"
+          rowsMax={20}
           multiLine={true}
           onChange={onChangeDeviceEuis}
           value={state.deviceEuisText}
         />
+
+        <DeviceIdsFileUploader onLoadEnd={setDeviceEuis}/>
 
         <Checkbox
           checked={state.requireApproval}
