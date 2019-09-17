@@ -10,6 +10,7 @@ export interface ValidatorProps {
   validators?: string[];
   errorMessages?: string[];
   labelText?: string;
+  maxLength?: string;
 }
 
 type Props = TextFieldProps & ValidatorProps & ThemeContext;
