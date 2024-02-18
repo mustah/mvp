@@ -32,7 +32,7 @@ public class UserRepository implements Users {
   public List<User> findAll() {
     return userJpaRepository.findAllByOrderByOrganisationNameAscNameAsc().stream()
       .map(UserEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
@@ -80,7 +80,7 @@ public class UserRepository implements Users {
   public List<User> findByRole(Role role) {
     return userJpaRepository.findByRoles_Role(role.role).stream()
       .map(UserEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
@@ -90,6 +90,6 @@ public class UserRepository implements Users {
       organisationId
     ).stream()
       .map(UserEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 }

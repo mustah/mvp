@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.Table;
@@ -31,6 +32,10 @@ import static org.jooq.impl.DSL.when;
 @RequiredArgsConstructor
 public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor {
 
+  private static final Field<LocalDate> GENDATE_FIELD = field("gendate", LocalDate.class);
+
+  private static final String ACTUAL = "actual";
+
   private final DSLContext dsl;
 
   private FilterPeriod period;
@@ -51,13 +56,13 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
   protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
     Condition condition;
     if (period == null) {
-      throw new RuntimeException("No period selected");
+      throw new NullPointerException("No period selected");
     } else {
       var series = JooqUtils.dateSerieFor(
         period.start.toLocalDate(),
         period.stop.toLocalDate().minusDays(1L),
         "1 days",
-        "gendate"
+        GENDATE_FIELD.getName()
       );
 
       condition = measurementStatsConditionFor(period)
@@ -80,15 +85,15 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
         dsl.select(
           sum(when(
             PHYSICAL_METER.READ_INTERVAL_MINUTES.ne(0L),
-            coalesce(field("actual", Long.class), 0L)
+            coalesce(field(ACTUAL, Long.class), 0L)
           )
-            .otherwise(inline((Long) null))).as("actual"),
+            .otherwise(inline((Long) null))).as(ACTUAL),
           inline(1440L) //60*24
             .divide(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)).as("expected"),
-          field("gendate")
+          GENDATE_FIELD
 
         ).from(
-          select(field("gendate", LocalDate.class))
+          select(GENDATE_FIELD)
             .from(series)
             .asTable("series")
             .leftJoin(
@@ -102,7 +107,7 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
                     0L
                   )
                 )
-                  .otherwise(inline((Long) null)).as("actual"),
+                  .otherwise(inline((Long) null)).as(ACTUAL),
                 MEASUREMENT_STAT_DATA.STAT_DATE
               )
                 .from(PHYSICAL_METER)
@@ -114,7 +119,7 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
                   MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID,
                   MEASUREMENT_STAT_DATA.STAT_DATE
                 ).asTable("meter_stats"))
-            .on("series.gendate=stat_date")).groupBy(field("gendate"))
+            .on("series.gendate=stat_date")).groupBy(GENDATE_FIELD)
           .asTable("foo"))).on(trueCondition());
     }
   }

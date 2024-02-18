@@ -24,7 +24,7 @@ public class WidgetRepository implements Widgets {
   public List<Widget> findAll() {
     return widgetJpaRepository.findAll().stream()
       .map(WidgetEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
@@ -35,8 +35,7 @@ public class WidgetRepository implements Widgets {
       dashboardId,
       ownerUserId,
       organisationId
-    ).stream()
-      .map(WidgetEntityMapper::toDomainModel).collect(toList());
+    ).stream().map(WidgetEntityMapper::toDomainModel).toList();
   }
 
   @Override
