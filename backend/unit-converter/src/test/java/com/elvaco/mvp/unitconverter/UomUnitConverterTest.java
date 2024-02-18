@@ -105,7 +105,7 @@ public class UomUnitConverterTest {
   }
 
   @Test
-  public void isSameDimenssion_Allows_SameUnitDifferentPrefix() {
+  public void isSameDimension_Allows_SameUnitDifferentPrefix() {
     assertThat(converter.isSameDimension("Wh", "MWh")).isTrue();
   }
 

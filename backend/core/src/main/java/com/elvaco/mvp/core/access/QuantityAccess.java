@@ -1,5 +1,7 @@
 package com.elvaco.mvp.core.access;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +26,6 @@ public final class QuantityAccess implements QuantityProvider {
 
   @Override
   public List<Quantity> all() {
-    return quantityMap.values().stream().collect(toList());
+    return new ArrayList<>(quantityMap.values());
   }
 }

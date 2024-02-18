@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.spi.repository;
 
+import com.elvaco.mvp.core.domainmodels.AlarmDescriptionQuery;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Test;
@@ -14,31 +15,63 @@ public class AlarmDescriptionsTest extends IntegrationTest {
 
   @Test
   public void noDescriptionFound() {
-    assertThat(
-      alarmDescriptions.descriptionFor("NOT_A_MANUFACTURER", 99999, 99999, 2048)
+
+    assertThat(alarmDescriptions.descriptionFor(
+      AlarmDescriptionQuery.builder()
+        .manufacturer("NOT_A_MANUFACTURER")
+        .firmwareVersion(99999)
+        .deviceType(99999)
+        .mask(2048)
+        .build())
     ).isEmpty();
   }
 
   @Test
   public void invalidMasksThrowsException() {
     assertThatThrownBy(() ->
-      alarmDescriptions.descriptionFor("ELV", 1, 1, 3)
+      alarmDescriptions.descriptionFor(
+        AlarmDescriptionQuery.builder()
+          .manufacturer("ELV")
+          .firmwareVersion(1)
+          .deviceType(1)
+          .mask(3)
+          .build()
+      )
     ).isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   public void nullParametersReturnsEmpty() {
-    assertThat(alarmDescriptions.descriptionFor("ELV", 1, null, 1)).isEmpty();
-    assertThat(alarmDescriptions.descriptionFor("ELV", null, 1, 1)).isEmpty();
-    assertThat(alarmDescriptions.descriptionFor(null, 1, null, 1)).isEmpty();
+    var withoutFirmwareVersion = AlarmDescriptionQuery.builder()
+      .manufacturer("ELV")
+      .deviceType(1)
+      .mask(1)
+      .build();
+    assertThat(alarmDescriptions.descriptionFor(withoutFirmwareVersion)).isEmpty();
+
+    var withoutDeviceType = AlarmDescriptionQuery.builder()
+      .manufacturer("ELV")
+      .firmwareVersion(1)
+      .mask(1)
+      .build();
+    assertThat(alarmDescriptions.descriptionFor(withoutDeviceType)).isEmpty();
+
+    var withoutManufacturer = AlarmDescriptionQuery.builder()
+      .firmwareVersion(1)
+      .deviceType(1)
+      .mask(1)
+      .build();
+    assertThat(alarmDescriptions.descriptionFor(withoutManufacturer)).isEmpty();
   }
 
   @Test
   public void descriptionFound() {
-    assertThat(
-      alarmDescriptions.descriptionFor(
-        "ELR", 7, 1, 1
-      )
-    ).hasValue("Meter battery low");
+    var withLowBattery = AlarmDescriptionQuery.builder()
+      .manufacturer("ELV")
+      .firmwareVersion(7)
+      .deviceType(1)
+      .mask(1)
+      .build();
+    assertThat(alarmDescriptions.descriptionFor(withLowBattery)).isEqualTo("Meter battery low");
   }
 }

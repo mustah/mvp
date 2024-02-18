@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PrimaryKey;
+import com.elvaco.mvp.core.domainmodels.AlarmDescriptionQuery;
 import com.elvaco.mvp.core.spi.repository.AlarmDescriptions;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
@@ -48,15 +49,18 @@ public class MeterAlarmLogEntityMapper {
     return physicalMeters.stream()
       .flatMap(physicalMeter -> physicalMeter.alarms.stream()
         .filter(AlarmLogEntry::isActive)
-        .map(alarmLogEntry -> alarmLogEntry.toBuilder()
-          .description(
-            alarmDescriptions.descriptionFor(
-              physicalMeter.manufacturer,
-              physicalMeter.mbusDeviceType,
-              physicalMeter.revision,
-              alarmLogEntry.mask
-            ).orElse(null))
-          .build())
+        .map(alarmLogEntry -> {
+          String description = alarmDescriptions.descriptionFor(
+              AlarmDescriptionQuery.builder()
+                .manufacturer(physicalMeter.manufacturer)
+                .firmwareVersion(physicalMeter.revision)
+                .deviceType(physicalMeter.mbusDeviceType)
+                .mask(alarmLogEntry.mask)
+                .build());
+          return alarmLogEntry.toBuilder()
+            .description(description)
+            .build();
+        })
         .sorted(Comparator.comparing(alarmLogEntry -> alarmLogEntry.mask))
       )
       .collect(toList());

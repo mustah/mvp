@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
+import com.elvaco.mvp.core.domainmodels.AlarmDescriptionMbusQuery;
 import com.elvaco.mvp.core.spi.repository.AlarmDescriptions;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
@@ -20,15 +21,18 @@ public class AlarmDataLoader implements MockDataLoader {
   private final PhysicalMeters physicalMeters;
   private final AlarmDescriptions alarmDescriptions;
 
+  @Override
   public void load(Random random) {
     physicalMeters.findAll()
       .stream()
       .filter((ignore -> random.nextBoolean()))
-      .forEach((meter) -> {
+      .forEach(meter -> {
         var availableMasks = alarmDescriptions.descriptionsFor(
-          meter.manufacturer,
-          meter.mbusDeviceType,
-          meter.revision
+          AlarmDescriptionMbusQuery.builder()
+            .manufacturer(meter.manufacturer)
+            .deviceType(meter.mbusDeviceType)
+            .version(meter.revision)
+            .build()
         ).keySet();
         if (availableMasks.isEmpty()) {
           return;

@@ -22,7 +22,7 @@ public class PeriodRangeParser {
   static final String EMPTY = "empty";
 
   public static PeriodRange parse(String rangeString) {
-    if (rangeString.isEmpty() || rangeString.length() < 2) {
+    if (rangeString.length() < 2) {
       throw new MalformedPeriodRange(rangeString);
     }
 
@@ -137,7 +137,7 @@ public class PeriodRangeParser {
     public final boolean isLeftBound;
     public final boolean isExclusive;
 
-    public static Optional<BoundType> fromChar(char c) {
+    private static Optional<BoundType> fromChar(char c) {
       return Arrays.stream(values()).filter(v -> v.render == c).findAny();
     }
 

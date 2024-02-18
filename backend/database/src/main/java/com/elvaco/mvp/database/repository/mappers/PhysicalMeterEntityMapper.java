@@ -69,7 +69,8 @@ public class PhysicalMeterEntityMapper {
 
   private static Set<AlarmLogEntry> toAlarms(PhysicalMeterEntity entity) {
     return entity.alarms.stream()
-      .map(MeterAlarmLogEntityMapper::toDomainModel).collect(toSet());
+      .map(MeterAlarmLogEntityMapper::toDomainModel)
+      .collect(toSet());
   }
 
   private static PhysicalMeter.PhysicalMeterBuilder physicalMeterBuilderFrom(

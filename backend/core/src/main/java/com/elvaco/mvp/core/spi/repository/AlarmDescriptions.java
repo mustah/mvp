@@ -1,20 +1,16 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.util.Map;
-import java.util.Optional;
+
 import javax.annotation.Nullable;
 
-public interface AlarmDescriptions {
-  Optional<String> descriptionFor(
-    String manufacturer,
-    @Nullable Integer deviceType,
-    @Nullable Integer firmwareRevision,
-    int mask
-  );
+import com.elvaco.mvp.core.domainmodels.AlarmDescriptionMbusQuery;
+import com.elvaco.mvp.core.domainmodels.AlarmDescriptionQuery;
 
-  Map<Integer, String> descriptionsFor(
-    String manufacturer,
-    int mbusDeviceType,
-    int revision
-  );
+public interface AlarmDescriptions {
+
+  @Nullable
+  String descriptionFor(AlarmDescriptionQuery query);
+
+  Map<Integer, String> descriptionsFor(AlarmDescriptionMbusQuery query);
 }

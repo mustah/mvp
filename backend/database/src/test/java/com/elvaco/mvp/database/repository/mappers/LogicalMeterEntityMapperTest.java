@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.access.MediumProvider;
@@ -16,6 +17,8 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.AlarmDescriptionMbusQuery;
+import com.elvaco.mvp.core.domainmodels.AlarmDescriptionQuery;
 import com.elvaco.mvp.core.spi.repository.AlarmDescriptions;
 import com.elvaco.mvp.database.entity.meter.DisplayQuantityEntity;
 import com.elvaco.mvp.database.entity.meter.DisplayQuantityPk;
@@ -54,20 +57,14 @@ public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
   private static final MediumProvider MEDIUM_PROVIDER = name -> Optional.of(UNKNOWN_MEDIUM);
 
   private static final AlarmDescriptions ALARM_DESCRIPTIONS = new AlarmDescriptions() {
+    @Nullable
     @Override
-    public Optional<String> descriptionFor(
-      String manufacturer,
-      @Nullable Integer deviceType,
-      @Nullable Integer firmwareRevision,
-      int mask
-    ) {
-      return Optional.empty();
+    public String descriptionFor(AlarmDescriptionQuery query) {
+      return null;
     }
 
     @Override
-    public Map<Integer, String> descriptionsFor(
-      String manufacturer, int mbusDeviceType, int revision
-    ) {
+    public Map<Integer, String> descriptionsFor(AlarmDescriptionMbusQuery query) {
       return emptyMap();
     }
   };
