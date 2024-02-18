@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.springframework.data.util.Streamable;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.jooq.impl.DSL.inline;
 
 @UtilityClass
@@ -50,7 +52,7 @@ public class SortUtil {
       .map(order -> sortFieldsMap.get(order.getProperty())
         .sort(SortOrder.valueOf(order.getDirection().name()))
       )
-      .collect(toList());
+      .collect(toUnmodifiableList());
   }
 
   public static Field<Integer> levenshtein(TableField<?, String> tableField, String inlineStr) {
@@ -65,7 +67,7 @@ public class SortUtil {
       .map(p -> p.getValues(SORT).stream()
         .filter(s -> !s.isEmpty())
         .map(s -> new Sort.Order(getDirection(s), getProperty(s)))
-        .collect(toList()))
+        .toList())
       .map(Sort::by);
   }
 

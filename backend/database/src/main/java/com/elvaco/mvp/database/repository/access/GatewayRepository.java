@@ -34,7 +34,7 @@ public class GatewayRepository implements Gateways {
   public List<Gateway> findAll() {
     return gatewayJpaRepository.findAll().stream()
       .map(gatewayWithMetersMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
@@ -77,7 +77,7 @@ public class GatewayRepository implements Gateways {
   public List<Gateway> findBy(String serial) {
     return gatewayJpaRepository.findBySerial(serial).stream()
       .map(GatewayEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override

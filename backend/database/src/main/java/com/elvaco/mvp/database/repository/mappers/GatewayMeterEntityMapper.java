@@ -4,7 +4,6 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.database.entity.gateway.GatewayMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 
 public @UtilityClass class GatewayMeterEntityMapper {

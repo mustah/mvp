@@ -36,21 +36,21 @@ public class OrganisationRepository implements Organisations {
   public List<Organisation> findAll() {
     return organisationJpaRepository.findAllByOrderByNameAsc().stream()
       .map(OrganisationEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
   public List<Organisation> findOrganisationAndSubOrganisations(UUID organisationId) {
     return organisationJpaRepository.findOrganisationAndSubOrganisations(organisationId).stream()
       .map(OrganisationEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
   public List<Organisation> findAllSubOrganisations(UUID organisationId) {
     return organisationJpaRepository.findAllSubOrganisations(organisationId).stream()
       .map(OrganisationEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override

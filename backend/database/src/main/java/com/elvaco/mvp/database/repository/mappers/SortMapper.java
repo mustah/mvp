@@ -5,8 +5,6 @@ import com.elvaco.mvp.core.spi.data.Order;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Sort;
 
-import static java.util.stream.Collectors.toList;
-
 @UtilityClass
 public class SortMapper {
   public static Sort getAsSpringSort(com.elvaco.mvp.core.spi.data.Sort sort) {
@@ -14,6 +12,6 @@ public class SortMapper {
       .map(order -> order.getDirection() == Order.Direction.ASC
         ? Sort.Order.asc(order.getProperty())
         : Sort.Order.desc(order.getProperty()))
-      .collect(toList()));
+      .toList());
   }
 }

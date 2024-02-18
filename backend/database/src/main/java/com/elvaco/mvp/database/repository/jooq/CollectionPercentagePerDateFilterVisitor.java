@@ -53,7 +53,7 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
     if (period == null) {
       throw new RuntimeException("No period selected");
     } else {
-      Table series = JooqUtils.dateSerieFor(
+      var series = JooqUtils.dateSerieFor(
         period.start.toLocalDate(),
         period.stop.toLocalDate().minusDays(1L),
         "1 days",

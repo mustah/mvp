@@ -26,6 +26,6 @@ abstract class Filter<T> implements VisitableFilter {
   }
 
   public T oneValue() {
-    return new ArrayList<>(values).get(0);
+    return new ArrayList<>(values).getFirst();
   }
 }

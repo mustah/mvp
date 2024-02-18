@@ -63,6 +63,6 @@ public class MeterAlarmLogEntityMapper {
         })
         .sorted(Comparator.comparing(alarmLogEntry -> alarmLogEntry.mask))
       )
-      .collect(toList());
+      .toList();
   }
 }

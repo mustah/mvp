@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.jooq.tables.Gateway;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 
 import org.jooq.Condition;
@@ -72,9 +73,9 @@ class GatewayJooqJpaRepository
     List<String> gatewaySerials = query
       .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP, editDistance.asc()))
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue())
+      .offset((int) pageable.getOffset())
       .stream().map(Record2::value1)
-      .collect(toList());
+      .toList();
 
     return getPage(gatewaySerials, pageable, () -> dsl.fetchCount(countQuery));
   }

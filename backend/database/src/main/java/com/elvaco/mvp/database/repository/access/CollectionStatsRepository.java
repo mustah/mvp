@@ -28,7 +28,6 @@ import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCE
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.LAST_DATA;
 import static com.elvaco.mvp.database.repository.mappers.SortMapper.getAsSpringSort;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
-import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.avg;
 import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.field;
@@ -40,9 +39,11 @@ public class CollectionStatsRepository implements CollectionStats {
 
   private static final Map<String, Field<?>> COLLECTION_SORT_FIELDS_MAP = Map.of(
     "facility", LOGICAL_METER.EXTERNAL_ID,
-    "collectionPercentage", field("collectionPercentage2"),
+    "collectionPercentage", field("collectionPercentage2", Double.class),
     "lastData", LAST_DATA
   );
+
+  private static final Field<LocalDate> GENDATE_FIELD = field("gendate", LocalDate.class);
 
   private final DSLContext dsl;
   private final MeasurementThresholdParser measurementThresholdParser;
@@ -77,7 +78,7 @@ public class CollectionStatsRepository implements CollectionStats {
         LOGICAL_METER.EXTERNAL_ID.asc()
       ))
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue());
+      .offset((int) pageable.getOffset());
 
     List<CollectionStatsDto> result = select.fetch().stream()
       .map(record -> new CollectionStatsDto(
@@ -87,7 +88,7 @@ public class CollectionStatsRepository implements CollectionStats {
         record.value4(),
         record.value5()
       ))
-      .collect(toList());
+      .toList();
 
     PageRequest pageRequest = PageRequest.of(
       pageable.getPageNumber(),
@@ -102,21 +103,21 @@ public class CollectionStatsRepository implements CollectionStats {
   public List<CollectionStatsPerDateDto> findAllPerDate(RequestParameters parameters) {
     var selectQuery = dsl.select(
       avg(field("actual", Double.class).divide(field("expected", Double.class))).times(100.0),
-      field("gendate", LocalDate.class)
+      GENDATE_FIELD
     ).from(LOGICAL_METER);
 
     FilterVisitors.collectionPercentagePerDate(dsl, measurementThresholdParser)
       .accept(toFilters(parameters))
       .andJoinsOn(selectQuery);
 
-    var select = selectQuery.groupBy(field("gendate"))
-      .orderBy(field("gendate").asc());
+    var select = selectQuery.groupBy(GENDATE_FIELD)
+      .orderBy(GENDATE_FIELD.asc());
 
     return select.fetch().stream()
       .map(record -> new CollectionStatsPerDateDto(
         record.value2().atStartOfDay(ZoneId.of("UTC+1")),
         record.value1().doubleValue()
       ))
-      .collect(toList());
+      .toList();
   }
 }

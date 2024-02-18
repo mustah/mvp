@@ -11,7 +11,6 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 
 import lombok.experimental.UtilityClass;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
@@ -22,7 +21,7 @@ public class PhysicalMeterEntityMapper {
   ) {
     return entities.stream()
       .map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs)
-      .collect(toList());
+      .toList();
   }
 
   public static PhysicalMeter toDomainModelWithoutStatusLogs(PhysicalMeterEntity entity) {
@@ -38,7 +37,7 @@ public class PhysicalMeterEntityMapper {
     Collection<PhysicalMeterStatusLogEntity> statuses
   ) {
     return physicalMeterBuilderFrom(entity)
-      .statuses(statuses.stream().map(MeterStatusLogEntityMapper::toDomainModel).collect(toList()))
+      .statuses(statuses.stream().map(MeterStatusLogEntityMapper::toDomainModel).toList())
       .alarms(toAlarms(entity))
       .build();
   }
@@ -64,7 +63,7 @@ public class PhysicalMeterEntityMapper {
   static List<PhysicalMeter> toDomainModels(Collection<PhysicalMeterEntity> entities) {
     return entities.stream()
       .map(PhysicalMeterEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   private static Set<AlarmLogEntry> toAlarms(PhysicalMeterEntity entity) {

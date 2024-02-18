@@ -446,13 +446,13 @@ public class MeasurementRepository implements Measurements {
       ? falseCondition()
       : QUANTITY.NAME.in(parameter.getQuantities().stream()
         .map(q -> q.name)
-        .collect(toList()));
+        .toList());
 
     OffsetDateTime stop = parameter.getTo().toOffsetDateTime();
 
     TemporalResolution resolution = parameter.getResolution();
 
-    if (parameter.getQuantities().get(0).isConsumption() && TemporalResolution.all != resolution) {
+    if (parameter.getQuantities().getFirst().isConsumption() && TemporalResolution.all != resolution) {
       stop = stop.plus(1, resolution);
     }
     TableField<MeasurementRecord, OffsetDateTime> timeField = getDateTimeFieldForResolution(
@@ -522,7 +522,7 @@ public class MeasurementRepository implements Measurements {
       .quantities(parameter.getQuantities()
         .stream()
         .filter(q -> !q.isConsumption())
-        .collect(toList()))
+        .toList())
       .build();
   }
 
@@ -531,7 +531,7 @@ public class MeasurementRepository implements Measurements {
       .quantities(parameter.getQuantities()
         .stream()
         .filter(QuantityParameter::isConsumption)
-        .collect(toList()))
+        .toList())
       .build();
   }
 

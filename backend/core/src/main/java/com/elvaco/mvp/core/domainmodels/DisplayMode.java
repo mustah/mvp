@@ -12,25 +12,19 @@ public enum DisplayMode {
   }
 
   public static DisplayMode from(String name) {
-    switch (name) {
-      case "readout":
-        return READOUT;
-      case "consumption":
-        return CONSUMPTION;
-      default:
-        return UNKNOWN;
-    }
+    return switch (name) {
+      case "readout" -> READOUT;
+      case "consumption" -> CONSUMPTION;
+      default -> UNKNOWN;
+    };
   }
 
   public static DisplayMode from(Integer ordinal) {
-    switch (ordinal) {
-      case 1:
-        return READOUT;
-      case 2:
-        return CONSUMPTION;
-      default:
-        return UNKNOWN;
-    }
+    return switch (ordinal) {
+      case 1 -> READOUT;
+      case 2 -> CONSUMPTION;
+      default -> UNKNOWN;
+    };
   }
 
   @Override

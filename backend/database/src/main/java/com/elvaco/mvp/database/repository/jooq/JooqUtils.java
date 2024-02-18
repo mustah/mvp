@@ -110,21 +110,12 @@ public class JooqUtils {
     Field<Double> max,
     Field<Double> min
   ) {
-    switch (threshold.operator) {
-      case LESS_THAN:
-        return min.lessThan(threshold.getConvertedValue());
-      case LESS_THAN_OR_EQUAL:
-        return min.lessOrEqual(threshold.getConvertedValue());
-      case GREATER_THAN:
-        return max.greaterThan(threshold.getConvertedValue());
-      case GREATER_THAN_OR_EQUAL:
-        return max.greaterOrEqual(threshold.getConvertedValue());
-      default:
-        throw new UnsupportedOperationException(String.format(
-          "Measurement threshold operator '%s' is not supported",
-          threshold.operator.name()
-        ));
-    }
+    return switch (threshold.operator) {
+      case LESS_THAN -> min.lessThan(threshold.getConvertedValue());
+      case LESS_THAN_OR_EQUAL -> min.lessOrEqual(threshold.getConvertedValue());
+      case GREATER_THAN -> max.greaterThan(threshold.getConvertedValue());
+      case GREATER_THAN_OR_EQUAL -> max.greaterOrEqual(threshold.getConvertedValue());
+    };
   }
 
   private static Field<Double> asHourly(TableField<MeasurementStatDataRecord, Double> field) {

@@ -13,14 +13,12 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
-import static java.util.stream.Collectors.toUnmodifiableList;
-
 abstract class JooqFilterVisitor implements FilterAcceptor, FilterVisitor, ConditionAdding, Joins {
 
   private final Collection<Condition> conditions = new ArrayList<>();
   private final Collection<FilterAcceptor> decorators;
 
-  private Collection<Joins> joiners = List.of();
+  private List<Joins> joiners = List.of();
 
   JooqFilterVisitor(Collection<FilterAcceptor> decorators) {
     this.decorators = decorators;
@@ -52,7 +50,7 @@ abstract class JooqFilterVisitor implements FilterAcceptor, FilterVisitor, Condi
   private void decorateWith(Filters filters) {
     joiners = decorators.stream()
       .map(acceptor -> acceptor.accept(filters))
-      .collect(toUnmodifiableList());
+      .toList();
   }
 
   private Supplier<Joins> joinSupplier() {

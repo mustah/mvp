@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModels;
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModelsWithoutStatusLogs;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @RequiredArgsConstructor
@@ -95,7 +94,7 @@ public final class LogicalMeterEntityMapper {
       .physicalMeters(physicalMeters)
       .gateways(entity.gatewayMeters.stream()
         .map(GatewayMeterEntityMapper::toDomainModel)
-        .collect(toList()))
+        .toList())
       .location(LocationEntityMapper.toDomainModel(entity.location))
       .alarms(MeterAlarmLogEntityMapper.toLatestActiveAlarms(alarmDescriptions, physicalMeters))
       .utcOffset(entity.utcOffset)

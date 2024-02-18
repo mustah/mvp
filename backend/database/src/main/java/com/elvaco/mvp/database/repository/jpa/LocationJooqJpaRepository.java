@@ -70,12 +70,12 @@ class LocationJooqJpaRepository
       .where(LOCATION.COUNTRY.isNotNull().and(LOCATION.CITY.isNotNull()))
       .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP, editDistance.asc()))
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue());
+      .offset((int) pageable.getOffset());
 
     var addresses = select.fetch()
       .stream()
       .map(record -> new City(record.value1(), record.value2()))
-      .collect(toList());
+      .toList();
 
     return getPage(addresses, pageable, () -> dsl.fetchCount(countQuery));
   }
@@ -106,11 +106,11 @@ class LocationJooqJpaRepository
         .and(LOCATION.STREET_ADDRESS.isNotNull()))
       .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP, editDistance.asc()))
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue());
+      .offset((int) pageable.getOffset());
 
     var addresses = select.fetch().stream()
       .map(record -> new Address(record.value1(), record.value2(), record.value3(), record.value4())
-      ).collect(toList());
+      ).toList();
 
     return getPage(addresses, pageable, () -> dsl.fetchCount(countQuery));
   }

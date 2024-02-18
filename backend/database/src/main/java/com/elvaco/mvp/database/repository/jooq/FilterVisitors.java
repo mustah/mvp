@@ -37,8 +37,7 @@ public class FilterVisitors {
     return new LogicalMeterFilterVisitor(Stream.concat(
       filterDecorators(dsl, parser).stream(),
       Stream.of(new DisplayQuantityFilterVisitor())
-    ).collect(toList()
-    ));
+    ).toList());
   }
 
   public static FilterAcceptor logicalMeterWithCollectionPercentageAndLastData(
@@ -51,7 +50,7 @@ public class FilterVisitors {
         new CollectionPercentageFilterVisitor(dsl),
         new MeasurementLastDataFilterVisitor(dsl)
       )
-    ).collect(toList()));
+    ).toList());
   }
 
   public static FilterAcceptor collectionPercentagePerDate(
@@ -61,7 +60,7 @@ public class FilterVisitors {
     return new LogicalMeterFilterVisitor(Stream.concat(
       filterDecorators(dsl, parser).stream(),
       Stream.of(new CollectionPercentagePerDateFilterVisitor(dsl))
-    ).collect(toList()));
+    ).toList());
   }
 
   public static FilterAcceptor gateway(DSLContext dsl, MeasurementThresholdParser parser) {

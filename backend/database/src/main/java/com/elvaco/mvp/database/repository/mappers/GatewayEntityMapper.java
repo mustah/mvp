@@ -7,7 +7,6 @@ import com.elvaco.mvp.database.entity.meter.JsonField;
 
 import lombok.experimental.UtilityClass;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
@@ -29,7 +28,7 @@ public class GatewayEntityMapper {
     return toDomainModelWithoutStatusLogs(entity).toBuilder()
       .statusLogs(entity.statusLogs.stream()
         .map(GatewayStatusLogEntityMapper::toDomainModel)
-        .collect(toList()))
+        .toList())
       .build();
   }
 

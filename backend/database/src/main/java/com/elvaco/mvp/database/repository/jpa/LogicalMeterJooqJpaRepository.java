@@ -123,7 +123,7 @@ class LogicalMeterJooqJpaRepository
     return findAll(parameters, pageable)
       .getContent().stream()
       .map(it -> new LegendDto(it.id, it.externalId, it.medium))
-      .collect(toList());
+      .toList();
   }
 
   @Override
@@ -173,7 +173,7 @@ class LogicalMeterJooqJpaRepository
     SelectForUpdateStep<Record> select = selectQuery
       .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP, LOGICAL_METER.EXTERNAL_ID.asc()))
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue());
+      .offset((int) pageable.getOffset());
 
     List<LogicalMeterSummaryDto> logicalMeters = select
       .fetchInto(LogicalMeterSummaryDto.class);
@@ -232,7 +232,7 @@ class LogicalMeterJooqJpaRepository
         record.value2(),
         record.value3(),
         DisplayMode.from(record.value4())
-      )).collect(toList());
+      )).toList();
   }
 
   private Page<String> fetchAllBy(
@@ -259,11 +259,11 @@ class LogicalMeterJooqJpaRepository
     var select = selectQuery.where(whereCondition)
       .orderBy(orderOf(field, pageable.getSort(), editDistance.asc()))
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue());
+      .offset((int) pageable.getOffset());
 
     var all = select.fetch().stream()
       .map(Record2::value1)
-      .collect(toList());
+      .toList();
 
     return getPage(all, pageable, () -> dsl.fetchCount(countQuery));
   }

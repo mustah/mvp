@@ -63,14 +63,14 @@ public class MeterDefinitionRepository implements MeterDefinitions {
     return meterDefinitionJpaRepository.findByOrganisationIdOrOrganisationIsNull(organisationId)
       .stream()
       .map(meterDefinitionEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
   public List<MeterDefinition> findAll() {
     return meterDefinitionJpaRepository.findAll().stream()
       .map(meterDefinitionEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override

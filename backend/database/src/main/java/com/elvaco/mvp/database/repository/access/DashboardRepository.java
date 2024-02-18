@@ -24,7 +24,7 @@ public class DashboardRepository implements Dashboards {
   public List<Dashboard> findAll() {
     return dashboardJpaRepository.findAll().stream()
       .map(DashboardEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
@@ -45,8 +45,7 @@ public class DashboardRepository implements Dashboards {
     return dashboardJpaRepository.findByOwnerUserIdAndOrganisationId(
       ownerUserId,
       organisationId
-    ).stream()
-      .map(DashboardEntityMapper::toDomainModel).collect(toList());
+    ).stream().map(DashboardEntityMapper::toDomainModel).toList();
   }
 
   @Override

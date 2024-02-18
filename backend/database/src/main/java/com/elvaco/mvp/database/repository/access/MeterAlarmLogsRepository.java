@@ -36,7 +36,7 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
       .map(MeterAlarmLogEntityMapper::toEntity)
       .map(meterAlarmLogJpaRepository::save)
       .map(MeterAlarmLogEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override

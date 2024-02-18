@@ -43,9 +43,9 @@ public class Asset {
         throw new RuntimeException(e);
       }
       StringBuilder checksum = new StringBuilder(md5.length * 2);
-      for (int i = 0; i < md5.length; i++) {
-        checksum.append(Character.forDigit((md5[i] >> 4) & 0xF, 16));
-        checksum.append(Character.forDigit((md5[i] & 0xF), 16));
+      for (byte b : md5) {
+        checksum.append(Character.forDigit((b >> 4) & 0xF, 16));
+        checksum.append(Character.forDigit((b & 0xF), 16));
       }
       return checksum.toString();
     }
