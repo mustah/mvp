@@ -54,13 +54,13 @@ public class SqlErrorMapper {
     return mapDataIntegrityViolation(ex, null);
   }
 
-  public static RuntimeException mapDataIntegrityViolation(
+  private static RuntimeException mapDataIntegrityViolation(
     DataIntegrityViolationException ex,
     String extraInformation
   ) {
     Throwable cause = ex.getCause();
-    if (cause instanceof JDBCException) {
-      String sqlErrorMessage = ((JDBCException) cause).getSQLException().getMessage();
+    if (cause instanceof JDBCException jdbcException) {
+      String sqlErrorMessage = jdbcException.getSQLException().getMessage();
       for (ErrorPatternMapperContainer patternMapperContainer : PATTERN_MAPPER_CONTAINERS) {
         Matcher matcher = patternMapperContainer.pattern.matcher(sqlErrorMessage);
         if (matcher.matches()) {
