@@ -81,12 +81,12 @@ public class CollectionStatsRepository implements CollectionStats {
       .offset((int) pageable.getOffset());
 
     List<CollectionStatsDto> result = select.fetch().stream()
-      .map(record -> new CollectionStatsDto(
-        record.value1(),
-        record.value2(),
-        record.value3() == null ? null : record.value3().intValue(),
-        record.value4(),
-        record.value5()
+      .map(collectionStatusRecord -> new CollectionStatsDto(
+        collectionStatusRecord.value1(),
+        collectionStatusRecord.value2(),
+        collectionStatusRecord.value3() == null ? null : collectionStatusRecord.value3().intValue(),
+        collectionStatusRecord.value4(),
+        collectionStatusRecord.value5()
       ))
       .toList();
 
@@ -114,9 +114,9 @@ public class CollectionStatsRepository implements CollectionStats {
       .orderBy(GENDATE_FIELD.asc());
 
     return select.fetch().stream()
-      .map(record -> new CollectionStatsPerDateDto(
-        record.value2().atStartOfDay(ZoneId.of("UTC+1")),
-        record.value1().doubleValue()
+      .map(collectionStatsPerDateRecord -> new CollectionStatsPerDateDto(
+        collectionStatsPerDateRecord.value2().atStartOfDay(ZoneId.of("UTC+1")),
+        collectionStatsPerDateRecord.value1().doubleValue()
       ))
       .toList();
   }

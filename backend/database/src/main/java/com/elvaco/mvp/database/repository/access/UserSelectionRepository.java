@@ -11,8 +11,6 @@ import com.elvaco.mvp.database.repository.mappers.UserSelectionEntityMapper;
 
 import lombok.RequiredArgsConstructor;
 
-import static java.util.stream.Collectors.toList;
-
 @RequiredArgsConstructor
 public class UserSelectionRepository implements UserSelections {
 
@@ -42,7 +40,7 @@ public class UserSelectionRepository implements UserSelections {
       organisationId
     ).stream()
       .map(UserSelectionEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override

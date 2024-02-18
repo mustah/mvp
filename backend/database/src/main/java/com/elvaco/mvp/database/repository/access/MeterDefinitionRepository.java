@@ -16,7 +16,6 @@ import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @RequiredArgsConstructor
@@ -36,9 +35,11 @@ public class MeterDefinitionRepository implements MeterDefinitions {
 
     displayQuantityJpaRepository.deleteAllByPkMeterDefinitionId(meterDefinitionEntity.id);
 
-    meterDefinitionEntity.quantities = meterDefinitionEntityMapper.toDisplayQuantityEntities(
-      meterDefinition).stream()
-      .peek(displayQuantity -> displayQuantity.pk.meterDefinitionId = meterDefinitionEntity.id)
+    meterDefinitionEntity.quantities = meterDefinitionEntityMapper.toDisplayQuantityEntities(meterDefinition).stream()
+      .map(displayQuantity -> {
+        displayQuantity.pk.meterDefinitionId = meterDefinitionEntity.id;
+        return displayQuantity;
+      })
       .map(displayQuantityJpaRepository::save)
       .collect(toSet());
 

@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.database.repository.mappers.DashboardEntityMapper.toDomainModel;
 import static com.elvaco.mvp.database.repository.mappers.DashboardEntityMapper.toEntity;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class DashboardRepository implements Dashboards {

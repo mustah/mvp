@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper.toDomainModel;
 import static com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper.toEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrUnsorted;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class OrganisationRepository implements Organisations {

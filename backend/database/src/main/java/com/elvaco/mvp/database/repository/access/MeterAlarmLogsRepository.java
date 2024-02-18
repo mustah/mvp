@@ -16,8 +16,6 @@ import com.elvaco.mvp.database.repository.mappers.MeterAlarmLogEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.stream.Collectors.toList;
-
 @RequiredArgsConstructor
 public class MeterAlarmLogsRepository implements MeterAlarmLogs {
 

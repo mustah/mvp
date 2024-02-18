@@ -10,8 +10,6 @@ import com.elvaco.mvp.database.repository.mappers.SettingEntityMapper;
 
 import lombok.RequiredArgsConstructor;
 
-import static java.util.stream.Collectors.toList;
-
 @RequiredArgsConstructor
 public class SettingRepository implements Settings {
 
@@ -21,7 +19,7 @@ public class SettingRepository implements Settings {
   public List<Setting> findAll() {
     return settingJpaRepository.findAll().stream()
       .map(SettingEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override

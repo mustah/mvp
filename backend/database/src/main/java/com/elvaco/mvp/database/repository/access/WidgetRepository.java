@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.database.repository.mappers.WidgetEntityMapper.toDomainModel;
 import static com.elvaco.mvp.database.repository.mappers.WidgetEntityMapper.toEntity;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class WidgetRepository implements Widgets {

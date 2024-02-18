@@ -20,7 +20,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import static com.elvaco.mvp.database.repository.mappers.UserEntityMapper.toDomainModel;
 import static com.elvaco.mvp.database.repository.mappers.UserEntityMapper.toEntity;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class UserRepository implements Users {

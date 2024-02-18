@@ -29,7 +29,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class LogicalMeterRepository implements LogicalMeters {
@@ -120,7 +119,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
     return logicalMeterJpaRepository.findAll(parameters).stream()
       .map(logicalMeterEntityMapper::toSimpleDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override

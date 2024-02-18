@@ -33,14 +33,14 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   public List<PhysicalMeter> findByMedium(String medium) {
     return physicalMeterJpaRepository.findByMedium(medium).stream()
       .map(PhysicalMeterEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
   public List<PhysicalMeter> findAll() {
     return physicalMeterJpaRepository.findAll().stream()
       .map(PhysicalMeterEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
@@ -130,7 +130,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
     return physicalMeterJpaRepository.findByOrganisationIdAndExternalId(
       organisationId,
       externalId
-    ).stream().map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs).collect(toList());
+    ).stream().map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs).toList();
   }
 
   @Override

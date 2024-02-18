@@ -12,8 +12,6 @@ import com.elvaco.mvp.database.repository.jpa.OrganisationThemeJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.stream.Collectors.toList;
-
 @RequiredArgsConstructor
 public class OrganisationThemeRepository implements OrganisationThemes {
 
@@ -33,7 +31,7 @@ public class OrganisationThemeRepository implements OrganisationThemes {
             .organisationThemePk(pkBuilder.property(entry.getKey()).build())
             .value(entry.getValue())
             .build())
-        .collect(toList())
+        .toList()
     );
 
     return Theme.builder()

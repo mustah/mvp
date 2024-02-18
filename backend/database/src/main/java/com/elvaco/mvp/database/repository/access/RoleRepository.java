@@ -9,8 +9,6 @@ import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 
 import lombok.RequiredArgsConstructor;
 
-import static java.util.stream.Collectors.toList;
-
 @RequiredArgsConstructor
 public class RoleRepository implements Roles {
 
@@ -22,14 +20,14 @@ public class RoleRepository implements Roles {
       .map(this::toEntity)
       .map(roleJpaRepository::save)
       .map(this::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override
   public List<Role> findAll() {
     return roleJpaRepository.findAll().stream()
       .map(this::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   private Role toDomainModel(RoleEntity roleEntity) {

@@ -11,8 +11,6 @@ import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 
 import lombok.RequiredArgsConstructor;
 
-import static java.util.stream.Collectors.toList;
-
 @RequiredArgsConstructor
 public class QuantityRepository implements Quantities {
 
@@ -23,7 +21,7 @@ public class QuantityRepository implements Quantities {
   public List<Quantity> findAll() {
     return quantityJpaRepository.findAll().stream()
       .map(quantityEntityMapper::toDomainModel)
-      .collect(toList());
+      .toList();
   }
 
   @Override

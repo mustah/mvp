@@ -22,7 +22,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrUnsorted;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class GatewayRepository implements Gateways {

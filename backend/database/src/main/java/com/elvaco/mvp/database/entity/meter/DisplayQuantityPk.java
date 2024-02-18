@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.entity.meter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -13,6 +14,7 @@ import javax.persistence.ManyToOne;
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -23,9 +25,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Access(AccessType.FIELD)
 @Embeddable
+@Builder(toBuilder = true)
 public class DisplayQuantityPk implements Serializable {
 
-  private static final long serialVersionUID = 9023894151522851555L;
+  @Serial private static final long serialVersionUID = 9023894151522851555L;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "quantity_id", nullable = false)
