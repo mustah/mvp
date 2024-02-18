@@ -26,7 +26,6 @@ import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -74,7 +73,7 @@ class LocationJooqJpaRepository
 
     var addresses = select.fetch()
       .stream()
-      .map(record -> new City(record.value1(), record.value2()))
+      .map(locationRecord -> new City(locationRecord.value1(), locationRecord.value2()))
       .toList();
 
     return getPage(addresses, pageable, () -> dsl.fetchCount(countQuery));
@@ -109,7 +108,12 @@ class LocationJooqJpaRepository
       .offset((int) pageable.getOffset());
 
     var addresses = select.fetch().stream()
-      .map(record -> new Address(record.value1(), record.value2(), record.value3(), record.value4())
+      .map(locationRecord -> new Address(
+          locationRecord.value1(),
+          locationRecord.value2(),
+          locationRecord.value3(),
+          locationRecord.value4()
+        )
       ).toList();
 
     return getPage(addresses, pageable, () -> dsl.fetchCount(countQuery));

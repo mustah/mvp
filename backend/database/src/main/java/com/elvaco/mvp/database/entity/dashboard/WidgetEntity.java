@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.entity.dashboard;
 
+import java.io.Serial;
 import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -28,7 +29,7 @@ import lombok.ToString;
 @Access(AccessType.FIELD)
 public class WidgetEntity extends IdentifiableType<UUID> {
 
-  private static final long serialVersionUID = 3077521204858765442L;
+  @Serial private static final long serialVersionUID = 3077521204858765442L;
 
   @Id
   public UUID id;

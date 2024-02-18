@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.spi.data;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
@@ -51,8 +52,7 @@ public enum RequestParameter {
   @Nullable
   public static RequestParameter from(String name) {
     return Stream.of(values())
-      .filter(parameter -> parameter.name != null)
-      .filter(parameter -> parameter.name.equals(name))
+      .filter(parameter -> Objects.equals(parameter.name, name))
       .findAny()
       .orElse(null);
   }

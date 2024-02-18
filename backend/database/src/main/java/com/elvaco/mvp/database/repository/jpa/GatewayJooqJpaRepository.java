@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.entity.jooq.tables.Gateway;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 
 import org.jooq.Condition;
@@ -25,7 +24,6 @@ import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static com.elvaco.mvp.database.entity.jooq.tables.Gateway.GATEWAY;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository

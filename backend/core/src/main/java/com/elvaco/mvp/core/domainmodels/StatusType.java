@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
@@ -45,6 +46,6 @@ public enum StatusType {
   }
 
   private boolean hasAlias(String status) {
-    return alias != null && alias.equals(status);
+    return Objects.equals(status, alias);
   }
 }

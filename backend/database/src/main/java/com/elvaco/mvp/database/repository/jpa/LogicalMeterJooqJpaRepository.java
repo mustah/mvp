@@ -49,7 +49,6 @@ import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCE
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
-import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.noCondition;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
@@ -228,10 +227,10 @@ class LogicalMeterJooqJpaRepository
     );
 
     return orderedQuery.fetch().stream()
-      .map(record -> new QuantityParameter(
-        record.value2(),
-        record.value3(),
-        DisplayMode.from(record.value4())
+      .map(logicalMeterRecord -> new QuantityParameter(
+        logicalMeterRecord.value2(),
+        logicalMeterRecord.value3(),
+        DisplayMode.from(logicalMeterRecord.value4())
       )).toList();
   }
 

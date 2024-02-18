@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
@@ -53,14 +52,18 @@ public class MeasurementThreshold {
       this.symbol = symbol;
     }
 
-    public static Optional<Operator> from(String symbol) {
-      return Arrays.stream(Operator.values())
-        .filter(operator -> operator.symbol.equals(symbol))
-        .findFirst();
-    }
-
     public String getSymbol() {
       return symbol;
+    }
+
+    public static Optional<Operator> from(String symbol) {
+      return switch (symbol) {
+        case "<" -> Optional.of(LESS_THAN);
+        case ">" -> Optional.of(GREATER_THAN);
+        case "<=" -> Optional.of(LESS_THAN_OR_EQUAL);
+        case ">=" -> Optional.of(GREATER_THAN_OR_EQUAL);
+        default -> Optional.empty();
+      };
     }
   }
 }

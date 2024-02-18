@@ -53,7 +53,7 @@ public class LocationParametersParser {
     return ids.stream()
       .map(toParamMapper)
       .filter(Objects::nonNull)
-      .collect(toList());
+      .toList();
   }
 
   @Nullable

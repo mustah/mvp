@@ -8,8 +8,6 @@ import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import lombok.experimental.UtilityClass;
 import org.jooq.DSLContext;
 
-import static java.util.stream.Collectors.toList;
-
 @UtilityClass
 public class FilterVisitors {
 

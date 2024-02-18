@@ -31,7 +31,6 @@ import static com.elvaco.mvp.database.entity.jooq.tables.Organisation.ORGANISATI
 import static com.elvaco.mvp.database.entity.jooq.tables.OrganisationUserSelection.ORGANISATION_USER_SELECTION;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -117,16 +116,16 @@ class OrganisationJooqJpaRepository
     SelectForUpdateStep<Record5<UUID, String, String, String, Integer>> select = selectQuery
       .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP, editDistance.asc()))
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue());
+      .offset((int) pageable.getOffset());
 
     var all = select.fetch().stream()
-      .map(record -> Organisation.builder()
-        .id(record.value1())
-        .name(record.value2())
-        .slug(record.value3())
-        .externalId(record.value4())
+      .map(record5 -> Organisation.builder()
+        .id(record5.value1())
+        .name(record5.value2())
+        .slug(record5.value3())
+        .externalId(record5.value4())
         .build())
-      .collect(toList());
+      .toList();
 
     return getPage(all, pageable, () -> dsl.fetchCount(countQuery));
   }
