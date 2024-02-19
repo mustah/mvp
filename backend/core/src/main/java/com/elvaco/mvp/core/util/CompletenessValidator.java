@@ -11,7 +11,7 @@ public class CompletenessValidator<T> {
 
   @SafeVarargs
   CompletenessValidator(Predicate<T>... predicates) {
-    this(Arrays.asList(predicates));
+    this(List.of(predicates));
   }
 
   private CompletenessValidator(List<Predicate<T>> predicates) {

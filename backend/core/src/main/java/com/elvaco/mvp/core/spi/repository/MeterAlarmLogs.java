@@ -11,7 +11,7 @@ public interface MeterAlarmLogs {
 
   AlarmLogEntry save(AlarmLogEntry alarm);
 
-  Collection<? extends AlarmLogEntry> save(Collection<? extends AlarmLogEntry> alarms);
+  Collection<AlarmLogEntry> save(Collection<AlarmLogEntry> alarms);
 
   void createOrUpdate(PrimaryKey primaryKey, int mask, ZonedDateTime start);
 

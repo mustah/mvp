@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.UserSelection.SelectionParametersDto;
@@ -147,7 +148,7 @@ public class RequestParametersAdapter implements RequestParameters {
   @Nullable
   @Override
   public String getFirst(RequestParameter... param) {
-    return Arrays.stream(param)
+    return Stream.of(param)
       .map(delegate::getFirst)
       .filter(Objects::nonNull)
       .findFirst()

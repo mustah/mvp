@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
@@ -176,7 +177,7 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   }
 
   Collection<? extends AlarmLogEntry> given(AlarmLogEntryBuilder... alarmLogEntryBuilders) {
-    return meterAlarmLogs.save(Arrays.stream(alarmLogEntryBuilders)
+    return meterAlarmLogs.save(Stream.of(alarmLogEntryBuilders)
       .map(AlarmLogEntryBuilder::build)
       .collect(toList()));
   }

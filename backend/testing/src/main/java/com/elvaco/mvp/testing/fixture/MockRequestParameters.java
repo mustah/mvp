@@ -1,7 +1,6 @@
 package com.elvaco.mvp.testing.fixture;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -60,15 +60,12 @@ public class MockRequestParameters implements RequestParameters {
   @Override
   public RequestParameters setAllIds(RequestParameter param, Collection<UUID> ids) {
     List<String> values = ids.stream().map(UUID::toString).collect(toList());
-    map.put(param, values);
-    return this;
+    return setAll(param, values);
   }
 
   @Override
   public RequestParameters replace(RequestParameter param, String value) {
-    List<String> values = new ArrayList<>();
-    values.add(value);
-    map.put(param, values);
+    map.put(param, List.of(value));
     return this;
   }
 
@@ -85,7 +82,7 @@ public class MockRequestParameters implements RequestParameters {
 
   @Override
   public List<String> getValues(RequestParameter param) {
-    return map.getOrDefault(param, emptyList());
+    return map.getOrDefault(param, List.of());
   }
 
   @Override
@@ -96,10 +93,10 @@ public class MockRequestParameters implements RequestParameters {
   @Nullable
   @Override
   public String getFirst(RequestParameter... param) {
-    return Arrays.stream(param)
+    return Stream.of(param)
       .map(map::get)
       .filter(Objects::nonNull)
-      .map(strings -> strings.isEmpty() ? null : strings.get(0))
+      .map(strings -> strings.isEmpty() ? null : strings.getFirst())
       .findFirst()
       .orElse(null);
   }
